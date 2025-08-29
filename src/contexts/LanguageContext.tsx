@@ -142,8 +142,8 @@ const translations = {
     allRightsReserved: 'Tous droits réservés',
     
     // About page translations
-    aboutBeitik: 'À propos de Beitik',
-    aboutDescription: 'Beitik est la plateforme immobilière de référence en Algérie, connectant acheteurs, vendeurs et locataires depuis plus de 15 ans. Notre mission est de simplifier vos transactions immobilières.',
+    aboutBeitik: 'À propos de Holibayt',
+    aboutDescription: 'Holibayt est la plateforme immobilière de référence en Algérie, connectant acheteurs, vendeurs et locataires depuis plus de 15 ans. Notre mission est de simplifier vos transactions immobilières.',
     properties: 'Propriétés',
     propertiesListed: 'Propriétés listées',
     clients: 'Clients',
@@ -154,7 +154,7 @@ const translations = {
     security: 'Sécurité',
     secureTransactions: 'Transactions sécurisées',
     ourStory: 'Notre Histoire',
-    storyParagraph1: 'Fondée en 2009, Beitik a révolutionné le marché immobilier algérien en créant la première plateforme en ligne dédiée à l\'immobilier en Algérie.',
+    storyParagraph1: 'Fondée en 2009, Holibayt a révolutionné le marché immobilier algérien en créant la première plateforme en ligne dédiée à l\'immobilier en Algérie.',
     storyParagraph2: 'Nous avons commencé avec une vision simple : rendre l\'immobilier accessible à tous et faciliter les transactions entre particuliers et professionnels.',
     storyParagraph3: 'Aujourd\'hui, nous sommes fiers d\'être la plateforme de référence avec plus de 10,000 propriétés actives et une communauté de plus de 50,000 utilisateurs.',
     storyParagraph4: 'Notre équipe d\'experts travaille chaque jour pour améliorer votre expérience et vous accompagner dans vos projets immobiliers.',
@@ -428,8 +428,8 @@ const translations = {
     allRightsReserved: 'All rights reserved',
     
     // About page translations
-    aboutBeitik: 'About Beitik',
-    aboutDescription: 'Beitik is Algeria\'s leading real estate platform, connecting buyers, sellers and tenants for over 15 years. Our mission is to simplify your real estate transactions.',
+    aboutBeitik: 'About Holibayt',
+    aboutDescription: 'Holibayt is Algeria\'s leading real estate platform, connecting buyers, sellers and tenants for over 15 years. Our mission is to simplify your real estate transactions.',
     properties: 'Properties',
     propertiesListed: 'Properties listed',
     clients: 'Clients',
@@ -440,7 +440,7 @@ const translations = {
     security: 'Security',
     secureTransactions: 'Secure transactions',
     ourStory: 'Our Story',
-    storyParagraph1: 'Founded in 2009, Beitik revolutionized the Algerian real estate market by creating the first online platform dedicated to real estate in Algeria.',
+    storyParagraph1: 'Founded in 2009, Holibayt revolutionized the Algerian real estate market by creating the first online platform dedicated to real estate in Algeria.',
     storyParagraph2: 'We started with a simple vision: make real estate accessible to everyone and facilitate transactions between individuals and professionals.',
     storyParagraph3: 'Today, we are proud to be the reference platform with more than 10,000 active properties and a community of more than 50,000 users.',
     storyParagraph4: 'Our team of experts works every day to improve your experience and support you in your real estate projects.',
@@ -714,8 +714,8 @@ const translations = {
     allRightsReserved: 'جميع الحقوق محفوظة',
     
     // About page translations
-    aboutBeitik: 'حول بيتك',
-    aboutDescription: 'بيتك هي منصة العقارات الرائدة في الجزائر، تربط المشترين والبائعين والمستأجرين لأكثر من 15 عامًا. مهمتنا هي تبسيط معاملاتك العقارية.',
+    aboutBeitik: 'حول هوليبايت',
+    aboutDescription: 'هوليبايت هي منصة العقارات الرائدة في الجزائر، تربط المشترين والبائعين والمستأجرين لأكثر من 15 عامًا. مهمتنا هي تبسيط معاملاتك العقارية.',
     properties: 'العقارات',
     propertiesListed: 'العقارات المدرجة',
     clients: 'العملاء',

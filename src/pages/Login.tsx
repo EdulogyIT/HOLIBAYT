@@ -19,7 +19,7 @@ const Login = () => {
     e.preventDefault();
     toast({
       title: "Connexion réussie!",
-      description: "Vous êtes maintenant connecté à votre compte Beitik.",
+      description: "Vous êtes maintenant connecté à votre compte Holibayt.",
     });
   };
 
@@ -36,7 +36,7 @@ const Login = () => {
             <CardHeader className="text-center">
               <CardTitle className="text-2xl">Se connecter</CardTitle>
               <p className="text-muted-foreground">
-                Connectez-vous à votre compte Beitik
+                Connectez-vous à votre compte Holibayt
               </p>
             </CardHeader>
             <CardContent>
