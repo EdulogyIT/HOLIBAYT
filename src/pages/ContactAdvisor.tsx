@@ -83,7 +83,7 @@ const ContactAdvisor = () => {
             alt="Property advisor consultation" 
             className="w-full h-full object-cover"
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-primary/90 via-primary/70 to-primary/50"></div>
+          <div className="absolute inset-0 bg-gradient-to-r from-primary/10 via-primary/5 to-transparent"></div>
         </div>
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-3xl">
@@ -100,11 +100,11 @@ const ContactAdvisor = () => {
             <div className="flex flex-col sm:flex-row gap-4">
               <Button size="lg" variant="secondary" className="font-inter font-semibold text-lg px-8 py-4">
                 <MessageCircle className="h-5 w-5 mr-2" />
-                {t('startChat')}
+                Start Chat
               </Button>
-              <Button size="lg" variant="outline" className="font-inter font-semibold text-lg px-8 py-4 border-primary-foreground text-primary-foreground hover:bg-primary-foreground hover:text-primary">
+              <Button size="lg" variant="secondary" className="font-inter font-semibold text-lg px-8 py-4">
                 <Phone className="h-5 w-5 mr-2" />
-                {t('callNow')}
+                Call Now
               </Button>
             </div>
           </div>
