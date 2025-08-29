@@ -140,7 +140,7 @@ const HeroSection = () => {
           <>
             <div className="flex-1">
               <select 
-                className="w-full px-4 py-3 bg-background border border-input rounded-md font-inter text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                className="w-full h-12 px-3 py-2 bg-background border border-input rounded-md font-inter text-sm focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent ring-offset-background"
                 value={formData.propertyType}
                 onChange={(e) => updateFormField('propertyType', e.target.value)}
               >
@@ -157,7 +157,7 @@ const HeroSection = () => {
                 <Input
                   type="text"
                   placeholder={t('maxBudget')}
-                  className="pl-10 font-inter text-sm"
+                  className="h-12 pl-10 font-inter text-sm"
                   value={formData.budget}
                   onChange={(e) => updateFormField('budget', e.target.value)}
                 />
@@ -170,7 +170,7 @@ const HeroSection = () => {
           <>
             <div className="flex-1">
               <select 
-                className="w-full px-4 py-3 bg-background border border-input rounded-md font-inter text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                className="w-full h-12 px-3 py-2 bg-background border border-input rounded-md font-inter text-sm focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent ring-offset-background"
                 value={formData.housingType}
                 onChange={(e) => updateFormField('housingType', e.target.value)}
               >
@@ -187,7 +187,7 @@ const HeroSection = () => {
                 <Input
                   type="text"
                   placeholder={t('maxRentMonth')}
-                  className="pl-10 font-inter text-sm"
+                  className="h-12 pl-10 font-inter text-sm"
                   value={formData.maxRent}
                   onChange={(e) => updateFormField('maxRent', e.target.value)}
                 />
@@ -251,7 +251,7 @@ const HeroSection = () => {
                 <Input
                   type="text"
                   placeholder={t('travelers')}
-                  className="pl-10 font-inter text-sm"
+                  className="h-12 pl-10 font-inter text-sm"
                   value={formData.travelers}
                   onChange={(e) => updateFormField('travelers', e.target.value)}
                 />
