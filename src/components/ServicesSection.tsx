@@ -65,11 +65,11 @@ const ServicesSection = () => {
         </div>
 
         {/* Services Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-16">
+        <div className="grid grid-cols-1 md:grid-cols-3 items-stretch gap-6 mb-16">
           {services.map((service, index) => {
             const IconComponent = service.icon;
             return (
-              <Card key={service.id} className="group relative overflow-hidden border-border/50 hover:shadow-elegant transition-all duration-300 hover:-translate-y-1 bg-card">
+              <Card key={service.id} className="group relative overflow-hidden border-border/50 hover:shadow-elegant transition-all duration-300 hover:-translate-y-1 bg-card flex flex-col h-full min-h-[420px]">
                 {/* Hero Image */}
                 <div className="relative h-48 overflow-hidden">
                   <img 
@@ -85,7 +85,7 @@ const ServicesSection = () => {
                   </div>
                 </div>
 
-                <CardContent className="relative p-6">
+                <CardContent className="relative p-6 flex flex-col flex-grow">
                   {/* Content */}
                   <div className="mb-6">
                     <h3 className="text-xl font-playfair font-semibold text-foreground mb-1">{service.title}</h3>
@@ -105,11 +105,10 @@ const ServicesSection = () => {
                     </div>
                   </div>
 
-                  {/* CTA Button */}
-                  <div className="flex justify-center">
+                  {/* CTA Button - Anchored to bottom */}
+                  <div className="mt-auto pt-6">
                     <Button 
-                      variant="outline" 
-                      className="w-full font-inter font-medium text-sm group-hover:bg-primary group-hover:text-primary-foreground group-hover:border-primary transition-all duration-300 min-h-[44px] flex items-center justify-center"
+                      className="h-11 px-5 text-sm font-medium whitespace-nowrap w-full bg-gradient-primary font-inter group-hover:shadow-elegant transition-all duration-300"
                       onClick={() => navigate(`/${service.id === 'stay' ? 'short-stay' : service.id}`)}
                     >
                       <span className="whitespace-nowrap">{t('explore')} {service.title}</span>

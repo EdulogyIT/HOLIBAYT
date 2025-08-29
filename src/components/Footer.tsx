@@ -23,11 +23,6 @@ const Footer = () => {
           {/* Company Info - Enhanced */}
           <div className="space-y-6 md:col-span-1">
             <div className="space-y-4">
-              <img 
-                src="/holibayt-logo-new.png" 
-                alt="Holibayt Logo" 
-                className="h-20 w-auto hover:scale-105 transition-transform duration-300"
-              />
               <p className="text-muted-foreground font-inter text-sm leading-relaxed">
                 {t('footerDescription')}
               </p>

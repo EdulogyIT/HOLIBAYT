@@ -25,8 +25,6 @@ const Navigation = () => {
 
   const handleLanguageChange = (lang: 'FR' | 'EN' | 'AR') => {
     setCurrentLang(lang);
-    // Force page refresh to update all translations
-    window.location.reload();
   };
 
   return (
