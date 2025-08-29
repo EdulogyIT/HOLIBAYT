@@ -112,7 +112,7 @@ const Property = () => {
                       <Bed className="w-6 h-6 mr-2 text-primary" />
                       <div>
                         <div className="font-semibold font-inter">{property.beds}</div>
-                        <div className="text-sm text-muted-foreground font-inter">Chambres</div>
+                        <div className="text-sm text-muted-foreground font-inter">{t('chambers')}</div>
                       </div>
                     </div>
                     <Separator orientation="vertical" className="h-12" />
@@ -120,7 +120,7 @@ const Property = () => {
                       <Bath className="w-6 h-6 mr-2 text-primary" />
                       <div>
                         <div className="font-semibold font-inter">{property.baths}</div>
-                        <div className="text-sm text-muted-foreground font-inter">Salles de bain</div>
+                        <div className="text-sm text-muted-foreground font-inter">{t('bathrooms')}</div>
                       </div>
                     </div>
                     <Separator orientation="vertical" className="h-12" />
@@ -128,13 +128,13 @@ const Property = () => {
                       <Square className="w-6 h-6 mr-2 text-primary" />
                       <div>
                         <div className="font-semibold font-inter">{property.area}</div>
-                        <div className="text-sm text-muted-foreground font-inter">Surface</div>
+                        <div className="text-sm text-muted-foreground font-inter">{t('areaField')}</div>
                       </div>
                     </div>
                   </div>
 
                   <div className="space-y-4">
-                    <h3 className="text-xl font-semibold font-playfair">Description</h3>
+                    <h3 className="text-xl font-semibold font-playfair">{t('descriptionField')}</h3>
                     <p className="text-muted-foreground leading-relaxed font-inter">{property.description}</p>
                   </div>
                 </CardContent>
