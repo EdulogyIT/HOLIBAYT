@@ -275,8 +275,25 @@ const translations = {
     publishedOn: 'Publié le',
     lastUpdated: 'Dernière mise à jour',
     daysAgo: 'il y a 2 jours',
-    callBtn: 'Appeler',
-    sendMessageBtn: 'Envoyer un message'
+    // Cities translations
+    exploreByTitle: 'Explorez par',
+    citiesTitle: 'Villes',
+    citiesDescription: 'Découvrez les meilleures opportunités immobilières dans les principales villes d\'Algérie',
+    discoverCity: 'Découvrir',
+    allCitiesAvailable: 'Toutes les villes disponibles',
+    moreThanCitiesAvailable: 'Plus de 20 villes disponibles',
+    showLess: 'Voir moins',
+    seeAllCities: 'Voir toutes les villes',
+    
+    // City descriptions
+    algerDescription: 'La capitale dynamique de l\'Algérie',
+    oranDescription: 'La perle de l\'Ouest algérien',
+    constantineDescription: 'La ville des ponts suspendus',
+    annabaDescription: 'La cité du jujubier',
+    setifDescription: 'Ville des hautes plaines',
+    tlemcenDescription: 'Perle du Maghreb',
+    bejaiaDescription: 'Fiancée de la Méditerranée',
+    blidaDescription: 'Ville des roses',
   },
   EN: {
     // Navigation
@@ -544,8 +561,25 @@ const translations = {
     publishedOn: 'Published on',
     lastUpdated: 'Last updated',
     daysAgo: '2 days ago',
-    callBtn: 'Call',
-    sendMessageBtn: 'Send message'
+    // Cities translations
+    exploreByTitle: 'Explore by',
+    citiesTitle: 'Cities',
+    citiesDescription: 'Discover the best real estate opportunities in Algeria\'s main cities',
+    discoverCity: 'Discover',
+    allCitiesAvailable: 'All available cities',
+    moreThanCitiesAvailable: 'More than 20 cities available',
+    showLess: 'Show Less',
+    seeAllCities: 'See All Cities',
+    
+    // City descriptions
+    algerDescription: 'Algeria\'s dynamic capital',
+    oranDescription: 'Pearl of Western Algeria',
+    constantineDescription: 'City of suspended bridges',
+    annabaDescription: 'City of the jujube tree',
+    setifDescription: 'City of the High Plains',
+    tlemcenDescription: 'Pearl of the Maghreb',
+    bejaiaDescription: 'Bride of the Mediterranean',
+    blidaDescription: 'City of Roses',
   },
   AR: {
     // Navigation
@@ -813,6 +847,27 @@ const translations = {
     publishedOn: 'نُشر في',
     lastUpdated: 'آخر تحديث',
     daysAgo: 'منذ يومين',
+    
+    // Cities translations
+    exploreByTitle: 'استكشف حسب',
+    citiesTitle: 'المدن',
+    citiesDescription: 'اكتشف أفضل الفرص العقارية في المدن الرئيسية بالجزائر',
+    discoverCity: 'اكتشف',
+    allCitiesAvailable: 'جميع المدن المتاحة',
+    moreThanCitiesAvailable: 'أكثر من 20 مدينة متاحة',
+    showLess: 'إظهار أقل',
+    seeAllCities: 'رؤية جميع المدن',
+    
+    // City descriptions  
+    algerDescription: 'العاصمة النشطة للجزائر',
+    oranDescription: 'لؤلؤة الغرب الجزائري',
+    constantineDescription: 'مدينة الجسور المعلقة',
+    annabaDescription: 'مدينة النبق',
+    setifDescription: 'مدينة الهضاب العليا',
+    tlemcenDescription: 'لؤلؤة المغرب الأوسط',
+    bejaiaDescription: 'عروس البحر الأبيض المتوسط',
+    blidaDescription: 'مدينة الورود',
+    
     callBtn: 'اتصال',
     sendMessageBtn: 'أرسل رسالة'
   }

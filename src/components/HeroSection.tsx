@@ -11,69 +11,96 @@ import { cn } from "@/lib/utils";
 import algeriaHero from "@/assets/algeria-architecture-hero.jpg";
 import { DateRangePicker } from "@/components/DateRangePicker";
 
-// Stay Date Picker Component using unified DateRangePicker
-const StayDatePicker = () => {
-  const { t } = useLanguage();
-  const [dateRange, setDateRange] = useState<{ from?: Date; to?: Date }>();
-
-  return (
-    <div className="flex flex-1 gap-2">
-      <div className="flex-1">
-        <Popover>
-          <PopoverTrigger asChild>
-            <Button
-              variant="outline"
-              className={cn(
-                "w-full justify-start text-left font-inter text-sm h-12",
-                !dateRange?.from && "text-muted-foreground"
-              )}
-            >
-              <CalendarIcon className="mr-2 h-4 w-4" />
-              {dateRange?.from ? format(dateRange.from, "dd/MM/yy") : t('checkIn')}
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent className="w-auto p-0" align="start">
-            <DateRangePicker
-              value={dateRange}
-              onChange={setDateRange}
-              allowPast={false}
-            />
-          </PopoverContent>
-        </Popover>
-      </div>
-      <div className="flex-1">
-        <Popover>
-          <PopoverTrigger asChild>
-            <Button
-              variant="outline"
-              className={cn(
-                "w-full justify-start text-left font-inter text-sm h-12",
-                !dateRange?.to && "text-muted-foreground"
-              )}
-              disabled={!dateRange?.from}
-            >
-              <CalendarIcon className="mr-2 h-4 w-4" />
-              {dateRange?.to ? format(dateRange.to, "dd/MM/yy") : t('checkOut')}
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent className="w-auto p-0" align="start">
-            <DateRangePicker
-              value={dateRange}
-              onChange={setDateRange}
-              allowPast={false}
-            />
-          </PopoverContent>
-        </Popover>
-      </div>
-    </div>
-  );
-};
-
 const HeroSection = () => {
-  const [selectedMode, setSelectedMode] = useState<'buy' | 'rent' | 'stay'>('buy');
-  const [searchQuery, setSearchQuery] = useState('');
   const { t } = useLanguage();
   const navigate = useNavigate();
+  const [selectedMode, setSelectedMode] = useState<'buy' | 'rent' | 'stay'>('buy');
+  
+  // Form states for validation
+  const [formData, setFormData] = useState({
+    location: '',
+    propertyType: '',
+    budget: '',
+    housingType: '',
+    maxRent: '',
+    dateRange: undefined as { from?: Date; to?: Date } | undefined,
+    travelers: ''
+  });
+
+  const updateFormField = (field: string, value: any) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+  };
+
+  // Validation logic
+  const isFormValid = () => {
+    if (!formData.location.trim()) return false;
+    
+    switch (selectedMode) {
+      case 'buy':
+        return formData.propertyType !== '' && formData.budget.trim() !== '';
+      case 'rent':
+        return formData.housingType !== '' && formData.maxRent.trim() !== '';
+      case 'stay':
+        return formData.dateRange?.from && formData.dateRange?.to && formData.travelers.trim() !== '';
+      default:
+        return false;
+    }
+  };
+
+  // Stay Date Picker Component using unified DateRangePicker
+  const StayDatePicker = () => {
+    return (
+      <div className="flex flex-1 gap-2">
+        <div className="flex-1">
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button
+                variant="outline"
+                className={cn(
+                  "w-full justify-start text-left font-inter text-sm h-12",
+                  !formData.dateRange?.from && "text-muted-foreground"
+                )}
+              >
+                <CalendarIcon className="mr-2 h-4 w-4" />
+                {formData.dateRange?.from ? format(formData.dateRange.from, "dd/MM/yy") : t('checkIn')}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0" align="start">
+              <DateRangePicker
+                value={formData.dateRange}
+                onChange={(range) => updateFormField('dateRange', range)}
+                allowPast={false}
+              />
+            </PopoverContent>
+          </Popover>
+        </div>
+        <div className="flex-1">
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button
+                variant="outline"
+                className={cn(
+                  "w-full justify-start text-left font-inter text-sm h-12",
+                  !formData.dateRange?.to && "text-muted-foreground"
+                )}
+                disabled={!formData.dateRange?.from}
+              >
+                <CalendarIcon className="mr-2 h-4 w-4" />
+                {formData.dateRange?.to ? format(formData.dateRange.to, "dd/MM/yy") : t('checkOut')}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0" align="start">
+              <DateRangePicker
+                value={formData.dateRange}
+                onChange={(range) => updateFormField('dateRange', range)}
+                allowPast={false}
+              />
+            </PopoverContent>
+          </Popover>
+        </div>
+      </div>
+    );
+  };
 
   const modes = [
     {
@@ -112,7 +139,11 @@ const HeroSection = () => {
         return (
           <>
             <div className="flex-1">
-              <select className="w-full px-4 py-3 bg-background border border-input rounded-md font-inter text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent">
+              <select 
+                className="w-full px-4 py-3 bg-background border border-input rounded-md font-inter text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                value={formData.propertyType}
+                onChange={(e) => updateFormField('propertyType', e.target.value)}
+              >
                 <option value="">{t('propertyType')}</option>
                 <option value="apartment">{t('apartment')}</option>
                 <option value="house">{t('house')}</option>
@@ -127,6 +158,8 @@ const HeroSection = () => {
                   type="text"
                   placeholder={t('maxBudget')}
                   className="pl-10 font-inter text-sm"
+                  value={formData.budget}
+                  onChange={(e) => updateFormField('budget', e.target.value)}
                 />
               </div>
             </div>
@@ -136,7 +169,11 @@ const HeroSection = () => {
         return (
           <>
             <div className="flex-1">
-              <select className="w-full px-4 py-3 bg-background border border-input rounded-md font-inter text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent">
+              <select 
+                className="w-full px-4 py-3 bg-background border border-input rounded-md font-inter text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                value={formData.housingType}
+                onChange={(e) => updateFormField('housingType', e.target.value)}
+              >
                 <option value="">{t('housingType')}</option>
                 <option value="apartment">{t('apartment')}</option>
                 <option value="house">{t('house')}</option>
@@ -151,6 +188,8 @@ const HeroSection = () => {
                   type="text"
                   placeholder={t('maxRentMonth')}
                   className="pl-10 font-inter text-sm"
+                  value={formData.maxRent}
+                  onChange={(e) => updateFormField('maxRent', e.target.value)}
                 />
               </div>
             </div>
@@ -167,6 +206,8 @@ const HeroSection = () => {
                   type="text"
                   placeholder={t('travelers')}
                   className="pl-10 font-inter text-sm"
+                  value={formData.travelers}
+                  onChange={(e) => updateFormField('travelers', e.target.value)}
                 />
               </div>
             </div>
@@ -178,18 +219,31 @@ const HeroSection = () => {
   };
 
   const handleSearch = () => {
-    // If there's a search query, include it as a URL parameter
-    const searchParams = searchQuery ? `?search=${encodeURIComponent(searchQuery)}` : '';
+    if (!isFormValid()) {
+      return; // Don't proceed if form is invalid
+    }
+
+    // Build search parameters from form data
+    const searchParams = new URLSearchParams();
+    
+    if (formData.location) searchParams.append('location', formData.location);
     
     switch (selectedMode) {
       case 'buy':
-        navigate(`/buy${searchParams}`);
+        if (formData.propertyType) searchParams.append('type', formData.propertyType);
+        if (formData.budget) searchParams.append('budget', formData.budget);
+        navigate(`/buy?${searchParams.toString()}`);
         break;
       case 'rent':
-        navigate(`/rent${searchParams}`);
+        if (formData.housingType) searchParams.append('type', formData.housingType);
+        if (formData.maxRent) searchParams.append('maxRent', formData.maxRent);
+        navigate(`/rent?${searchParams.toString()}`);
         break;
       case 'stay':
-        navigate(`/short-stay${searchParams}`);
+        if (formData.dateRange?.from) searchParams.append('checkIn', formData.dateRange.from.toISOString());
+        if (formData.dateRange?.to) searchParams.append('checkOut', formData.dateRange.to.toISOString());
+        if (formData.travelers) searchParams.append('travelers', formData.travelers);
+        navigate(`/short-stay?${searchParams.toString()}`);
         break;
       default:
         navigate('/buy');
@@ -255,10 +309,9 @@ const HeroSection = () => {
                 <Input
                   type="text"
                   placeholder={getSearchPlaceholder()}
-                  className="pl-10 font-inter text-sm h-12"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
+                  value={formData.location}
+                  onChange={(e) => updateFormField('location', e.target.value)}
+                  className="pl-10 bg-white/95 backdrop-blur-sm border-white/20 placeholder:text-gray-500 text-gray-900 font-inter text-sm h-12 focus:bg-white"
                 />
               </div>
               
@@ -266,10 +319,18 @@ const HeroSection = () => {
               {renderSearchFields()}
               
               {/* Search Button */}
-              <Button size="lg" className="bg-gradient-primary font-inter font-semibold hover:shadow-elegant px-6 md:px-8 h-12 whitespace-nowrap" onClick={handleSearch}>
-                <Search className="mr-2 h-4 w-4" />
-                <span className="hidden sm:inline">{t('search')}</span>
-                <span className="sm:hidden">{t('search')}</span>
+              <Button 
+                onClick={handleSearch}
+                disabled={!isFormValid()}
+                className={cn(
+                  "h-12 px-8 font-inter font-medium transition-all duration-300",
+                  isFormValid() 
+                    ? "bg-gradient-primary hover:shadow-elegant text-white" 
+                    : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                )}
+              >
+                <Search className="mr-2 h-5 w-5" />
+                {t('search')}
               </Button>
             </div>
           </Card>

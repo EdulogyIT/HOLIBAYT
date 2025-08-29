@@ -23,32 +23,32 @@ const CitiesSection = () => {
     {
       id: "alger",
       name: "Alger",
-      description: "La capitale dynamique de l'Algérie",
-      properties: "1,200+ propriétés",
+      description: t('algerDescription'),
+      properties: "1,200+ " + t('availableProperties'),
       image: algerImage,
       color: "from-blue-500 to-blue-600"
     },
     {
       id: "oran",
       name: "Oran",
-      description: "La perle de l'Ouest algérien",
-      properties: "800+ propriétés",
+      description: t('oranDescription'),
+      properties: "800+ " + t('availableProperties'),
       image: oranImage,
       color: "from-orange-500 to-red-500"
     },
     {
       id: "constantine", 
       name: "Constantine",
-      description: "La ville des ponts suspendus",
-      properties: "450+ propriétés",
+      description: t('constantineDescription'),
+      properties: "450+ " + t('availableProperties'),
       image: constantineImage,
       color: "from-green-500 to-emerald-600"
     },
     {
       id: "annaba",
       name: "Annaba",
-      description: "La cité du jujubier",
-      properties: "300+ propriétés", 
+      description: t('annabaDescription'),
+      properties: "300+ " + t('availableProperties'), 
       image: annabaImage,
       color: "from-purple-500 to-pink-500"
     }
@@ -59,7 +59,7 @@ const CitiesSection = () => {
     {
       id: "setif",
       name: "Sétif",
-      description: t('currentLang') === 'AR' ? "مدينة الهضاب العليا" : t('currentLang') === 'EN' ? "City of the High Plains" : "Ville des hautes plaines",
+      description: t('setifDescription'),
       properties: "250+ " + t('availableProperties'),
       image: algerImage,
       color: "from-indigo-500 to-blue-600"
@@ -67,7 +67,7 @@ const CitiesSection = () => {
     {
       id: "tlemcen",
       name: "Tlemcen",
-      description: t('currentLang') === 'AR' ? "لؤلؤة المغرب الأوسط" : t('currentLang') === 'EN' ? "Pearl of the Maghreb" : "Perle du Maghreb",
+      description: t('tlemcenDescription'),
       properties: "180+ " + t('availableProperties'),
       image: oranImage,
       color: "from-teal-500 to-green-600"
@@ -75,7 +75,7 @@ const CitiesSection = () => {
     {
       id: "bejaia",
       name: "Béjaïa",
-      description: t('currentLang') === 'AR' ? "عروس البحر الأبيض المتوسط" : t('currentLang') === 'EN' ? "Bride of the Mediterranean" : "Fiancée de la Méditerranée",
+      description: t('bejaiaDescription'),
       properties: "200+ " + t('availableProperties'),
       image: annabaImage,
       color: "from-cyan-500 to-blue-500"
@@ -83,7 +83,7 @@ const CitiesSection = () => {
     {
       id: "blida",
       name: "Blida",
-      description: t('currentLang') === 'AR' ? "مدينة الورود" : t('currentLang') === 'EN' ? "City of Roses" : "Ville des roses",
+      description: t('blidaDescription'),
       properties: "150+ " + t('availableProperties'),
       image: constantineImage,
       color: "from-rose-500 to-pink-600"
@@ -98,10 +98,10 @@ const CitiesSection = () => {
         {/* Section Header */}
         <div className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-playfair font-bold text-foreground mb-4">
-            {t('currentLang') === 'AR' ? 'استكشف حسب' : t('currentLang') === 'EN' ? 'Explore by' : 'Explorez par'} <span className="text-primary">{t('currentLang') === 'AR' ? 'المدن' : t('currentLang') === 'EN' ? 'Cities' : 'Villes'}</span>
+            {t('exploreByTitle')} <span className="text-primary">{t('citiesTitle')}</span>
           </h2>
           <p className="text-lg text-muted-foreground font-inter font-light max-w-2xl mx-auto">
-            {t('currentLang') === 'AR' ? 'اكتشف أفضل الفرص العقارية في المدن الرئيسية بالجزائر' : t('currentLang') === 'EN' ? 'Discover the best real estate opportunities in Algeria\'s main cities' : 'Découvrez les meilleures opportunités immobilières dans les principales villes d\'Algérie'}
+            {t('citiesDescription')}
           </p>
         </div>
 
@@ -142,7 +142,7 @@ const CitiesSection = () => {
                     navigate(`/city/${city.id}`);
                   }}
                 >
-                  <span>{t('currentLang') === 'AR' ? `اكتشف ${city.name}` : t('currentLang') === 'EN' ? `Discover ${city.name}` : `Découvrir ${city.name}`}</span>
+                  <span>{t('discoverCity')} {city.name}</span>
                   <ArrowRight className="ml-2 h-4 w-4 group-hover/btn:translate-x-1 transition-transform duration-300" />
                 </Button>
               </CardContent>
@@ -156,10 +156,7 @@ const CitiesSection = () => {
         {/* Bottom CTA */}
         <div className="text-center mt-12">
           <p className="text-muted-foreground font-inter text-sm mb-4">
-            {showAllCities 
-              ? (t('currentLang') === 'AR' ? 'جميع المدن المتاحة' : t('currentLang') === 'EN' ? 'All available cities' : 'Toutes les villes disponibles')
-              : (t('currentLang') === 'AR' ? 'أكثر من 20 مدينة متاحة' : t('currentLang') === 'EN' ? 'More than 20 cities available' : 'Plus de 20 villes disponibles')
-            }
+            {showAllCities ? t('allCitiesAvailable') : t('moreThanCitiesAvailable')}
           </p>
           <Button 
             variant="outline" 
@@ -167,10 +164,7 @@ const CitiesSection = () => {
             className="font-inter font-medium"
             onClick={() => setShowAllCities(!showAllCities)}
           >
-            {showAllCities 
-              ? (t('currentLang') === 'AR' ? 'إظهار أقل' : t('currentLang') === 'EN' ? 'Show Less' : 'Voir moins')
-              : (t('currentLang') === 'AR' ? 'رؤية جميع المدن' : t('currentLang') === 'EN' ? 'See All Cities' : 'Voir toutes les villes')
-            }
+            {showAllCities ? t('showLess') : t('seeAllCities')}
           </Button>
         </div>
       </div>
