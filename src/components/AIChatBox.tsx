@@ -25,6 +25,7 @@ const AIChatBox = () => {
   const { t, currentLang } = useLanguage();
   const [isOpen, setIsOpen] = useState(false);
   const [isMinimized, setIsMinimized] = useState(false);
+  const [isInitialized, setIsInitialized] = useState(false);
   
   const getWelcomeMessage = () => {
     switch (currentLang) {
@@ -38,17 +39,41 @@ const AIChatBox = () => {
     }
   };
 
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      id: 1,
-      text: getWelcomeMessage(),
-      isBot: true,
-      timestamp: new Date()
-    }
-  ]);
+  const [messages, setMessages] = useState<Message[]>([]);
   const [inputValue, setInputValue] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  // Initialize messages with welcome message and update when language changes
+  useEffect(() => {
+    if (!isInitialized) {
+      // Initial load - just set welcome message
+      setMessages([{
+        id: 1,
+        text: getWelcomeMessage(),
+        isBot: true,
+        timestamp: new Date()
+      }]);
+      setIsInitialized(true);
+    } else {
+      // Language change - add language change notice and new welcome message
+      const languageChangeMessage: Message = {
+        id: Date.now(),
+        text: currentLang === 'AR' ? 'تم تغيير اللغة. كيف يمكنني مساعدتك؟' : 
+              currentLang === 'EN' ? 'Language changed. How can I help you?' : 
+              'Langue changée. Comment puis-je vous aider ?',
+        isBot: true,
+        timestamp: new Date()
+      };
+      
+      setMessages([{
+        id: 1,
+        text: getWelcomeMessage(),
+        isBot: true,
+        timestamp: new Date()
+      }, languageChangeMessage]);
+    }
+  }, [currentLang]); // Re-run when language changes
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
