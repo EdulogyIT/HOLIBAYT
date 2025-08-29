@@ -197,8 +197,54 @@ const HeroSection = () => {
         );
       case 'stay':
         return (
-          <>
-            <StayDatePicker />
+          <div className="flex flex-1 gap-2">
+            <div className="flex-1">
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className={cn(
+                      "w-full justify-start text-left font-inter text-sm h-12",
+                      !formData.dateRange?.from && "text-muted-foreground"
+                    )}
+                  >
+                    <CalendarIcon className="mr-2 h-4 w-4" />
+                    {formData.dateRange?.from ? format(formData.dateRange.from, "dd/MM/yy") : t('checkIn')}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="start">
+                  <DateRangePicker
+                    value={formData.dateRange}
+                    onChange={(range) => updateFormField('dateRange', range)}
+                    allowPast={false}
+                  />
+                </PopoverContent>
+              </Popover>
+            </div>
+            <div className="flex-1">
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className={cn(
+                      "w-full justify-start text-left font-inter text-sm h-12",
+                      !formData.dateRange?.to && "text-muted-foreground"
+                    )}
+                    disabled={!formData.dateRange?.from}
+                  >
+                    <CalendarIcon className="mr-2 h-4 w-4" />
+                    {formData.dateRange?.to ? format(formData.dateRange.to, "dd/MM/yy") : t('checkOut')}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="start">
+                  <DateRangePicker
+                    value={formData.dateRange}
+                    onChange={(range) => updateFormField('dateRange', range)}
+                    allowPast={false}
+                  />
+                </PopoverContent>
+              </Popover>
+            </div>
             <div className="flex-1">
               <div className="relative">
                 <Users className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
@@ -211,7 +257,7 @@ const HeroSection = () => {
                 />
               </div>
             </div>
-          </>
+          </div>
         );
       default:
         return null;
