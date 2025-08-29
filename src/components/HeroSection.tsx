@@ -2,32 +2,19 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { format } from "date-fns";
-import { fr } from "date-fns/locale";
 import { Search, MapPin, Home, Key, Bed, Calendar as CalendarIcon, Users, DollarSign } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import algeriaHero from "@/assets/algeria-architecture-hero.jpg";
+import { DateRangePicker } from "@/components/DateRangePicker";
 
-// Stay Date Picker Component
+// Stay Date Picker Component using unified DateRangePicker
 const StayDatePicker = () => {
-  const [checkIn, setCheckIn] = useState<Date>();
-  const [checkOut, setCheckOut] = useState<Date>();
   const { t } = useLanguage();
-
-  const handleCheckInChange = (date: Date | undefined) => {
-    setCheckIn(date);
-    if (date && checkOut && checkOut <= date) {
-      setCheckOut(undefined);
-    }
-  };
-
-  const handleCheckOutChange = (date: Date | undefined) => {
-    setCheckOut(date);
-  };
+  const [dateRange, setDateRange] = useState<{ from?: Date; to?: Date }>();
 
   return (
     <div className="flex flex-1 gap-2">
@@ -38,21 +25,18 @@ const StayDatePicker = () => {
               variant="outline"
               className={cn(
                 "w-full justify-start text-left font-inter text-sm h-12",
-                !checkIn && "text-muted-foreground"
+                !dateRange?.from && "text-muted-foreground"
               )}
             >
               <CalendarIcon className="mr-2 h-4 w-4" />
-              {checkIn ? format(checkIn, "dd/MM/yy", { locale: fr }) : t('checkIn')}
+              {dateRange?.from ? format(dateRange.from, "dd/MM/yy") : t('checkIn')}
             </Button>
           </PopoverTrigger>
           <PopoverContent className="w-auto p-0" align="start">
-            <Calendar
-              mode="single"
-              selected={checkIn}
-              onSelect={handleCheckInChange}
-              disabled={(date) => date < new Date()}
-              initialFocus
-              className={cn("p-3 pointer-events-auto")}
+            <DateRangePicker
+              value={dateRange}
+              onChange={setDateRange}
+              allowPast={false}
             />
           </PopoverContent>
         </Popover>
@@ -64,22 +48,19 @@ const StayDatePicker = () => {
               variant="outline"
               className={cn(
                 "w-full justify-start text-left font-inter text-sm h-12",
-                !checkOut && "text-muted-foreground"
+                !dateRange?.to && "text-muted-foreground"
               )}
-              disabled={!checkIn}
+              disabled={!dateRange?.from}
             >
               <CalendarIcon className="mr-2 h-4 w-4" />
-              {checkOut ? format(checkOut, "dd/MM/yy", { locale: fr }) : t('checkOut')}
+              {dateRange?.to ? format(dateRange.to, "dd/MM/yy") : t('checkOut')}
             </Button>
           </PopoverTrigger>
           <PopoverContent className="w-auto p-0" align="start">
-            <Calendar
-              mode="single"
-              selected={checkOut}
-              onSelect={handleCheckOutChange}
-              disabled={(date) => !checkIn || date <= checkIn}
-              initialFocus
-              className={cn("p-3 pointer-events-auto")}
+            <DateRangePicker
+              value={dateRange}
+              onChange={setDateRange}
+              allowPast={false}
             />
           </PopoverContent>
         </Popover>
