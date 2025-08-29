@@ -140,7 +140,7 @@ const HeroSection = () => {
           <>
             <div className="flex-1">
               <select 
-                className="w-full h-12 px-3 py-2 bg-background border border-input rounded-md font-inter text-sm focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent ring-offset-background"
+                className="w-full h-12 px-3 py-2 bg-background border border-input rounded-md font-inter text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent ring-offset-background"
                 value={formData.propertyType}
                 onChange={(e) => updateFormField('propertyType', e.target.value)}
               >
@@ -170,7 +170,7 @@ const HeroSection = () => {
           <>
             <div className="flex-1">
               <select 
-                className="w-full h-12 px-3 py-2 bg-background border border-input rounded-md font-inter text-sm focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent ring-offset-background"
+                className="w-full h-12 px-3 py-2 bg-background border border-input rounded-md font-inter text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent ring-offset-background"
                 value={formData.housingType}
                 onChange={(e) => updateFormField('housingType', e.target.value)}
               >
@@ -201,10 +201,10 @@ const HeroSection = () => {
             <div className="flex-1">
               <Popover>
                 <PopoverTrigger asChild>
-                  <Button
+                <Button
                     variant="outline"
                     className={cn(
-                      "w-full justify-start text-left font-inter text-sm h-12",
+                      "w-full justify-start text-left font-inter text-sm h-12 bg-background border border-input",
                       !formData.dateRange?.from && "text-muted-foreground"
                     )}
                   >
@@ -224,10 +224,10 @@ const HeroSection = () => {
             <div className="flex-1">
               <Popover>
                 <PopoverTrigger asChild>
-                  <Button
+                <Button
                     variant="outline"
                     className={cn(
-                      "w-full justify-start text-left font-inter text-sm h-12",
+                      "w-full justify-start text-left font-inter text-sm h-12 bg-background border border-input",
                       !formData.dateRange?.to && "text-muted-foreground"
                     )}
                     disabled={!formData.dateRange?.from}
@@ -357,7 +357,7 @@ const HeroSection = () => {
                   placeholder={getSearchPlaceholder()}
                   value={formData.location}
                   onChange={(e) => updateFormField('location', e.target.value)}
-                  className="pl-10 bg-white/95 backdrop-blur-sm border-white/20 placeholder:text-gray-500 text-gray-900 font-inter text-sm h-12 focus:bg-white"
+                  className="h-12 pl-10 font-inter text-sm bg-background border border-input"
                 />
               </div>
               
