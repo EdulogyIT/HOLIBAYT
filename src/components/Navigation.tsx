@@ -45,6 +45,9 @@ const Navigation = () => {
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-8">
+            <Link to="/" className="text-foreground hover:text-primary transition-colors font-inter">
+              {t('home')}
+            </Link>
             <Link to="/buy" className="text-foreground hover:text-primary transition-colors font-inter">
               {t('buy')}
             </Link>
@@ -56,6 +59,9 @@ const Navigation = () => {
             </Link>
             <Link to="/about" className="text-foreground hover:text-primary transition-colors font-inter">
               {t('about')}
+            </Link>
+            <Link to="/blog" className="text-foreground hover:text-primary transition-colors font-inter">
+              {t('blog')}
             </Link>
           </div>
 
@@ -105,6 +111,9 @@ const Navigation = () => {
         {isMenuOpen && (
           <div className="md:hidden py-4 border-t border-border">
             <div className="flex flex-col space-y-4">
+              <Link to="/" className="text-foreground hover:text-primary transition-colors font-inter font-medium">
+                {t('home')}
+              </Link>
               <Link to="/buy" className="text-foreground hover:text-primary transition-colors font-inter font-medium">
                 {t('buy')}
               </Link>
@@ -116,6 +125,9 @@ const Navigation = () => {
               </Link>
               <Link to="/about" className="text-foreground hover:text-primary transition-colors font-inter font-medium">
                 {t('about')}
+              </Link>
+              <Link to="/blog" className="text-foreground hover:text-primary transition-colors font-inter font-medium">
+                {t('blog')}
               </Link>
               <div className="flex flex-col space-y-2 pt-4 border-t border-border">
                 <DropdownMenu>

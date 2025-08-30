@@ -11,10 +11,12 @@ interface LanguageContextType {
 const translations = {
   FR: {
     // Navigation
+    home: 'Accueil',
     buy: 'Acheter',
     rent: 'Louer',
     shortStay: 'Short Stay',
     about: 'À propos',
+    blog: 'Blog',
     login: 'Se connecter',
     publishProperty: 'Publier une annonce',
     
@@ -297,10 +299,12 @@ const translations = {
   },
   EN: {
     // Navigation
+    home: 'Home',
     buy: 'Buy',
     rent: 'Rent',
     shortStay: 'Short Stay',
     about: 'About',
+    blog: 'Blog',
     login: 'Login',
     publishProperty: 'Publish Property',
     
@@ -583,10 +587,12 @@ const translations = {
   },
   AR: {
     // Navigation
+    home: 'الرئيسية',
     buy: 'شراء',
     rent: 'إيجار',
     shortStay: 'إقامة قصيرة',
     about: 'حول',
+    blog: 'المدونة',
     login: 'تسجيل الدخول',
     publishProperty: 'نشر عقار',
     

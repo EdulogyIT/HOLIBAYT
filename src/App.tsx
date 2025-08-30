@@ -10,6 +10,7 @@ import Buy from "./pages/Buy";
 import Rent from "./pages/Rent";
 import ShortStay from "./pages/ShortStay";
 import About from "./pages/About";
+import Blog from "./pages/Blog";
 import PublishProperty from "./pages/PublishProperty";
 import Property from "./pages/Property";
 import City from "./pages/City";
@@ -30,6 +31,7 @@ const App = () => (
             <Route path="/rent" element={<Rent />} />
             <Route path="/short-stay" element={<ShortStay />} />
             <Route path="/about" element={<About />} />
+            <Route path="/blog" element={<Blog />} />
             <Route path="/publish-property" element={<PublishProperty />} />
             <Route path="/property/:id" element={<Property />} />
             <Route path="/city/:cityId" element={<City />} />
