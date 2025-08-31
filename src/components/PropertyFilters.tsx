@@ -145,22 +145,22 @@ const PropertyFilters = ({ onFilterChange, listingType }: PropertyFiltersProps) 
                     <SelectValue placeholder="Sélectionner" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all">{t('allTypes') || 'Tous les types'}</SelectItem>
-                    <SelectItem value="villa">Villa</SelectItem>
-                    <SelectItem value="apartment">Appartement</SelectItem>
-                    <SelectItem value="studio">Studio</SelectItem>
-                    <SelectItem value="duplex">Duplex</SelectItem>
-                    <SelectItem value="house">Maison</SelectItem>
+                    <SelectItem value="all">{t('allTypes') || 'Tous Les Types'}</SelectItem>
+                    <SelectItem value="villa">{t('villaFilter') || 'Villa'}</SelectItem>
+                    <SelectItem value="apartment">{t('apartment') || 'Appartement'}</SelectItem>
+                    <SelectItem value="studio">{t('studio') || 'Studio'}</SelectItem>
+                    <SelectItem value="duplex">{t('duplexFilter') || 'Duplex'}</SelectItem>
+                    <SelectItem value="house">{t('house') || 'Maison'}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
 
               {/* Bedrooms */}
               <div className="space-y-2">
-                <Label className="font-inter font-medium">Chambres</Label>
+                <Label className="font-inter font-medium">{t('bedrooms') || 'Chambres'}</Label>
                 <Select value={filters.bedrooms} onValueChange={(value) => handleFilterChange('bedrooms', value)}>
                   <SelectTrigger className="font-inter">
-                    <SelectValue placeholder="Nombre" />
+                    <SelectValue placeholder={t('number') || 'Nombre'} />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">{t('all') || 'Tout'}</SelectItem>
@@ -175,10 +175,10 @@ const PropertyFilters = ({ onFilterChange, listingType }: PropertyFiltersProps) 
 
               {/* Bathrooms */}
               <div className="space-y-2">
-                <Label className="font-inter font-medium">Salles de bain</Label>
+                <Label className="font-inter font-medium">{t('bathrooms') || 'Salles De Bain'}</Label>
                 <Select value={filters.bathrooms} onValueChange={(value) => handleFilterChange('bathrooms', value)}>
                   <SelectTrigger className="font-inter">
-                    <SelectValue placeholder="Nombre" />
+                    <SelectValue placeholder={t('number') || 'Nombre'} />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">{t('all') || 'Tout'}</SelectItem>
@@ -192,10 +192,10 @@ const PropertyFilters = ({ onFilterChange, listingType }: PropertyFiltersProps) 
 
               {/* Surface Area */}
               <div className="space-y-2">
-                <Label className="font-inter font-medium">Surface min (m²)</Label>
+                <Label className="font-inter font-medium">{t('minArea') || 'Surface Min (m²)'}</Label>
                 <Input
                   type="number"
-                  placeholder="Ex: 50"
+                  placeholder={t('areaPlaceholder') || 'Ex: 50'}
                   value={filters.minArea}
                   onChange={(e) => handleFilterChange('minArea', e.target.value)}
                   className="font-inter"
@@ -203,10 +203,10 @@ const PropertyFilters = ({ onFilterChange, listingType }: PropertyFiltersProps) 
               </div>
 
               <div className="space-y-2">
-                <Label className="font-inter font-medium">Surface max (m²)</Label>
+                <Label className="font-inter font-medium">{t('maxArea') || 'Surface Max (m²)'}</Label>
                 <Input
                   type="number"
-                  placeholder="Ex: 200"
+                  placeholder={t('maxAreaPlaceholder') || 'Ex: 200'}
                   value={filters.maxArea}
                   onChange={(e) => handleFilterChange('maxArea', e.target.value)}
                   className="font-inter"
@@ -217,18 +217,42 @@ const PropertyFilters = ({ onFilterChange, listingType }: PropertyFiltersProps) 
             {/* Price Range */}
             <div className="mt-6 space-y-4">
               <Label className="font-inter font-medium">{getPriceLabel()}</Label>
-              <div className="px-2">
-                <Slider
-                  min={0}
-                  max={getMaxPrice()}
-                  step={listingType === 'buy' ? 50000 : listingType === 'rent' ? 5000 : 1000}
-                  value={filters.maxPrice}
-                  onValueChange={(value) => handleFilterChange('maxPrice', value)}
-                  className="w-full"
-                />
-                <div className="flex justify-between text-sm text-muted-foreground font-inter mt-2">
-                  <span>0 DA</span>
-                  <span>{filters.maxPrice[0].toLocaleString()} DA</span>
+              
+              {/* Minimum Price */}
+              <div className="space-y-2">
+                <Label className="font-inter text-sm">{t('minPrice') || 'Prix Minimum'}</Label>
+                <div className="px-2">
+                  <Slider
+                    min={0}
+                    max={getMaxPrice()}
+                    step={listingType === 'buy' ? 50000 : listingType === 'rent' ? 5000 : 1000}
+                    value={filters.minPrice}
+                    onValueChange={(value) => handleFilterChange('minPrice', value)}
+                    className="w-full"
+                  />
+                  <div className="flex justify-between text-sm text-muted-foreground font-inter mt-2">
+                    <span>0 DA</span>
+                    <span>{filters.minPrice[0].toLocaleString()} DA</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Maximum Price */}
+              <div className="space-y-2">
+                <Label className="font-inter text-sm">{t('maxPrice') || 'Prix Maximum'}</Label>
+                <div className="px-2">
+                  <Slider
+                    min={0}
+                    max={getMaxPrice()}
+                    step={listingType === 'buy' ? 50000 : listingType === 'rent' ? 5000 : 1000}
+                    value={filters.maxPrice}
+                    onValueChange={(value) => handleFilterChange('maxPrice', value)}
+                    className="w-full"
+                  />
+                  <div className="flex justify-between text-sm text-muted-foreground font-inter mt-2">
+                    <span>0 DA</span>
+                    <span>{filters.maxPrice[0].toLocaleString()} DA</span>
+                  </div>
                 </div>
               </div>
             </div>

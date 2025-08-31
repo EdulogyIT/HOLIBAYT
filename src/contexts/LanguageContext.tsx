@@ -172,6 +172,21 @@ const translations = {
     propertyPublished: 'Propriété publiée!',
     propertySubmittedSuccess: 'Votre propriété a été soumise avec succès et sera examinée sous peu.',
     
+    // Filter translations
+    filters: 'Filtres',
+    clearAll: 'Effacer Tout',
+    allTypes: 'Tous Les Types',
+    villaFilter: 'Villa',
+    duplexFilter: 'Duplex',
+    number: 'Nombre',
+    minArea: 'Surface Min (m²)',
+    maxArea: 'Surface Max (m²)',
+    areaPlaceholder: 'Ex: 50',
+    maxAreaPlaceholder: 'Ex: 200',
+    minPrice: 'Prix Minimum',
+    maxPrice: 'Prix Maximum',
+    all: 'Tout',
+    
     // Cities and additional translations
     followUs: 'Suivez-nous',
     privacyPolicy: 'Politique de confidentialité',
@@ -459,6 +474,21 @@ const translations = {
     addPropertyDetails: 'Add your property details',
     propertyPublished: 'Property published!',
     propertySubmittedSuccess: 'Your property has been successfully submitted and will be reviewed shortly.',
+    
+    // Filter translations  
+    filters: 'Filters',
+    clearAll: 'Clear All',
+    allTypes: 'All Types',
+    villaFilter: 'Villa',
+    duplexFilter: 'Duplex',
+    number: 'Number',
+    minArea: 'Min Area (m²)',
+    maxArea: 'Max Area (m²)',
+    areaPlaceholder: 'Ex: 50',
+    maxAreaPlaceholder: 'Ex: 200',
+    minPrice: 'Minimum Price',
+    maxPrice: 'Maximum Price',
+    all: 'All',
     
     // Cities and additional translations
     followUs: 'Follow us',

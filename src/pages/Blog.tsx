@@ -5,9 +5,19 @@ import { useScrollToTop } from "@/hooks/useScrollToTop";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Calendar, User, Clock } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+
+// Import blog images
+import blogRealEstateFuture from "@/assets/blog-real-estate-future.jpg";
+import blogPropertyLocation from "@/assets/blog-property-location.jpg";
+import blogShortStayRental from "@/assets/blog-short-stay-rental.jpg";
+import blogPropertyValuation from "@/assets/blog-property-valuation.jpg";
+import blogRenovationTips from "@/assets/blog-renovation-tips.jpg";
+import blogLegalConsiderations from "@/assets/blog-legal-considerations.jpg";
 
 const Blog = () => {
   const { t } = useLanguage();
+  const navigate = useNavigate();
   useScrollToTop();
 
   const blogPosts = [
@@ -19,7 +29,7 @@ const Blog = () => {
       date: "March 15, 2024",
       readTime: "5 min read",
       category: "Market Trends",
-      image: "/src/assets/algeria-architecture-hero.jpg"
+      image: blogRealEstateFuture
     },
     {
       id: 2,
@@ -29,7 +39,7 @@ const Blog = () => {
       date: "March 10, 2024",
       readTime: "7 min read",
       category: "Buying Guide",
-      image: "/src/assets/city-alger.jpg"
+      image: blogPropertyLocation
     },
     {
       id: 3,
@@ -39,7 +49,7 @@ const Blog = () => {
       date: "March 5, 2024",
       readTime: "6 min read",
       category: "Investment",
-      image: "/src/assets/property-seaside-rental.jpg"
+      image: blogShortStayRental
     },
     {
       id: 4,
@@ -49,7 +59,7 @@ const Blog = () => {
       date: "February 28, 2024",
       readTime: "8 min read",
       category: "Finance",
-      image: "/src/assets/city-oran.jpg"
+      image: blogPropertyValuation
     },
     {
       id: 5,
@@ -59,7 +69,7 @@ const Blog = () => {
       date: "February 20, 2024",
       readTime: "9 min read",
       category: "Renovation",
-      image: "/src/assets/property-modern-apartment.jpg"
+      image: blogRenovationTips
     },
     {
       id: 6,
@@ -69,7 +79,7 @@ const Blog = () => {
       date: "February 15, 2024",
       readTime: "10 min read",
       category: "Legal",
-      image: "/src/assets/city-constantine.jpg"
+      image: blogLegalConsiderations
     }
   ];
 
@@ -113,7 +123,11 @@ const Blog = () => {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {blogPosts.map((post) => (
-                <Card key={post.id} className="group cursor-pointer hover:shadow-elegant transition-all duration-300 hover:-translate-y-2">
+                <Card 
+                  key={post.id} 
+                  className="group cursor-pointer hover:shadow-elegant transition-all duration-300 hover:-translate-y-2"
+                  onClick={() => navigate(`/blog/${post.id}`)}
+                >
                   <div className="aspect-video bg-muted rounded-t-lg overflow-hidden">
                     <img 
                       src={post.image} 
