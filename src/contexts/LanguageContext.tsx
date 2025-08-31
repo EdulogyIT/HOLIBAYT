@@ -311,6 +311,50 @@ const translations = {
     tlemcenDescription: 'Perle du Maghreb',
     bejaiaDescription: 'Fiancée de la Méditerranée',
     blidaDescription: 'Ville des roses',
+    
+    // Blog translations
+    blogInsights: 'Blog & Actualités',
+    blogDescription: 'Restez informé des dernières tendances, conseils et analyses du marché immobilier algérien',
+    stayUpdated: 'Restez Informé',
+    newsletterDescription: 'Abonnez-vous à notre newsletter et ne manquez jamais les dernières analyses immobilières',
+    enterEmail: 'Entrez votre email',
+    subscribe: 'S\'abonner',
+    backToBlog: 'Retour au Blog',
+    publishedBy: 'Publié par',
+    readMore: 'Lire plus',
+    
+    // Blog categories
+    allCategories: 'Toutes',
+    marketTrends: 'Tendances du Marché',
+    buyingGuide: 'Guide d\'Achat',
+    investment: 'Investissement',
+    finance: 'Finance',
+    renovation: 'Rénovation',
+    legal: 'Juridique',
+    
+    // Blog post titles
+    blogTitle1: 'L\'Avenir de l\'Immobilier en Algérie',
+    blogTitle2: 'Comment Choisir l\'Emplacement Parfait',
+    blogTitle3: 'Courts Séjours : Une Opportunité Croissante',
+    blogTitle4: 'Comprendre l\'Évaluation Immobilière en Algérie',
+    blogTitle5: 'Conseils de Rénovation pour un ROI Maximum',
+    blogTitle6: 'Considérations Juridiques pour les Acheteurs',
+    
+    // Blog excerpts
+    blogExcerpt1: 'Découvrez les tendances émergentes et les opportunités du marché immobilier algérien en croissance.',
+    blogExcerpt2: 'Un guide complet pour sélectionner l\'emplacement idéal pour votre prochain investissement immobilier.',
+    blogExcerpt3: 'Explorez le marché en pleine expansion des locations courtes et comment maximiser vos rendements d\'investissement.',
+    blogExcerpt4: 'Apprenez les facteurs clés qui déterminent la valeur des propriétés dans différentes villes algériennes.',
+    blogExcerpt5: 'Stratégies de rénovation intelligentes qui peuvent considérablement augmenter la valeur de votre propriété.',
+    blogExcerpt6: 'Aspects juridiques essentiels que tout acheteur de propriété devrait connaître avant de faire un achat.',
+    
+    // Blog authors
+    author1: 'Sarah Benali',
+    author2: 'Ahmed Mansouri', 
+    author3: 'Fatima Ouali',
+    author4: 'Karim Hakim',
+    author5: 'Leila Benaissa',
+    author6: 'Mohamed Kaci',
   },
   EN: {
     // Navigation
@@ -614,6 +658,50 @@ const translations = {
     tlemcenDescription: 'Pearl of the Maghreb',
     bejaiaDescription: 'Bride of the Mediterranean',
     blidaDescription: 'City of Roses',
+    
+    // Blog translations
+    blogInsights: 'Blog & Insights',
+    blogDescription: 'Stay updated with the latest trends, tips, and insights from Algeria\'s real estate market',
+    stayUpdated: 'Stay Updated',
+    newsletterDescription: 'Subscribe to our newsletter and never miss the latest real estate insights',
+    enterEmail: 'Enter your email',
+    subscribe: 'Subscribe',
+    backToBlog: 'Back to Blog',
+    publishedBy: 'Published by',
+    readMore: 'Read more',
+    
+    // Blog categories
+    allCategories: 'All',
+    marketTrends: 'Market Trends',
+    buyingGuide: 'Buying Guide',
+    investment: 'Investment',
+    finance: 'Finance',
+    renovation: 'Renovation',
+    legal: 'Legal',
+    
+    // Blog post titles
+    blogTitle1: 'The Future of Real Estate in Algeria',
+    blogTitle2: 'How to Choose the Perfect Property Location',
+    blogTitle3: 'Short-Stay Rentals: A Growing Opportunity',
+    blogTitle4: 'Understanding Property Valuation in Algeria',
+    blogTitle5: 'Renovation Tips for Maximum ROI',
+    blogTitle6: 'Legal Considerations for Property Buyers',
+    
+    // Blog excerpts
+    blogExcerpt1: 'Discover the emerging trends and opportunities in Algeria\'s growing real estate market.',
+    blogExcerpt2: 'A comprehensive guide to selecting the ideal location for your next property investment.',
+    blogExcerpt3: 'Explore the booming short-term rental market and how to maximize your investment returns.',
+    blogExcerpt4: 'Learn the key factors that determine property values in different Algerian cities.',
+    blogExcerpt5: 'Smart renovation strategies that can significantly increase your property\'s value.',
+    blogExcerpt6: 'Essential legal aspects every property buyer should know before making a purchase.',
+    
+    // Blog authors
+    author1: 'Sarah Benali',
+    author2: 'Ahmed Mansouri', 
+    author3: 'Fatima Ouali',
+    author4: 'Karim Hakim',
+    author5: 'Leila Benaissa',
+    author6: 'Mohamed Kaci',
   },
   AR: {
     // Navigation
@@ -894,7 +982,7 @@ const translations = {
     showLess: 'إظهار أقل',
     seeAllCities: 'رؤية جميع المدن',
     
-    // City descriptions  
+    // City descriptions
     algerDescription: 'العاصمة النشطة للجزائر',
     oranDescription: 'لؤلؤة الغرب الجزائري',
     constantineDescription: 'مدينة الجسور المعلقة',
@@ -903,6 +991,50 @@ const translations = {
     tlemcenDescription: 'لؤلؤة المغرب الأوسط',
     bejaiaDescription: 'عروس البحر الأبيض المتوسط',
     blidaDescription: 'مدينة الورود',
+    
+    // Blog translations
+    blogInsights: 'المدونة والرؤى',
+    blogDescription: 'ابق على اطلاع بأحدث الاتجاهات والنصائح والرؤى من سوق العقارات الجزائري',
+    stayUpdated: 'ابق مطلعاً',  
+    newsletterDescription: 'اشترك في نشرتنا الإخبارية ولا تفوت أحدث الرؤى العقارية',
+    enterEmail: 'أدخل بريدك الإلكتروني',
+    subscribe: 'اشتراك',
+    backToBlog: 'العودة للمدونة',
+    publishedBy: 'نشر بواسطة',
+    readMore: 'اقرأ المزيد',
+    
+    // Blog categories
+    allCategories: 'الكل',
+    marketTrends: 'اتجاهات السوق',
+    buyingGuide: 'دليل الشراء',
+    investment: 'الاستثمار',
+    finance: 'التمويل',
+    renovation: 'التجديد',
+    legal: 'قانوني',
+    
+    // Blog post titles
+    blogTitle1: 'مستقبل العقارات في الجزائر',
+    blogTitle2: 'كيفية اختيار الموقع المثالي للعقار',
+    blogTitle3: 'الإيجار قصير المدى: فرصة متنامية',
+    blogTitle4: 'فهم تقييم العقارات في الجزائر',
+    blogTitle5: 'نصائح التجديد لتحقيق أقصى عائد استثمار',
+    blogTitle6: 'الاعتبارات القانونية لمشتري العقارات',
+    
+    // Blog excerpts
+    blogExcerpt1: 'اكتشف الاتجاهات الناشئة والفرص في سوق العقارات الجزائري المتنامي.',
+    blogExcerpt2: 'دليل شامل لاختيار الموقع المثالي لاستثمارك العقاري القادم.',
+    blogExcerpt3: 'استكشف سوق الإيجار قصير المدى المزدهر وكيفية تعظيم عوائد استثمارك.',
+    blogExcerpt4: 'تعلم العوامل الرئيسية التي تحدد قيم العقارات في مختلف المدن الجزائرية.',
+    blogExcerpt5: 'استراتيجيات تجديد ذكية يمكنها زيادة قيمة عقارك بشكل كبير.',
+    blogExcerpt6: 'الجوانب القانونية الأساسية التي يجب على كل مشتري عقار معرفتها قبل الشراء.',
+    
+    // Blog authors
+    author1: 'سارة بن علي',
+    author2: 'أحمد منصوري', 
+    author3: 'فاطمة والي',
+    author4: 'كريم حكيم',
+    author5: 'ليلى بن عيسى',
+    author6: 'محمد قاسي',
     
     callBtn: 'اتصال',
     sendMessageBtn: 'أرسل رسالة'

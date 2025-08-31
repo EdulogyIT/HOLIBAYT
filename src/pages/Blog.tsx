@@ -23,67 +23,67 @@ const Blog = () => {
   const blogPosts = [
     {
       id: 1,
-      title: "The Future of Real Estate in Algeria",
-      excerpt: "Discover the emerging trends and opportunities in Algeria's growing real estate market.",
-      author: "Sarah Benali",
+      title: t('blogTitle1'),
+      excerpt: t('blogExcerpt1'),
+      author: t('author1'),
       date: "March 15, 2024",
       readTime: "5 min read",
-      category: "Market Trends",
+      category: t('marketTrends'),
       image: blogRealEstateFuture
     },
     {
       id: 2,
-      title: "How to Choose the Perfect Property Location",
-      excerpt: "A comprehensive guide to selecting the ideal location for your next property investment.",
-      author: "Ahmed Mansouri",
+      title: t('blogTitle2'),
+      excerpt: t('blogExcerpt2'),
+      author: t('author2'),
       date: "March 10, 2024",
       readTime: "7 min read",
-      category: "Buying Guide",
+      category: t('buyingGuide'),
       image: blogPropertyLocation
     },
     {
       id: 3,
-      title: "Short-Stay Rentals: A Growing Opportunity",
-      excerpt: "Explore the booming short-term rental market and how to maximize your investment returns.",
-      author: "Fatima Ouali",
+      title: t('blogTitle3'),
+      excerpt: t('blogExcerpt3'),
+      author: t('author3'),
       date: "March 5, 2024",
       readTime: "6 min read",
-      category: "Investment",
+      category: t('investment'),
       image: blogShortStayRental
     },
     {
       id: 4,
-      title: "Understanding Property Valuation in Algeria",
-      excerpt: "Learn the key factors that determine property values in different Algerian cities.",
-      author: "Karim Hakim",
+      title: t('blogTitle4'),
+      excerpt: t('blogExcerpt4'),
+      author: t('author4'),
       date: "February 28, 2024",
       readTime: "8 min read",
-      category: "Finance",
+      category: t('finance'),
       image: blogPropertyValuation
     },
     {
       id: 5,
-      title: "Renovation Tips for Maximum ROI",
-      excerpt: "Smart renovation strategies that can significantly increase your property's value.",
-      author: "Leila Benaissa",
+      title: t('blogTitle5'),
+      excerpt: t('blogExcerpt5'),
+      author: t('author5'),
       date: "February 20, 2024",
       readTime: "9 min read",
-      category: "Renovation",
+      category: t('renovation'),
       image: blogRenovationTips
     },
     {
       id: 6,
-      title: "Legal Considerations for Property Buyers",
-      excerpt: "Essential legal aspects every property buyer should know before making a purchase.",
-      author: "Mohamed Kaci",
+      title: t('blogTitle6'),
+      excerpt: t('blogExcerpt6'),
+      author: t('author6'),
       date: "February 15, 2024",
       readTime: "10 min read",
-      category: "Legal",
+      category: t('legal'),
       image: blogLegalConsiderations
     }
   ];
 
-  const categories = ["All", "Market Trends", "Buying Guide", "Investment", "Finance", "Renovation", "Legal"];
+  const categories = [t('allCategories'), t('marketTrends'), t('buyingGuide'), t('investment'), t('finance'), t('renovation'), t('legal')];
 
   return (
     <div className="min-h-screen bg-background">
@@ -93,10 +93,10 @@ const Blog = () => {
         <section className="bg-gradient-subtle py-16">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-4 font-playfair">
-              {t('blog')} & Insights
+              {t('blogInsights')}
             </h1>
             <p className="text-xl text-muted-foreground font-inter max-w-2xl mx-auto">
-              Stay updated with the latest trends, tips, and insights from Algeria's real estate market
+              {t('blogDescription')}
             </p>
           </div>
         </section>
@@ -172,19 +172,19 @@ const Blog = () => {
         <section className="py-16 bg-gradient-subtle">
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <h2 className="text-3xl font-bold text-foreground mb-4 font-playfair">
-              Stay Updated
+              {t('stayUpdated')}
             </h2>
             <p className="text-lg text-muted-foreground mb-8 font-inter">
-              Subscribe to our newsletter and never miss the latest real estate insights
+              {t('newsletterDescription')}
             </p>
             <div className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
               <input 
                 type="email" 
-                placeholder="Enter your email"
+                placeholder={t('enterEmail')}
                 className="flex-1 px-4 py-3 rounded-md border border-input bg-background focus:outline-none focus:ring-2 focus:ring-ring font-inter"
               />
               <button className="px-6 py-3 bg-gradient-primary text-primary-foreground rounded-md font-medium hover:shadow-elegant transition-all font-inter">
-                Subscribe
+                {t('subscribe')}
               </button>
             </div>
           </div>
