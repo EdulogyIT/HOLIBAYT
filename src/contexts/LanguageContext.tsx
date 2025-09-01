@@ -1060,12 +1060,37 @@ const translations = {
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
-export const LanguageProvider = ({ children }: { children: ReactNode }) => {
-  const [currentLang, setCurrentLang] = useState<Language>('FR');
+function detectInitialLang(): Language {
+  // 1) URL ?lang=en|fr|ar
+  const urlLang = new URLSearchParams(window.location.search).get('lang');
+  if (urlLang) {
+    const up = urlLang.toUpperCase();
+    if (up === 'EN' || up === 'FR' || up === 'AR') return up as Language;
+  }
+  // 2) localStorage
+  const saved = localStorage.getItem('lang');
+  if (saved === 'EN' || saved === 'FR' || saved === 'AR') return saved as Language;
+  // 3) browser language fallback
+  const nav = (navigator.language || 'en').slice(0, 2).toUpperCase();
+  if (nav === 'FR' || nav === 'AR') return nav as Language;
+  return 'EN';
+}
 
-  const t = (key: string): string => {
-    return translations[currentLang][key as keyof typeof translations['FR']] || key;
-  };
+export const LanguageProvider = ({ children }: { children: ReactNode }) => {
+  const [currentLang, setCurrentLang] = useState<Language>(detectInitialLang);
+
+  // Persist choice and update <html> attributes
+  useEffect(() => {
+    localStorage.setItem('lang', currentLang);
+    document.documentElement.lang = currentLang === 'AR' ? 'ar' : currentLang.toLowerCase();
+    document.documentElement.dir = currentLang === 'AR' ? 'rtl' : 'ltr';
+  }, [currentLang]);
+
+  // Memoized translator for the active language
+  const t = useMemo(() => {
+    const dict = translations[currentLang] as Record<string, string>;
+    return (key: string): string => dict[key] ?? key;
+  }, [currentLang]);
 
   return (
     <LanguageContext.Provider value={{ currentLang, setCurrentLang, t }}>
@@ -1076,8 +1101,6 @@ export const LanguageProvider = ({ children }: { children: ReactNode }) => {
 
 export const useLanguage = () => {
   const context = useContext(LanguageContext);
-  if (context === undefined) {
-    throw new Error('useLanguage must be used within a LanguageProvider');
-  }
+  if (!context) throw new Error('useLanguage must be used within a LanguageProvider');
   return context;
 };
