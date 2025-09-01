@@ -866,6 +866,23 @@ const translations = {
     propertyPublished: 'تم نشر العقار!',
     propertySubmittedSuccess: 'تم إرسال عقارك بنجاح وسيتم مراجعته قريبًا.',
     
+    // Filter translations
+    filters: 'المرشحات',
+    clearAll: 'مسح الكل',
+    allTypes: 'جميع الأنواع',
+    villaFilter: 'فيلا',
+    duplexFilter: 'دوبلكس',
+    number: 'العدد',
+    minArea: 'أقل مساحة (م²)',
+    maxArea: 'أكبر مساحة (م²)',
+    areaPlaceholder: 'مثال: 50',
+    maxAreaPlaceholder: 'مثال: 200',
+    minPrice: 'أقل سعر',
+    maxPrice: 'أعلى سعر',
+    all: 'الكل',
+    location: 'الموقع',
+    cityOrDistrict: 'المدينة أو الحي',
+    
     // Cities and additional translations
     followUs: 'تابعنا',
     privacyPolicy: 'سياسة الخصوصية',
