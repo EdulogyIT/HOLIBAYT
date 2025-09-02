@@ -4,13 +4,12 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { format } from "date-fns";
-import { Search, MapPin, Calendar as CalendarIcon, Users } from "lucide-react";
+import { Search, MapPin, Calendar as CalendarIcon, Users, Bed } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { DateRangePicker } from "@/components/DateRangePicker";
 import shortStayHeroBg from "@/assets/short-stay-hero-bg.jpg";
-import shortStayLogo from "@/assets/short-stay-logo.png";
 
 const ShortStayHeroSearch = () => {
   const { t } = useLanguage();
@@ -57,7 +56,7 @@ const ShortStayHeroSearch = () => {
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 z-10">
         <div className="text-center mb-12">
           <div className="inline-flex items-center gap-3 bg-white/20 backdrop-blur-sm rounded-full px-6 py-3 mb-6">
-            <img src={shortStayLogo} alt="Short Stay Logo" className="h-8 w-8" />
+            <Bed className="h-6 w-6 text-white" />
             <span className="text-white font-semibold font-inter">{t('shortStay')}</span>
           </div>
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-playfair font-bold text-white mb-4 leading-tight">
