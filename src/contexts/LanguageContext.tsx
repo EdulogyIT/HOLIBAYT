@@ -1164,18 +1164,16 @@ const allTranslations = {
     readTime7: "7 دقائق قراءة", 
     readTime8: "8 دقائق قراءة",
     readTime9: "9 دقائق قراءة",
-    readTime10: "10 دقائق قراءة",
-
-    // Blog navigation
-    backToBlog: "العودة إلى المدونة"
+    readTime10: "10 دقائق قراءة"
   }
 };
 
 const translations = allTranslations;
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
-  function detectInitialLang(): Language {
+function detectInitialLang(): Language {
   // 1) URL ?lang=en|fr|ar
+  const urlLang = new URLSearchParams(window.location.search).get('lang');
   if (urlLang) {
     const up = urlLang.toUpperCase();
     if (up === 'EN' || up === 'FR' || up === 'AR') return up as Language;
