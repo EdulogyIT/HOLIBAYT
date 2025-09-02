@@ -14,7 +14,7 @@ const allTranslations = {
     home: 'Accueil',
     buy: 'Acheter',
     rent: 'Louer',
-    shortStay: 'Short Stay',
+    shortStay: 'Court séjour',
     about: 'À propos',
     blog: 'Blog',
     login: 'Se connecter',
