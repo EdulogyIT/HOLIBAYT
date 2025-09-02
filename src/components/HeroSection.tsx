@@ -140,7 +140,7 @@ const HeroSection = () => {
           <>
             <div className="flex-1">
               <select 
-                className="w-full h-12 px-3 py-2 bg-background border border-input rounded-md font-inter text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent ring-offset-background"
+                className="w-full h-10 sm:h-12 px-3 py-2 bg-background border border-input rounded-md font-inter text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent ring-offset-background"
                 value={formData.propertyType}
                 onChange={(e) => updateFormField('propertyType', e.target.value)}
               >
@@ -157,7 +157,7 @@ const HeroSection = () => {
                 <Input
                   type="text"
                   placeholder={t('maxBudget')}
-                  className="h-12 pl-10 font-inter text-sm"
+                  className="h-10 sm:h-12 pl-10 font-inter text-sm"
                   value={formData.budget}
                   onChange={(e) => updateFormField('budget', e.target.value)}
                 />
@@ -170,7 +170,7 @@ const HeroSection = () => {
           <>
             <div className="flex-1">
               <select 
-                className="w-full h-12 px-3 py-2 bg-background border border-input rounded-md font-inter text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent ring-offset-background"
+                className="w-full h-10 sm:h-12 px-3 py-2 bg-background border border-input rounded-md font-inter text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent ring-offset-background"
                 value={formData.housingType}
                 onChange={(e) => updateFormField('housingType', e.target.value)}
               >
@@ -187,7 +187,7 @@ const HeroSection = () => {
                 <Input
                   type="text"
                   placeholder={t('maxRentMonth')}
-                  className="h-12 pl-10 font-inter text-sm"
+                  className="h-10 sm:h-12 pl-10 font-inter text-sm"
                   value={formData.maxRent}
                   onChange={(e) => updateFormField('maxRent', e.target.value)}
                 />
@@ -197,19 +197,19 @@ const HeroSection = () => {
         );
       case 'stay':
         return (
-          <div className="flex flex-1 gap-2">
+          <div className="flex flex-col sm:flex-row flex-1 gap-2 sm:gap-3">
             <div className="flex-1">
               <Popover>
                 <PopoverTrigger asChild>
                 <Button
                     variant="outline"
                     className={cn(
-                      "w-full justify-start text-left font-inter text-sm h-12 bg-background border border-input",
+                      "w-full justify-start text-left font-inter text-sm h-10 sm:h-12 bg-background border border-input",
                       !formData.dateRange?.from && "text-muted-foreground"
                     )}
                   >
                     <CalendarIcon className="mr-2 h-4 w-4" />
-                    {formData.dateRange?.from ? format(formData.dateRange.from, "dd/MM/yy") : t('checkIn')}
+                    <span className="truncate">{formData.dateRange?.from ? format(formData.dateRange.from, "dd/MM/yy") : t('checkIn')}</span>
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-auto p-0" align="start">
@@ -227,13 +227,13 @@ const HeroSection = () => {
                 <Button
                     variant="outline"
                     className={cn(
-                      "w-full justify-start text-left font-inter text-sm h-12 bg-background border border-input",
+                      "w-full justify-start text-left font-inter text-sm h-10 sm:h-12 bg-background border border-input",
                       !formData.dateRange?.to && "text-muted-foreground"
                     )}
                     disabled={!formData.dateRange?.from}
                   >
                     <CalendarIcon className="mr-2 h-4 w-4" />
-                    {formData.dateRange?.to ? format(formData.dateRange.to, "dd/MM/yy") : t('checkOut')}
+                    <span className="truncate">{formData.dateRange?.to ? format(formData.dateRange.to, "dd/MM/yy") : t('checkOut')}</span>
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-auto p-0" align="start">
@@ -251,7 +251,7 @@ const HeroSection = () => {
                 <Input
                   type="text"
                   placeholder={t('travelers')}
-                  className="h-12 pl-10 font-inter text-sm"
+                  className="h-10 sm:h-12 pl-10 font-inter text-sm"
                   value={formData.travelers}
                   onChange={(e) => updateFormField('travelers', e.target.value)}
                 />
@@ -324,21 +324,21 @@ const HeroSection = () => {
           </div>
           
           {/* Mode Selector */}
-          <div className="mb-8">
-            <div className="inline-flex bg-card/90 backdrop-blur-md rounded-2xl p-1.5 border border-border/30 shadow-elegant">
+          <div className="mb-6 sm:mb-8">
+            <div className="inline-flex bg-card/90 backdrop-blur-md rounded-xl sm:rounded-2xl p-1 sm:p-1.5 border border-border/30 shadow-elegant overflow-x-auto max-w-full">
               {modes.map((mode) => {
                 const IconComponent = mode.icon;
                 return (
                   <button
                     key={mode.id}
                     onClick={() => setSelectedMode(mode.id)}
-                    className={`flex items-center gap-3 px-6 py-4 rounded-xl font-inter font-semibold text-base transition-all duration-300 min-h-[56px] ${
+                    className={`flex items-center gap-2 sm:gap-3 px-3 sm:px-6 py-3 sm:py-4 rounded-lg sm:rounded-xl font-inter font-semibold text-sm sm:text-base transition-all duration-300 min-h-[48px] sm:min-h-[56px] ${
                       selectedMode === mode.id
                         ? 'bg-primary text-primary-foreground shadow-lg scale-105'
                         : 'text-muted-foreground hover:text-foreground hover:bg-muted/30'
                     }`}
                   >
-                    <IconComponent className="h-5 w-5" />
+                    <IconComponent className="h-4 w-4 sm:h-5 sm:w-5" />
                     <span className="whitespace-nowrap">{mode.label}</span>
                   </button>
                 );
@@ -347,8 +347,8 @@ const HeroSection = () => {
           </div>
 
           {/* Dynamic Search Card */}
-          <Card className="max-w-6xl mx-auto p-6 md:p-8 bg-card/90 backdrop-blur-md border-border/30 shadow-elegant rounded-3xl">
-            <div className="flex flex-col lg:flex-row gap-3 md:gap-4">
+          <Card className="max-w-6xl mx-auto p-3 sm:p-4 md:p-6 lg:p-8 bg-card/90 backdrop-blur-md border-border/30 shadow-elegant rounded-2xl sm:rounded-3xl">
+            <div className="flex flex-col gap-3 sm:gap-4 lg:flex-row">
               {/* Location Input */}
               <div className="flex-2 relative">
                 <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
@@ -357,26 +357,28 @@ const HeroSection = () => {
                   placeholder={getSearchPlaceholder()}
                   value={formData.location}
                   onChange={(e) => updateFormField('location', e.target.value)}
-                  className="h-12 pl-10 font-inter text-sm bg-background border border-input"
+                  className="h-10 sm:h-12 pl-10 font-inter text-sm bg-background border border-input"
                 />
               </div>
               
               {/* Dynamic Fields */}
-              {renderSearchFields()}
+              <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 lg:flex-1">
+                {renderSearchFields()}
+              </div>
               
               {/* Search Button */}
               <Button 
                 onClick={handleSearch}
                 disabled={!isFormValid()}
                 className={cn(
-                  "h-12 px-8 font-inter font-medium transition-all duration-300",
+                  "h-10 sm:h-12 px-4 sm:px-8 font-inter font-medium transition-all duration-300 w-full sm:w-auto lg:min-w-[120px]",
                   isFormValid() 
                     ? "bg-gradient-primary hover:shadow-elegant text-white" 
                     : "bg-gray-300 text-gray-500 cursor-not-allowed"
                 )}
               >
-                <Search className="mr-2 h-5 w-5" />
-                {t('search')}
+                <Search className="mr-2 h-4 w-4 sm:h-5 sm:w-5" />
+                <span className="text-sm sm:text-base">{t('search')}</span>
               </Button>
             </div>
           </Card>
