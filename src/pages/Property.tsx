@@ -48,6 +48,17 @@ const Property = () => {
       }
     };
 
+    const getLocalizedFeatures = () => {
+      return [
+        t('privatePool'),
+        t('landscapedGarden'),
+        t('garage2Cars'),
+        t('alarmSystem'),
+        t('airConditioning'),
+        t('equippedKitchen')
+      ];
+    };
+
     switch (currentLang) {
       case 'EN':
         return {
@@ -57,14 +68,7 @@ const Property = () => {
           price: "2,500,000 DA",
           type: "Villa",
           description: "Magnificent Mediterranean villa located in the prestigious district of Hydra. This exceptional property offers a luxurious living environment with stunning views of Algiers Bay. The villa features a large bright living room, a modern equipped kitchen, 4 spacious bedrooms and 3 bathrooms. The landscaped garden with private pool completes this exceptional property.",
-          features: [
-            "Private pool",
-            "Landscaped garden",
-            "2-car garage",
-            "Alarm system",
-            "Air conditioning",
-            "Equipped kitchen"
-          ],
+          features: getLocalizedFeatures(),
           publishedDate: "March 15, 2024"
         };
       case 'AR':
@@ -75,14 +79,7 @@ const Property = () => {
           price: "2,500,000 دج",
           type: "فيلا",
           description: "فيلا متوسطية رائعة تقع في حي الحيدرة المرموق. تقدم هذه الممتلكات الاستثنائية بيئة معيشية فاخرة مع إطلالات خلابة على خليج الجزائر. تتميز الفيلا بصالون كبير مضيء ومطبخ حديث مجهز و4 غرف نوم واسعة و3 حمامات. تكتمل هذه الممتلكات الاستثنائية بحديقة منسقة مع مسبح خاص.",
-          features: [
-            "مسبح خاص",
-            "حديقة منسقة",
-            "مرآب لسيارتين",
-            "نظام إنذار",
-            "تكييف هواء",
-            "مطبخ مجهز"
-          ],
+          features: getLocalizedFeatures(),
           publishedDate: "15 مارس 2024"
         };
       default: // FR
@@ -93,14 +90,7 @@ const Property = () => {
           price: "2,500,000 DA",
           type: "Villa",
           description: "Magnifique villa méditerranéenne située dans le quartier prestigieux d'Hydra. Cette propriété exceptionnelle offre un cadre de vie luxueux avec une vue imprenable sur la baie d'Alger. La villa dispose d'un grand salon lumineux, d'une cuisine moderne équipée, de 4 chambres spacieuses et de 3 salles de bain. Le jardin paysager avec piscine privée complète cette propriété d'exception.",
-          features: [
-            "Piscine privée",
-            "Jardin paysager", 
-            "Garage 2 voitures",
-            "Système d'alarme",
-            "Climatisation",
-            "Cuisine équipée"
-          ],
+          features: getLocalizedFeatures(),
           publishedDate: "15 Mars 2024"
         };
     }
@@ -243,11 +233,11 @@ const Property = () => {
                   <div className="space-y-3">
                     <Button className="w-full bg-gradient-primary hover:shadow-elegant font-inter">
                       <Phone className="w-4 h-4 mr-2" />
-                      Call
+                      {t('callBtn')}
                     </Button>
                     <Button variant="outline" className="w-full font-inter">
                       <Mail className="w-4 h-4 mr-2" />
-                      Send Message
+                      {t('sendMessageBtn')}
                     </Button>
                   </div>
                 </CardContent>

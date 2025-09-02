@@ -297,7 +297,27 @@ const allTranslations = {
     securityFeature: 'Sécurité',
     furnishedFeature: 'Meublé',
     airConditioningFeature: 'Climatisation',
-    gymFeature: 'Salle de sport',
+    // Property features
+    privatePool: "Piscine privée",
+    landscapedGarden: "Jardin paysager",
+    garage2Cars: "Garage 2 voitures",
+    alarmSystem: "Système d'alarme",
+    airConditioning: "Climatisation",
+    equippedKitchen: "Cuisine équipée",
+
+    // Property page specific keys
+    locationTitle: "Localisation",
+    mapboxHint: "Pour afficher la carte interactive, veuillez entrer votre token Mapbox public. Vous pouvez l'obtenir sur",
+    mapboxTokenPlaceholder: "Votre token Mapbox public",
+    loadMap: "Charger la carte",
+    addressLabel: "Adresse",
+    detailsLabel: "Détails",
+    nearbyShops: "Commerces",
+    nearbyShopsNote: "À proximité",
+    transport: "Transport",
+    transportAccessible: "Accessible",
+    callBtn: "Appeler",
+    sendMessageBtn: "Envoyer un message",
     descriptionField: 'Description',
     detailedDescription: 'Description Détaillée',
     describeProperty: 'Décrivez votre propriété en détail...',
@@ -815,6 +835,28 @@ const allTranslations = {
     publishedOn: 'Published on',
     lastUpdated: 'Last updated',
     daysAgo: '2 days ago',
+
+    // Property page specific keys
+    locationTitle: "Location",
+    mapboxHint: "To display the interactive map, please enter your public Mapbox token. You can get it at",
+    mapboxTokenPlaceholder: "Your public Mapbox token",
+    loadMap: "Load map",
+    addressLabel: "Address",
+    detailsLabel: "Details",
+    nearbyShops: "Shops",
+    nearbyShopsNote: "Nearby",
+    transport: "Transport",
+    transportAccessible: "Accessible",
+    callBtn: "Call",
+    sendMessageBtn: "Send Message",
+
+    // Property features
+    privatePool: "Private pool",
+    landscapedGarden: "Landscaped garden",
+    garage2Cars: "2-car garage",
+    alarmSystem: "Alarm system",
+    airConditioning: "Air conditioning",
+    equippedKitchen: "Equipped kitchen",
     // Cities translations
     exploreByTitle: 'Explore by',
     citiesTitle: 'Cities',
@@ -1485,6 +1527,26 @@ const allTranslations = {
     
     callBtn: 'اتصال',
     sendMessageBtn: 'أرسل رسالة',
+
+    // Property page specific keys
+    locationTitle: "الموقع",
+    mapboxHint: "لعرض الخريطة التفاعلية، أدخل مفتاح Mapbox العام. يمكنك الحصول عليه من",
+    mapboxTokenPlaceholder: "مفتاح Mapbox العام",
+    loadMap: "تحميل الخريطة",
+    addressLabel: "العنوان",
+    detailsLabel: "التفاصيل",
+    nearbyShops: "متاجر",
+    nearbyShopsNote: "قريب",
+    transport: "النقل",
+    transportAccessible: "متاح",
+
+    // Property features
+    privatePool: "مسبح خاص",
+    landscapedGarden: "حديقة منسقة",
+    garage2Cars: "مرآب لسيارتين",
+    alarmSystem: "نظام إنذار",
+    airConditioning: "تكييف هواء",
+    equippedKitchen: "مطبخ مجهز",
     
     // Blog dates
     march15: "15 مارس 2024",
