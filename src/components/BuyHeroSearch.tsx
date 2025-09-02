@@ -2,10 +2,12 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Search, MapPin, DollarSign, Home } from "lucide-react";
+import { Search, MapPin, DollarSign } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
+import buyHeroBg from "@/assets/buy-hero-bg.jpg";
+import buyLogo from "@/assets/buy-logo.png";
 
 const BuyHeroSearch = () => {
   const { t } = useLanguage();
@@ -37,17 +39,24 @@ const BuyHeroSearch = () => {
   };
 
   return (
-    <section className="relative bg-gradient-to-br from-primary/10 via-background to-secondary/5 py-16 md:py-24">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section className="relative py-16 md:py-24 overflow-hidden">
+      {/* Background Image */}
+      <div 
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+        style={{ backgroundImage: `url(${buyHeroBg})` }}
+      />
+      <div className="absolute inset-0 bg-gradient-to-br from-primary/80 via-background/60 to-secondary/70" />
+      
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 z-10">
         <div className="text-center mb-12">
-          <div className="inline-flex items-center gap-3 bg-primary/10 backdrop-blur-sm rounded-full px-6 py-3 mb-6">
-            <Home className="h-6 w-6 text-primary" />
-            <span className="text-primary font-semibold font-inter">{t('buy')}</span>
+          <div className="inline-flex items-center gap-3 bg-white/20 backdrop-blur-sm rounded-full px-6 py-3 mb-6">
+            <img src={buyLogo} alt="Buy Logo" className="h-8 w-8" />
+            <span className="text-white font-semibold font-inter">{t('buy')}</span>
           </div>
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-playfair font-bold text-foreground mb-4 leading-tight">
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-playfair font-bold text-white mb-4 leading-tight">
             {t('findDreamProperty')}
           </h1>
-          <p className="text-xl md:text-2xl text-muted-foreground font-inter font-light max-w-3xl mx-auto leading-relaxed">
+          <p className="text-xl md:text-2xl text-white/90 font-inter font-light max-w-3xl mx-auto leading-relaxed">
             {t('buyHeroDescription')}
           </p>
         </div>
