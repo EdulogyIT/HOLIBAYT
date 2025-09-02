@@ -12,8 +12,22 @@ import penthouse from "@/assets/property-penthouse.jpg";
 import studio from "@/assets/property-studio.jpg";
 
 const ServicesSection = () => {
-  const { t } = useLanguage();
+  const { t, currentLang } = useLanguage();
   const navigate = useNavigate();
+
+  // Localized metrics formatting
+  const locale = currentLang === "AR" ? "ar" : currentLang.toLowerCase();
+  const int1 = new Intl.NumberFormat(locale, { maximumFractionDigits: 1 });
+  const int0 = new Intl.NumberFormat(locale, { maximumFractionDigits: 0 });
+
+  // Actual numbers
+  const verifiedPercent = 100;
+  const rating = 4.8;
+  const responseHours = 2;
+
+  const statVerified = `${int0.format(verifiedPercent)}% ${t("verifiedLabel")}`;
+  const statRating = `${int1.format(rating)}/5 ${t("ratingLabel")}`;
+  const statResponse = `< ${int0.format(responseHours)}${t("hoursAbbrev")} ${t("responseLabel")}`;
   
   const services = [
     {
@@ -141,7 +155,7 @@ const ServicesSection = () => {
               </div>
               <h4 className="text-xl font-playfair font-bold text-foreground mb-3">{t('securityGuaranteed')}</h4>
               <p className="text-muted-foreground font-inter">{t('securityDesc')}</p>
-              <div className="mt-4 text-primary font-semibold font-inter text-sm">{t('verified')}</div>
+              <div className="mt-4 text-primary font-semibold font-inter text-sm">{statVerified}</div>
             </div>
             
             <div className="group text-center p-6 rounded-2xl bg-white/50 backdrop-blur-sm hover:bg-white/80 transition-all duration-300 hover:-translate-y-2 hover:shadow-lg">
@@ -150,7 +164,7 @@ const ServicesSection = () => {
               </div>
               <h4 className="text-xl font-playfair font-bold text-foreground mb-3">{t('premiumQuality')}</h4>
               <p className="text-muted-foreground font-inter">{t('qualityDesc')}</p>
-              <div className="mt-4 text-accent font-semibold font-inter text-sm">{t('rating')}</div>
+              <div className="mt-4 text-accent font-semibold font-inter text-sm">{statRating}</div>
             </div>
             
             <div className="group text-center p-6 rounded-2xl bg-white/50 backdrop-blur-sm hover:bg-white/80 transition-all duration-300 hover:-translate-y-2 hover:shadow-lg">
@@ -159,7 +173,7 @@ const ServicesSection = () => {
               </div>
               <h4 className="text-xl font-playfair font-bold text-foreground mb-3">{t('support247')}</h4>
               <p className="text-muted-foreground font-inter">{t('supportDesc')}</p>
-              <div className="mt-4 text-foreground font-semibold font-inter text-sm">{t('responseTime')}</div>
+              <div className="mt-4 text-foreground font-semibold font-inter text-sm">{statResponse}</div>
             </div>
           </div>
         </div>

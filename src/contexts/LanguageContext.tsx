@@ -418,6 +418,12 @@ const allTranslations = {
     cityOran: 'Oran',
     cityConstantine: 'Constantine',
     cityAnnaba: 'Annaba',
+
+    // Metrics labels
+    verifiedLabel: "vérifiés",
+    ratingLabel: "note",
+    responseLabel: "réponse",
+    hoursAbbrev: "h",
     citySetif: 'Sétif',
     cityTlemcen: 'Tlemcen',
     cityBejaia: 'Béjaïa',
@@ -883,6 +889,12 @@ const allTranslations = {
     cityTlemcen: 'Tlemcen',
     cityBejaia: 'Bejaia',
     cityBlida: 'Blida',
+
+    // Metrics labels
+    verifiedLabel: "verified",
+    ratingLabel: "rating",
+    responseLabel: "response",
+    hoursAbbrev: "h",
     
     // City page sections
     historyHeritage: 'History & Heritage',
@@ -1345,6 +1357,12 @@ const allTranslations = {
     cityTlemcen: 'تلمسان',
     cityBejaia: 'بجاية',
     cityBlida: 'البليدة',
+
+    // Metrics labels
+    verifiedLabel: "موثَّق",
+    ratingLabel: "تقييم",
+    responseLabel: "استجابة",
+    hoursAbbrev: "س",
     
     // City page sections
     historyHeritage: 'التاريخ والتراث',
