@@ -36,10 +36,11 @@ const ServicesSection = () => {
       title: t('buyTitle'),
       subtitle: t('buySubtitle'),
       description: t('buyDescription'),
-      features: [t('securityDesc'), "Visite virtuelle", "Accompagnement juridique", "Financement facilité"],
+      features: [t('buy_feat_verified'), t('buy_feat_virtualTour'), t('buy_feat_legal'), t('buy_feat_financing')],
       color: "bg-primary",
       gradient: "from-primary to-primary/80",
-      image: villaMediterranean
+      image: villaMediterranean,
+      ctaKey: 'exploreBuy'
     },
     {
       id: "rent",
@@ -47,10 +48,11 @@ const ServicesSection = () => {
       title: t('rentTitle'),
       subtitle: t('rentSubtitle'),
       description: t('rentDescription'),
-      features: ["Garantie de paiement", "Contrats sécurisés", t('supportDesc'), "État des lieux numérique"],
+      features: [t('rent_feat_paymentGuarantee'), t('rent_feat_secureContracts'), t('rent_feat_dedicatedTeam'), t('rent_feat_digitalInspection')],
       color: "bg-accent",
       gradient: "from-accent to-accent/80",
-      image: modernApartment
+      image: modernApartment,
+      ctaKey: 'exploreRent'
     },
     {
       id: "stay",
@@ -58,10 +60,11 @@ const ServicesSection = () => {
       title: t('stayTitle'),
       subtitle: t('staySubtitle'),
       description: t('stayDescription'),
-      features: ["Réservation instantanée", "Hôtes vérifiés", "Assurance voyage", "Expériences locales"],
+      features: [t('stay_feat_instantBooking'), t('stay_feat_verifiedHosts'), t('stay_feat_travelInsurance'), t('stay_feat_localExperiences')],
       color: "bg-foreground",
       gradient: "from-foreground to-foreground/80",
-      image: shortStay
+      image: shortStay,
+      ctaKey: 'exploreShortStay'
     }
   ];
 
@@ -125,7 +128,7 @@ const ServicesSection = () => {
                       className="h-11 px-5 text-sm font-medium whitespace-nowrap w-full bg-gradient-primary font-inter group-hover:shadow-elegant transition-all duration-300"
                       onClick={() => navigate(`/${service.id === 'stay' ? 'short-stay' : service.id}`)}
                     >
-                      <span className="whitespace-nowrap">{t('explore')} {service.title}</span>
+                      <span className="whitespace-nowrap">{t(service.ctaKey)}</span>
                     </Button>
                   </div>
                 </CardContent>
@@ -144,7 +147,7 @@ const ServicesSection = () => {
               {t('whyChooseHolibayt')}
             </h3>
             <p className="text-lg text-muted-foreground font-inter max-w-2xl mx-auto">
-              Découvrez pourquoi des milliers d'utilisateurs nous font confiance pour leurs projets immobiliers
+              {t('whyChooseDesc')}
             </p>
           </div>
           
@@ -155,7 +158,7 @@ const ServicesSection = () => {
               </div>
               <h4 className="text-xl font-playfair font-bold text-foreground mb-3">{t('securityGuaranteed')}</h4>
               <p className="text-muted-foreground font-inter">{t('securityDesc')}</p>
-              <div className="mt-4 text-primary font-semibold font-inter text-sm">{statVerified}</div>
+              <div className="mt-4 text-primary font-semibold font-inter text-sm">{t('verifiedLabel')}</div>
             </div>
             
             <div className="group text-center p-6 rounded-2xl bg-white/50 backdrop-blur-sm hover:bg-white/80 transition-all duration-300 hover:-translate-y-2 hover:shadow-lg">
@@ -164,7 +167,7 @@ const ServicesSection = () => {
               </div>
               <h4 className="text-xl font-playfair font-bold text-foreground mb-3">{t('premiumQuality')}</h4>
               <p className="text-muted-foreground font-inter">{t('qualityDesc')}</p>
-              <div className="mt-4 text-accent font-semibold font-inter text-sm">{statRating}</div>
+              <div className="mt-4 text-accent font-semibold font-inter text-sm">{t('ratingLabel')}</div>
             </div>
             
             <div className="group text-center p-6 rounded-2xl bg-white/50 backdrop-blur-sm hover:bg-white/80 transition-all duration-300 hover:-translate-y-2 hover:shadow-lg">
@@ -173,7 +176,7 @@ const ServicesSection = () => {
               </div>
               <h4 className="text-xl font-playfair font-bold text-foreground mb-3">{t('support247')}</h4>
               <p className="text-muted-foreground font-inter">{t('supportDesc')}</p>
-              <div className="mt-4 text-foreground font-semibold font-inter text-sm">{statResponse}</div>
+              <div className="mt-4 text-foreground font-semibold font-inter text-sm">{t('responseTimeLabel')}</div>
             </div>
           </div>
         </div>

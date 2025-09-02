@@ -420,10 +420,34 @@ const allTranslations = {
     cityAnnaba: 'Annaba',
 
     // Metrics labels
-    verifiedLabel: "vérifiés",
-    ratingLabel: "note",
-    responseLabel: "réponse",
+    verifiedLabel: "100% vérifié",
+    ratingLabel: "Note 4,8/5",
+    responseTimeLabel: "Réponse ≤ 2h",
     hoursAbbrev: "h",
+    whyChooseDesc: "Découvrez pourquoi des milliers d'utilisateurs nous font confiance pour leurs projets immobiliers.",
+
+    // Service CTAs
+    exploreBuy: "Découvrir Achat",
+    exploreRent: "Découvrir Location",
+    exploreShortStay: "Découvrir Court séjour",
+
+    // Buy bullets
+    buy_feat_verified: "Tous nos biens et utilisateurs sont vérifiés",
+    buy_feat_virtualTour: "Visite virtuelle",
+    buy_feat_financing: "Financement facilité",
+    buy_feat_legal: "Accompagnement juridique",
+
+    // Rent bullets
+    rent_feat_secureContracts: "Contrats sécurisés",
+    rent_feat_paymentGuarantee: "Garantie de paiement",
+    rent_feat_digitalInspection: "État des lieux numérique",
+    rent_feat_dedicatedTeam: "Équipe dédiée à votre service",
+
+    // Short Stay bullets
+    stay_feat_verifiedHosts: "Hôtes vérifiés",
+    stay_feat_instantBooking: "Réservation instantanée",
+    stay_feat_localExperiences: "Expériences locales",
+    stay_feat_travelInsurance: "Assurance voyage",
     citySetif: 'Sétif',
     cityTlemcen: 'Tlemcen',
     cityBejaia: 'Béjaïa',
@@ -891,10 +915,34 @@ const allTranslations = {
     cityBlida: 'Blida',
 
     // Metrics labels
-    verifiedLabel: "verified",
-    ratingLabel: "rating",
-    responseLabel: "response",
+    verifiedLabel: "100% verified",
+    ratingLabel: "4.8/5 rating", 
+    responseTimeLabel: "≤ 2h response",
     hoursAbbrev: "h",
+    whyChooseDesc: "Discover why thousands of users trust us for their real-estate projects.",
+
+    // Service CTAs
+    exploreBuy: "Explore Buy",
+    exploreRent: "Explore Rent", 
+    exploreShortStay: "Explore Short Stay",
+
+    // Buy bullets
+    buy_feat_verified: "All properties & users verified",
+    buy_feat_virtualTour: "Virtual tour",
+    buy_feat_financing: "Easy financing",
+    buy_feat_legal: "Legal support",
+
+    // Rent bullets
+    rent_feat_secureContracts: "Secure contracts",
+    rent_feat_paymentGuarantee: "Payment guarantee",
+    rent_feat_digitalInspection: "Digital check-in/out report",
+    rent_feat_dedicatedTeam: "A dedicated team for you",
+
+    // Short Stay bullets
+    stay_feat_verifiedHosts: "Verified hosts",
+    stay_feat_instantBooking: "Instant booking",
+    stay_feat_localExperiences: "Local experiences",
+    stay_feat_travelInsurance: "Travel insurance",
     
     // City page sections
     historyHeritage: 'History & Heritage',
@@ -1359,10 +1407,34 @@ const allTranslations = {
     cityBlida: 'البليدة',
 
     // Metrics labels
-    verifiedLabel: "موثَّق",
-    ratingLabel: "تقييم",
-    responseLabel: "استجابة",
+    verifiedLabel: "موثَّق 100٪",
+    ratingLabel: "تقييم 4.8/5",
+    responseTimeLabel: "استجابة ≤ ساعتين",
     hoursAbbrev: "س",
+    whyChooseDesc: "اكتشف لماذا يثق بنا الآلاف في مشاريعهم العقارية.",
+
+    // Service CTAs
+    exploreBuy: "استكشف شراء",
+    exploreRent: "استكشف إيجار",
+    exploreShortStay: "استكشف إقامة قصيرة",
+
+    // Buy bullets
+    buy_feat_verified: "جميع عقاراتنا ومستخدمينا موثّقون",
+    buy_feat_virtualTour: "جولة افتراضية",
+    buy_feat_financing: "تمويل ميسّر",
+    buy_feat_legal: "دعم قانوني",
+
+    // Rent bullets
+    rent_feat_secureContracts: "عقود آمنة",
+    rent_feat_paymentGuarantee: "ضمان الدفع",
+    rent_feat_digitalInspection: "تقرير فحص رقمي",
+    rent_feat_dedicatedTeam: "فريق مخصص لخدمتك",
+
+    // Short Stay bullets
+    stay_feat_verifiedHosts: "مضيفون موثّقون",
+    stay_feat_instantBooking: "حجز فوري",
+    stay_feat_localExperiences: "تجارب محلية",
+    stay_feat_travelInsurance: "تأمين سفر",
     
     // City page sections
     historyHeritage: 'التاريخ والتراث',
