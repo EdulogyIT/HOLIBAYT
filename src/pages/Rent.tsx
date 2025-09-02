@@ -29,8 +29,8 @@ const Rent = () => {
   const properties = [
     {
       id: 3,
-      title: "Appartement Moderne",
-      location: "Constantine, Algérie",
+      title: t('modernApartment'),
+      location: t('constantineAlgeria'),
       price: "45,000 DA/mois",
       beds: 2,
       baths: 1,
@@ -40,8 +40,8 @@ const Rent = () => {
     },
     {
       id: 4,
-      title: "Villa avec Jardin",
-      location: "Annaba, Algérie", 
+      title: t('villaWithGarden'),
+      location: t('annabaAlgeria'), 
       price: "80,000 DA/mois",
       beds: 5,
       baths: 3,
@@ -51,8 +51,8 @@ const Rent = () => {
     },
     {
       id: 13,
-      title: "Studio Centre-Ville",
-      location: "Alger, Algérie",
+      title: t('studioCenterCity'),
+      location: t('algerAlgeria'),
       price: "25,000 DA/mois",
       beds: 1,
       baths: 1,
@@ -62,8 +62,8 @@ const Rent = () => {
     },
     {
       id: 14,
-      title: "Duplex Familial",
-      location: "Oran, Algérie",
+      title: t('duplexFamily'),
+      location: t('oranAlgeria'),
       price: "65,000 DA/mois",
       beds: 4,
       baths: 2,
@@ -73,8 +73,8 @@ const Rent = () => {
     },
     {
       id: 15,
-      title: "Maison Individuelle",
-      location: "Tlemcen, Algérie",
+      title: t('individualHouse'),
+      location: t('tlemcenAlgeria'),
       price: "55,000 DA/mois",
       beds: 3,
       baths: 2,
@@ -84,8 +84,8 @@ const Rent = () => {
     },
     {
       id: 16,
-      title: "Appartement Neuf",
-      location: "Sétif, Algérie",
+      title: t('newApartment'),
+      location: t('setifAlgeria'),
       price: "40,000 DA/mois",
       beds: 3,
       baths: 2,
@@ -95,8 +95,8 @@ const Rent = () => {
     },
     {
       id: 17,
-      title: "Villa Moderne",
-      location: "Béjaïa, Algérie",
+      title: t('villaModern'),
+      location: t('bejaiaAlgeria'),
       price: "70,000 DA/mois",
       beds: 4,
       baths: 3,
@@ -106,8 +106,8 @@ const Rent = () => {
     },
     {
       id: 18,
-      title: "Loft Industriel",
-      location: "Tipaza, Algérie",
+      title: t('industrialLoft'),
+      location: t('tipazaAlgeria'),
       price: "50,000 DA/mois",
       beds: 2,
       baths: 1,

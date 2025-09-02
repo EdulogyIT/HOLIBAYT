@@ -29,8 +29,8 @@ const Buy = () => {
   const properties = [
     {
       id: 1,
-      title: "Villa Méditerranéenne",
-      location: "Alger, Algérie",
+      title: t('villaMediterranean'),
+      location: t('algerAlgeria'),
       price: "2,500,000 DA",
       beds: 4,
       baths: 3,
@@ -40,8 +40,8 @@ const Buy = () => {
     },
     {
       id: 2,
-      title: "Appartement de Luxe",
-      location: "Oran, Algérie", 
+      title: t('luxuryApartment'),
+      location: t('oranAlgeria'), 
       price: "1,800,000 DA",
       beds: 3,
       baths: 2,
@@ -51,8 +51,8 @@ const Buy = () => {
     },
     {
       id: 7,
-      title: "Villa Moderne",
-      location: "Constantine, Algérie",
+      title: t('villaModern'),
+      location: t('constantineAlgeria'),
       price: "3,200,000 DA",
       beds: 5,
       baths: 4,
@@ -62,8 +62,8 @@ const Buy = () => {
     },
     {
       id: 8,
-      title: "Duplex Familial",
-      location: "Tlemcen, Algérie",
+      title: t('duplexFamily'),
+      location: t('tlemcenAlgeria'),
       price: "2,800,000 DA",
       beds: 4,
       baths: 3,
@@ -73,8 +73,8 @@ const Buy = () => {
     },
     {
       id: 9,
-      title: "Maison Traditionnelle",
-      location: "Sétif, Algérie",
+      title: t('traditionalHouse'),
+      location: t('setifAlgeria'),
       price: "1,950,000 DA",
       beds: 3,
       baths: 2,
@@ -84,8 +84,8 @@ const Buy = () => {
     },
     {
       id: 10,
-      title: "Studio Moderne",
-      location: "Béjaïa, Algérie",
+      title: t('modernStudio'),
+      location: t('bejaiaAlgeria'),
       price: "950,000 DA",
       beds: 1,
       baths: 1,
@@ -95,8 +95,8 @@ const Buy = () => {
     },
     {
       id: 11,
-      title: "Appartement Standing",
-      location: "Annaba, Algérie",
+      title: t('apartmentStanding'),
+      location: t('annabaAlgeria'),
       price: "2,100,000 DA",
       beds: 3,
       baths: 2,
@@ -106,8 +106,8 @@ const Buy = () => {
     },
     {
       id: 12,
-      title: "Villa avec Piscine",
-      location: "Tipaza, Algérie",
+      title: t('villaWithPool'),
+      location: t('tipazaAlgeria'),
       price: "4,500,000 DA",
       beds: 6,
       baths: 5,

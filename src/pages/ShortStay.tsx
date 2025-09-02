@@ -29,8 +29,8 @@ const ShortStay = () => {
   const properties = [
     {
       id: 5,
-      title: "Studio Courts Séjours",
-      location: "Alger Centre, Algérie",
+      title: t('studioShortStay'),
+      location: t('algerCentreAlgeria'),
       price: "8,000 DA/nuit",
       beds: 1,
       baths: 1,
@@ -41,8 +41,8 @@ const ShortStay = () => {
     },
     {
       id: 6,
-      title: "Appartement Vue Mer",
-      location: "Tipaza, Algérie", 
+      title: t('seaViewApartment'),
+      location: t('tipazaAlgeria'), 
       price: "12,000 DA/nuit",
       beds: 2,
       baths: 1,
@@ -53,8 +53,8 @@ const ShortStay = () => {
     },
     {
       id: 19,
-      title: "Villa de Vacances",
-      location: "Oran, Algérie",
+      title: t('holidayVilla'),
+      location: t('oranAlgeria'),
       price: "18,000 DA/nuit",
       beds: 4,
       baths: 3,
@@ -65,8 +65,8 @@ const ShortStay = () => {
     },
     {
       id: 20,
-      title: "Chambre d'Hôte",
-      location: "Constantine, Algérie",
+      title: t('guestRoom'),
+      location: t('constantineAlgeria'),
       price: "6,000 DA/nuit",
       beds: 1,
       baths: 1,
@@ -77,8 +77,8 @@ const ShortStay = () => {
     },
     {
       id: 21,
-      title: "Loft Moderne",
-      location: "Annaba, Algérie",
+      title: t('modernLoft'),
+      location: t('annabaAlgeria'),
       price: "14,000 DA/nuit",
       beds: 2,
       baths: 2,
@@ -89,8 +89,8 @@ const ShortStay = () => {
     },
     {
       id: 22,
-      title: "Suite Familiale",
-      location: "Tlemcen, Algérie",
+      title: t('familySuite'),
+      location: t('tlemcenAlgeria'),
       price: "16,000 DA/nuit",
       beds: 3,
       baths: 2,
@@ -101,8 +101,8 @@ const ShortStay = () => {
     },
     {
       id: 23,
-      title: "Penthouse Vue Mer",
-      location: "Béjaïa, Algérie",
+      title: t('penthouseSeaView'),
+      location: t('bejaiaAlgeria'),
       price: "25,000 DA/nuit",
       beds: 3,
       baths: 3,
@@ -113,8 +113,8 @@ const ShortStay = () => {
     },
     {
       id: 24,
-      title: "Maison Traditionnelle",
-      location: "Sétif, Algérie",
+      title: t('traditionalHouse'),
+      location: t('setifAlgeria'),
       price: "10,000 DA/nuit",
       beds: 2,
       baths: 1,
