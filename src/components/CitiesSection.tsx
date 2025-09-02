@@ -22,7 +22,7 @@ const CitiesSection = () => {
   const cities = [
     {
       id: "alger",
-      name: "Alger",
+      name: t('cityAlger'),
       description: t('algerDescription'),
       properties: "1,200+ " + t('availableProperties'),
       image: algerImage,
@@ -30,7 +30,7 @@ const CitiesSection = () => {
     },
     {
       id: "oran",
-      name: "Oran",
+      name: t('cityOran'),
       description: t('oranDescription'),
       properties: "800+ " + t('availableProperties'),
       image: oranImage,
@@ -38,7 +38,7 @@ const CitiesSection = () => {
     },
     {
       id: "constantine", 
-      name: "Constantine",
+      name: t('cityConstantine'),
       description: t('constantineDescription'),
       properties: "450+ " + t('availableProperties'),
       image: constantineImage,
@@ -46,7 +46,7 @@ const CitiesSection = () => {
     },
     {
       id: "annaba",
-      name: "Annaba",
+      name: t('cityAnnaba'),
       description: t('annabaDescription'),
       properties: "300+ " + t('availableProperties'), 
       image: annabaImage,
@@ -58,7 +58,7 @@ const CitiesSection = () => {
     ...cities,
     {
       id: "setif",
-      name: "Sétif",
+      name: t('citySetif'),
       description: t('setifDescription'),
       properties: "250+ " + t('availableProperties'),
       image: algerImage,
@@ -66,7 +66,7 @@ const CitiesSection = () => {
     },
     {
       id: "tlemcen",
-      name: "Tlemcen",
+      name: t('cityTlemcen'),
       description: t('tlemcenDescription'),
       properties: "180+ " + t('availableProperties'),
       image: oranImage,
@@ -74,7 +74,7 @@ const CitiesSection = () => {
     },
     {
       id: "bejaia",
-      name: "Béjaïa",
+      name: t('cityBejaia'),
       description: t('bejaiaDescription'),
       properties: "200+ " + t('availableProperties'),
       image: annabaImage,
@@ -82,7 +82,7 @@ const CitiesSection = () => {
     },
     {
       id: "blida",
-      name: "Blida",
+      name: t('cityBlida'),
       description: t('blidaDescription'),
       properties: "150+ " + t('availableProperties'),
       image: constantineImage,

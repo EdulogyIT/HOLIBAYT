@@ -141,7 +141,7 @@ const ServicesSection = () => {
               </div>
               <h4 className="text-xl font-playfair font-bold text-foreground mb-3">{t('securityGuaranteed')}</h4>
               <p className="text-muted-foreground font-inter">{t('securityDesc')}</p>
-              <div className="mt-4 text-primary font-semibold font-inter text-sm">100% Vérifié</div>
+              <div className="mt-4 text-primary font-semibold font-inter text-sm">{t('verified')}</div>
             </div>
             
             <div className="group text-center p-6 rounded-2xl bg-white/50 backdrop-blur-sm hover:bg-white/80 transition-all duration-300 hover:-translate-y-2 hover:shadow-lg">
@@ -150,7 +150,7 @@ const ServicesSection = () => {
               </div>
               <h4 className="text-xl font-playfair font-bold text-foreground mb-3">{t('premiumQuality')}</h4>
               <p className="text-muted-foreground font-inter">{t('qualityDesc')}</p>
-              <div className="mt-4 text-accent font-semibold font-inter text-sm">Note 4.8/5</div>
+              <div className="mt-4 text-accent font-semibold font-inter text-sm">{t('rating')}</div>
             </div>
             
             <div className="group text-center p-6 rounded-2xl bg-white/50 backdrop-blur-sm hover:bg-white/80 transition-all duration-300 hover:-translate-y-2 hover:shadow-lg">
@@ -159,7 +159,7 @@ const ServicesSection = () => {
               </div>
               <h4 className="text-xl font-playfair font-bold text-foreground mb-3">{t('support247')}</h4>
               <p className="text-muted-foreground font-inter">{t('supportDesc')}</p>
-              <div className="mt-4 text-foreground font-semibold font-inter text-sm">Réponse &lt; 2h</div>
+              <div className="mt-4 text-foreground font-semibold font-inter text-sm">{t('responseTime')}</div>
             </div>
           </div>
         </div>

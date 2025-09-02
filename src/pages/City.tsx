@@ -32,46 +32,46 @@ const City = () => {
 
   const cityData = {
     alger: {
-      name: "Alger",
-      description: "Capitale de l'Algérie et plus grande ville du pays",
-      history: "Alger, surnommée 'Alger la Blanche' pour ses bâtiments blancs qui se reflètent dans la mer, est une ville millénaire fondée par les Berbères au Xe siècle. Devenue une importante base ottomane puis capitale de l'Algérie française, elle conserve aujourd'hui un riche patrimoine architectural mêlant influences arabes, ottomanes et françaises.",
+      name: t('cityAlger'),
+      description: t('algerCityDesc'),
+      history: t('algerHistory'),
       stats: {
-        population: "3.4M habitants",
+        population: "3.4M " + t('habitants'),
         area: "809 km²",
-        founded: "Xe siècle"
+        founded: t('tenthCentury')
       },
       image: algerImage
     },
     oran: {
-      name: "Oran",
-      description: "Deuxième ville d'Algérie et capitale de l'Ouest",
-      history: "Oran, fondée en 903 par les marchands andalous, est devenue un carrefour commercial majeur en Méditerranée. Connue pour son architecture hispano-mauresque et ses influences espagnoles, elle est également célèbre pour être le berceau de la musique raï et abrite le plus grand port d'Algérie.",
+      name: t('cityOran'),
+      description: t('oranCityDesc'),
+      history: t('oranHistory'),
       stats: {
-        population: "1.5M habitants", 
+        population: "1.5M " + t('habitants'), 
         area: "2,121 km²",
         founded: "903"
       },
       image: oranImage
     },
     constantine: {
-      name: "Constantine",
-      description: "Ville des ponts suspendus et ancien centre culturel",
-      history: "Constantine, l'antique Cirta, est l'une des plus anciennes villes au monde, habitée depuis le paléolithique. Perchée sur un plateau rocheux et entourée de gorges profondes, elle doit son surnom de 'ville des ponts suspendus' aux nombreux ponts qui l'enjambent. Centre intellectuel et culturel de l'Algérie orientale.",
+      name: t('cityConstantine'),
+      description: t('constantineCityDesc'),
+      history: t('constantineHistory'),
       stats: {
-        population: "950k habitants",
+        population: "950k " + t('habitants'),
         area: "231 km²", 
-        founded: "IIIe millénaire av. J.-C."
+        founded: t('thirdMillenniumBC')
       },
       image: constantineImage
     },
     annaba: {
-      name: "Annaba",
-      description: "Port méditerranéen et centre industriel de l'Est",
-      history: "Annaba, l'ancienne Hippone, fut fondée par les Phéniciens et devint célèbre grâce à Saint Augustin qui y vécut au Ve siècle. Cette cité portuaire au bord de la Méditerranée combine heritage historique et développement industriel moderne, étant aujourd'hui un centre sidérurgique important.",
+      name: t('cityAnnaba'),
+      description: t('annabaCityDesc'),
+      history: t('annabaHistory'),
       stats: {
-        population: "640k habitants",
+        population: "640k " + t('habitants'),
         area: "1,439 km²",
-        founded: "XIIe siècle av. J.-C."
+        founded: t('twelfthCenturyBC')
       },
       image: annabaImage
     }
@@ -85,8 +85,8 @@ const City = () => {
         <Navigation />
         <main className="pt-20 flex items-center justify-center">
           <div className="text-center">
-            <h1 className="text-2xl font-bold text-foreground mb-4">Ville non trouvée</h1>
-            <Button onClick={() => navigate('/')}>Retour à l'accueil</Button>
+            <h1 className="text-2xl font-bold text-foreground mb-4">{t('cityNotFound')}</h1>
+            <Button onClick={() => navigate('/')}>{t('backToHome')}</Button>
           </div>
         </main>
         <Footer />
@@ -98,76 +98,76 @@ const City = () => {
   const buyProperties = [
     {
       id: 1,
-      title: `Villa ${currentCity.name}`,
-      location: `${currentCity.name}, Algérie`,
-      price: "2,500,000 DA",
+      title: `${t('propertyVilla')} ${currentCity.name}`,
+      location: `${currentCity.name}, ${t('algeria')}`,
+      price: `2,500,000 ${t('currencyDA')}`,
       beds: 4,
       baths: 3,
       area: "280 m²",
       image: villaMediterranean,
-      type: "Villa"
+      type: t('propertyVilla')
     },
     {
       id: 2,
-      title: `Appartement ${currentCity.name}`,
-      location: `${currentCity.name}, Algérie`,
-      price: "1,800,000 DA",
+      title: `${t('propertyAppartement')} ${currentCity.name}`,
+      location: `${currentCity.name}, ${t('algeria')}`,
+      price: `1,800,000 ${t('currencyDA')}`,
       beds: 3,
       baths: 2,
       area: "120 m²",
       image: luxuryApartment,
-      type: "Appartement"
+      type: t('propertyAppartement')
     }
   ];
 
   const rentProperties = [
     {
       id: 3,
-      title: `Studio ${currentCity.name}`,
-      location: `${currentCity.name}, Algérie`,
-      price: "35,000 DA/mois",
+      title: `${t('propertyStudio')} ${currentCity.name}`,
+      location: `${currentCity.name}, ${t('algeria')}`,
+      price: `35,000 ${t('currencyPerMonth')}`,
       beds: 1,
       baths: 1,
       area: "45 m²",
       image: shortStay,
-      type: "Studio"
+      type: t('propertyStudio')
     },
     {
       id: 4,
-      title: `Appartement ${currentCity.name}`,
-      location: `${currentCity.name}, Algérie`,
-      price: "55,000 DA/mois",
+      title: `${t('propertyAppartement')} ${currentCity.name}`,
+      location: `${currentCity.name}, ${t('algeria')}`,
+      price: `55,000 ${t('currencyPerMonth')}`,
       beds: 3,
       baths: 2,
       area: "110 m²",
       image: luxuryApartment,
-      type: "Appartement"
+      type: t('propertyAppartement')
     }
   ];
 
   const shortStayProperties = [
     {
       id: 5,
-      title: `Suite ${currentCity.name}`,
-      location: `${currentCity.name}, Algérie`,
-      price: "12,000 DA/nuit",
+      title: `${t('propertySuite')} ${currentCity.name}`,
+      location: `${currentCity.name}, ${t('algeria')}`,
+      price: `12,000 ${t('currencyPerNight')}`,
       beds: 2,
       baths: 1,
       area: "75 m²",
       image: shortStay,
-      type: "Suite",
+      type: t('propertySuite'),
       rating: 4.8
     },
     {
       id: 6,
-      title: `Appartement Vue ${currentCity.name}`,
-      location: `${currentCity.name}, Algérie`,
-      price: "15,000 DA/nuit",
+      title: `${t('propertyAppartement')} Vue ${currentCity.name}`,
+      location: `${currentCity.name}, ${t('algeria')}`,
+      price: `15,000 ${t('currencyPerNight')}`,
       beds: 3,
       baths: 2,
       area: "95 m²",
       image: luxuryApartment,
-      type: "Appartement",
+      type: t('propertyAppartement'),
       rating: 4.9
     }
   ];
@@ -219,7 +219,7 @@ const City = () => {
             navigate(`/property/${property.id}`);
           }}
         >
-          {listingType === 'shortStay' ? 'Réserver' : 'Voir détails'}
+          {listingType === 'shortStay' ? t('reserve') : t('seeDetails')}
         </Button>
       </CardContent>
     </Card>
@@ -257,28 +257,28 @@ const City = () => {
               <div className="text-2xl font-bold text-foreground font-playfair mb-1">
                 {currentCity.stats.population}
               </div>
-              <div className="text-muted-foreground font-inter text-sm">Population</div>
+              <div className="text-muted-foreground font-inter text-sm">{t('population')}</div>
             </div>
             <div className="text-center p-6 bg-card rounded-xl shadow-sm">
               <Square className="h-8 w-8 text-accent mx-auto mb-3" />
               <div className="text-2xl font-bold text-foreground font-playfair mb-1">
                 {currentCity.stats.area}
               </div>
-              <div className="text-muted-foreground font-inter text-sm">Superficie</div>
+              <div className="text-muted-foreground font-inter text-sm">{t('area')}</div>
             </div>
             <div className="text-center p-6 bg-card rounded-xl shadow-sm">
               <Clock className="h-8 w-8 text-foreground mx-auto mb-3" />
               <div className="text-2xl font-bold text-foreground font-playfair mb-1">
                 {currentCity.stats.founded}
               </div>
-              <div className="text-muted-foreground font-inter text-sm">Fondée en</div>
+              <div className="text-muted-foreground font-inter text-sm">{t('foundedIn')}</div>
             </div>
           </div>
 
           {/* History Section */}
           <div className="mb-12">
             <h2 className="text-3xl font-playfair font-bold text-foreground mb-6">
-              Histoire & Patrimoine
+              {t('historyHeritage')}
             </h2>
             <div className="bg-card p-8 rounded-xl shadow-sm">
               <p className="text-muted-foreground font-inter leading-relaxed text-lg">
@@ -290,22 +290,22 @@ const City = () => {
           {/* Properties Tabs */}
           <div className="mb-12">
             <h2 className="text-3xl font-playfair font-bold text-foreground mb-6">
-              Propriétés disponibles à {currentCity.name}
+              {t('propertiesAvailableIn')} {currentCity.name}
             </h2>
             
             <Tabs defaultValue="buy" className="w-full">
               <TabsList className="grid w-full grid-cols-3 mb-8">
                 <TabsTrigger value="buy" className="font-inter">
                   <Building className="h-4 w-4 mr-2" />
-                  Acheter
+                  {t('buy')}
                 </TabsTrigger>
                 <TabsTrigger value="rent" className="font-inter">
                   <MapPin className="h-4 w-4 mr-2" />
-                  Louer
+                  {t('rent')}
                 </TabsTrigger>
                 <TabsTrigger value="shortStay" className="font-inter">
                   <Bed className="h-4 w-4 mr-2" />
-                  Court séjour
+                  {t('shortStay')}
                 </TabsTrigger>
               </TabsList>
               
@@ -322,7 +322,7 @@ const City = () => {
                     className="font-inter"
                     onClick={() => navigate('/buy')}
                   >
-                    Voir toutes les propriétés à vendre
+                    {t('seeAllForSale')}
                   </Button>
                 </div>
               </TabsContent>
@@ -340,7 +340,7 @@ const City = () => {
                     className="font-inter"
                     onClick={() => navigate('/rent')}
                   >
-                    Voir toutes les propriétés à louer
+                    {t('seeAllForRent')}
                   </Button>
                 </div>
               </TabsContent>
@@ -358,7 +358,7 @@ const City = () => {
                     className="font-inter"
                     onClick={() => navigate('/short-stay')}
                   >
-                    Voir tous les courts séjours
+                    {t('seeAllShortStay')}
                   </Button>
                 </div>
               </TabsContent>

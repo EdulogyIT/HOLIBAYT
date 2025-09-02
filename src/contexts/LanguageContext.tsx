@@ -406,6 +406,13 @@ const allTranslations = {
     publishedBy: 'Publié par',
     readMore: 'Lire plus',
     
+    // Additional translations
+    habitants: 'habitants',
+    algeria: 'Algérie',
+    tenthCentury: 'Xe siècle',
+    thirdMillenniumBC: 'IIIe millénaire av. J.-C.',
+    twelfthCenturyBC: 'XIIe siècle av. J.-C.',
+    
     // Blog categories
     allCategories: 'Toutes',
     marketTrends: 'Tendances du Marché',
@@ -835,6 +842,13 @@ const allTranslations = {
 
     publishedBy: 'Published by',
     readMore: 'Read more',
+    
+    // Additional translations
+    habitants: 'inhabitants',
+    algeria: 'Algeria',
+    tenthCentury: '10th century',
+    thirdMillenniumBC: '3rd millennium BC',
+    twelfthCenturyBC: '12th century BC',
     
     // Blog categories
     allCategories: 'All',
@@ -1266,6 +1280,13 @@ const allTranslations = {
 
     publishedBy: 'نشر بواسطة',
     readMore: 'اقرأ المزيد',
+    
+    // Additional translations
+    habitants: 'ساكن',
+    algeria: 'الجزائر',
+    tenthCentury: 'القرن العاشر',
+    thirdMillenniumBC: 'الألفية الثالثة ق.م.',
+    twelfthCenturyBC: 'القرن الثاني عشر ق.م.',
     
     // Blog categories
     allCategories: 'الكل',
