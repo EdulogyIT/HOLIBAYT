@@ -26,8 +26,8 @@ const Blog = () => {
       title: t('blogTitle1'),
       excerpt: t('blogExcerpt1'),
       author: t('author1'),
-      date: "March 15, 2024",
-      readTime: "5 min read",
+      date: t('march15'),
+      readTime: t('readTime5'),
       category: t('marketTrends'),
       image: blogRealEstateFuture
     },
@@ -36,8 +36,8 @@ const Blog = () => {
       title: t('blogTitle2'),
       excerpt: t('blogExcerpt2'),
       author: t('author2'),
-      date: "March 10, 2024",
-      readTime: "7 min read",
+      date: t('march10'),
+      readTime: t('readTime7'),
       category: t('buyingGuide'),
       image: blogPropertyLocation
     },
@@ -46,8 +46,8 @@ const Blog = () => {
       title: t('blogTitle3'),
       excerpt: t('blogExcerpt3'),
       author: t('author3'),
-      date: "March 5, 2024",
-      readTime: "6 min read",
+      date: t('march5'),
+      readTime: t('readTime6'),
       category: t('investment'),
       image: blogShortStayRental
     },
@@ -56,8 +56,8 @@ const Blog = () => {
       title: t('blogTitle4'),
       excerpt: t('blogExcerpt4'),
       author: t('author4'),
-      date: "February 28, 2024",
-      readTime: "8 min read",
+      date: t('february28'),
+      readTime: t('readTime8'),
       category: t('finance'),
       image: blogPropertyValuation
     },
@@ -66,8 +66,8 @@ const Blog = () => {
       title: t('blogTitle5'),
       excerpt: t('blogExcerpt5'),
       author: t('author5'),
-      date: "February 20, 2024",
-      readTime: "9 min read",
+      date: t('february20'),
+      readTime: t('readTime9'),
       category: t('renovation'),
       image: blogRenovationTips
     },
@@ -76,8 +76,8 @@ const Blog = () => {
       title: t('blogTitle6'),
       excerpt: t('blogExcerpt6'),
       author: t('author6'),
-      date: "February 15, 2024",
-      readTime: "10 min read",
+      date: t('february15'),
+      readTime: t('readTime10'),
       category: t('legal'),
       image: blogLegalConsiderations
     }

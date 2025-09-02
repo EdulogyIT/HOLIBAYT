@@ -8,7 +8,7 @@ interface LanguageContextType {
   t: (key: string) => string | any;
 }
 
-const translations = {
+const allTranslations = {
   FR: {
     // Navigation
     home: 'Accueil',
@@ -1148,15 +1148,34 @@ const translations = {
     author6: 'محمد قاسي',
     
     callBtn: 'اتصال',
-    sendMessageBtn: 'أرسل رسالة'
+    sendMessageBtn: 'أرسل رسالة',
+    
+    // Blog dates
+    march15: "15 مارس 2024",
+    march10: "10 مارس 2024", 
+    march5: "5 مارس 2024",
+    february28: "28 فبراير 2024",
+    february20: "20 فبراير 2024",
+    february15: "15 فبراير 2024",
+
+    // Reading times
+    readTime5: "5 دقائق قراءة",
+    readTime6: "6 دقائق قراءة",
+    readTime7: "7 دقائق قراءة", 
+    readTime8: "8 دقائق قراءة",
+    readTime9: "9 دقائق قراءة",
+    readTime10: "10 دقائق قراءة",
+
+    // Blog navigation
+    backToBlog: "العودة إلى المدونة"
   }
 };
 
-const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
+const translations = allTranslations;
 
-function detectInitialLang(): Language {
+const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
+  function detectInitialLang(): Language {
   // 1) URL ?lang=en|fr|ar
-  const urlLang = new URLSearchParams(window.location.search).get('lang');
   if (urlLang) {
     const up = urlLang.toUpperCase();
     if (up === 'EN' || up === 'FR' || up === 'AR') return up as Language;

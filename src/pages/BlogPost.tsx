@@ -17,7 +17,7 @@ import blogRenovationTips from "@/assets/blog-renovation-tips.jpg";
 import blogLegalConsiderations from "@/assets/blog-legal-considerations.jpg";
 
 const BlogPost = () => {
-  const { t } = useLanguage();
+  const { t, currentLang } = useLanguage();
   const { id } = useParams();
   const navigate = useNavigate();
   useScrollToTop();
@@ -28,11 +28,11 @@ const BlogPost = () => {
       title: t('blogTitle1'),
       excerpt: t('blogExcerpt1'),
       author: t('author1'),
-      date: "March 15, 2024",
-      readTime: "5 min read",
+      date: t('march15'),
+      readTime: t('readTime5'),
       category: t('marketTrends'),
       image: blogRealEstateFuture,
-      content: t('currentLang') === 'FR' ? `
+      content: currentLang === 'FR' ? `
         <p>Le marché immobilier algérien connaît une transformation significative, portée par l'innovation technologique, les changements démographiques et les réformes économiques. En regardant vers l'avenir, plusieurs tendances clés façonnent le paysage de l'investissement et du développement immobilier à travers le pays.</p>
         
         <h2>Transformation Digitale</h2>
@@ -48,7 +48,7 @@ const BlogPost = () => {
         <p>Les réglementations sur l'investissement étranger deviennent plus favorables, ouvrant de nouvelles possibilités pour les acheteurs internationaux. Le secteur touristique en croissance présente également des opportunités sur les marchés de location à court terme, particulièrement dans les zones côtières et les centres-villes historiques.</p>
         
         <p>Alors que l'Algérie continue de moderniser son économie et ses infrastructures, le secteur immobilier est bien placé pour en bénéficier considérablement. Les investisseurs qui comprennent ces tendances et se positionnent en conséquence seront bien placés pour capitaliser sur les opportunités à venir.</p>
-      ` : t('currentLang') === 'AR' ? `
+      ` : currentLang === 'AR' ? `
         <p>يشهد السوق العقاري الجزائري تحولاً كبيراً، مدفوعاً بالابتكار التكنولوجي والتغيرات الديموغرافية والإصلاحات الاقتصادية. عند النظر نحو المستقبل، تشكل عدة اتجاهات رئيسية مشهد الاستثمار والتطوير العقاري عبر البلاد.</p>
         
         <h2>التحول الرقمي</h2>
@@ -89,11 +89,11 @@ const BlogPost = () => {
       title: t('blogTitle2'),
       excerpt: t('blogExcerpt2'),
       author: t('author2'),
-      date: "March 10, 2024",
-      readTime: "7 min read",
+      date: t('march10'),
+      readTime: t('readTime7'),
       category: t('buyingGuide'),
       image: blogPropertyLocation,
-      content: t('currentLang') === 'FR' ? `
+      content: currentLang === 'FR' ? `
         <p>L'emplacement est le facteur le plus critique dans le succès immobilier. Que vous achetiez votre première maison ou fassiez un investissement, comprendre comment évaluer la qualité de l'emplacement déterminera la valeur à long terme de votre propriété et votre satisfaction en tant que propriétaire.</p>
         
         <h2>Transport et Accessibilité</h2>
@@ -112,7 +112,7 @@ const BlogPost = () => {
         <p>Recherchez des zones avec de solides fondamentaux économiques, une croissance de l'emploi et des tendances démographiques positives. L'investissement gouvernemental dans l'infrastructure et les initiatives d'urbanisme peuvent signaler un potentiel d'appréciation future.</p>
         
         <p>Rappelez-vous que l'emplacement parfait varie selon vos besoins spécifiques, que vous priorisiez les écoles pour une famille, la vie nocturne pour de jeunes professionnels, ou un environnement calme pour les retraités.</p>
-      ` : t('currentLang') === 'AR' ? `
+      ` : currentLang === 'AR' ? `
         <p>الموقع هو العامل الأكثر أهمية في نجاح العقارات. سواء كنت تشتري منزلك الأول أو تقوم باستثمار، فهم كيفية تقييم جودة الموقع سيحدد القيمة طويلة المدى لممتلكاتك ورضاك كمالك.</p>
         
         <h2>النقل وإمكانية الوصول</h2>
@@ -159,11 +159,11 @@ const BlogPost = () => {
       title: t('blogTitle3'),
       excerpt: t('blogExcerpt3'),
       author: t('author3'),
-      date: "March 5, 2024",
-      readTime: "6 min read",
+      date: t('march5'),
+      readTime: t('readTime6'),
       category: t('investment'),
       image: blogShortStayRental,
-      content: t('currentLang') === 'FR' ? `
+      content: currentLang === 'FR' ? `
         <p>Le marché des locations courtes en Algérie connaît une croissance sans précédent, portée par l'augmentation du tourisme, des voyages d'affaires et l'évolution des préférences d'hébergement. Cela présente des opportunités significatives pour les investisseurs immobiliers prêts à s'adapter à ce marché dynamique.</p>
         
         <h2>Dynamiques du Marché</h2>
@@ -182,7 +182,7 @@ const BlogPost = () => {
         <p>Considérez si gérer vous-même ou embaucher des sociétés de gestion professionnelles. L'auto-gestion offre des marges plus élevées mais nécessite un investissement de temps significatif, tandis que la gestion professionnelle offre la commodité à un coût.</p>
         
         <p>Avec une planification et une exécution appropriées, les locations courtes peuvent fournir des rendements plus élevés que les locations traditionnelles à long terme tout en contribuant à l'économie touristique croissante de l'Algérie.</p>
-      ` : t('currentLang') === 'AR' ? `
+      ` : currentLang === 'AR' ? `
         <p>يشهد سوق الإيجار قصير المدى في الجزائر نمواً غير مسبوق، مدفوعاً بزيادة السياحة وسفر الأعمال وتغيير تفضيلات الإقامة. هذا يقدم فرصاً مهمة للمستثمرين العقاريين المستعدين للتكيف مع هذا السوق الديناميكي.</p>
         
         <h2>ديناميكيات السوق</h2>
@@ -229,11 +229,11 @@ const BlogPost = () => {
       title: t('blogTitle4'),
       excerpt: t('blogExcerpt4'),
       author: t('author4'),
-      date: "February 28, 2024",
-      readTime: "8 min read",
+      date: t('february28'),
+      readTime: t('readTime8'),
       category: t('finance'),
       image: blogPropertyValuation,
-      content: t('currentLang') === 'FR' ? `
+      content: currentLang === 'FR' ? `
         <p>L'évaluation immobilière en Algérie implique des facteurs complexes qui varient considérablement selon la région, le type de propriété et les conditions du marché. Comprendre ces éléments est essentiel pour prendre des décisions éclairées d'achat, de vente ou d'investissement.</p>
         
         <h2>Évaluation Basée sur le Marché</h2>
@@ -255,7 +255,7 @@ const BlogPost = () => {
         <p>Pour les transactions importantes, embaucher des évaluateurs certifiés assure des évaluations précises. Ils considèrent tous les facteurs pertinents et fournissent des rapports détaillés essentiels pour le financement et les objectifs légaux.</p>
         
         <p>Une évaluation immobilière précise protège à la fois les acheteurs et les vendeurs, assurant des transactions équitables et soutenant un développement de marché sain à travers l'Algérie.</p>
-      ` : t('currentLang') === 'AR' ? `
+      ` : currentLang === 'AR' ? `
         <p>تقييم العقارات في الجزائر يتضمن عوامل معقدة تختلف بشكل كبير حسب المنطقة ونوع العقار وظروف السوق. فهم هذه العناصر أمر أساسي لاتخاذ قرارات مستنيرة للشراء أو البيع أو الاستثمار.</p>
         
         <h2>التقييم القائم على السوق</h2>
@@ -308,11 +308,11 @@ const BlogPost = () => {
       title: t('blogTitle5'),
       excerpt: t('blogExcerpt5'),
       author: t('author5'),
-      date: "February 20, 2024",
-      readTime: "9 min read",
+      date: t('february20'),
+      readTime: t('readTime9'),
       category: t('renovation'),
       image: blogRenovationTips,
-      content: t('currentLang') === 'FR' ? `
+      content: currentLang === 'FR' ? `
         <p>La rénovation stratégique de propriété peut substantiellement augmenter la valeur et le potentiel locatif. Cependant, toutes les améliorations ne fournissent pas des rendements égaux. Comprendre quelles rénovations offrent le meilleur ROI est crucial pour maximiser votre investissement.</p>
         
         <h2>Modernisation de la Cuisine</h2>
@@ -334,7 +334,7 @@ const BlogPost = () => {
         <p>Fixez des budgets réalistes et priorisez les améliorations à fort impact. Les mises à jour cosmétiques fournissent souvent un meilleur ROI que les changements structurels. Concentrez-vous sur les améliorations qui augmentent à la fois la valeur et améliorent la habitabilité.</p>
         
         <p>La rénovation réussie nécessite d'équilibrer les coûts avec les rendements potentiels tout en considérant les préférences du marché local et les exigences réglementaires.</p>
-      ` : t('currentLang') === 'AR' ? `
+      ` : currentLang === 'AR' ? `
         <p>التجديد الاستراتيجي للعقارات يمكن أن يزيد القيمة والإمكانات الإيجارية بشكل كبير. ومع ذلك، ليس كل التحسينات توفر عوائد متساوية. فهم أي التجديدات توفر أفضل عائد استثمار أمر بالغ الأهمية لتعظيم استثمارك.</p>
         
         <h2>تحديث المطبخ</h2>
@@ -387,11 +387,11 @@ const BlogPost = () => {
       title: t('blogTitle6'),
       excerpt: t('blogExcerpt6'),
       author: t('author6'),
-      date: "February 15, 2024",
-      readTime: "10 min read",
+      date: t('february15'),
+      readTime: t('readTime10'),
       category: t('legal'),
       image: blogLegalConsiderations,
-      content: t('currentLang') === 'FR' ? `
+      content: currentLang === 'FR' ? `
         <p>Naviguer dans le droit immobilier algérien nécessite de comprendre des cadres juridiques complexes, des exigences de documentation et des procédures réglementaires. Une préparation juridique appropriée protège les acheteurs d'erreurs coûteuses et assure des transactions fluides.</p>
         
         <h2>Types de Propriété Immobilière</h2>
@@ -416,7 +416,7 @@ const BlogPost = () => {
         <p>Embaucher un conseil juridique qualifié familier avec le droit immobilier algérien fournit une protection essentielle. Des avocats expérimentés peuvent naviguer les réglementations complexes et protéger vos intérêts tout au long du processus de transaction.</p>
         
         <p>Comprendre les exigences légales avant de commencer votre recherche immobilière prévient les délais, complications et problèmes légaux potentiels qui pourraient compromettre votre investissement.</p>
-      ` : t('currentLang') === 'AR' ? `
+      ` : currentLang === 'AR' ? `
         <p>التنقل في قانون العقارات الجزائري يتطلب فهم الأطر القانونية المعقدة ومتطلبات التوثيق والإجراءات التنظيمية. التحضير القانوني المناسب يحمي المشترين من الأخطاء المكلفة ويضمن معاملات سلسة.</p>
         
         <h2>أنواع ملكية العقارات</h2>
