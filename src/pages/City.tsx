@@ -33,10 +33,10 @@ const City = () => {
   const cityData = {
     alger: {
       name: t('cityAlger'),
-      description: t('algerCityDesc'),
+      description: t('algerDescription'),
       history: t('algerHistory'),
       stats: {
-        population: "3.4M " + t('habitants'),
+        population: "3.4M " + t('inhabitantsShort'),
         area: "809 km²",
         founded: t('tenthCentury')
       },
@@ -44,10 +44,10 @@ const City = () => {
     },
     oran: {
       name: t('cityOran'),
-      description: t('oranCityDesc'),
+      description: t('oranDescription'),
       history: t('oranHistory'),
       stats: {
-        population: "1.5M " + t('habitants'), 
+        population: "1.5M " + t('inhabitantsShort'), 
         area: "2,121 km²",
         founded: "903"
       },
@@ -55,10 +55,10 @@ const City = () => {
     },
     constantine: {
       name: t('cityConstantine'),
-      description: t('constantineCityDesc'),
+      description: t('constantineDescription'),
       history: t('constantineHistory'),
       stats: {
-        population: "950k " + t('habitants'),
+        population: "950k " + t('inhabitantsShort'),
         area: "231 km²", 
         founded: t('thirdMillenniumBC')
       },
@@ -66,10 +66,10 @@ const City = () => {
     },
     annaba: {
       name: t('cityAnnaba'),
-      description: t('annabaCityDesc'),
+      description: t('annabaDescription'),
       history: t('annabaHistory'),
       stats: {
-        population: "640k " + t('habitants'),
+        population: "640k " + t('inhabitantsShort'),
         area: "1,439 km²",
         founded: t('twelfthCenturyBC')
       },
@@ -264,7 +264,7 @@ const City = () => {
               <div className="text-2xl font-bold text-foreground font-playfair mb-1">
                 {currentCity.stats.area}
               </div>
-              <div className="text-muted-foreground font-inter text-sm">{t('area')}</div>
+              <div className="text-muted-foreground font-inter text-sm">{t('cityArea')}</div>
             </div>
             <div className="text-center p-6 bg-card rounded-xl shadow-sm">
               <Clock className="h-8 w-8 text-foreground mx-auto mb-3" />

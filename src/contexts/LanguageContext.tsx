@@ -413,6 +413,30 @@ const allTranslations = {
     thirdMillenniumBC: 'IIIe millénaire av. J.-C.',
     twelfthCenturyBC: 'XIIe siècle av. J.-C.',
     
+    // City names
+    cityAlger: 'Alger',
+    cityOran: 'Oran',
+    cityConstantine: 'Constantine',
+    cityAnnaba: 'Annaba',
+    citySetif: 'Sétif',
+    cityTlemcen: 'Tlemcen',
+    cityBejaia: 'Béjaïa',
+    cityBlida: 'Blida',
+    
+    // City page sections
+    historyHeritage: 'Histoire & patrimoine',
+    population: 'Population',
+    inhabitantsShort: 'habitants',
+    cityArea: 'Superficie',
+    foundedIn: 'Fondée en',
+    propertiesAvailableIn: 'Propriétés disponibles à',
+    
+    // City histories
+    oranHistory: 'Oran est une ville côtière du nord-ouest algérien, connue pour son port, la musique raï et un patrimoine mêlant influences françaises et espagnoles. La corniche moderne et les quartiers historiques en font un pôle culturel.',
+    algerHistory: 'Alger, la capitale, mêle influences ottomanes, coloniales françaises et modernes ; la Casbah est classée UNESCO.',
+    constantineHistory: 'Constantine est célèbre pour ses gorges spectaculaires et ses ponts suspendus, qui ont façonné son histoire.',
+    annabaHistory: 'Annaba, sur la Méditerranée, est réputée pour ses plages, l\'héritage de Saint Augustin et un port en développement.',
+    
     // Blog categories
     allCategories: 'Toutes',
     marketTrends: 'Tendances du Marché',
@@ -849,6 +873,30 @@ const allTranslations = {
     tenthCentury: '10th century',
     thirdMillenniumBC: '3rd millennium BC',
     twelfthCenturyBC: '12th century BC',
+    
+    // City names
+    cityAlger: 'Algiers',
+    cityOran: 'Oran',
+    cityConstantine: 'Constantine',
+    cityAnnaba: 'Annaba',
+    citySetif: 'Setif',
+    cityTlemcen: 'Tlemcen',
+    cityBejaia: 'Bejaia',
+    cityBlida: 'Blida',
+    
+    // City page sections
+    historyHeritage: 'History & Heritage',
+    population: 'Population',
+    inhabitantsShort: 'inhabitants',
+    cityArea: 'Area',
+    foundedIn: 'Founded in',
+    propertiesAvailableIn: 'Properties available in',
+    
+    // City histories
+    oranHistory: 'Oran is a coastal city in north-western Algeria known for its port, raï music scene, and a blend of French and Spanish architecture. Its modern corniche and historic quarters make it a cultural hub.',
+    algerHistory: 'Algiers, the capital, mixes Ottoman, French colonial, and modern influences; the Casbah is a UNESCO World Heritage site.',
+    constantineHistory: 'Constantine is famed for its dramatic gorges and suspension bridges, shaping its urban form and history.',
+    annabaHistory: 'Annaba, on the Mediterranean, is known for its beaches, Saint Augustine heritage, and a growing port economy.',
     
     // Blog categories
     allCategories: 'All',
@@ -1288,6 +1336,30 @@ const allTranslations = {
     thirdMillenniumBC: 'الألفية الثالثة ق.م.',
     twelfthCenturyBC: 'القرن الثاني عشر ق.م.',
     
+    // City names
+    cityAlger: 'الجزائر',
+    cityOran: 'وهران',
+    cityConstantine: 'قسنطينة',
+    cityAnnaba: 'عنابة',
+    citySetif: 'سطيف',
+    cityTlemcen: 'تلمسان',
+    cityBejaia: 'بجاية',
+    cityBlida: 'البليدة',
+    
+    // City page sections
+    historyHeritage: 'التاريخ والتراث',
+    population: 'السكان',
+    inhabitantsShort: 'نسمة',
+    cityArea: 'المساحة',
+    foundedIn: 'تأسست في',
+    propertiesAvailableIn: 'العقارات المتاحة في',
+    
+    // City histories
+    oranHistory: 'وهران مدينة ساحلية في شمال غرب الجزائر، معروفة بمينائها وموسيقى الراي ومزيج من العمارة الفرنسية والإسبانية. كورنيشها الحديث وأحياؤها التاريخية يجعلونها مركزًا ثقافيًا.',
+    algerHistory: 'الجزائر العاصمة تمزج بين التأثيرات العثمانية والاستعمارية الفرنسية والحديثة؛ القصبة موقع تراث عالمي لليونسكو.',
+    constantineHistory: 'قسنطينة مشهورة بأوديتها العميقة وجسورها المعلقة التي شكّلت تاريخها وعمرانها.',
+    annabaHistory: 'عنابة على المتوسط معروفة بشواطئها وإرث القديس أوغسطين ومينائها المتنامي.',
+    
     // Blog categories
     allCategories: 'الكل',
     marketTrends: 'اتجاهات السوق',
@@ -1381,7 +1453,8 @@ export const LanguageProvider = ({ children }: { children: ReactNode }) => {
         if (result && typeof result === 'object' && k in result) {
           result = result[k];
         } else {
-          return key; // Return the key if not found
+          // Hide raw keys in production, show them in development
+          return import.meta.env.DEV ? key : '';
         }
       }
       
