@@ -109,14 +109,14 @@ const HeroSection = () => {
       label: t('buy')
     },
     {
-      id: 'rent' as const,
-      icon: Key,
-      label: t('rent')
-    },
-    {
       id: 'stay' as const,
       icon: Bed,
       label: t('shortStay')
+    },
+    {
+      id: 'rent' as const,
+      icon: Key,
+      label: t('rent')
     }
   ];
 
