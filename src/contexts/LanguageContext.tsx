@@ -352,6 +352,22 @@ const allTranslations = {
     enterEmail: 'Entrez votre email',
     subscribe: 'S\'abonner',
     backToBlog: "Retour au Blog",
+    
+    // Property types
+    propertyVilla: 'Villa',
+    propertyAppartement: 'Appartement', 
+    propertyDuplex: 'Duplex',
+    propertyMaison: 'Maison',
+    propertyStudio: 'Studio',
+    propertyLoft: 'Loft',
+    propertyChambre: 'Chambre',
+    propertySuite: 'Suite',
+    propertyPenthouse: 'Penthouse',
+    
+    // Pricing units
+    currencyDA: 'DA',
+    currencyPerMonth: 'DA/mois',
+    currencyPerNight: 'DA/nuit',
 
     // Property names
     villaMediterranean: "Villa Méditerranéenne",
@@ -766,6 +782,22 @@ const allTranslations = {
     enterEmail: 'Enter your email',
     subscribe: 'Subscribe',
     backToBlog: "Back to Blog",
+    
+    // Property types
+    propertyVilla: 'Villa',
+    propertyAppartement: 'Apartment', 
+    propertyDuplex: 'Duplex',
+    propertyMaison: 'House',
+    propertyStudio: 'Studio',
+    propertyLoft: 'Loft',
+    propertyChambre: 'Room',
+    propertySuite: 'Suite',
+    propertyPenthouse: 'Penthouse',
+    
+    // Pricing units
+    currencyDA: 'DZD',
+    currencyPerMonth: 'DZD/month',
+    currencyPerNight: 'DZD/night',
 
     // Property names
     villaMediterranean: "Mediterranean Villa",
@@ -1181,6 +1213,22 @@ const allTranslations = {
     enterEmail: 'أدخل بريدك الإلكتروني',
     subscribe: 'اشتراك',
     backToBlog: "العودة للمدونة",
+    
+    // Property types
+    propertyVilla: 'فيلا',
+    propertyAppartement: 'شقة', 
+    propertyDuplex: 'دوبلكس',
+    propertyMaison: 'منزل',
+    propertyStudio: 'استوديو',
+    propertyLoft: 'لوفت',
+    propertyChambre: 'غرفة',
+    propertySuite: 'جناح',
+    propertyPenthouse: 'بنتهاوس',
+    
+    // Pricing units
+    currencyDA: 'دج',
+    currencyPerMonth: 'دج/الشهر',
+    currencyPerNight: 'دج/الليلة',
 
     // Property names
     villaMediterranean: "فيلا البحر الأبيض المتوسط",

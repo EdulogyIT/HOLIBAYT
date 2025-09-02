@@ -31,89 +31,89 @@ const Rent = () => {
       id: 3,
       title: t('modernApartment'),
       location: t('constantineAlgeria'),
-      price: "45,000 DA/mois",
+      price: `45,000 ${t('currencyPerMonth')}`,
       beds: 2,
       baths: 1,
       area: "85 m²",
       image: modernApartment,
-      type: "Appartement"
+      type: t('propertyAppartement')
     },
     {
       id: 4,
       title: t('villaWithGarden'),
       location: t('annabaAlgeria'), 
-      price: "80,000 DA/mois",
+      price: `80,000 ${t('currencyPerMonth')}`,
       beds: 5,
       baths: 3,
       area: "320 m²",
       image: villaMediterranean, 
-      type: "Villa"
+      type: t('propertyVilla')
     },
     {
       id: 13,
       title: t('studioCenterCity'),
       location: t('algerAlgeria'),
-      price: "25,000 DA/mois",
+      price: `25,000 ${t('currencyPerMonth')}`,
       beds: 1,
       baths: 1,
       area: "35 m²",
       image: studio,
-      type: "Studio"
+      type: t('propertyStudio')
     },
     {
       id: 14,
       title: t('duplexFamily'),
       location: t('oranAlgeria'),
-      price: "65,000 DA/mois",
+      price: `65,000 ${t('currencyPerMonth')}`,
       beds: 4,
       baths: 2,
       area: "180 m²",
       image: penthouse,
-      type: "Duplex"
+      type: t('propertyDuplex')
     },
     {
       id: 15,
       title: t('individualHouse'),
       location: t('tlemcenAlgeria'),
-      price: "55,000 DA/mois",
+      price: `55,000 ${t('currencyPerMonth')}`,
       beds: 3,
       baths: 2,
       area: "150 m²",
       image: traditionalHouse,
-      type: "Maison"
+      type: t('propertyMaison')
     },
     {
       id: 16,
       title: t('newApartment'),
       location: t('setifAlgeria'),
-      price: "40,000 DA/mois",
+      price: `40,000 ${t('currencyPerMonth')}`,
       beds: 3,
       baths: 2,
       area: "110 m²",
       image: luxuryApartment,
-      type: "Appartement"
+      type: t('propertyAppartement')
     },
     {
       id: 17,
       title: t('villaModern'),
       location: t('bejaiaAlgeria'),
-      price: "70,000 DA/mois",
+      price: `70,000 ${t('currencyPerMonth')}`,
       beds: 4,
       baths: 3,
       area: "250 m²",
       image: seasideRental,
-      type: "Villa"
+      type: t('propertyVilla')
     },
     {
       id: 18,
       title: t('industrialLoft'),
       location: t('tipazaAlgeria'),
-      price: "50,000 DA/mois",
+      price: `50,000 ${t('currencyPerMonth')}`,
       beds: 2,
       baths: 1,
       area: "95 m²",
       image: shortStay,
-      type: "Loft"
+      type: t('propertyLoft')
     }
   ];
 

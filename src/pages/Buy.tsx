@@ -31,89 +31,89 @@ const Buy = () => {
       id: 1,
       title: t('villaMediterranean'),
       location: t('algerAlgeria'),
-      price: "2,500,000 DA",
+      price: `2,500,000 ${t('currencyDA')}`,
       beds: 4,
       baths: 3,
       area: "280 m²",
       image: villaMediterranean,
-      type: "Villa"
+      type: t('propertyVilla')
     },
     {
       id: 2,
       title: t('luxuryApartment'),
       location: t('oranAlgeria'), 
-      price: "1,800,000 DA",
+      price: `1,800,000 ${t('currencyDA')}`,
       beds: 3,
       baths: 2,
       area: "120 m²",
       image: luxuryApartment, 
-      type: "Appartement"
+      type: t('propertyAppartement')
     },
     {
       id: 7,
       title: t('villaModern'),
       location: t('constantineAlgeria'),
-      price: "3,200,000 DA",
+      price: `3,200,000 ${t('currencyDA')}`,
       beds: 5,
       baths: 4,
       area: "350 m²",
       image: modernApartment,
-      type: "Villa"
+      type: t('propertyVilla')
     },
     {
       id: 8,
       title: t('duplexFamily'),
       location: t('tlemcenAlgeria'),
-      price: "2,800,000 DA",
+      price: `2,800,000 ${t('currencyDA')}`,
       beds: 4,
       baths: 3,
       area: "220 m²",
       image: penthouse,
-      type: "Duplex"
+      type: t('propertyDuplex')
     },
     {
       id: 9,
       title: t('traditionalHouse'),
       location: t('setifAlgeria'),
-      price: "1,950,000 DA",
+      price: `1,950,000 ${t('currencyDA')}`,
       beds: 3,
       baths: 2,
       area: "180 m²",
       image: traditionalHouse,
-      type: "Maison"
+      type: t('propertyMaison')
     },
     {
       id: 10,
       title: t('modernStudio'),
       location: t('bejaiaAlgeria'),
-      price: "950,000 DA",
+      price: `950,000 ${t('currencyDA')}`,
       beds: 1,
       baths: 1,
       area: "45 m²",
       image: studio,
-      type: "Studio"
+      type: t('propertyStudio')
     },
     {
       id: 11,
       title: t('apartmentStanding'),
       location: t('annabaAlgeria'),
-      price: "2,100,000 DA",
+      price: `2,100,000 ${t('currencyDA')}`,
       beds: 3,
       baths: 2,
       area: "140 m²",
       image: seasideRental,
-      type: "Appartement"
+      type: t('propertyAppartement')
     },
     {
       id: 12,
       title: t('villaWithPool'),
       location: t('tipazaAlgeria'),
-      price: "4,500,000 DA",
+      price: `4,500,000 ${t('currencyDA')}`,
       beds: 6,
       baths: 5,
       area: "450 m²",
       image: shortStay,
-      type: "Villa"
+      type: t('propertyVilla')
     }
   ];
 
