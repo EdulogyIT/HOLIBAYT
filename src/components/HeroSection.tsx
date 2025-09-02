@@ -14,7 +14,7 @@ import { DateRangePicker } from "@/components/DateRangePicker";
 const HeroSection = () => {
   const { t } = useLanguage();
   const navigate = useNavigate();
-  const [selectedMode, setSelectedMode] = useState<'buy' | 'rent' | 'stay'>('buy');
+  const [selectedMode, setSelectedMode] = useState<'buy' | 'rent' | 'stay'>('stay');
   
   // Form states for validation
   const [formData, setFormData] = useState({
