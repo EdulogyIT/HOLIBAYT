@@ -128,9 +128,9 @@ const PropertyFilters = ({ onFilterChange, listingType }: PropertyFiltersProps) 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {/* Location */}
               <div className="space-y-2">
-                <Label className="font-inter font-medium">{t('location') || 'Localisation'}</Label>
+                <Label className="font-inter font-medium">{t('location') || 'Location'}</Label>
                 <Input
-                  placeholder={t('cityOrDistrict') || 'Ville ou quartier'}
+                  placeholder={t('cityOrDistrict') || 'City Or District'}
                   value={filters.location}
                   onChange={(e) => handleFilterChange('location', e.target.value)}
                   className="font-inter"

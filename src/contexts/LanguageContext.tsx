@@ -5,7 +5,7 @@ type Language = 'FR' | 'EN' | 'AR';
 interface LanguageContextType {
   currentLang: Language;
   setCurrentLang: (lang: Language) => void;
-  t: (key: string) => string;
+  t: (key: string) => string | any;
 }
 
 const translations = {
@@ -186,6 +186,38 @@ const translations = {
     minPrice: 'Prix Minimum',
     maxPrice: 'Prix Maximum',
     all: 'Tout',
+    location: 'Localisation',
+    cityOrDistrict: 'Ville Ou Quartier',
+    
+    // Property names and locations
+    propertyNames: {
+      luxuryApartment: 'Appartement de Luxe',
+      modernApartment: 'Appartement Moderne',
+      penthouse: 'Penthouse',
+      seasideRental: 'Location Bord de Mer',
+      shortStay: 'Court Séjour',
+      studio: 'Studio',
+      traditionalHouse: 'Maison Traditionnelle',
+      villaMediterranean: 'Villa Méditerranéenne'
+    },
+    propertyLocations: {
+      algiers: 'Alger',
+      oran: 'Oran',
+      constantine: 'Constantine',
+      annaba: 'Annaba',
+      tlemcen: 'Tlemcen',
+      setif: 'Sétif',
+      bejaia: 'Béjaïa',
+      blida: 'Blida',
+      hydra: 'Hydra',
+      benAknoun: 'Ben Aknoun',
+      birMouradRais: 'Bir Mourad Raïs',
+      elBiar: 'El Biar',
+      kouba: 'Kouba',
+      bachdjerrah: 'Bachdjerrah',
+      husseinDey: 'Hussein Dey',
+      elHarrach: 'El Harrach'
+    },
     
     // Cities and additional translations
     followUs: 'Suivez-nous',
@@ -519,7 +551,7 @@ const translations = {
     propertyPublished: 'Property published!',
     propertySubmittedSuccess: 'Your property has been successfully submitted and will be reviewed shortly.',
     
-    // Filter translations  
+    // Filter translations
     filters: 'Filters',
     clearAll: 'Clear All',
     allTypes: 'All Types',
@@ -533,6 +565,38 @@ const translations = {
     minPrice: 'Minimum Price',
     maxPrice: 'Maximum Price',
     all: 'All',
+    location: 'Location',
+    cityOrDistrict: 'City Or District',
+    
+    // Property names and locations
+    propertyNames: {
+      luxuryApartment: 'Luxury Apartment',
+      modernApartment: 'Modern Apartment',
+      penthouse: 'Penthouse',
+      seasideRental: 'Seaside Rental',
+      shortStay: 'Short Stay',
+      studio: 'Studio',
+      traditionalHouse: 'Traditional House',
+      villaMediterranean: 'Mediterranean Villa'
+    },
+    propertyLocations: {
+      algiers: 'Algiers',
+      oran: 'Oran',
+      constantine: 'Constantine',
+      annaba: 'Annaba',
+      tlemcen: 'Tlemcen',
+      setif: 'Setif',
+      bejaia: 'Bejaia',
+      blida: 'Blida',
+      hydra: 'Hydra',
+      benAknoun: 'Ben Aknoun',
+      birMouradRais: 'Bir Mourad Rais',
+      elBiar: 'El Biar',
+      kouba: 'Kouba',
+      bachdjerrah: 'Bachdjerrah',
+      husseinDey: 'Hussein Dey',
+      elHarrach: 'El Harrach'
+    },
     
     // Cities and additional translations
     followUs: 'Follow us',
@@ -873,15 +937,45 @@ const translations = {
     villaFilter: 'فيلا',
     duplexFilter: 'دوبلكس',
     number: 'العدد',
-    minArea: 'أقل مساحة (م²)',
-    maxArea: 'أكبر مساحة (م²)',
+    minArea: 'المساحة الدنيا (م²)',
+    maxArea: 'المساحة القصوى (م²)',
     areaPlaceholder: 'مثال: 50',
     maxAreaPlaceholder: 'مثال: 200',
-    minPrice: 'أقل سعر',
-    maxPrice: 'أعلى سعر',
+    minPrice: 'السعر الأدنى',
+    maxPrice: 'السعر الأقصى',
     all: 'الكل',
     location: 'الموقع',
-    cityOrDistrict: 'المدينة أو الحي',
+    cityOrDistrict: 'مدينة أو منطقة',
+    
+    // Property names and locations
+    propertyNames: {
+      luxuryApartment: 'شقة فاخرة',
+      modernApartment: 'شقة عصرية',
+      penthouse: 'بنتهاوس',
+      seasideRental: 'إيجار على البحر',
+      shortStay: 'إقامة قصيرة',
+      studio: 'استوديو',
+      traditionalHouse: 'منزل تقليدي',
+      villaMediterranean: 'فيلا متوسطية'
+    },
+    propertyLocations: {
+      algiers: 'الجزائر',
+      oran: 'وهران',
+      constantine: 'قسنطينة',
+      annaba: 'عنابة',
+      tlemcen: 'تلمسان',
+      setif: 'سطيف',
+      bejaia: 'بجاية',
+      blida: 'البليدة',
+      hydra: 'حيدرة',
+      benAknoun: 'بن عكنون',
+      birMouradRais: 'بير مراد رايس',
+      elBiar: 'الأبيار',
+      kouba: 'القبة',
+      bachdjerrah: 'باش جراح',
+      husseinDey: 'حسين داي',
+      elHarrach: 'الحراش'
+    },
     
     // Cities and additional translations
     followUs: 'تابعنا',
@@ -1088,8 +1182,20 @@ export const LanguageProvider = ({ children }: { children: ReactNode }) => {
 
   // Memoized translator for the active language
   const t = useMemo(() => {
-    const dict = translations[currentLang] as Record<string, string>;
-    return (key: string): string => dict[key] ?? key;
+    return (key: string): string | any => {
+      const keys = key.split('.');
+      let result: any = translations[currentLang];
+      
+      for (const k of keys) {
+        if (result && typeof result === 'object' && k in result) {
+          result = result[k];
+        } else {
+          return key; // Return the key if not found
+        }
+      }
+      
+      return result;
+    };
   }, [currentLang]);
 
   return (
