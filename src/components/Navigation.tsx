@@ -1,13 +1,15 @@
 import { Button } from "@/components/ui/button";
-import { Menu, X, Globe } from "lucide-react";
+import { Menu, X, Globe, LogOut, Settings, User } from "lucide-react";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useAuth } from "@/contexts/AuthContext";
 import LoginModal from "@/components/LoginModal";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
@@ -15,6 +17,7 @@ const Navigation = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const { currentLang, setCurrentLang, t } = useLanguage();
+  const { isAuthenticated, user, logout, hasRole } = useAuth();
   const navigate = useNavigate();
 
   const languages = [
@@ -25,6 +28,11 @@ const Navigation = () => {
 
   const handleLanguageChange = (lang: 'FR' | 'EN' | 'AR') => {
     setCurrentLang(lang);
+  };
+
+  const handleLogout = () => {
+    logout();
+    navigate('/');
   };
 
   return (
@@ -87,12 +95,60 @@ const Navigation = () => {
                 ))}
               </DropdownMenuContent>
             </DropdownMenu>
-            <Button variant="ghost" className="font-inter font-medium" onClick={() => setIsLoginModalOpen(true)}>
-              {t('login')}
-            </Button>
-            <Button className="bg-gradient-primary font-inter font-medium hover:shadow-elegant" onClick={() => navigate('/publish-property')}>
-              {t('publishProperty')}
-            </Button>
+
+            {!isAuthenticated ? (
+              <>
+                <Button variant="ghost" className="font-inter font-medium" onClick={() => setIsLoginModalOpen(true)}>
+                  {t('login')}
+                </Button>
+                <Button className="bg-gradient-primary font-inter font-medium hover:shadow-elegant" onClick={() => navigate('/publish-property')}>
+                  {t('publishProperty')}
+                </Button>
+              </>
+            ) : (
+              <>
+                {/* Become a Host CTA for logged-in non-hosts */}
+                {!hasRole('host') && !hasRole('admin') && (
+                  <Button 
+                    className="bg-gradient-primary font-inter font-medium hover:shadow-elegant"
+                    onClick={() => navigate('/host/onboarding')}
+                  >
+                    Become a Host
+                  </Button>
+                )}
+
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" className="font-inter font-medium">
+                      <User className="h-4 w-4 mr-2" />
+                      {user?.name}
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    {hasRole('admin') && (
+                      <DropdownMenuItem onClick={() => navigate('/admin')}>
+                        <Settings className="h-4 w-4 mr-2" />
+                        Admin Dashboard
+                      </DropdownMenuItem>
+                    )}
+                    {hasRole('host') && (
+                      <DropdownMenuItem onClick={() => navigate('/host')}>
+                        <Settings className="h-4 w-4 mr-2" />
+                        Host Dashboard
+                      </DropdownMenuItem>
+                    )}
+                    <DropdownMenuItem onClick={() => navigate('/publish-property')}>
+                      {t('publishProperty')}
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem onClick={handleLogout}>
+                      <LogOut className="h-4 w-4 mr-2" />
+                      Logout
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </>
+            )}
           </div>
 
           {/* Mobile menu button */}
@@ -151,12 +207,47 @@ const Navigation = () => {
                     ))}
                   </DropdownMenuContent>
                 </DropdownMenu>
-                <Button variant="ghost" className="font-inter font-medium justify-start" onClick={() => setIsLoginModalOpen(true)}>
-                  {t('login')}
-                </Button>
-                <Button className="bg-gradient-primary font-inter font-medium hover:shadow-elegant justify-start" onClick={() => navigate('/publish-property')}>
-                  {t('publishProperty')}
-                </Button>
+
+                {!isAuthenticated ? (
+                  <>
+                    <Button variant="ghost" className="font-inter font-medium justify-start" onClick={() => setIsLoginModalOpen(true)}>
+                      {t('login')}
+                    </Button>
+                    <Button className="bg-gradient-primary font-inter font-medium hover:shadow-elegant justify-start" onClick={() => navigate('/publish-property')}>
+                      {t('publishProperty')}
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    {!hasRole('host') && !hasRole('admin') && (
+                      <Button 
+                        className="bg-gradient-primary font-inter font-medium hover:shadow-elegant justify-start"
+                        onClick={() => navigate('/host/onboarding')}
+                      >
+                        Become a Host
+                      </Button>
+                    )}
+                    {hasRole('admin') && (
+                      <Button variant="ghost" className="font-inter font-medium justify-start" onClick={() => navigate('/admin')}>
+                        <Settings className="h-4 w-4 mr-2" />
+                        Admin Dashboard
+                      </Button>
+                    )}
+                    {hasRole('host') && (
+                      <Button variant="ghost" className="font-inter font-medium justify-start" onClick={() => navigate('/host')}>
+                        <Settings className="h-4 w-4 mr-2" />
+                        Host Dashboard
+                      </Button>
+                    )}
+                    <Button variant="ghost" className="font-inter font-medium justify-start" onClick={() => navigate('/publish-property')}>
+                      {t('publishProperty')}
+                    </Button>
+                    <Button variant="ghost" className="font-inter font-medium justify-start" onClick={handleLogout}>
+                      <LogOut className="h-4 w-4 mr-2" />
+                      Logout ({user?.name})
+                    </Button>
+                  </>
+                )}
               </div>
             </div>
           </div>
