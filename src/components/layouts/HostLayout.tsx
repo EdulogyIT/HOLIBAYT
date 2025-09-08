@@ -114,7 +114,7 @@ export const HostLayout = ({ children }: HostLayoutProps) => {
           </SidebarContent>
         </Sidebar>
 
-        <main className="flex-1">
+        <main className="flex-1 md:ml-64">
           {/* Top bar */}
           <header className="h-16 border-b bg-background flex items-center px-4 md:px-6">
             <SidebarTrigger />
