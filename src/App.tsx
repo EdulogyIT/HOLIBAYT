@@ -21,6 +21,7 @@ import Property from "./pages/Property";
 import City from "./pages/City";
 import ContactAdvisor from "./pages/ContactAdvisor";
 import LoginPage from "./pages/auth/LoginPage";
+import Bookings from "./pages/Bookings";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import HostDashboard from "./pages/host/HostDashboard";
 import HostOnboarding from "./pages/host/HostOnboarding";
@@ -44,7 +45,16 @@ const App = () => (
               <Route path="/about" element={<About />} />
               <Route path="/blog" element={<Blog />} />
               <Route path="/blog/:id" element={<BlogPost />} />
-              <Route path="/publish-property" element={<PublishProperty />} />
+              <Route path="/publish-property" element={
+                <ProtectedRoute requireAuth>
+                  <PublishProperty />
+                </ProtectedRoute>
+              } />
+              <Route path="/bookings" element={
+                <ProtectedRoute requireAuth>
+                  <Bookings />
+                </ProtectedRoute>
+              } />
               <Route path="/property/:id" element={<Property />} />
               <Route path="/city/:cityId" element={<City />} />
               <Route path="/contact-advisor" element={<ContactAdvisor />} />
