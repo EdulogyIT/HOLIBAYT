@@ -1,11 +1,12 @@
 import { useState } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface LoginModalProps {
   open: boolean;
@@ -15,18 +16,35 @@ interface LoginModalProps {
 const LoginModal = ({ open, onOpenChange }: LoginModalProps) => {
   const { toast } = useToast();
   const { t } = useLanguage();
+  const { login } = useAuth();
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    toast({
-      title: t('loginSuccess'),
-      description: t('loginSuccessDesc'),
-    });
-    onOpenChange(false);
+    setIsLoading(true);
+
+    const success = await login(formData.email, formData.password);
+
+    if (success) {
+      toast({
+        title: t('loginSuccess'),
+        description: t('loginSuccessDesc'),
+      });
+      onOpenChange(false);
+      setFormData({ email: "", password: "" }); // Reset form
+    } else {
+      toast({
+        title: 'Login Failed',
+        description: 'Invalid credentials. Try: admin@holibayt.com / password',
+        variant: 'destructive',
+      });
+    }
+
+    setIsLoading(false);
   };
 
   const handleInputChange = (field: string, value: string) => {
@@ -38,9 +56,9 @@ const LoginModal = ({ open, onOpenChange }: LoginModalProps) => {
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="text-2xl text-center">{t('login')}</DialogTitle>
-          <p className="text-muted-foreground text-center">
+          <DialogDescription className="text-muted-foreground text-center">
             {t('loginDescription')}
-          </p>
+          </DialogDescription>
         </DialogHeader>
         
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -77,8 +95,8 @@ const LoginModal = ({ open, onOpenChange }: LoginModalProps) => {
             </button>
           </div>
 
-          <Button type="submit" className="w-full bg-gradient-primary hover:shadow-elegant">
-            {t('login')}
+          <Button type="submit" className="w-full bg-gradient-primary hover:shadow-elegant" disabled={isLoading}>
+            {isLoading ? 'Logging in...' : t('login')}
           </Button>
         </form>
 
@@ -91,6 +109,16 @@ const LoginModal = ({ open, onOpenChange }: LoginModalProps) => {
               {t('createAccount')}
             </button>
           </p>
+          
+          {/* Demo credentials */}
+          <div className="mt-4 p-3 bg-muted rounded-lg text-left">
+            <p className="text-xs font-medium mb-2">Demo Credentials:</p>
+            <div className="text-xs space-y-1 text-muted-foreground">
+              <p>Admin: admin@holibayt.com / password</p>
+              <p>Host: host@holibayt.com / password</p>
+              <p>User: user@holibayt.com / password</p>
+            </div>
+          </div>
         </div>
       </DialogContent>
     </Dialog>
