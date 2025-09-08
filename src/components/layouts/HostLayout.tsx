@@ -1,6 +1,7 @@
 import { ReactNode } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useIsMobile } from '@/hooks/use-mobile';
 import { 
   SidebarProvider, 
   Sidebar, 
@@ -33,6 +34,7 @@ export const HostLayout = ({ children }: HostLayoutProps) => {
   const { user, logout } = useAuth();
   const { t } = useLanguage();
   const navigate = useNavigate();
+  const isMobile = useIsMobile();
 
   const hostMenuItems = [
     { title: 'Reservations', url: '/host', icon: Calendar },
@@ -50,7 +52,11 @@ export const HostLayout = ({ children }: HostLayoutProps) => {
   return (
     <SidebarProvider>
       <div className="min-h-screen flex w-full">
-        <Sidebar className="w-64">
+        <Sidebar 
+          variant={isMobile ? "floating" : "sidebar"}
+          className={isMobile ? "w-64" : "w-64"}
+          collapsible="icon"
+        >
           <SidebarContent>
             {/* Header */}
             <div className="p-6 border-b">
@@ -110,15 +116,15 @@ export const HostLayout = ({ children }: HostLayoutProps) => {
 
         <main className="flex-1">
           {/* Top bar */}
-          <header className="h-16 border-b bg-background flex items-center px-6">
+          <header className="h-16 border-b bg-background flex items-center px-4 md:px-6">
             <SidebarTrigger />
             <div className="ml-4">
-              <h1 className="text-xl font-semibold">Host Dashboard</h1>
+              <h1 className="text-lg md:text-xl font-semibold">Host Dashboard</h1>
             </div>
           </header>
           
           {/* Content */}
-          <div className="p-6">
+          <div className="p-4 md:p-6">
             {children}
           </div>
         </main>
