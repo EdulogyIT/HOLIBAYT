@@ -19,12 +19,24 @@ serve(async (req) => {
       { auth: { persistSession: false } }
     )
 
+    // Check if admin user already exists
+    const { data: existingUser } = await supabaseAdmin.auth.admin.listUsers()
+    const adminExists = existingUser.users.some(user => user.email === 'contact@holibayt.com')
+
+    if (adminExists) {
+      console.log('Admin user already exists')
+      return new Response(
+        JSON.stringify({ message: 'Admin user already exists' }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      )
+    }
+
     // Create the admin user
     const { data: user, error: signUpError } = await supabaseAdmin.auth.admin.createUser({
       email: 'contact@holibayt.com',
       password: 'Holibayt@123',
       user_metadata: {
-        display_name: 'Admin User',
+        display_name: 'Holibayt Admin',
         role: 'admin',
         language: 'en'
       },
