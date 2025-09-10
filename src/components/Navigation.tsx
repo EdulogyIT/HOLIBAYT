@@ -32,9 +32,13 @@ const Navigation = () => {
 
   const handleLogout = async () => {
     console.log('Navigation: Logout clicked');
-    await logout();
-    console.log('Navigation: Navigating to home');
-    navigate('/');
+    try {
+      await logout();
+      console.log('Navigation: Logout completed, navigating to home');
+      navigate('/', { replace: true });
+    } catch (error) {
+      console.error('Navigation: Logout error:', error);
+    }
   };
 
   return (

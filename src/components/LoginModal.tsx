@@ -36,81 +36,85 @@ const LoginModal = ({ open, onOpenChange }: LoginModalProps) => {
     setIsLoading(true);
     console.log('LoginModal: Form submitted, isSignupMode:', isSignupMode);
 
-    if (isSignupMode) {
-      // Validate passwords match
-      if (formData.password !== formData.confirmPassword) {
-        toast({
-          title: 'Password Mismatch',
-          description: 'Passwords do not match. Please try again.',
-          variant: 'destructive',
-        });
-        setIsLoading(false);
-        return;
-      }
+    try {
+      if (isSignupMode) {
+        // Validate passwords match
+        if (formData.password !== formData.confirmPassword) {
+          toast({
+            title: 'Password Mismatch',
+            description: 'Passwords do not match. Please try again.',
+            variant: 'destructive',
+          });
+          return;
+        }
 
-      console.log('LoginModal: Calling signup');
-      const { success, error } = await signup(
-        formData.email, 
-        formData.password, 
-        formData.displayName || formData.email
-      );
-      console.log('LoginModal: Signup result:', { success, error });
+        console.log('LoginModal: Calling signup');
+        const { success, error } = await signup(
+          formData.email, 
+          formData.password, 
+          formData.displayName || formData.email
+        );
+        console.log('LoginModal: Signup result:', { success, error });
 
-      if (success) {
-        toast({
-          title: 'Account Created',
-          description: 'Your account has been created successfully. Please check your email for confirmation.',
-        });
-        onOpenChange(false);
-        resetForm();
+        if (success) {
+          toast({
+            title: 'Account Created',
+            description: 'Your account has been created successfully. Please check your email for confirmation.',
+          });
+          onOpenChange(false);
+          resetForm();
+        } else {
+          toast({
+            title: 'Signup Failed',
+            description: error || 'Failed to create account. Please try again.',
+            variant: 'destructive',
+          });
+        }
       } else {
-        toast({
-          title: 'Signup Failed',
-          description: error || 'Failed to create account. Please try again.',
-          variant: 'destructive',
-        });
-      }
-    } else {
-      console.log('LoginModal: Calling login for:', formData.email);
-      const { success, error } = await login(formData.email, formData.password);
-      console.log('LoginModal: Login result:', { success, error });
+        console.log('LoginModal: Calling login for:', formData.email);
+        const { success, error, user: loggedInUser } = await login(formData.email, formData.password);
+        console.log('LoginModal: Login result:', { success, error, user: !!loggedInUser });
 
-      if (success) {
-        console.log('LoginModal: Login successful, closing modal');
-        
-        toast({
-          title: t('loginSuccess'),
-          description: t('loginSuccessDesc'),
-        });
-        
-        // Check for admin redirect
-        if (formData.email.endsWith('@holibayt.com')) {
-          console.log('LoginModal: Admin email detected, will redirect to admin dashboard');
-          // Close modal first, then redirect
+        if (success && loggedInUser) {
+          console.log('LoginModal: Login successful, determining redirect');
+          
+          toast({
+            title: t('loginSuccess'),
+            description: t('loginSuccessDesc'),
+          });
+          
           onOpenChange(false);
           resetForm();
           
-          // Redirect after a short delay to ensure modal closes and auth state updates
+          // Role-based redirect with delay to allow auth state to update
           setTimeout(() => {
-            console.log('LoginModal: Redirecting to admin dashboard');
-            navigate('/admin');
-          }, 1000);
+            const role = loggedInUser.profile?.role;
+            console.log('LoginModal: User role:', role, 'Redirecting...');
+            
+            if (role === 'admin') {
+              console.log('LoginModal: Redirecting to admin dashboard');
+              navigate('/admin');
+            } else if (role === 'host') {
+              console.log('LoginModal: Redirecting to host dashboard');
+              navigate('/host');
+            } else {
+              console.log('LoginModal: Redirecting to home');
+              navigate('/');
+            }
+          }, 500);
         } else {
-          onOpenChange(false);
-          resetForm();
+          console.log('LoginModal: Login failed:', error);
+          toast({
+            title: 'Login Failed',
+            description: error || 'Invalid credentials. Please check your email and password.',
+            variant: 'destructive',
+          });
         }
-      } else {
-        console.log('LoginModal: Login failed:', error);
-        toast({
-          title: 'Login Failed',
-          description: error || 'Invalid credentials. Please check your email and password.',
-          variant: 'destructive',
-        });
       }
+    } finally {
+      console.log('LoginModal: Setting loading to false');
+      setIsLoading(false);
     }
-
-    console.log('LoginModal: Setting loading to false');
-    setIsLoading(false);
   };
 
   const resetForm = () => {

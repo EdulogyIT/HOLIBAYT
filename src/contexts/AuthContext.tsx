@@ -22,7 +22,7 @@ interface AuthContextType {
   user: AuthUser | null;
   session: Session | null;
   loading: boolean;
-  login: (email: string, password: string) => Promise<{ success: boolean; error?: string }>;
+  login: (email: string, password: string) => Promise<{ success: boolean; error?: string; user?: AuthUser }>;
   signup: (email: string, password: string, displayName?: string, role?: UserRole) => Promise<{ success: boolean; error?: string }>;
   logout: () => Promise<void>;
   assignHostRole: () => Promise<void>;
@@ -72,7 +72,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const login = async (email: string, password: string): Promise<{ success: boolean; error?: string }> => {
+  const login = async (email: string, password: string): Promise<{ success: boolean; error?: string; user?: AuthUser }> => {
     try {
       console.log('Attempting login for:', email);
       const { data, error } = await supabase.auth.signInWithPassword({
@@ -87,7 +87,32 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         return { success: false, error: error.message };
       }
 
-      console.log('Login successful');
+      if (data.user) {
+        // Ensure admin role for @holibayt.com emails
+        if (email.endsWith('@holibayt.com')) {
+          console.log('Admin email detected, ensuring admin role');
+          await supabase
+            .from('user_profiles')
+            .upsert({ 
+              user_id: data.user.id, 
+              role: 'admin',
+              display_name: data.user.email,
+              language: 'en'
+            });
+        }
+
+        // Fetch updated profile
+        const profile = await fetchUserProfile(data.user.id);
+        const authUser = {
+          id: data.user.id,
+          email: data.user.email || '',
+          profile
+        };
+
+        console.log('Login successful, user:', authUser);
+        return { success: true, user: authUser };
+      }
+
       return { success: true };
     } catch (error) {
       console.error('Login exception:', error);
@@ -130,13 +155,17 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const logout = async (): Promise<void> => {
     try {
       console.log('AuthContext: Starting logout process');
-      const { error } = await supabase.auth.signOut();
+      // Clear local state immediately
+      setUser(null);
+      setSession(null);
+      setLoading(false);
+      
+      // Sign out from Supabase
+      const { error } = await supabase.auth.signOut({ scope: 'local' });
       if (error) {
         console.error('AuthContext: Logout error:', error);
       } else {
         console.log('AuthContext: Logout successful');
-        setUser(null);
-        setSession(null);
       }
     } catch (error) {
       console.error('AuthContext: Error signing out:', error);
