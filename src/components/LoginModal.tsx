@@ -78,18 +78,27 @@ const LoginModal = ({ open, onOpenChange }: LoginModalProps) => {
       if (success) {
         console.log('LoginModal: Login successful, closing modal');
         
-        // Check for admin redirect
-        if (formData.email.endsWith('@holibayt.com')) {
-          console.log('LoginModal: Admin email detected, redirecting to admin dashboard');
-          setTimeout(() => navigate('/admin'), 500);
-        }
-        
         toast({
           title: t('loginSuccess'),
           description: t('loginSuccessDesc'),
         });
-        onOpenChange(false);
-        resetForm();
+        
+        // Check for admin redirect
+        if (formData.email.endsWith('@holibayt.com')) {
+          console.log('LoginModal: Admin email detected, will redirect to admin dashboard');
+          // Close modal first, then redirect
+          onOpenChange(false);
+          resetForm();
+          
+          // Redirect after a short delay to ensure modal closes and auth state updates
+          setTimeout(() => {
+            console.log('LoginModal: Redirecting to admin dashboard');
+            navigate('/admin');
+          }, 1000);
+        } else {
+          onOpenChange(false);
+          resetForm();
+        }
       } else {
         console.log('LoginModal: Login failed:', error);
         toast({

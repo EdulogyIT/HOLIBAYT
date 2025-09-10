@@ -30,8 +30,10 @@ const Navigation = () => {
     setCurrentLang(lang);
   };
 
-  const handleLogout = () => {
-    logout();
+  const handleLogout = async () => {
+    console.log('Navigation: Logout clicked');
+    await logout();
+    console.log('Navigation: Navigating to home');
     navigate('/');
   };
 

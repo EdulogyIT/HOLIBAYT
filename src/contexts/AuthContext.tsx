@@ -129,9 +129,17 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const logout = async (): Promise<void> => {
     try {
-      await supabase.auth.signOut();
+      console.log('AuthContext: Starting logout process');
+      const { error } = await supabase.auth.signOut();
+      if (error) {
+        console.error('AuthContext: Logout error:', error);
+      } else {
+        console.log('AuthContext: Logout successful');
+        setUser(null);
+        setSession(null);
+      }
     } catch (error) {
-      console.error('Error signing out:', error);
+      console.error('AuthContext: Error signing out:', error);
     }
   };
 
