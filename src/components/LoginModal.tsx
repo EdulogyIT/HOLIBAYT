@@ -29,6 +29,7 @@ const LoginModal = ({ open, onOpenChange }: LoginModalProps) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
+    console.log('LoginModal: Form submitted, isSignupMode:', isSignupMode);
 
     if (isSignupMode) {
       // Validate passwords match
@@ -42,11 +43,13 @@ const LoginModal = ({ open, onOpenChange }: LoginModalProps) => {
         return;
       }
 
+      console.log('LoginModal: Calling signup');
       const { success, error } = await signup(
         formData.email, 
         formData.password, 
         formData.displayName || formData.email
       );
+      console.log('LoginModal: Signup result:', { success, error });
 
       if (success) {
         toast({
@@ -63,9 +66,12 @@ const LoginModal = ({ open, onOpenChange }: LoginModalProps) => {
         });
       }
     } else {
+      console.log('LoginModal: Calling login for:', formData.email);
       const { success, error } = await login(formData.email, formData.password);
+      console.log('LoginModal: Login result:', { success, error });
 
       if (success) {
+        console.log('LoginModal: Login successful, closing modal');
         toast({
           title: t('loginSuccess'),
           description: t('loginSuccessDesc'),
@@ -73,6 +79,7 @@ const LoginModal = ({ open, onOpenChange }: LoginModalProps) => {
         onOpenChange(false);
         resetForm();
       } else {
+        console.log('LoginModal: Login failed:', error);
         toast({
           title: 'Login Failed',
           description: error || 'Invalid credentials. Please check your email and password.',
@@ -81,6 +88,7 @@ const LoginModal = ({ open, onOpenChange }: LoginModalProps) => {
       }
     }
 
+    console.log('LoginModal: Setting loading to false');
     setIsLoading(false);
   };
 
