@@ -110,7 +110,7 @@ export const AdminLayout = ({ children }: AdminLayoutProps) => {
                 </Button>
               </div>
               <div className="mt-2 text-xs text-muted-foreground">
-                Logged in as {user?.name}
+                Logged in as {user?.profile?.display_name || user?.email}
               </div>
             </div>
           </SidebarContent>

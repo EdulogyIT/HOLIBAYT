@@ -121,7 +121,7 @@ const Navigation = () => {
                   <DropdownMenuTrigger asChild>
                     <Button variant="ghost" className="font-inter font-medium">
                       <User className="h-4 w-4 mr-2" />
-                      {user?.name}
+                      {user?.profile?.display_name || user?.email}
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
@@ -281,7 +281,7 @@ const Navigation = () => {
                       setIsMenuOpen(false);
                     }}>
                       <LogOut className="h-4 w-4 mr-2" />
-                      Logout ({user?.name})
+                      Logout ({user?.profile?.display_name || user?.email})
                     </Button>
                   </>
                 )}

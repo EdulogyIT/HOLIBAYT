@@ -27,7 +27,7 @@ const LoginModal = ({ open, onOpenChange }: LoginModalProps) => {
     e.preventDefault();
     setIsLoading(true);
 
-    const success = await login(formData.email, formData.password);
+    const { success, error } = await login(formData.email, formData.password);
 
     if (success) {
       toast({
@@ -39,7 +39,7 @@ const LoginModal = ({ open, onOpenChange }: LoginModalProps) => {
     } else {
       toast({
         title: 'Login Failed',
-        description: 'Invalid credentials. Try: admin@holibayt.com / password',
+        description: error || 'Invalid credentials. Try: contact@holibayt.com / Holibayt@123',
         variant: 'destructive',
       });
     }
@@ -114,9 +114,7 @@ const LoginModal = ({ open, onOpenChange }: LoginModalProps) => {
           <div className="mt-4 p-3 bg-muted rounded-lg text-left">
             <p className="text-xs font-medium mb-2">Demo Credentials:</p>
             <div className="text-xs space-y-1 text-muted-foreground">
-              <p>Admin: admin@holibayt.com / password</p>
-              <p>Host: host@holibayt.com / password</p>
-              <p>User: user@holibayt.com / password</p>
+              <p>Admin: contact@holibayt.com / Holibayt@123</p>
             </div>
           </div>
         </div>
