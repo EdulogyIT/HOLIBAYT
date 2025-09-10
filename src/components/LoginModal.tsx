@@ -31,15 +31,6 @@ const LoginModal = ({ open, onOpenChange }: LoginModalProps) => {
 
   console.log('LoginModal: Current formData:', formData);
 
-  // Redirect admin users after successful login
-  useEffect(() => {
-    if (user && user.profile?.role === 'admin') {
-      console.log('LoginModal: Admin user detected, redirecting to admin dashboard');
-      navigate('/admin');
-      onOpenChange(false);
-    }
-  }, [user, navigate, onOpenChange]);
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
@@ -86,6 +77,13 @@ const LoginModal = ({ open, onOpenChange }: LoginModalProps) => {
 
       if (success) {
         console.log('LoginModal: Login successful, closing modal');
+        
+        // Check for admin redirect
+        if (formData.email.endsWith('@holibayt.com')) {
+          console.log('LoginModal: Admin email detected, redirecting to admin dashboard');
+          setTimeout(() => navigate('/admin'), 500);
+        }
+        
         toast({
           title: t('loginSuccess'),
           description: t('loginSuccessDesc'),
