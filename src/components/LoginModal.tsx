@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -17,7 +18,8 @@ const LoginModal = ({ open, onOpenChange }: LoginModalProps) => {
   console.log('LoginModal: Component rendered, open:', open);
   const { toast } = useToast();
   const { t } = useLanguage();
-  const { login, signup } = useAuth();
+  const { login, signup, user } = useAuth();
+  const navigate = useNavigate();
   const [isSignupMode, setIsSignupMode] = useState(false);
   const [formData, setFormData] = useState({
     email: "",
@@ -28,6 +30,15 @@ const LoginModal = ({ open, onOpenChange }: LoginModalProps) => {
   const [isLoading, setIsLoading] = useState(false);
 
   console.log('LoginModal: Current formData:', formData);
+
+  // Redirect admin users after successful login
+  useEffect(() => {
+    if (user && user.profile?.role === 'admin') {
+      console.log('LoginModal: Admin user detected, redirecting to admin dashboard');
+      navigate('/admin');
+      onOpenChange(false);
+    }
+  }, [user, navigate, onOpenChange]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
