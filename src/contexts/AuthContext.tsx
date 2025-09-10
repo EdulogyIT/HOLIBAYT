@@ -171,11 +171,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
         console.log('Auth state change:', event, !!session);
+        console.log('Session user:', session?.user?.id, session?.user?.email);
         setSession(session);
         
         if (session?.user) {
-          console.log('User found in session, fetching profile');
+          console.log('User found in session, fetching profile for:', session.user.id);
           const profile = await fetchUserProfile(session.user.id);
+          console.log('Profile fetched:', profile);
           const authUser = {
             id: session.user.id,
             email: session.user.email || '',

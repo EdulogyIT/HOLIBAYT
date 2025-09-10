@@ -14,6 +14,7 @@ interface LoginModalProps {
 }
 
 const LoginModal = ({ open, onOpenChange }: LoginModalProps) => {
+  console.log('LoginModal: Component rendered, open:', open);
   const { toast } = useToast();
   const { t } = useLanguage();
   const { login, signup } = useAuth();
@@ -25,6 +26,8 @@ const LoginModal = ({ open, onOpenChange }: LoginModalProps) => {
     displayName: "",
   });
   const [isLoading, setIsLoading] = useState(false);
+
+  console.log('LoginModal: Current formData:', formData);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
