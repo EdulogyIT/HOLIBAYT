@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -17,15 +16,10 @@ interface LoginModalProps {
 const LoginModal = ({ open, onOpenChange }: LoginModalProps) => {
   const { toast } = useToast();
   const { t } = useLanguage();
-  const { login, signup } = useAuth();
-  const navigate = useNavigate();
-
-  const [isSignupMode, setIsSignupMode] = useState(false);
+  const { login } = useAuth();
   const [formData, setFormData] = useState({
     email: "",
     password: "",
-    confirmPassword: "",
-    displayName: "",
   });
   const [isLoading, setIsLoading] = useState(false);
 
@@ -33,123 +27,55 @@ const LoginModal = ({ open, onOpenChange }: LoginModalProps) => {
     e.preventDefault();
     setIsLoading(true);
 
-    try {
-      if (isSignupMode) {
-        if (formData.password !== formData.confirmPassword) {
-          toast({
-            title: "Password Mismatch",
-            description: "Passwords do not match. Please try again.",
-            variant: "destructive",
-          });
-          return;
-        }
+    const success = await login(formData.email, formData.password);
 
-        const { success, error } = await signup(
-          formData.email,
-          formData.password,
-          formData.displayName || formData.email
-        );
-
-        if (success) {
-          toast({
-            title: "Account Created",
-            description: "Your account has been created successfully. Please check your email for confirmation.",
-          });
-          onOpenChange(false);
-          resetForm();
-        } else {
-          toast({
-            title: "Signup Failed",
-            description: error || "Failed to create account. Please try again.",
-            variant: "destructive",
-          });
-        }
-      } else {
-        const { success, error, user: loggedInUser } = await login(
-          formData.email,
-          formData.password
-        );
-
-        if (success && loggedInUser) {
-          toast({ title: t("loginSuccess"), description: t("loginSuccessDesc") });
-
-          const role = loggedInUser.profile?.role;
-          if (role === "admin") {
-            navigate("/admin", { replace: true });
-          } else if (role === "host") {
-            navigate("/host", { replace: true });
-          } else {
-            navigate("/", { replace: true });
-          }
-
-          onOpenChange(false);
-          resetForm();
-        } else {
-          toast({
-            title: "Login Failed",
-            description: error || "Invalid credentials. Please check your email and password.",
-            variant: "destructive",
-          });
-        }
-      }
-    } finally {
-      setIsLoading(false);
+    if (success) {
+      toast({
+        title: t('loginSuccess'),
+        description: t('loginSuccessDesc'),
+      });
+      onOpenChange(false);
+      setFormData({ email: "", password: "" }); // Reset form
+    } else {
+      toast({
+        title: 'Login Failed',
+        description: 'Invalid credentials. Try: admin@holibayt.com / password',
+        variant: 'destructive',
+      });
     }
-  };
 
-  const resetForm = () => {
-    setFormData({ email: "", password: "", confirmPassword: "", displayName: "" });
-  };
-
-  const toggleMode = () => {
-    setIsSignupMode(!isSignupMode);
-    resetForm();
+    setIsLoading(false);
   };
 
   const handleInputChange = (field: string, value: string) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
+    setFormData(prev => ({ ...prev, [field]: value }));
   };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle className="text-2xl text-center">
-            {isSignupMode ? "Create Account" : t("login")}
-          </DialogTitle>
+          <DialogTitle className="text-2xl text-center">{t('login')}</DialogTitle>
           <DialogDescription className="text-muted-foreground text-center">
-            {isSignupMode ? "Join Holibayt to start your real estate journey" : t("loginDescription")}
+            {t('loginDescription')}
           </DialogDescription>
         </DialogHeader>
-
+        
         <form onSubmit={handleSubmit} className="space-y-4">
-          {isSignupMode && (
-            <div className="space-y-2">
-              <Label htmlFor="displayName">Full Name</Label>
-              <Input
-                id="displayName"
-                type="text"
-                placeholder="Enter your full name"
-                value={formData.displayName}
-                onChange={(e) => handleInputChange("displayName", e.target.value)}
-              />
-            </div>
-          )}
-
           <div className="space-y-2">
-            <Label htmlFor="email">{t("email")}</Label>
+            <Label htmlFor="email">{t('email')}</Label>
             <Input
               id="email"
               type="email"
-              placeholder={t("emailPlaceholder")}
+              placeholder={t('emailPlaceholder')}
               value={formData.email}
               onChange={(e) => handleInputChange("email", e.target.value)}
               required
             />
           </div>
-
+          
           <div className="space-y-2">
-            <Label htmlFor="password">{t("password")}</Label>
+            <Label htmlFor="password">{t('password')}</Label>
             <Input
               id="password"
               type="password"
@@ -157,35 +83,20 @@ const LoginModal = ({ open, onOpenChange }: LoginModalProps) => {
               value={formData.password}
               onChange={(e) => handleInputChange("password", e.target.value)}
               required
-              minLength={6}
             />
           </div>
 
-          {isSignupMode && (
-            <div className="space-y-2">
-              <Label htmlFor="confirmPassword">Confirm Password</Label>
-              <Input
-                id="confirmPassword"
-                type="password"
-                placeholder="••••••••"
-                value={formData.confirmPassword}
-                onChange={(e) => handleInputChange("confirmPassword", e.target.value)}
-                required
-                minLength={6}
-              />
-            </div>
-          )}
-
-          {!isSignupMode && (
-            <div className="flex items-center justify-between">
-              <button type="button" className="text-sm text-primary hover:underline">
-                {t("forgotPassword")}
-              </button>
-            </div>
-          )}
+          <div className="flex items-center justify-between">
+            <button 
+              type="button"
+              className="text-sm text-primary hover:underline"
+            >
+              {t('forgotPassword')}
+            </button>
+          </div>
 
           <Button type="submit" className="w-full bg-gradient-primary hover:shadow-elegant" disabled={isLoading}>
-            {isLoading ? (isSignupMode ? "Creating Account..." : "Logging in...") : (isSignupMode ? "Create Account" : t("login"))}
+            {isLoading ? 'Logging in...' : t('login')}
           </Button>
         </form>
 
@@ -193,11 +104,21 @@ const LoginModal = ({ open, onOpenChange }: LoginModalProps) => {
 
         <div className="text-center">
           <p className="text-sm text-muted-foreground">
-            {isSignupMode ? "Already have an account?" : t("noAccount")}{" "}
-            <button type="button" onClick={toggleMode} className="text-primary hover:underline">
-              {isSignupMode ? "Sign In" : t("createAccount")}
+            {t('noAccount')}{" "}
+            <button className="text-primary hover:underline">
+              {t('createAccount')}
             </button>
           </p>
+          
+          {/* Demo credentials */}
+          <div className="mt-4 p-3 bg-muted rounded-lg text-left">
+            <p className="text-xs font-medium mb-2">Demo Credentials:</p>
+            <div className="text-xs space-y-1 text-muted-foreground">
+              <p>Admin: admin@holibayt.com / password</p>
+              <p>Host: host@holibayt.com / password</p>
+              <p>User: user@holibayt.com / password</p>
+            </div>
+          </div>
         </div>
       </DialogContent>
     </Dialog>
