@@ -189,8 +189,7 @@ const Navigation = () => {
               </Link>
               <Link to="/short-stay" className="text-foreground hover:text-primary transition-colors font-inter font-medium" onClick={() => setIsMenuOpen(false)}>
                 {tt('shortStay', 'Short Stay')}
-              </Link}
-              >
+              </Link>
               <Link to="/about" className="text-foreground hover:text-primary transition-colors font-inter font-medium" onClick={() => setIsMenuOpen(false)}>
                 {tt('about', 'About')}
               </Link>
