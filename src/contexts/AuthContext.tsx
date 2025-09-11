@@ -33,62 +33,81 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (context === undefined) throw new Error('useAuth must be used within an AuthProvider');
-  return context;
+  const ctx = useContext(AuthContext);
+  if (!ctx) throw new Error('useAuth must be used within an AuthProvider');
+  return ctx;
 };
 
-export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [user, setUser] = useState<AuthUser | null>(null);
-  const [session, setSession] = useState<Session | null>(null);
-  const [loading, setLoading] = useState(true);
+// ---- helpers ----
+function withTimeout<T>(promise: Promise<T>, ms = 12000): Promise<T> {
+  return new Promise((resolve, reject) => {
+    const id = setTimeout(() => reject(new Error('Request timed out')), ms);
+    promise.then(
+      (v) => { clearTimeout(id); resolve(v); },
+      (e) => { clearTimeout(id); reject(e); }
+    );
+  });
+}
 
-  async function fetchUserProfile(userId: string): Promise<UserProfile | null> {
-    const { data, error } = await supabase
-      .from('user_profiles') // <-- make sure table name matches your DB
-      .select('*')
-      .eq('user_id', userId)
-      .maybeSingle();
+async function fetchUserProfile(userId: string): Promise<UserProfile | null> {
+  const { data, error } = await supabase
+    .from('user_profiles')
+    .select('*')
+    .eq('user_id', userId)
+    .maybeSingle();
 
-    if (error) {
-      console.error('fetchUserProfile error:', error);
-      return null;
-    }
-    return (data as UserProfile) || null;
+  if (error) {
+    console.error('fetchUserProfile error:', error);
+    return null;
   }
+  return (data as UserProfile) ?? null;
+}
 
-  async function ensureProfileAndRole(spUser: SupabaseUser): Promise<UserProfile | null> {
-    const email = spUser.email || '';
-    const desiredRole: UserRole = email.endsWith('@holibayt.com') ? 'admin' : 'user';
+async function ensureProfileAndRole(spUser: SupabaseUser): Promise<UserProfile | null> {
+  const email = spUser.email || '';
+  const desiredRole: UserRole = email.endsWith('@holibayt.com') ? 'admin' : 'user';
 
-    // Upsert (create if missing, otherwise keep existing but enforce admin for @holibayt.com)
-    const { error: upsertErr } = await supabase
-      .from('user_profiles')
-      .upsert({
+  const { error: upsertErr } = await supabase
+    .from('user_profiles')
+    .upsert(
+      {
         user_id: spUser.id,
         display_name: email,
         role: desiredRole,
         language: 'en',
-      }, { onConflict: 'user_id' });
+      },
+      { onConflict: 'user_id' }
+    );
 
-    if (upsertErr) {
-      console.error('ensureProfileAndRole upsert error:', upsertErr);
-      return null;
-    }
-
-    return fetchUserProfile(spUser.id);
+  if (upsertErr) {
+    // Don't block login on profile write issues (RLS etc) — just log it.
+    console.warn('ensureProfileAndRole upsert warning:', upsertErr);
   }
+
+  return fetchUserProfile(spUser.id);
+}
+
+// ---- provider ----
+export const AuthProvider = ({ children }: { children: ReactNode }) => {
+  const [user, setUser] = useState<AuthUser | null>(null);
+  const [session, setSession] = useState<Session | null>(null);
+  const [loading, setLoading] = useState(true);
 
   const login = async (
     email: string,
     password: string
   ): Promise<{ success: boolean; error?: string; user?: AuthUser }> => {
     try {
-      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+      // Timeout guard: prevents endless “Logging in…”
+      const { data, error } = await withTimeout(
+        supabase.auth.signInWithPassword({ email, password }),
+        12000
+      );
+
       if (error) return { success: false, error: error.message };
       if (!data.user) return { success: false, error: 'No user returned from Supabase.' };
 
-      // Ensure profile exists and map @holibayt.com to admin
+      // Create/refresh profile, but don’t block login if it fails
       const profile = await ensureProfileAndRole(data.user);
 
       const authUser: AuthUser = {
@@ -97,14 +116,17 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         profile,
       };
 
-      // Set state immediately for snappy UI (auth listener will also fire)
       setSession(data.session ?? null);
       setUser(authUser);
 
       return { success: true, user: authUser };
     } catch (e: any) {
       console.error('login exception:', e);
-      return { success: false, error: 'Unexpected error during login.' };
+      const msg =
+        e?.message === 'Request timed out'
+          ? 'Login timed out. Check network / Supabase URL & key / CORS settings.'
+          : 'Unexpected error during login.';
+      return { success: false, error: msg };
     }
   };
 
@@ -169,12 +191,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const hasRole = (role: UserRole): boolean => {
-    return user?.profile?.role === role;
-    // If admins should also access host pages, use:
-    // return user?.profile?.role === role || (role === 'host' && user?.profile?.role === 'admin');
-  };
-
+  const hasRole = (role: UserRole): boolean => user?.profile?.role === role;
   const isAuthenticated = user !== null && session !== null;
 
   useEffect(() => {
@@ -195,7 +212,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           profile,
         });
       }
-
       setLoading(false);
     })();
 
@@ -241,3 +257,4 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     </AuthContext.Provider>
   );
 };
+
