@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { User, Session } from '@supabase/supabase-js';
+import type { Session, User as SupabaseUser } from '@supabase/supabase-js';
 
 export type UserRole = 'user' | 'host' | 'admin';
 
@@ -34,9 +34,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
-  if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
-  }
+  if (context === undefined) throw new Error('useAuth must be used within an AuthProvider');
   return context;
 };
 
@@ -45,136 +43,114 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
 
-  const fetchUserProfile = async (userId: string): Promise<UserProfile | null> => {
-    try {
-      console.log('Fetching user profile for:', userId);
-      const { data, error } = await supabase
-        .from('user_profiles')
-        .select('*')
-        .eq('user_id', userId)
-        .maybeSingle();
+  async function fetchUserProfile(userId: string): Promise<UserProfile | null> {
+    const { data, error } = await supabase
+      .from('user_profiles') // <-- make sure table name matches your DB
+      .select('*')
+      .eq('user_id', userId)
+      .maybeSingle();
 
-      if (error) {
-        console.error('Error fetching user profile:', error);
-        return null;
-      }
-
-      if (!data) {
-        console.log('No profile found for user:', userId);
-        return null;
-      }
-
-      console.log('User profile fetched:', data);
-      return data as UserProfile;
-    } catch (error) {
-      console.error('Error fetching user profile:', error);
+    if (error) {
+      console.error('fetchUserProfile error:', error);
       return null;
     }
-  };
+    return (data as UserProfile) || null;
+  }
 
-  const login = async (email: string, password: string): Promise<{ success: boolean; error?: string; user?: AuthUser }> => {
+  async function ensureProfileAndRole(spUser: SupabaseUser): Promise<UserProfile | null> {
+    const email = spUser.email || '';
+    const desiredRole: UserRole = email.endsWith('@holibayt.com') ? 'admin' : 'user';
+
+    // Upsert (create if missing, otherwise keep existing but enforce admin for @holibayt.com)
+    const { error: upsertErr } = await supabase
+      .from('user_profiles')
+      .upsert({
+        user_id: spUser.id,
+        display_name: email,
+        role: desiredRole,
+        language: 'en',
+      }, { onConflict: 'user_id' });
+
+    if (upsertErr) {
+      console.error('ensureProfileAndRole upsert error:', upsertErr);
+      return null;
+    }
+
+    return fetchUserProfile(spUser.id);
+  }
+
+  const login = async (
+    email: string,
+    password: string
+  ): Promise<{ success: boolean; error?: string; user?: AuthUser }> => {
     try {
-      console.log('Attempting login for:', email);
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
+      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+      if (error) return { success: false, error: error.message };
+      if (!data.user) return { success: false, error: 'No user returned from Supabase.' };
 
-      console.log('Login response:', { data: !!data, error });
+      // Ensure profile exists and map @holibayt.com to admin
+      const profile = await ensureProfileAndRole(data.user);
 
-      if (error) {
-        console.error('Login error:', error);
-        return { success: false, error: error.message };
-      }
+      const authUser: AuthUser = {
+        id: data.user.id,
+        email: data.user.email || '',
+        profile,
+      };
 
-      if (data.user) {
-        // Ensure admin role for @holibayt.com emails
-        if (email.endsWith('@holibayt.com')) {
-          console.log('Admin email detected, ensuring admin role');
-          await supabase
-            .from('user_profiles')
-            .upsert({ 
-              user_id: data.user.id, 
-              role: 'admin',
-              display_name: data.user.email,
-              language: 'en'
-            });
-        }
+      // Set state immediately for snappy UI (auth listener will also fire)
+      setSession(data.session ?? null);
+      setUser(authUser);
 
-        // Fetch updated profile
-        const profile = await fetchUserProfile(data.user.id);
-        const authUser = {
-          id: data.user.id,
-          email: data.user.email || '',
-          profile
-        };
-
-        console.log('Login successful, user:', authUser);
-        return { success: true, user: authUser };
-      }
-
-      return { success: true };
-    } catch (error) {
-      console.error('Login exception:', error);
-      return { success: false, error: 'An unexpected error occurred' };
+      return { success: true, user: authUser };
+    } catch (e: any) {
+      console.error('login exception:', e);
+      return { success: false, error: 'Unexpected error during login.' };
     }
   };
 
   const signup = async (
-    email: string, 
-    password: string, 
-    displayName?: string, 
+    email: string,
+    password: string,
+    displayName?: string,
     role: UserRole = 'user'
   ): Promise<{ success: boolean; error?: string }> => {
     try {
       const redirectUrl = `${window.location.origin}/`;
-      
-      const { data, error } = await supabase.auth.signUp({
+      const { error } = await supabase.auth.signUp({
         email,
         password,
         options: {
           emailRedirectTo: redirectUrl,
           data: {
             display_name: displayName || email,
-            role: role,
-            language: 'en'
-          }
-        }
+            role,
+            language: 'en',
+          },
+        },
       });
-
-      if (error) {
-        return { success: false, error: error.message };
-      }
-
+      if (error) return { success: false, error: error.message };
       return { success: true };
-    } catch (error) {
-      return { success: false, error: 'An unexpected error occurred' };
+    } catch (e: any) {
+      console.error('signup exception:', e);
+      return { success: false, error: 'Unexpected error during signup.' };
     }
   };
 
   const logout = async (): Promise<void> => {
     try {
-      console.log('AuthContext: Starting logout process');
-      // Clear local state immediately
+      const { error } = await supabase.auth.signOut();
+      if (error) console.error('logout error:', error);
+    } catch (e) {
+      console.error('logout exception:', e);
+    } finally {
       setUser(null);
       setSession(null);
       setLoading(false);
-      
-      // Sign out from Supabase
-      const { error } = await supabase.auth.signOut({ scope: 'local' });
-      if (error) {
-        console.error('AuthContext: Logout error:', error);
-      } else {
-        console.log('AuthContext: Logout successful');
-      }
-    } catch (error) {
-      console.error('AuthContext: Error signing out:', error);
     }
   };
 
   const assignHostRole = async (): Promise<void> => {
     if (!user) return;
-
     try {
       const { error } = await supabase
         .from('user_profiles')
@@ -182,80 +158,69 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         .eq('user_id', user.id);
 
       if (error) {
-        console.error('Error updating user role:', error);
+        console.error('assignHostRole error:', error);
         return;
       }
 
-      // Refresh user profile
       const profile = await fetchUserProfile(user.id);
-      if (profile) {
-        setUser({ ...user, profile });
-      }
-    } catch (error) {
-      console.error('Error updating user role:', error);
+      setUser({ ...user, profile: profile ?? user.profile });
+    } catch (e) {
+      console.error('assignHostRole exception:', e);
     }
   };
 
   const hasRole = (role: UserRole): boolean => {
     return user?.profile?.role === role;
+    // If admins should also access host pages, use:
+    // return user?.profile?.role === role || (role === 'host' && user?.profile?.role === 'admin');
   };
 
   const isAuthenticated = user !== null && session !== null;
 
   useEffect(() => {
-    console.log('Setting up auth state listener');
-    // Set up auth state listener
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
-        console.log('Auth state change:', event, !!session);
-        console.log('Session user:', session?.user?.id, session?.user?.email);
-        setSession(session);
-        
-        if (session?.user) {
-          console.log('User found in session, fetching profile for:', session.user.id);
-          const profile = await fetchUserProfile(session.user.id);
-          console.log('Profile fetched:', profile);
-          const authUser = {
-            id: session.user.id,
-            email: session.user.email || '',
-            profile
-          };
-          console.log('Setting user:', authUser);
-          setUser(authUser);
-        } else {
-          console.log('No user in session, clearing user state');
-          setUser(null);
-        }
-        
-        setLoading(false);
-      }
-    );
+    let mounted = true;
 
-    console.log('Checking for existing session');
-    // Check for existing session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      console.log('Existing session check:', !!session);
-      setSession(session);
-      
-      if (session?.user) {
-        console.log('Found existing session, fetching profile');
-        fetchUserProfile(session.user.id).then(profile => {
-          const authUser = {
-            id: session.user.id,
-            email: session.user.email || '',
-            profile
-          };
-          console.log('Setting user from existing session:', authUser);
-          setUser(authUser);
-          setLoading(false);
+    (async () => {
+      const { data } = await supabase.auth.getSession();
+      if (!mounted) return;
+
+      setSession(data.session ?? null);
+
+      if (data.session?.user) {
+        const profile = await fetchUserProfile(data.session.user.id);
+        if (!mounted) return;
+        setUser({
+          id: data.session.user.id,
+          email: data.session.user.email || '',
+          profile,
+        });
+      }
+
+      setLoading(false);
+    })();
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, sess) => {
+      if (!mounted) return;
+
+      setSession(sess ?? null);
+
+      if (sess?.user) {
+        const profile = await fetchUserProfile(sess.user.id);
+        if (!mounted) return;
+        setUser({
+          id: sess.user.id,
+          email: sess.user.email || '',
+          profile,
         });
       } else {
-        console.log('No existing session');
-        setLoading(false);
+        setUser(null);
       }
     });
 
-    return () => subscription.unsubscribe();
+    return () => {
+      mounted = false;
+      subscription.unsubscribe();
+    };
   }, []);
 
   return (
