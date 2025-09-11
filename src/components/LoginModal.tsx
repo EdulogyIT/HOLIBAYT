@@ -53,31 +53,25 @@ const LoginModal = ({ open, onOpenChange }: LoginModalProps) => {
         if (success) {
           toast({
             title: "Account Created",
-            description:
-              "Your account has been created successfully. Please check your email for confirmation.",
+            description: "Your account has been created successfully. Please check your email for confirmation.",
           });
           onOpenChange(false);
           resetForm();
         } else {
           toast({
             title: "Signup Failed",
-            description:
-              error || "Failed to create account. Please try again.",
+            description: error || "Failed to create account. Please try again.",
             variant: "destructive",
           });
         }
       } else {
-        // LOGIN FLOW — immediate role-based redirect (no setTimeout)
         const { success, error, user: loggedInUser } = await login(
           formData.email,
           formData.password
         );
 
         if (success && loggedInUser) {
-          toast({
-            title: t("loginSuccess"),
-            description: t("loginSuccessDesc"),
-          });
+          toast({ title: t("loginSuccess"), description: t("loginSuccessDesc") });
 
           const role = loggedInUser.profile?.role;
           if (role === "admin") {
@@ -93,9 +87,7 @@ const LoginModal = ({ open, onOpenChange }: LoginModalProps) => {
         } else {
           toast({
             title: "Login Failed",
-            description:
-              error ||
-              "Invalid credentials. Please check your email and password.",
+            description: error || "Invalid credentials. Please check your email and password.",
             variant: "destructive",
           });
         }
@@ -106,12 +98,7 @@ const LoginModal = ({ open, onOpenChange }: LoginModalProps) => {
   };
 
   const resetForm = () => {
-    setFormData({
-      email: "",
-      password: "",
-      confirmPassword: "",
-      displayName: "",
-    });
+    setFormData({ email: "", password: "", confirmPassword: "", displayName: "" });
   };
 
   const toggleMode = () => {
@@ -131,9 +118,7 @@ const LoginModal = ({ open, onOpenChange }: LoginModalProps) => {
             {isSignupMode ? "Create Account" : t("login")}
           </DialogTitle>
           <DialogDescription className="text-muted-foreground text-center">
-            {isSignupMode
-              ? "Join Holibayt to start your real estate journey"
-              : t("loginDescription")}
+            {isSignupMode ? "Join Holibayt to start your real estate journey" : t("loginDescription")}
           </DialogDescription>
         </DialogHeader>
 
@@ -146,9 +131,7 @@ const LoginModal = ({ open, onOpenChange }: LoginModalProps) => {
                 type="text"
                 placeholder="Enter your full name"
                 value={formData.displayName}
-                onChange={(e) =>
-                  handleInputChange("displayName", e.target.value)
-                }
+                onChange={(e) => handleInputChange("displayName", e.target.value)}
               />
             </div>
           )}
@@ -186,9 +169,7 @@ const LoginModal = ({ open, onOpenChange }: LoginModalProps) => {
                 type="password"
                 placeholder="••••••••"
                 value={formData.confirmPassword}
-                onChange={(e) =>
-                  handleInputChange("confirmPassword", e.target.value)
-                }
+                onChange={(e) => handleInputChange("confirmPassword", e.target.value)}
                 required
                 minLength={6}
               />
@@ -197,27 +178,14 @@ const LoginModal = ({ open, onOpenChange }: LoginModalProps) => {
 
           {!isSignupMode && (
             <div className="flex items-center justify-between">
-              <button
-                type="button"
-                className="text-sm text-primary hover:underline"
-              >
+              <button type="button" className="text-sm text-primary hover:underline">
                 {t("forgotPassword")}
               </button>
             </div>
           )}
 
-          <Button
-            type="submit"
-            className="w-full bg-gradient-primary hover:shadow-elegant"
-            disabled={isLoading}
-          >
-            {isLoading
-              ? isSignupMode
-                ? "Creating Account..."
-                : "Logging in..."
-              : isSignupMode
-              ? "Create Account"
-              : t("login")}
+          <Button type="submit" className="w-full bg-gradient-primary hover:shadow-elegant" disabled={isLoading}>
+            {isLoading ? (isSignupMode ? "Creating Account..." : "Logging in...") : (isSignupMode ? "Create Account" : t("login"))}
           </Button>
         </form>
 
@@ -226,11 +194,7 @@ const LoginModal = ({ open, onOpenChange }: LoginModalProps) => {
         <div className="text-center">
           <p className="text-sm text-muted-foreground">
             {isSignupMode ? "Already have an account?" : t("noAccount")}{" "}
-            <button
-              type="button"
-              onClick={toggleMode}
-              className="text-primary hover:underline"
-            >
+            <button type="button" onClick={toggleMode} className="text-primary hover:underline">
               {isSignupMode ? "Sign In" : t("createAccount")}
             </button>
           </p>
