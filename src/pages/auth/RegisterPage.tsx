@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { Button } from '@/components/ui/button';
@@ -7,35 +7,46 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
-import { Link } from 'react-router-dom';
 
-export default function LoginPage() {
-  const [formData, setFormData] = useState({ email: '', password: '' });
+export default function RegisterPage() {
+  const [formData, setFormData] = useState({ 
+    name: '', 
+    email: '', 
+    password: '',
+    confirmPassword: ''
+  });
   const [isLoading, setIsLoading] = useState(false);
-  const { login } = useAuth();
+  const { register } = useAuth();
   const { t } = useLanguage();
   const navigate = useNavigate();
-  const location = useLocation();
   const { toast } = useToast();
-
-  const from = (location.state as any)?.from?.pathname || '/';
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (formData.password !== formData.confirmPassword) {
+      toast({
+        title: 'Password Mismatch',
+        description: 'Passwords do not match',
+        variant: 'destructive',
+      });
+      return;
+    }
+
     setIsLoading(true);
 
-    const success = await login(formData.email, formData.password);
+    const success = await register(formData.name, formData.email, formData.password);
 
     if (success) {
       toast({
-        title: t('loginSuccess'),
-        description: t('loginSuccessDesc'),
+        title: 'Account Created',
+        description: 'Your account has been created successfully',
       });
-      navigate(from, { replace: true });
+      navigate('/login');
     } else {
       toast({
-        title: 'Login Failed',
-        description: 'Invalid email or password. Try: admin@holibayt.com / password',
+        title: 'Registration Failed',
+        description: 'Email already exists or registration failed',
         variant: 'destructive',
       });
     }
@@ -62,11 +73,23 @@ export default function LoginPage() {
 
         <Card>
           <CardHeader>
-            <CardTitle>{t('login')}</CardTitle>
-            <CardDescription>{t('loginDescription')}</CardDescription>
+            <CardTitle>{t('createAccount')}</CardTitle>
+            <CardDescription>Create your Holibayt account</CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="name">Full Name</Label>
+                <Input
+                  id="name"
+                  type="text"
+                  placeholder="Your full name"
+                  value={formData.name}
+                  onChange={(e) => handleInputChange('name', e.target.value)}
+                  required
+                />
+              </div>
+
               <div className="space-y-2">
                 <Label htmlFor="email">{t('email')}</Label>
                 <Input
@@ -84,29 +107,38 @@ export default function LoginPage() {
                 <Input
                   id="password"
                   type="password"
+                  placeholder="Create a password"
                   value={formData.password}
                   onChange={(e) => handleInputChange('password', e.target.value)}
                   required
                 />
               </div>
 
+              <div className="space-y-2">
+                <Label htmlFor="confirmPassword">Confirm Password</Label>
+                <Input
+                  id="confirmPassword"
+                  type="password"
+                  placeholder="Confirm your password"
+                  value={formData.confirmPassword}
+                  onChange={(e) => handleInputChange('confirmPassword', e.target.value)}
+                  required
+                />
+              </div>
+
               <Button type="submit" className="w-full" disabled={isLoading}>
-                {isLoading ? 'Logging in...' : t('login')}
+                {isLoading ? 'Creating Account...' : t('createAccount')}
               </Button>
 
-              <div className="text-center space-y-2">
-                <Link to="/forgot-password" className="text-sm text-primary hover:underline">
-                  {t('forgotPassword')}
-                </Link>
+              <div className="text-center">
                 <p className="text-sm text-muted-foreground">
-                  {t('noAccount')}{' '}
-                  <Link to="/register" className="text-primary hover:underline">
-                    {t('createAccount')}
+                  Already have an account?{' '}
+                  <Link to="/login" className="text-primary hover:underline">
+                    {t('login')}
                   </Link>
                 </p>
               </div>
             </form>
-
           </CardContent>
         </Card>
       </div>

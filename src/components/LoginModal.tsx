@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -17,6 +18,7 @@ const LoginModal = ({ open, onOpenChange }: LoginModalProps) => {
   const { toast } = useToast();
   const { t } = useLanguage();
   const { login } = useAuth();
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -39,7 +41,7 @@ const LoginModal = ({ open, onOpenChange }: LoginModalProps) => {
     } else {
       toast({
         title: 'Login Failed',
-        description: 'Invalid credentials. Try: admin@holibayt.com / password',
+        description: 'Invalid credentials',
         variant: 'destructive',
       });
     }
@@ -49,6 +51,11 @@ const LoginModal = ({ open, onOpenChange }: LoginModalProps) => {
 
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
+  };
+
+  const handleCreateAccount = () => {
+    onOpenChange(false);
+    navigate('/register');
   };
 
   return (
@@ -105,20 +112,13 @@ const LoginModal = ({ open, onOpenChange }: LoginModalProps) => {
         <div className="text-center">
           <p className="text-sm text-muted-foreground">
             {t('noAccount')}{" "}
-            <button className="text-primary hover:underline">
+            <button 
+              onClick={handleCreateAccount}
+              className="text-primary hover:underline"
+            >
               {t('createAccount')}
             </button>
           </p>
-          
-          {/* Demo credentials */}
-          <div className="mt-4 p-3 bg-muted rounded-lg text-left">
-            <p className="text-xs font-medium mb-2">Demo Credentials:</p>
-            <div className="text-xs space-y-1 text-muted-foreground">
-              <p>Admin: admin@holibayt.com / password</p>
-              <p>Host: host@holibayt.com / password</p>
-              <p>User: user@holibayt.com / password</p>
-            </div>
-          </div>
         </div>
       </DialogContent>
     </Dialog>
