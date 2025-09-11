@@ -36,12 +36,12 @@ export const AdminLayout = ({ children }: AdminLayoutProps) => {
   const navigate = useNavigate();
 
   const adminMenuItems = [
-    { title: 'Dashboard', url: '/admin', icon: LayoutDashboard },
-    { title: 'Bookings', url: '/admin/bookings', icon: Calendar },
-    { title: 'Properties', url: '/admin/properties', icon: Building2 },
-    { title: 'Hosts & Guests', url: '/admin/users', icon: Users },
-    { title: 'Messages', url: '/admin/messages', icon: MessageSquare },
-    { title: 'Settings', url: '/admin/settings', icon: Settings },
+    { title: t('dashboard'), url: '/admin', icon: LayoutDashboard },
+    { title: t('bookings'), url: '/admin/bookings', icon: Calendar },
+    { title: t('properties'), url: '/admin/properties', icon: Building2 },
+    { title: t('hostsAndGuests'), url: '/admin/users', icon: Users },
+    { title: t('messages'), url: '/admin/messages', icon: MessageSquare },
+    { title: t('settings'), url: '/admin/settings', icon: Settings },
   ];
 
   const handleLogout = () => {
@@ -68,7 +68,7 @@ export const AdminLayout = ({ children }: AdminLayoutProps) => {
 
             {/* Navigation */}
             <SidebarGroup>
-              <SidebarGroupLabel>Administration</SidebarGroupLabel>
+              <SidebarGroupLabel>{t('administration')}</SidebarGroupLabel>
               <SidebarGroupContent>
                 <SidebarMenu>
                   {adminMenuItems.map((item) => (
@@ -96,15 +96,15 @@ export const AdminLayout = ({ children }: AdminLayoutProps) => {
               <div className="flex flex-col gap-2">
                 <Button variant="ghost" className="justify-start" onClick={() => navigate('/')}>
                   <Home className="mr-2 h-4 w-4" />
-                  Back to Site
+                  {t('backToSite')}
                 </Button>
                 <Button variant="ghost" className="justify-start" onClick={handleLogout}>
                   <LogOut className="mr-2 h-4 w-4" />
-                  Logout
+                  {t('logout')}
                 </Button>
               </div>
               <div className="mt-2 text-xs text-muted-foreground">
-                Logged in as {user?.name}
+                {t('loggedInAs')} {user?.name}
               </div>
             </div>
           </SidebarContent>
@@ -115,7 +115,7 @@ export const AdminLayout = ({ children }: AdminLayoutProps) => {
           <header className="h-16 border-b bg-background flex items-center px-6">
             <SidebarTrigger />
             <div className="ml-4">
-              <h1 className="text-xl font-semibold">Admin Panel</h1>
+              <h1 className="text-xl font-semibold">{t('adminPanel')}</h1>
             </div>
           </header>
           

@@ -35,11 +35,11 @@ export const HostLayout = ({ children }: HostLayoutProps) => {
   const navigate = useNavigate();
 
   const hostMenuItems = [
-    { title: 'Reservations', url: '/host', icon: Calendar },
-    { title: 'Calendar', url: '/host/calendar', icon: CalendarDays },
-    { title: 'Listings', url: '/host/listings', icon: Building2 },
-    { title: 'Messages', url: '/host/messages', icon: MessageSquare },
-    { title: 'Payouts & Settings', url: '/host/payouts', icon: CreditCard },
+    { title: t('reservations'), url: '/host', icon: Calendar },
+    { title: t('calendar'), url: '/host/calendar', icon: CalendarDays },
+    { title: t('listings'), url: '/host/listings', icon: Building2 },
+    { title: t('messages'), url: '/host/messages', icon: MessageSquare },
+    { title: t('payoutsSettings'), url: '/host/payouts', icon: CreditCard },
   ];
 
   const handleLogout = () => {
@@ -60,13 +60,13 @@ export const HostLayout = ({ children }: HostLayoutProps) => {
                   alt="Holibayt" 
                   className="h-8 w-auto"
                 />
-                <span className="font-semibold text-lg">Host</span>
+                <span className="font-semibold text-lg">{t('host')}</span>
               </div>
             </div>
 
             {/* Navigation */}
             <SidebarGroup>
-              <SidebarGroupLabel>Host Dashboard</SidebarGroupLabel>
+              <SidebarGroupLabel>{t('hostDashboard')}</SidebarGroupLabel>
               <SidebarGroupContent>
                 <SidebarMenu>
                   {hostMenuItems.map((item) => (
@@ -94,15 +94,15 @@ export const HostLayout = ({ children }: HostLayoutProps) => {
               <div className="flex flex-col gap-2">
                 <Button variant="ghost" className="justify-start" onClick={() => navigate('/')}>
                   <Home className="mr-2 h-4 w-4" />
-                  Back to Site
+                  {t('backToSite')}
                 </Button>
                 <Button variant="ghost" className="justify-start" onClick={handleLogout}>
                   <LogOut className="mr-2 h-4 w-4" />
-                  Logout
+                  {t('logout')}
                 </Button>
               </div>
               <div className="mt-2 text-xs text-muted-foreground">
-                Logged in as {user?.name}
+                {t('loggedInAs')} {user?.name}
               </div>
             </div>
           </SidebarContent>
@@ -113,7 +113,7 @@ export const HostLayout = ({ children }: HostLayoutProps) => {
           <header className="h-16 border-b bg-background flex items-center px-6">
             <SidebarTrigger />
             <div className="ml-4">
-              <h1 className="text-xl font-semibold">Host Dashboard</h1>
+              <h1 className="text-xl font-semibold">{t('hostDashboard')}</h1>
             </div>
           </header>
           
