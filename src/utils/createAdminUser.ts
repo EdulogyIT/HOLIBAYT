@@ -17,11 +17,4 @@ export const createAdminUser = async () => {
   }
 };
 
-// Auto-create admin user on app initialization
-createAdminUser().then(result => {
-  if (result.success) {
-    console.log('✅ Admin user setup complete');
-  } else {
-    console.log('ℹ️ Admin user may already exist or creation failed:', result.error);
-  }
-});
+// Note: Call this function manually when needed, don't auto-execute during module loading
