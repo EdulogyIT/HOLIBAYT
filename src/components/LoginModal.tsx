@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -15,11 +15,11 @@ interface LoginModalProps {
 }
 
 const LoginModal = ({ open, onOpenChange }: LoginModalProps) => {
-  console.log('LoginModal: Component rendered, open:', open);
   const { toast } = useToast();
   const { t } = useLanguage();
-  const { login, signup, user } = useAuth();
+  const { login, signup } = useAuth();
   const navigate = useNavigate();
+
   const [isSignupMode, setIsSignupMode] = useState(false);
   const [formData, setFormData] = useState({
     email: "",
@@ -29,96 +29,89 @@ const LoginModal = ({ open, onOpenChange }: LoginModalProps) => {
   });
   const [isLoading, setIsLoading] = useState(false);
 
-  console.log('LoginModal: Current formData:', formData);
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    console.log('LoginModal: Form submitted, isSignupMode:', isSignupMode);
 
     try {
       if (isSignupMode) {
-        // Validate passwords match
         if (formData.password !== formData.confirmPassword) {
           toast({
-            title: 'Password Mismatch',
-            description: 'Passwords do not match. Please try again.',
-            variant: 'destructive',
+            title: "Password Mismatch",
+            description: "Passwords do not match. Please try again.",
+            variant: "destructive",
           });
           return;
         }
 
-        console.log('LoginModal: Calling signup');
         const { success, error } = await signup(
-          formData.email, 
-          formData.password, 
+          formData.email,
+          formData.password,
           formData.displayName || formData.email
         );
-        console.log('LoginModal: Signup result:', { success, error });
 
         if (success) {
           toast({
-            title: 'Account Created',
-            description: 'Your account has been created successfully. Please check your email for confirmation.',
+            title: "Account Created",
+            description:
+              "Your account has been created successfully. Please check your email for confirmation.",
           });
           onOpenChange(false);
           resetForm();
         } else {
           toast({
-            title: 'Signup Failed',
-            description: error || 'Failed to create account. Please try again.',
-            variant: 'destructive',
+            title: "Signup Failed",
+            description:
+              error || "Failed to create account. Please try again.",
+            variant: "destructive",
           });
         }
       } else {
-        console.log('LoginModal: Calling login for:', formData.email);
-        const { success, error, user: loggedInUser } = await login(formData.email, formData.password);
-        console.log('LoginModal: Login result:', { success, error, user: !!loggedInUser });
+        // LOGIN FLOW — immediate role-based redirect (no setTimeout)
+        const { success, error, user: loggedInUser } = await login(
+          formData.email,
+          formData.password
+        );
 
         if (success && loggedInUser) {
-          console.log('LoginModal: Login successful, determining redirect');
-          
           toast({
-            title: t('loginSuccess'),
-            description: t('loginSuccessDesc'),
+            title: t("loginSuccess"),
+            description: t("loginSuccessDesc"),
           });
-          
+
+          const role = loggedInUser.profile?.role;
+          if (role === "admin") {
+            navigate("/admin", { replace: true });
+          } else if (role === "host") {
+            navigate("/host", { replace: true });
+          } else {
+            navigate("/", { replace: true });
+          }
+
           onOpenChange(false);
           resetForm();
-          
-          // Role-based redirect with delay to allow auth state to update
-          setTimeout(() => {
-            const role = loggedInUser.profile?.role;
-            console.log('LoginModal: User role:', role, 'Redirecting...');
-            
-            if (role === 'admin') {
-              console.log('LoginModal: Redirecting to admin dashboard');
-              navigate('/admin');
-            } else if (role === 'host') {
-              console.log('LoginModal: Redirecting to host dashboard');
-              navigate('/host');
-            } else {
-              console.log('LoginModal: Redirecting to home');
-              navigate('/');
-            }
-          }, 500);
         } else {
-          console.log('LoginModal: Login failed:', error);
           toast({
-            title: 'Login Failed',
-            description: error || 'Invalid credentials. Please check your email and password.',
-            variant: 'destructive',
+            title: "Login Failed",
+            description:
+              error ||
+              "Invalid credentials. Please check your email and password.",
+            variant: "destructive",
           });
         }
       }
     } finally {
-      console.log('LoginModal: Setting loading to false');
       setIsLoading(false);
     }
   };
 
   const resetForm = () => {
-    setFormData({ email: "", password: "", confirmPassword: "", displayName: "" });
+    setFormData({
+      email: "",
+      password: "",
+      confirmPassword: "",
+      displayName: "",
+    });
   };
 
   const toggleMode = () => {
@@ -127,7 +120,7 @@ const LoginModal = ({ open, onOpenChange }: LoginModalProps) => {
   };
 
   const handleInputChange = (field: string, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
   return (
@@ -135,16 +128,15 @@ const LoginModal = ({ open, onOpenChange }: LoginModalProps) => {
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="text-2xl text-center">
-            {isSignupMode ? 'Create Account' : t('login')}
+            {isSignupMode ? "Create Account" : t("login")}
           </DialogTitle>
           <DialogDescription className="text-muted-foreground text-center">
-            {isSignupMode 
-              ? 'Join Holibayt to start your real estate journey'
-              : t('loginDescription')
-            }
+            {isSignupMode
+              ? "Join Holibayt to start your real estate journey"
+              : t("loginDescription")}
           </DialogDescription>
         </DialogHeader>
-        
+
         <form onSubmit={handleSubmit} className="space-y-4">
           {isSignupMode && (
             <div className="space-y-2">
@@ -154,25 +146,27 @@ const LoginModal = ({ open, onOpenChange }: LoginModalProps) => {
                 type="text"
                 placeholder="Enter your full name"
                 value={formData.displayName}
-                onChange={(e) => handleInputChange("displayName", e.target.value)}
+                onChange={(e) =>
+                  handleInputChange("displayName", e.target.value)
+                }
               />
             </div>
           )}
 
           <div className="space-y-2">
-            <Label htmlFor="email">{t('email')}</Label>
+            <Label htmlFor="email">{t("email")}</Label>
             <Input
               id="email"
               type="email"
-              placeholder={t('emailPlaceholder')}
+              placeholder={t("emailPlaceholder")}
               value={formData.email}
               onChange={(e) => handleInputChange("email", e.target.value)}
               required
             />
           </div>
-          
+
           <div className="space-y-2">
-            <Label htmlFor="password">{t('password')}</Label>
+            <Label htmlFor="password">{t("password")}</Label>
             <Input
               id="password"
               type="password"
@@ -192,7 +186,9 @@ const LoginModal = ({ open, onOpenChange }: LoginModalProps) => {
                 type="password"
                 placeholder="••••••••"
                 value={formData.confirmPassword}
-                onChange={(e) => handleInputChange("confirmPassword", e.target.value)}
+                onChange={(e) =>
+                  handleInputChange("confirmPassword", e.target.value)
+                }
                 required
                 minLength={6}
               />
@@ -201,20 +197,27 @@ const LoginModal = ({ open, onOpenChange }: LoginModalProps) => {
 
           {!isSignupMode && (
             <div className="flex items-center justify-between">
-              <button 
+              <button
                 type="button"
                 className="text-sm text-primary hover:underline"
               >
-                {t('forgotPassword')}
+                {t("forgotPassword")}
               </button>
             </div>
           )}
 
-          <Button type="submit" className="w-full bg-gradient-primary hover:shadow-elegant" disabled={isLoading}>
-            {isLoading 
-              ? (isSignupMode ? 'Creating Account...' : 'Logging in...') 
-              : (isSignupMode ? 'Create Account' : t('login'))
-            }
+          <Button
+            type="submit"
+            className="w-full bg-gradient-primary hover:shadow-elegant"
+            disabled={isLoading}
+          >
+            {isLoading
+              ? isSignupMode
+                ? "Creating Account..."
+                : "Logging in..."
+              : isSignupMode
+              ? "Create Account"
+              : t("login")}
           </Button>
         </form>
 
@@ -222,13 +225,13 @@ const LoginModal = ({ open, onOpenChange }: LoginModalProps) => {
 
         <div className="text-center">
           <p className="text-sm text-muted-foreground">
-            {isSignupMode ? 'Already have an account?' : t('noAccount')}{" "}
-            <button 
+            {isSignupMode ? "Already have an account?" : t("noAccount")}{" "}
+            <button
               type="button"
               onClick={toggleMode}
               className="text-primary hover:underline"
             >
-              {isSignupMode ? 'Sign In' : t('createAccount')}
+              {isSignupMode ? "Sign In" : t("createAccount")}
             </button>
           </p>
         </div>
