@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Menu, X, Globe, LogOut, Settings, User } from "lucide-react";
+import { Menu, X, Globe, LogOut, Settings, User, Home, Calendar } from "lucide-react";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -12,6 +12,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 const Navigation = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -119,12 +120,30 @@ const Navigation = () => {
 
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" className="font-inter font-medium">
-                      <User className="h-4 w-4 mr-2" />
-                      {user?.name}
+                    <Button variant="ghost" className="flex items-center space-x-2 font-inter font-medium">
+                      <Avatar className="w-8 h-8">
+                        <AvatarFallback>
+                          {user?.name?.split(' ').map(n => n[0]).join('').toUpperCase() || 'U'}
+                        </AvatarFallback>
+                      </Avatar>
+                      <span>{user?.name}</span>
                     </Button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
+                  <DropdownMenuContent align="end" className="w-56">
+                    <DropdownMenuItem onClick={() => navigate('/profile')}>
+                      <User className="h-4 w-4 mr-2" />
+                      {t('myProfile')}
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => navigate('/bookings')}>
+                      <Calendar className="h-4 w-4 mr-2" />
+                      {t('myBookings')}
+                    </DropdownMenuItem>
+                    {hasRole('host') && (
+                      <DropdownMenuItem onClick={() => navigate('/host/publish')}>
+                        <Home className="h-4 w-4 mr-2" />
+                        {t('publishProperty')}
+                      </DropdownMenuItem>
+                    )}
                     {hasRole('admin') && (
                       <DropdownMenuItem onClick={() => navigate('/admin')}>
                         <Settings className="h-4 w-4 mr-2" />
@@ -137,18 +156,10 @@ const Navigation = () => {
                         Host Dashboard
                       </DropdownMenuItem>
                     )}
-                    {hasRole('user') && (
-                      <DropdownMenuItem onClick={() => navigate('/bookings')}>
-                        My Bookings
-                      </DropdownMenuItem>
-                    )}
-                    <DropdownMenuItem onClick={() => navigate('/publish-property')}>
-                      {t('publishProperty')}
-                    </DropdownMenuItem>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem onClick={handleLogout}>
                       <LogOut className="h-4 w-4 mr-2" />
-                      Logout
+                      {t('logout')}
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
@@ -244,6 +255,29 @@ const Navigation = () => {
                         Become a Host
                       </Button>
                     )}
+                    <Button variant="ghost" className="font-inter font-medium justify-start" onClick={() => {
+                      navigate('/profile');
+                      setIsMenuOpen(false);
+                    }}>
+                      <User className="h-4 w-4 mr-2" />
+                      {t('myProfile')}
+                    </Button>
+                    <Button variant="ghost" className="font-inter font-medium justify-start" onClick={() => {
+                      navigate('/bookings');
+                      setIsMenuOpen(false);
+                    }}>
+                      <Calendar className="h-4 w-4 mr-2" />
+                      {t('myBookings')}
+                    </Button>
+                    {hasRole('host') && (
+                      <Button variant="ghost" className="font-inter font-medium justify-start" onClick={() => {
+                        navigate('/host/publish');
+                        setIsMenuOpen(false);
+                      }}>
+                        <Home className="h-4 w-4 mr-2" />
+                        {t('publishProperty')}
+                      </Button>
+                    )}
                     {hasRole('admin') && (
                       <Button variant="ghost" className="font-inter font-medium justify-start" onClick={() => {
                         navigate('/admin');
@@ -262,26 +296,12 @@ const Navigation = () => {
                         Host Dashboard
                       </Button>
                     )}
-                    {hasRole('user') && (
-                      <Button variant="ghost" className="font-inter font-medium justify-start" onClick={() => {
-                        navigate('/bookings');
-                        setIsMenuOpen(false);
-                      }}>
-                        My Bookings
-                      </Button>
-                    )}
-                    <Button variant="ghost" className="font-inter font-medium justify-start" onClick={() => {
-                      navigate('/publish-property');
-                      setIsMenuOpen(false);
-                    }}>
-                      {t('publishProperty')}
-                    </Button>
                     <Button variant="ghost" className="font-inter font-medium justify-start" onClick={() => {
                       handleLogout();
                       setIsMenuOpen(false);
                     }}>
                       <LogOut className="h-4 w-4 mr-2" />
-                      Logout ({user?.name})
+                      {t('logout')} ({user?.name})
                     </Button>
                   </>
                 )}

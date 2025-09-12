@@ -25,6 +25,9 @@ const allTranslations = {
     blog: 'Blog',
     login: 'Se connecter',
     publishProperty: 'Publier une annonce',
+    myProfile: 'Mon profil',
+    myBookings: 'Mes réservations',
+    logout: 'Se déconnecter',
     
     // Hero
     heroTitle: 'Holibayt',
@@ -542,6 +545,9 @@ const allTranslations = {
     blog: 'Blog',
     login: 'Login',
     publishProperty: 'Publish Property',
+    myProfile: 'My Profile',
+    myBookings: 'My Bookings',
+    logout: 'Logout',
     
     // Hero
     heroTitle: 'Holibayt',
@@ -1061,6 +1067,9 @@ const allTranslations = {
     blog: 'المدونة',
     login: 'تسجيل الدخول',
     publishProperty: 'نشر عقار',
+    myProfile: 'ملفي الشخصي',
+    myBookings: 'حجوزاتي',
+    logout: 'تسجيل الخروج',
     
     // Hero
     heroTitle: 'هولي بايت',
