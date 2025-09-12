@@ -101,7 +101,7 @@ const Navigation = () => {
                 <Button variant="ghost" className="font-inter font-medium" onClick={() => setIsLoginModalOpen(true)}>
                   {t('login')}
                 </Button>
-                <Button className="bg-gradient-primary font-inter font-medium hover:shadow-elegant" onClick={() => navigate('/publish-property')}>
+                <Button className="bg-gradient-primary font-inter font-medium hover:shadow-elegant" onClick={() => setIsLoginModalOpen(true)}>
                   {t('publishProperty')}
                 </Button>
               </>
@@ -135,6 +135,11 @@ const Navigation = () => {
                       <DropdownMenuItem onClick={() => navigate('/host')}>
                         <Settings className="h-4 w-4 mr-2" />
                         Host Dashboard
+                      </DropdownMenuItem>
+                    )}
+                    {hasRole('user') && (
+                      <DropdownMenuItem onClick={() => navigate('/bookings')}>
+                        My Bookings
                       </DropdownMenuItem>
                     )}
                     <DropdownMenuItem onClick={() => navigate('/publish-property')}>
@@ -213,7 +218,7 @@ const Navigation = () => {
                     <Button variant="ghost" className="font-inter font-medium justify-start" onClick={() => setIsLoginModalOpen(true)}>
                       {t('login')}
                     </Button>
-                    <Button className="bg-gradient-primary font-inter font-medium hover:shadow-elegant justify-start" onClick={() => navigate('/publish-property')}>
+                    <Button className="bg-gradient-primary font-inter font-medium hover:shadow-elegant justify-start" onClick={() => setIsLoginModalOpen(true)}>
                       {t('publishProperty')}
                     </Button>
                   </>
@@ -237,6 +242,11 @@ const Navigation = () => {
                       <Button variant="ghost" className="font-inter font-medium justify-start" onClick={() => navigate('/host')}>
                         <Settings className="h-4 w-4 mr-2" />
                         Host Dashboard
+                      </Button>
+                    )}
+                    {hasRole('user') && (
+                      <Button variant="ghost" className="font-inter font-medium justify-start" onClick={() => navigate('/bookings')}>
+                        My Bookings
                       </Button>
                     )}
                     <Button variant="ghost" className="font-inter font-medium justify-start" onClick={() => navigate('/publish-property')}>

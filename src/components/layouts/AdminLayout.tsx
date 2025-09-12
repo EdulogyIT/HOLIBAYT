@@ -1,6 +1,7 @@
 import { ReactNode } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useIsMobile } from '@/hooks/use-mobile';
 import { 
   SidebarProvider, 
   Sidebar, 
@@ -34,14 +35,15 @@ export const AdminLayout = ({ children }: AdminLayoutProps) => {
   const { user, logout } = useAuth();
   const { t } = useLanguage();
   const navigate = useNavigate();
+  const isMobile = useIsMobile();
 
   const adminMenuItems = [
-    { title: t('dashboard'), url: '/admin', icon: LayoutDashboard },
-    { title: t('bookings'), url: '/admin/bookings', icon: Calendar },
-    { title: t('properties'), url: '/admin/properties', icon: Building2 },
-    { title: t('hostsAndGuests'), url: '/admin/users', icon: Users },
-    { title: t('messages'), url: '/admin/messages', icon: MessageSquare },
-    { title: t('settings'), url: '/admin/settings', icon: Settings },
+    { title: 'Dashboard', url: '/admin', icon: LayoutDashboard },
+    { title: 'Bookings', url: '/admin/bookings', icon: Calendar },
+    { title: 'Properties', url: '/admin/properties', icon: Building2 },
+    { title: 'Hosts & Guests', url: '/admin/users', icon: Users },
+    { title: 'Messages', url: '/admin/messages', icon: MessageSquare },
+    { title: 'Settings', url: '/admin/settings', icon: Settings },
   ];
 
   const handleLogout = () => {
@@ -52,7 +54,11 @@ export const AdminLayout = ({ children }: AdminLayoutProps) => {
   return (
     <SidebarProvider>
       <div className="min-h-screen flex w-full">
-        <Sidebar className="w-64">
+        <Sidebar 
+          variant={isMobile ? "floating" : "sidebar"}
+          className={isMobile ? "w-64" : "w-64"}
+          collapsible="icon"
+        >
           <SidebarContent>
             {/* Header */}
             <div className="p-6 border-b">
@@ -68,7 +74,7 @@ export const AdminLayout = ({ children }: AdminLayoutProps) => {
 
             {/* Navigation */}
             <SidebarGroup>
-              <SidebarGroupLabel>{t('administration')}</SidebarGroupLabel>
+              <SidebarGroupLabel>Administration</SidebarGroupLabel>
               <SidebarGroupContent>
                 <SidebarMenu>
                   {adminMenuItems.map((item) => (
@@ -96,15 +102,15 @@ export const AdminLayout = ({ children }: AdminLayoutProps) => {
               <div className="flex flex-col gap-2">
                 <Button variant="ghost" className="justify-start" onClick={() => navigate('/')}>
                   <Home className="mr-2 h-4 w-4" />
-                  {t('backToSite')}
+                  Back to Site
                 </Button>
                 <Button variant="ghost" className="justify-start" onClick={handleLogout}>
                   <LogOut className="mr-2 h-4 w-4" />
-                  {t('logout')}
+                  Logout
                 </Button>
               </div>
               <div className="mt-2 text-xs text-muted-foreground">
-                {t('loggedInAs')} {user?.name}
+                Logged in as {user?.name}
               </div>
             </div>
           </SidebarContent>
@@ -112,15 +118,15 @@ export const AdminLayout = ({ children }: AdminLayoutProps) => {
 
         <main className="flex-1">
           {/* Top bar */}
-          <header className="h-16 border-b bg-background flex items-center px-6">
+          <header className="h-16 border-b bg-background flex items-center px-4 md:px-6">
             <SidebarTrigger />
             <div className="ml-4">
-              <h1 className="text-xl font-semibold">{t('adminPanel')}</h1>
+              <h1 className="text-lg md:text-xl font-semibold">Admin Panel</h1>
             </div>
           </header>
           
           {/* Content */}
-          <div className="p-6">
+          <div className="p-4 md:p-6">
             {children}
           </div>
         </main>

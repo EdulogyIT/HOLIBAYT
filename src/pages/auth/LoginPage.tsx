@@ -107,6 +107,15 @@ export default function LoginPage() {
               </div>
             </form>
 
+            {/* Demo credentials */}
+            <div className="mt-6 p-4 bg-muted rounded-lg">
+              <p className="text-sm font-medium mb-2">Demo Credentials:</p>
+              <div className="text-xs space-y-1 text-muted-foreground">
+                <p>Admin: admin@holibayt.com / password</p>
+                <p>Host: host@holibayt.com / password</p>
+                <p>User: user@holibayt.com / password</p>
+              </div>
+            </div>
           </CardContent>
         </Card>
       </div>

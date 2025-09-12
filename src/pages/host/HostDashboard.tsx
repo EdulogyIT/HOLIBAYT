@@ -3,10 +3,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { CalendarDays, MessageSquare, Phone, CheckCircle } from 'lucide-react';
-import { useLanguage } from '@/contexts/LanguageContext';
 
 export default function HostDashboard() {
-  const { t } = useLanguage();
   const todayReservations = [
     {
       id: '1',
@@ -50,16 +48,16 @@ export default function HostDashboard() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold">{t('reservations')}</h1>
+        <h1 className="text-3xl font-bold">Reservations</h1>
         <p className="text-muted-foreground">
-          {t('manageBookingsGuest')}
+          Manage your property bookings and guest communications
         </p>
       </div>
 
       <Tabs defaultValue="today" className="space-y-4">
         <TabsList>
-          <TabsTrigger value="today">{t('today')}</TabsTrigger>
-          <TabsTrigger value="upcoming">{t('upcoming')}</TabsTrigger>
+          <TabsTrigger value="today">Today</TabsTrigger>
+          <TabsTrigger value="upcoming">Upcoming</TabsTrigger>
         </TabsList>
 
         <TabsContent value="today" className="space-y-4">
@@ -67,7 +65,7 @@ export default function HostDashboard() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <CalendarDays className="h-5 w-5" />
-                {t('todayCheckinsCheckouts')}
+                Today's Check-ins & Check-outs
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -78,7 +76,7 @@ export default function HostDashboard() {
                       <div className="space-y-1">
                         <div className="flex items-center gap-2">
                           <Badge variant={reservation.type === 'check-in' ? 'default' : 'secondary'}>
-                            {reservation.type === 'check-in' ? t('checkIn') : t('checkOut')}
+                            {reservation.type === 'check-in' ? 'Check-in' : 'Check-out'}
                           </Badge>
                           <span className="font-medium">{reservation.property}</span>
                         </div>
@@ -89,16 +87,16 @@ export default function HostDashboard() {
                       <div className="flex gap-2">
                         <Button size="sm" variant="outline">
                           <MessageSquare className="h-4 w-4 mr-1" />
-                          {t('sendMessage')}
+                          Message
                         </Button>
                         <Button size="sm" variant="outline">
                           <Phone className="h-4 w-4 mr-1" />
-                          {t('call')}
+                          Call
                         </Button>
                         {reservation.type === 'check-in' && (
                           <Button size="sm">
                             <CheckCircle className="h-4 w-4 mr-1" />
-                            {t('sendInfo')}
+                            Send Info
                           </Button>
                         )}
                       </div>
@@ -108,9 +106,9 @@ export default function HostDashboard() {
               ) : (
                 <div className="text-center py-8">
                   <CalendarDays className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                  <p className="text-muted-foreground">{t('noCheckinsCheckoutsToday')}</p>
+                  <p className="text-muted-foreground">No check-ins or check-outs today</p>
                   <Button className="mt-4" variant="outline">
-                    {t('viewUpcoming')}
+                    View Upcoming
                   </Button>
                 </div>
               )}
@@ -121,7 +119,7 @@ export default function HostDashboard() {
         <TabsContent value="upcoming" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle>{t('next30Days')}</CardTitle>
+              <CardTitle>Next 30 Days</CardTitle>
             </CardHeader>
             <CardContent>
               {upcomingReservations.length > 0 ? (
@@ -131,13 +129,13 @@ export default function HostDashboard() {
                       <div className="space-y-1">
                         <p className="font-medium">{reservation.property}</p>
                         <p className="text-sm text-muted-foreground">
-                          {reservation.guest} • {reservation.dates} • {reservation.nights} {t('nights')}
+                          {reservation.guest} • {reservation.dates} • {reservation.nights} nights
                         </p>
                       </div>
                       <div className="text-right space-y-1">
                         <p className="font-medium">{reservation.amount}</p>
                         <Badge variant={reservation.status === 'confirmed' ? 'default' : 'secondary'}>
-                          {reservation.status === 'confirmed' ? t('confirmed') : t('pending')}
+                          {reservation.status}
                         </Badge>
                       </div>
                     </div>
@@ -146,7 +144,7 @@ export default function HostDashboard() {
               ) : (
                 <div className="text-center py-8">
                   <CalendarDays className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                  <p className="text-muted-foreground">{t('noUpcomingReservations')}</p>
+                  <p className="text-muted-foreground">No upcoming reservations</p>
                 </div>
               )}
             </CardContent>

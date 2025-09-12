@@ -306,14 +306,23 @@ export default function HostOnboarding() {
 
         {/* Navigation */}
         <div className="flex justify-between mt-8">
-          <Button 
-            variant="outline" 
-            onClick={handlePrev}
-            disabled={currentStep === 1}
-          >
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            Previous
-          </Button>
+          {currentStep === 1 ? (
+            <Button 
+              variant="outline" 
+              onClick={() => navigate('/')}
+            >
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              Back to Home
+            </Button>
+          ) : (
+            <Button 
+              variant="outline" 
+              onClick={handlePrev}
+            >
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              Previous
+            </Button>
+          )}
           <Button onClick={handleNext}>
             {currentStep === steps.length ? 'Finish & Publish' : 'Next'}
             {currentStep < steps.length && <ArrowRight className="h-4 w-4 ml-2" />}

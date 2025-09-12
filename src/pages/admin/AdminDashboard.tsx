@@ -1,31 +1,28 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { CalendarDays, Users, Building2, DollarSign } from 'lucide-react';
-import { useLanguage } from '@/contexts/LanguageContext';
 
 export default function AdminDashboard() {
-  const { t } = useLanguage();
-  
   const kpiData = [
     {
-      title: t('newBookings7d'),
+      title: 'New Bookings (7d)',
       value: '24',
       change: '+12%',
       icon: CalendarDays,
     },
     {
-      title: t('upcomingCheckins7d'),
+      title: 'Upcoming Check-ins (7d)',
       value: '18',
       change: '+5%',
       icon: Users,
     },
     {
-      title: t('activeProperties'),
+      title: 'Active Properties',
       value: '142',
       change: '+3%',
       icon: Building2,
     },
     {
-      title: t('estRevenueMonth'),
+      title: 'Est. Revenue (Month)',
       value: 'DA 2,450,000',
       change: '+18%',
       icon: DollarSign,
@@ -35,9 +32,9 @@ export default function AdminDashboard() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold">{t('dashboard')}</h1>
+        <h1 className="text-3xl font-bold">Dashboard</h1>
         <p className="text-muted-foreground">
-          {t('overviewPlatformPerformance')}
+          Overview of your platform performance
         </p>
       </div>
 
@@ -54,7 +51,7 @@ export default function AdminDashboard() {
             <CardContent>
               <div className="text-2xl font-bold">{kpi.value}</div>
               <p className="text-xs text-green-600">
-                {kpi.change} {t('fromLastWeek')}
+                {kpi.change} from last week
               </p>
             </CardContent>
           </Card>
@@ -65,7 +62,7 @@ export default function AdminDashboard() {
       <div className="grid gap-6 md:grid-cols-2">
         <Card>
           <CardHeader>
-            <CardTitle>{t('recentBookings')}</CardTitle>
+            <CardTitle>Recent Bookings</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
@@ -76,7 +73,7 @@ export default function AdminDashboard() {
                 </div>
                 <div className="text-right">
                   <p className="font-medium">DA 45,000</p>
-                  <p className="text-sm text-green-600">{t('confirmed')}</p>
+                  <p className="text-sm text-green-600">Confirmed</p>
                 </div>
               </div>
               <div className="flex items-center justify-between">
@@ -86,7 +83,7 @@ export default function AdminDashboard() {
                 </div>
                 <div className="text-right">
                   <p className="font-medium">DA 28,000</p>
-                  <p className="text-sm text-yellow-600">{t('pending')}</p>
+                  <p className="text-sm text-yellow-600">Pending</p>
                 </div>
               </div>
             </div>
@@ -95,7 +92,7 @@ export default function AdminDashboard() {
 
         <Card>
           <CardHeader>
-            <CardTitle>{t('topPerformingProperties')}</CardTitle>
+            <CardTitle>Top Performing Properties</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
@@ -105,8 +102,8 @@ export default function AdminDashboard() {
                   <p className="text-sm text-muted-foreground">Annaba</p>
                 </div>
                 <div className="text-right">
-                  <p className="font-medium">95% {t('occupancy')}</p>
-                  <p className="text-sm text-muted-foreground">12 {t('bookings')}</p>
+                  <p className="font-medium">95% occupancy</p>
+                  <p className="text-sm text-muted-foreground">12 bookings</p>
                 </div>
               </div>
               <div className="flex items-center justify-between">
@@ -115,8 +112,8 @@ export default function AdminDashboard() {
                   <p className="text-sm text-muted-foreground">Algiers</p>
                 </div>
                 <div className="text-right">
-                  <p className="font-medium">87% {t('occupancy')}</p>
-                  <p className="text-sm text-muted-foreground">9 {t('bookings')}</p>
+                  <p className="font-medium">87% occupancy</p>
+                  <p className="text-sm text-muted-foreground">9 bookings</p>
                 </div>
               </div>
             </div>

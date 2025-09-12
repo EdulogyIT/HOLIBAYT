@@ -1,6 +1,7 @@
 import { ReactNode } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useIsMobile } from '@/hooks/use-mobile';
 import { 
   SidebarProvider, 
   Sidebar, 
@@ -33,13 +34,14 @@ export const HostLayout = ({ children }: HostLayoutProps) => {
   const { user, logout } = useAuth();
   const { t } = useLanguage();
   const navigate = useNavigate();
+  const isMobile = useIsMobile();
 
   const hostMenuItems = [
-    { title: t('reservations'), url: '/host', icon: Calendar },
-    { title: t('calendar'), url: '/host/calendar', icon: CalendarDays },
-    { title: t('listings'), url: '/host/listings', icon: Building2 },
-    { title: t('messages'), url: '/host/messages', icon: MessageSquare },
-    { title: t('payoutsSettings'), url: '/host/payouts', icon: CreditCard },
+    { title: 'Reservations', url: '/host', icon: Calendar },
+    { title: 'Calendar', url: '/host/calendar', icon: CalendarDays },
+    { title: 'Listings', url: '/host/listings', icon: Building2 },
+    { title: 'Messages', url: '/host/messages', icon: MessageSquare },
+    { title: 'Payouts & Settings', url: '/host/payouts', icon: CreditCard },
   ];
 
   const handleLogout = () => {
@@ -50,7 +52,11 @@ export const HostLayout = ({ children }: HostLayoutProps) => {
   return (
     <SidebarProvider>
       <div className="min-h-screen flex w-full">
-        <Sidebar className="w-64">
+        <Sidebar 
+          variant={isMobile ? "floating" : "sidebar"}
+          className={isMobile ? "w-64" : "w-64"}
+          collapsible="icon"
+        >
           <SidebarContent>
             {/* Header */}
             <div className="p-6 border-b">
@@ -60,13 +66,13 @@ export const HostLayout = ({ children }: HostLayoutProps) => {
                   alt="Holibayt" 
                   className="h-8 w-auto"
                 />
-                <span className="font-semibold text-lg">{t('host')}</span>
+                <span className="font-semibold text-lg">Host</span>
               </div>
             </div>
 
             {/* Navigation */}
             <SidebarGroup>
-              <SidebarGroupLabel>{t('hostDashboard')}</SidebarGroupLabel>
+              <SidebarGroupLabel>Host Dashboard</SidebarGroupLabel>
               <SidebarGroupContent>
                 <SidebarMenu>
                   {hostMenuItems.map((item) => (
@@ -94,15 +100,15 @@ export const HostLayout = ({ children }: HostLayoutProps) => {
               <div className="flex flex-col gap-2">
                 <Button variant="ghost" className="justify-start" onClick={() => navigate('/')}>
                   <Home className="mr-2 h-4 w-4" />
-                  {t('backToSite')}
+                  Back to Site
                 </Button>
                 <Button variant="ghost" className="justify-start" onClick={handleLogout}>
                   <LogOut className="mr-2 h-4 w-4" />
-                  {t('logout')}
+                  Logout
                 </Button>
               </div>
               <div className="mt-2 text-xs text-muted-foreground">
-                {t('loggedInAs')} {user?.name}
+                Logged in as {user?.name}
               </div>
             </div>
           </SidebarContent>
@@ -110,15 +116,15 @@ export const HostLayout = ({ children }: HostLayoutProps) => {
 
         <main className="flex-1">
           {/* Top bar */}
-          <header className="h-16 border-b bg-background flex items-center px-6">
+          <header className="h-16 border-b bg-background flex items-center px-4 md:px-6">
             <SidebarTrigger />
             <div className="ml-4">
-              <h1 className="text-xl font-semibold">{t('hostDashboard')}</h1>
+              <h1 className="text-lg md:text-xl font-semibold">Host Dashboard</h1>
             </div>
           </header>
           
           {/* Content */}
-          <div className="p-6">
+          <div className="p-4 md:p-6">
             {children}
           </div>
         </main>
