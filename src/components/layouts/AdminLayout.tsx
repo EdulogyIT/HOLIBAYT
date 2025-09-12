@@ -119,13 +119,6 @@ export const AdminLayout = ({ children }: AdminLayoutProps) => {
                 </DropdownMenuTrigger>
                 <DropdownMenuContent>
                   <DropdownMenuItem asChild>
-                    <NavLink to="/admin/profile">
-                      <User className="mr-2 h-4 w-4" />
-                      My Profile (Admin)
-                    </NavLink>
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem asChild>
                     <NavLink to="/admin">
                       <LayoutDashboard className="mr-2 h-4 w-4" />
                       Admin Console
