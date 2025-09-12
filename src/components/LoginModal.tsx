@@ -7,6 +7,7 @@ import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useAuth } from "@/contexts/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 interface LoginModalProps {
   open: boolean;
@@ -17,6 +18,7 @@ const LoginModal = ({ open, onOpenChange }: LoginModalProps) => {
   const { toast } = useToast();
   const { t } = useLanguage();
   const { login } = useAuth();
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -105,20 +107,17 @@ const LoginModal = ({ open, onOpenChange }: LoginModalProps) => {
         <div className="text-center">
           <p className="text-sm text-muted-foreground">
             {t('noAccount')}{" "}
-            <button className="text-primary hover:underline">
+            <button 
+              className="text-primary hover:underline"
+              onClick={() => {
+                onOpenChange(false);
+                navigate('/register');
+              }}
+            >
               {t('createAccount')}
             </button>
           </p>
           
-          {/* Demo credentials */}
-          <div className="mt-4 p-3 bg-muted rounded-lg text-left">
-            <p className="text-xs font-medium mb-2">Demo Credentials:</p>
-            <div className="text-xs space-y-1 text-muted-foreground">
-              <p>Admin: admin@holibayt.com / password</p>
-              <p>Host: host@holibayt.com / password</p>
-              <p>User: user@holibayt.com / password</p>
-            </div>
-          </div>
         </div>
       </DialogContent>
     </Dialog>

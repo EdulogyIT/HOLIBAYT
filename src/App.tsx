@@ -21,6 +21,7 @@ import Property from "./pages/Property";
 import City from "./pages/City";
 import ContactAdvisor from "./pages/ContactAdvisor";
 import LoginPage from "./pages/auth/LoginPage";
+import RegisterPage from "./pages/auth/RegisterPage";
 import Bookings from "./pages/Bookings";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import HostDashboard from "./pages/host/HostDashboard";
@@ -61,6 +62,7 @@ const App = () => (
               
               {/* Auth routes */}
               <Route path="/login" element={<LoginPage />} />
+              <Route path="/register" element={<RegisterPage />} />
               
               {/* Host onboarding - requires login but not host role */}
               <Route path="/host/onboarding" element={

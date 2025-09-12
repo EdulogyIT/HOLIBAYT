@@ -13,6 +13,7 @@ interface User {
 interface AuthContextType {
   user: User | null;
   login: (email: string, password: string) => Promise<boolean>;
+  register: (name: string, email: string, password: string) => Promise<boolean>;
   logout: () => void;
   assignHostRole: () => void;
   isAuthenticated: boolean;
@@ -54,6 +55,27 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     return false;
   };
 
+  const register = async (name: string, email: string, password: string): Promise<boolean> => {
+    // Mock registration - replace with Supabase later
+    // Check if user already exists
+    const existingUsers = ['admin@holibayt.com', 'host@holibayt.com', 'user@holibayt.com'];
+    if (existingUsers.includes(email)) {
+      return false; // User already exists
+    }
+
+    // Create new user
+    const newUser: User = {
+      id: Date.now().toString(),
+      email,
+      name,
+      role: 'user'
+    };
+
+    setUser(newUser);
+    localStorage.setItem('auth_user', JSON.stringify(newUser));
+    return true;
+  };
+
   const logout = () => {
     setUser(null);
     localStorage.removeItem('auth_user');
@@ -82,6 +104,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     <AuthContext.Provider value={{
       user,
       login,
+      register,
       logout,
       assignHostRole,
       isAuthenticated: !!user,
