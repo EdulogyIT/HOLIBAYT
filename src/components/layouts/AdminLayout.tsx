@@ -42,7 +42,6 @@ export const AdminLayout = ({ children }: AdminLayoutProps) => {
 
   const adminMenuItems = [
     { title: 'Dashboard', url: '/admin', icon: LayoutDashboard },
-    { title: 'Bookings', url: '/admin/bookings', icon: Calendar },
     { title: 'Properties', url: '/admin/properties', icon: Building2 },
     { title: 'Hosts & Guests', url: '/admin/users', icon: Users },
     { title: 'Messages', url: '/admin/messages', icon: MessageSquare },
