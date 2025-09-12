@@ -139,7 +139,7 @@ const Navigation = () => {
                       {t('myBookings')}
                     </DropdownMenuItem>
                     {hasRole('host') && (
-                      <DropdownMenuItem onClick={() => navigate('/host/publish')}>
+                      <DropdownMenuItem onClick={() => navigate('/host/listings')}>
                         <Home className="h-4 w-4 mr-2" />
                         {t('publishProperty')}
                       </DropdownMenuItem>
@@ -269,15 +269,15 @@ const Navigation = () => {
                       <Calendar className="h-4 w-4 mr-2" />
                       {t('myBookings')}
                     </Button>
-                    {hasRole('host') && (
-                      <Button variant="ghost" className="font-inter font-medium justify-start" onClick={() => {
-                        navigate('/host/publish');
-                        setIsMenuOpen(false);
-                      }}>
-                        <Home className="h-4 w-4 mr-2" />
-                        {t('publishProperty')}
-                      </Button>
-                    )}
+                     {hasRole('host') && (
+                       <Button variant="ghost" className="font-inter font-medium justify-start" onClick={() => {
+                         navigate('/host/listings');
+                         setIsMenuOpen(false);
+                       }}>
+                         <Home className="h-4 w-4 mr-2" />
+                         {t('publishProperty')}
+                       </Button>
+                     )}
                     {hasRole('admin') && (
                       <Button variant="ghost" className="font-inter font-medium justify-start" onClick={() => {
                         navigate('/admin');

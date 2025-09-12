@@ -8,6 +8,7 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { AdminLayout } from "@/components/layouts/AdminLayout";
 import { HostLayout } from "@/components/layouts/HostLayout";
+import { ErrorBoundary } from "@/components/ErrorBoundary";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import Buy from "./pages/Buy";
@@ -26,8 +27,11 @@ import Bookings from "./pages/Bookings";
 import Profile from "./pages/Profile";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminProfile from "./pages/admin/AdminProfile";
+import AdminProperties from "./pages/admin/AdminProperties";
+import AdminUsers from "./pages/admin/AdminUsers";
 import HostDashboard from "./pages/host/HostDashboard";
 import HostOnboarding from "./pages/host/HostOnboarding";
+import HostListings from "./pages/host/HostListings";
 
 const queryClient = new QueryClient();
 
@@ -36,10 +40,11 @@ const App = () => (
     <TooltipProvider>
       <AuthProvider>
         <LanguageProvider>
-          <Toaster />
-          <Sonner />
-          <BrowserRouter>
-            <Routes>
+          <ErrorBoundary>
+            <Toaster />
+            <Sonner />
+            <BrowserRouter>
+              <Routes>
               {/* Public routes */}
               <Route path="/" element={<Index />} />
               <Route path="/buy" element={<Buy />} />
@@ -85,9 +90,8 @@ const App = () => (
                     <Routes>
                       <Route index element={<AdminDashboard />} />
                       <Route path="profile" element={<AdminProfile />} />
-                      <Route path="bookings" element={<div>Admin Bookings - Coming Soon</div>} />
-                      <Route path="properties" element={<div>Admin Properties - Coming Soon</div>} />
-                      <Route path="users" element={<div>Admin Users - Coming Soon</div>} />
+                      <Route path="properties" element={<AdminProperties />} />
+                      <Route path="users" element={<AdminUsers />} />
                       <Route path="messages" element={<div>Admin Messages - Coming Soon</div>} />
                       <Route path="settings" element={<div>Admin Settings - Coming Soon</div>} />
                     </Routes>
@@ -102,7 +106,7 @@ const App = () => (
                     <Routes>
                       <Route index element={<HostDashboard />} />
                       <Route path="calendar" element={<div>Host Calendar - Coming Soon</div>} />
-                      <Route path="listings" element={<div>Host Listings - Coming Soon</div>} />
+                      <Route path="listings" element={<HostListings />} />
                       <Route path="messages" element={<div>Host Messages - Coming Soon</div>} />
                       <Route path="payouts" element={<div>Host Payouts - Coming Soon</div>} />
                     </Routes>
@@ -112,8 +116,9 @@ const App = () => (
               
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
-            </Routes>
-          </BrowserRouter>
+              </Routes>
+            </BrowserRouter>
+          </ErrorBoundary>
         </LanguageProvider>
       </AuthProvider>
     </TooltipProvider>
