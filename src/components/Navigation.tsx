@@ -172,24 +172,24 @@ const Navigation = () => {
         {isMenuOpen && (
           <div className="md:hidden py-4 border-t border-border">
             <div className="flex flex-col space-y-4">
-              <Link to="/" className="text-foreground hover:text-primary transition-colors font-inter font-medium">
-                {t('home')}
-              </Link>
-              <Link to="/buy" className="text-foreground hover:text-primary transition-colors font-inter font-medium">
-                {t('buy')}
-              </Link>
-              <Link to="/rent" className="text-foreground hover:text-primary transition-colors font-inter font-medium">
-                {t('rent')}
-              </Link>
-              <Link to="/short-stay" className="text-foreground hover:text-primary transition-colors font-inter font-medium">
-                {t('shortStay')}
-              </Link>
-              <Link to="/about" className="text-foreground hover:text-primary transition-colors font-inter font-medium">
-                {t('about')}
-              </Link>
-              <Link to="/blog" className="text-foreground hover:text-primary transition-colors font-inter font-medium">
-                {t('blog')}
-              </Link>
+                  <Link to="/" className="text-foreground hover:text-primary transition-colors font-inter font-medium" onClick={() => setIsMenuOpen(false)}>
+                    {t('home')}
+                  </Link>
+                  <Link to="/buy" className="text-foreground hover:text-primary transition-colors font-inter font-medium" onClick={() => setIsMenuOpen(false)}>
+                    {t('buy')}
+                  </Link>
+                  <Link to="/rent" className="text-foreground hover:text-primary transition-colors font-inter font-medium" onClick={() => setIsMenuOpen(false)}>
+                    {t('rent')}
+                  </Link>
+                  <Link to="/short-stay" className="text-foreground hover:text-primary transition-colors font-inter font-medium" onClick={() => setIsMenuOpen(false)}>
+                    {t('shortStay')}
+                  </Link>
+                  <Link to="/about" className="text-foreground hover:text-primary transition-colors font-inter font-medium" onClick={() => setIsMenuOpen(false)}>
+                    {t('about')}
+                  </Link>
+                  <Link to="/blog" className="text-foreground hover:text-primary transition-colors font-inter font-medium" onClick={() => setIsMenuOpen(false)}>
+                    {t('blog')}
+                  </Link>
               <div className="flex flex-col space-y-2 pt-4 border-t border-border">
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
@@ -202,7 +202,10 @@ const Navigation = () => {
                     {languages.map((lang) => (
                       <DropdownMenuItem 
                         key={lang.code}
-                        onClick={() => handleLanguageChange(lang.code as any)}
+                        onClick={() => {
+                          handleLanguageChange(lang.code as any);
+                          setIsMenuOpen(false);
+                        }}
                         className="flex items-center space-x-2"
                       >
                         <span>{lang.flag}</span>
@@ -215,10 +218,16 @@ const Navigation = () => {
 
                 {!isAuthenticated ? (
                   <>
-                    <Button variant="ghost" className="font-inter font-medium justify-start" onClick={() => setIsLoginModalOpen(true)}>
+                    <Button variant="ghost" className="font-inter font-medium justify-start" onClick={() => {
+                      setIsLoginModalOpen(true);
+                      setIsMenuOpen(false);
+                    }}>
                       {t('login')}
                     </Button>
-                    <Button className="bg-gradient-primary font-inter font-medium hover:shadow-elegant justify-start" onClick={() => setIsLoginModalOpen(true)}>
+                    <Button className="bg-gradient-primary font-inter font-medium hover:shadow-elegant justify-start" onClick={() => {
+                      setIsLoginModalOpen(true);
+                      setIsMenuOpen(false);
+                    }}>
                       {t('publishProperty')}
                     </Button>
                   </>
@@ -227,32 +236,50 @@ const Navigation = () => {
                     {!hasRole('host') && !hasRole('admin') && (
                       <Button 
                         className="bg-gradient-primary font-inter font-medium hover:shadow-elegant justify-start"
-                        onClick={() => navigate('/host/onboarding')}
+                        onClick={() => {
+                          navigate('/host/onboarding');
+                          setIsMenuOpen(false);
+                        }}
                       >
                         Become a Host
                       </Button>
                     )}
                     {hasRole('admin') && (
-                      <Button variant="ghost" className="font-inter font-medium justify-start" onClick={() => navigate('/admin')}>
+                      <Button variant="ghost" className="font-inter font-medium justify-start" onClick={() => {
+                        navigate('/admin');
+                        setIsMenuOpen(false);
+                      }}>
                         <Settings className="h-4 w-4 mr-2" />
                         Admin Dashboard
                       </Button>
                     )}
                     {hasRole('host') && (
-                      <Button variant="ghost" className="font-inter font-medium justify-start" onClick={() => navigate('/host')}>
+                      <Button variant="ghost" className="font-inter font-medium justify-start" onClick={() => {
+                        navigate('/host');
+                        setIsMenuOpen(false);
+                      }}>
                         <Settings className="h-4 w-4 mr-2" />
                         Host Dashboard
                       </Button>
                     )}
                     {hasRole('user') && (
-                      <Button variant="ghost" className="font-inter font-medium justify-start" onClick={() => navigate('/bookings')}>
+                      <Button variant="ghost" className="font-inter font-medium justify-start" onClick={() => {
+                        navigate('/bookings');
+                        setIsMenuOpen(false);
+                      }}>
                         My Bookings
                       </Button>
                     )}
-                    <Button variant="ghost" className="font-inter font-medium justify-start" onClick={() => navigate('/publish-property')}>
+                    <Button variant="ghost" className="font-inter font-medium justify-start" onClick={() => {
+                      navigate('/publish-property');
+                      setIsMenuOpen(false);
+                    }}>
                       {t('publishProperty')}
                     </Button>
-                    <Button variant="ghost" className="font-inter font-medium justify-start" onClick={handleLogout}>
+                    <Button variant="ghost" className="font-inter font-medium justify-start" onClick={() => {
+                      handleLogout();
+                      setIsMenuOpen(false);
+                    }}>
                       <LogOut className="h-4 w-4 mr-2" />
                       Logout ({user?.name})
                     </Button>
