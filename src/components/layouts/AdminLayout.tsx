@@ -14,6 +14,8 @@ import {
   SidebarMenuItem,
   SidebarTrigger
 } from '@/components/ui/sidebar';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { 
   LayoutDashboard, 
   Calendar, 
@@ -22,7 +24,8 @@ import {
   MessageSquare, 
   Settings,
   LogOut,
-  Home
+  Home,
+  User
 } from 'lucide-react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -99,19 +102,48 @@ export const AdminLayout = ({ children }: AdminLayoutProps) => {
 
             {/* User Actions */}
             <div className="mt-auto p-4 border-t">
-              <div className="flex flex-col gap-2">
-                <Button variant="ghost" className="justify-start" onClick={() => navigate('/')}>
-                  <Home className="mr-2 h-4 w-4" />
-                  Back to Site
-                </Button>
-                <Button variant="ghost" className="justify-start" onClick={handleLogout}>
-                  <LogOut className="mr-2 h-4 w-4" />
-                  Logout
-                </Button>
-              </div>
-              <div className="mt-2 text-xs text-muted-foreground">
-                Logged in as {user?.name}
-              </div>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" className="w-full justify-start p-2 h-auto">
+                    <Avatar className="h-8 w-8 mr-3">
+                      <AvatarImage src="" />
+                      <AvatarFallback className="bg-primary text-primary-foreground text-sm">
+                        {user?.name?.slice(0, 2).toUpperCase() || 'AD'}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div className="text-left flex-1">
+                      <div className="text-sm font-medium">{user?.name}</div>
+                      <div className="text-xs text-muted-foreground">{user?.role}</div>
+                    </div>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent>
+                  <DropdownMenuItem asChild>
+                    <NavLink to="/admin/profile">
+                      <User className="mr-2 h-4 w-4" />
+                      My Profile (Admin)
+                    </NavLink>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem asChild>
+                    <NavLink to="/admin">
+                      <LayoutDashboard className="mr-2 h-4 w-4" />
+                      Admin Console
+                    </NavLink>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <NavLink to="/">
+                      <Home className="mr-2 h-4 w-4" />
+                      Back to Site
+                    </NavLink>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={handleLogout} className="text-destructive">
+                    <LogOut className="mr-2 h-4 w-4" />
+                    Logout
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
           </SidebarContent>
         </Sidebar>

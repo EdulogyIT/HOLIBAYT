@@ -25,6 +25,7 @@ import RegisterPage from "./pages/auth/RegisterPage";
 import Bookings from "./pages/Bookings";
 import Profile from "./pages/Profile";
 import AdminDashboard from "./pages/admin/AdminDashboard";
+import AdminProfile from "./pages/admin/AdminProfile";
 import HostDashboard from "./pages/host/HostDashboard";
 import HostOnboarding from "./pages/host/HostOnboarding";
 
@@ -83,6 +84,7 @@ const App = () => (
                   <AdminLayout>
                     <Routes>
                       <Route index element={<AdminDashboard />} />
+                      <Route path="profile" element={<AdminProfile />} />
                       <Route path="bookings" element={<div>Admin Bookings - Coming Soon</div>} />
                       <Route path="properties" element={<div>Admin Properties - Coming Soon</div>} />
                       <Route path="users" element={<div>Admin Users - Coming Soon</div>} />
