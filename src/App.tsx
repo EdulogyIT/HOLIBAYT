@@ -23,6 +23,7 @@ import ContactAdvisor from "./pages/ContactAdvisor";
 import LoginPage from "./pages/auth/LoginPage";
 import RegisterPage from "./pages/auth/RegisterPage";
 import Bookings from "./pages/Bookings";
+import Profile from "./pages/Profile";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import HostDashboard from "./pages/host/HostDashboard";
 import HostOnboarding from "./pages/host/HostOnboarding";
@@ -54,6 +55,11 @@ const App = () => (
               <Route path="/bookings" element={
                 <ProtectedRoute requireAuth>
                   <Bookings />
+                </ProtectedRoute>
+              } />
+              <Route path="/profile" element={
+                <ProtectedRoute requireAuth>
+                  <Profile />
                 </ProtectedRoute>
               } />
               <Route path="/property/:id" element={<Property />} />
