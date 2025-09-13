@@ -53,12 +53,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         return false;
       }
 
-      // Check if email is confirmed
-      if (data.user && !data.user.email_confirmed_at) {
-        console.error('Email not verified');
-        return false;
-      }
-
       return true;
     } catch (error) {
       console.error('Login error:', error);
@@ -122,35 +116,30 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         setSession(session);
         
       if (session?.user) {
-        // Only allow verified users
-        if (session.user.email_confirmed_at) {
-          // Fetch user profile to get role
-          setTimeout(async () => {
-            try {
-              const { data: profile } = await supabase
-                .from('profiles')
-                .select('*')
-                .eq('id', session.user.id)
-                .single();
+        // Fetch user profile to get role
+        setTimeout(async () => {
+          try {
+            const { data: profile } = await supabase
+              .from('profiles')
+              .select('*')
+              .eq('id', session.user.id)
+              .single();
 
-              if (profile) {
-                const userData: User = {
-                  id: session.user.id,
-                  email: profile.email,
-                  name: profile.name || session.user.email?.split('@')[0] || '',
-                  role: profile.role as UserRole,
-                  emailConfirmed: true
-                };
-                setUser(userData);
-              }
-            } catch (error) {
-              console.error('Error fetching profile:', error);
-              setUser(null);
+            if (profile) {
+              const userData: User = {
+                id: session.user.id,
+                email: profile.email,
+                name: profile.name || session.user.email?.split('@')[0] || '',
+                role: profile.role as UserRole,
+                emailConfirmed: !!session.user.email_confirmed_at
+              };
+              setUser(userData);
             }
-          }, 0);
-        } else {
-          setUser(null);
-        }
+          } catch (error) {
+            console.error('Error fetching profile:', error);
+            setUser(null);
+          }
+        }, 0);
       } else {
         setUser(null);
       }
@@ -161,7 +150,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     supabase.auth.getSession().then(async ({ data: { session } }) => {
       setSession(session);
       
-      if (session?.user && session.user.email_confirmed_at) {
+      if (session?.user) {
         try {
           const { data: profile } = await supabase
             .from('profiles')
@@ -175,7 +164,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
               email: profile.email,
               name: profile.name || session.user.email?.split('@')[0] || '',
               role: profile.role as UserRole,
-              emailConfirmed: true
+              emailConfirmed: !!session.user.email_confirmed_at
             };
             setUser(userData);
           }
