@@ -92,7 +92,7 @@ const App = () => (
                       <Route path="profile" element={<AdminProfile />} />
                       <Route path="properties" element={<AdminProperties />} />
                       <Route path="users" element={<AdminUsers />} />
-                      <Route path="messages" element={<div>Admin Messages - Coming Soon</div>} />
+                      <Route path="messages" element={<div className="p-6"><h1 className="text-2xl font-bold mb-4">Messages</h1><p className="text-muted-foreground">Message management system coming soon. You'll be able to view and manage all user communications here.</p></div>} />
                       <Route path="settings" element={<div>Admin Settings - Coming Soon</div>} />
                     </Routes>
                   </AdminLayout>
