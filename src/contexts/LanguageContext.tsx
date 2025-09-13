@@ -1603,12 +1603,8 @@ function detectInitialLang(): Language {
     const up = urlLang.toUpperCase();
     if (up === 'EN' || up === 'FR' || up === 'AR') return up as Language;
   }
-  // 2) localStorage
-  const saved = localStorage.getItem('lang');
-  if (saved === 'EN' || saved === 'FR' || saved === 'AR') return saved as Language;
-  // 3) browser language fallback
-  const nav = (navigator.language || 'en').slice(0, 2).toUpperCase();
-  if (nav === 'FR' || nav === 'AR') return nav as Language;
+  
+  // Default to English for all users
   return 'EN';
 }
 
