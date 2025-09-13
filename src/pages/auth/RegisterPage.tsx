@@ -36,14 +36,22 @@ export default function RegisterPage() {
 
     setIsLoading(true);
 
-    const success = await register(formData.name, formData.email, formData.password);
+    const result = await register(formData.name, formData.email, formData.password);
 
-    if (success) {
-      toast({
-        title: 'Registration Successful',
-        description: 'Welcome to Holibayt! You are now logged in.',
-      });
-      navigate('/');
+    if (result.success) {
+      if (result.needsConfirmation) {
+        toast({
+          title: 'Check Your Email',
+          description: 'Please check your email and click the confirmation link to complete registration.',
+          duration: 6000,
+        });
+      } else {
+        toast({
+          title: 'Registration Successful',
+          description: 'Welcome to Holibayt! You are now logged in.',
+        });
+        navigate('/');
+      }
     } else {
       toast({
         title: 'Registration Failed',

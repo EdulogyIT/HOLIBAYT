@@ -16,7 +16,7 @@ interface User {
 interface AuthContextType {
   user: User | null;
   login: (email: string, password: string) => Promise<boolean>;
-  register: (name: string, email: string, password: string) => Promise<boolean>;
+  register: (name: string, email: string, password: string) => Promise<{ success: boolean; needsConfirmation: boolean }>;
   logout: () => void;
   assignHostRole: () => void;
   isAuthenticated: boolean;
@@ -66,7 +66,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     }
   };
 
-  const register = async (name: string, email: string, password: string): Promise<boolean> => {
+  const register = async (name: string, email: string, password: string): Promise<{ success: boolean; needsConfirmation: boolean }> => {
     try {
       const redirectUrl = `${window.location.origin}/`;
       
@@ -83,13 +83,16 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
       if (error) {
         console.error('Registration error:', error.message);
-        return false;
+        return { success: false, needsConfirmation: false };
       }
 
-      return true;
+      // Check if email confirmation is needed
+      const needsConfirmation = data.user && !data.user.email_confirmed_at;
+      
+      return { success: true, needsConfirmation: !!needsConfirmation };
     } catch (error) {
       console.error('Registration error:', error);
-      return false;
+      return { success: false, needsConfirmation: false };
     }
   };
 
