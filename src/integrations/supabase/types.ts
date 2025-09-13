@@ -41,6 +41,87 @@ export type Database = {
         }
         Relationships: []
       }
+      properties: {
+        Row: {
+          area: string
+          bathrooms: string | null
+          bedrooms: string | null
+          category: string
+          city: string
+          contact_email: string
+          contact_name: string
+          contact_phone: string
+          created_at: string
+          description: string | null
+          district: string | null
+          features: Json | null
+          floor_number: string | null
+          full_address: string | null
+          id: string
+          images: string[] | null
+          location: string
+          price: string
+          price_type: string
+          property_type: string
+          status: string | null
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          area: string
+          bathrooms?: string | null
+          bedrooms?: string | null
+          category: string
+          city: string
+          contact_email: string
+          contact_name: string
+          contact_phone: string
+          created_at?: string
+          description?: string | null
+          district?: string | null
+          features?: Json | null
+          floor_number?: string | null
+          full_address?: string | null
+          id?: string
+          images?: string[] | null
+          location: string
+          price: string
+          price_type: string
+          property_type: string
+          status?: string | null
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          area?: string
+          bathrooms?: string | null
+          bedrooms?: string | null
+          category?: string
+          city?: string
+          contact_email?: string
+          contact_name?: string
+          contact_phone?: string
+          created_at?: string
+          description?: string | null
+          district?: string | null
+          features?: Json | null
+          floor_number?: string | null
+          full_address?: string | null
+          id?: string
+          images?: string[] | null
+          location?: string
+          price?: string
+          price_type?: string
+          property_type?: string
+          status?: string | null
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

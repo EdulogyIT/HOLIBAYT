@@ -51,10 +51,11 @@ interface FormData {
 }
 
 interface PublishPropertyStepsProps {
-  onSubmit: (data: FormData) => void;
+  onSubmit: (data: FormData, images: File[]) => void;
+  isSubmitting?: boolean;
 }
 
-const PublishPropertySteps = ({ onSubmit }: PublishPropertyStepsProps) => {
+const PublishPropertySteps = ({ onSubmit, isSubmitting = false }: PublishPropertyStepsProps) => {
   const { toast } = useToast();
   const { t } = useLanguage();
   const [currentStep, setCurrentStep] = useState(1);
@@ -155,7 +156,7 @@ const PublishPropertySteps = ({ onSubmit }: PublishPropertyStepsProps) => {
 
   const handleSubmit = () => {
     if (isStep4Valid()) {
-      onSubmit(formData);
+      onSubmit(formData, images);
     }
   };
 
@@ -547,9 +548,9 @@ const PublishPropertySteps = ({ onSubmit }: PublishPropertyStepsProps) => {
               type="button" 
               onClick={handleSubmit}
               className="bg-gradient-primary hover:shadow-elegant"
-              disabled={!isStep4Valid()}
+              disabled={!isStep4Valid() || isSubmitting}
             >
-              {t('publishPropertyBtn')}
+              {isSubmitting ? t('publishing') : t('publishPropertyBtn')}
             </Button>
           )}
         </div>

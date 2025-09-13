@@ -4,252 +4,258 @@ import ShortStayHeroSearch from "@/components/ShortStayHeroSearch";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { MapPin, Bed, Bath, Square, Star } from "lucide-react";
+import { MapPin, Bed, Bath, Square, Loader2, Wifi, Car, Waves, Coffee } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useLanguage } from "@/contexts/LanguageContext";
 import PropertyFilters from "@/components/PropertyFilters";
-import shortStay from "@/assets/property-short-stay.jpg";
-import luxuryApartment from "@/assets/property-luxury-apartment.jpg";
-import villaMediterranean from "@/assets/property-villa-mediterranean.jpg";
-import modernApartment from "@/assets/property-modern-apartment.jpg";
-import traditionalHouse from "@/assets/property-traditional-house.jpg";
-import penthouse from "@/assets/property-penthouse.jpg";
-import studio from "@/assets/property-studio.jpg";
-import seasideRental from "@/assets/property-seaside-rental.jpg";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import AIChatBox from "@/components/AIChatBox";
 import { useScrollToTop } from "@/hooks/useScrollToTop";
+import { supabase } from "@/integrations/supabase/client";
+
+interface Property {
+  id: string;
+  title: string;
+  location: string;
+  city: string;
+  price: string;
+  price_type: string;
+  bedrooms?: string;
+  bathrooms?: string;
+  area: string;
+  images: string[];
+  property_type: string;
+  features?: any;
+  description?: string;
+  contact_name: string;
+  contact_phone: string;
+}
 
 const ShortStay = () => {
   const navigate = useNavigate();
   const { t } = useLanguage();
-  const [filteredProperties, setFilteredProperties] = useState<any[]>([]);
+  const [properties, setProperties] = useState<Property[]>([]);
+  const [filteredProperties, setFilteredProperties] = useState<Property[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   
   useScrollToTop();
 
-  const properties = [
-    {
-      id: 5,
-      title: t('studioShortStay'),
-      location: t('algerCentreAlgeria'),
-      price: `8,000 ${t('currencyPerNight')}`,
-      beds: 1,
-      baths: 1,
-      area: "45 m²",
-      image: studio,
-      type: t('propertyStudio'),
-      rating: 4.8
-    },
-    {
-      id: 6,
-      title: t('seaViewApartment'),
-      location: t('tipazaAlgeria'), 
-      price: `12,000 ${t('currencyPerNight')}`,
-      beds: 2,
-      baths: 1,
-      area: "75 m²",
-      image: seasideRental, 
-      type: t('propertyAppartement'),
-      rating: 4.9
-    },
-    {
-      id: 19,
-      title: t('holidayVilla'),
-      location: t('oranAlgeria'),
-      price: `18,000 ${t('currencyPerNight')}`,
-      beds: 4,
-      baths: 3,
-      area: "200 m²",
-      image: villaMediterranean,
-      type: t('propertyVilla'),
-      rating: 4.7
-    },
-    {
-      id: 20,
-      title: t('guestRoom'),
-      location: t('constantineAlgeria'),
-      price: `6,000 ${t('currencyPerNight')}`,
-      beds: 1,
-      baths: 1,
-      area: "25 m²",
-      image: traditionalHouse,
-      type: t('propertyChambre'),
-      rating: 4.5
-    },
-    {
-      id: 21,
-      title: t('modernLoft'),
-      location: t('annabaAlgeria'),
-      price: `14,000 ${t('currencyPerNight')}`,
-      beds: 2,
-      baths: 2,
-      area: "90 m²",
-      image: modernApartment,
-      type: t('propertyLoft'),
-      rating: 4.8
-    },
-    {
-      id: 22,
-      title: t('familySuite'),
-      location: t('tlemcenAlgeria'),
-      price: `16,000 ${t('currencyPerNight')}`,
-      beds: 3,
-      baths: 2,
-      area: "120 m²",
-      image: luxuryApartment,
-      type: t('propertySuite'),
-      rating: 4.6
-    },
-    {
-      id: 23,
-      title: t('penthouseSeaView'),
-      location: t('bejaiaAlgeria'),
-      price: `25,000 ${t('currencyPerNight')}`,
-      beds: 3,
-      baths: 3,
-      area: "150 m²",
-      image: penthouse,
-      type: t('propertyPenthouse'),
-      rating: 4.9
-    },
-    {
-      id: 24,
-      title: t('traditionalHouse'),
-      location: t('setifAlgeria'),
-      price: `10,000 ${t('currencyPerNight')}`,
-      beds: 2,
-      baths: 1,
-      area: "80 m²",
-      image: shortStay,
-      type: t('propertyMaison'),
-      rating: 4.4
-    }
-  ];
+  useEffect(() => {
+    fetchProperties();
+  }, []);
 
-  const handleFilterChange = (filters: any) => {
-    let filtered = [...properties];
-    
-    if (filters.location) {
-      filtered = filtered.filter(p => 
-        p.location.toLowerCase().includes(filters.location.toLowerCase())
-      );
+  const fetchProperties = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('properties')
+        .select('*')
+        .eq('category', 'short-stay')
+        .eq('status', 'active')
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        console.error('Error fetching properties:', error);
+        return;
+      }
+
+      setProperties(data || []);
+      setFilteredProperties(data || []);
+    } catch (error) {
+      console.error('Error fetching properties:', error);
+    } finally {
+      setIsLoading(false);
     }
-    
-    if (filters.propertyType && filters.propertyType !== "all") {
-      filtered = filtered.filter(p => 
-        p.type.toLowerCase() === filters.propertyType.toLowerCase()
-      );
-    }
-    
-    if (filters.bedrooms && filters.bedrooms !== "all") {
-      const minBeds = parseInt(filters.bedrooms);
-      filtered = filtered.filter(p => p.beds >= minBeds);
-    }
-    
-    if (filters.bathrooms && filters.bathrooms !== "all") {
-      const minBaths = parseInt(filters.bathrooms);
-      filtered = filtered.filter(p => p.baths >= minBaths);
-    }
-    
-    if (filters.minArea) {
-      const minArea = parseInt(filters.minArea);
-      filtered = filtered.filter(p => parseInt(p.area) >= minArea);
-    }
-    
-    if (filters.maxArea) {
-      const maxArea = parseInt(filters.maxArea);
-      filtered = filtered.filter(p => parseInt(p.area) <= maxArea);
-    }
-    
-    if (filters.maxPrice && filters.maxPrice[0] > 0) {
-      const maxPrice = filters.maxPrice[0];
-      filtered = filtered.filter(p => {
-        const priceNum = parseInt(p.price.replace(/[^\d]/g, ''));
-        return priceNum <= maxPrice;
-      });
-    }
-    
-    setFilteredProperties(filtered);
   };
 
-  const displayProperties = filteredProperties.length > 0 ? filteredProperties : properties;
+  const formatPrice = (price: string, priceType: string) => {
+    const formattedPrice = `${price} ${t('currencyDA')}`;
+    if (priceType === 'monthly') return `${formattedPrice}/${t('month')}`;
+    if (priceType === 'daily') return `${formattedPrice}/${t('day')}`;
+    if (priceType === 'weekly') return `${formattedPrice}/${t('week')}`;
+    return formattedPrice;
+  };
+
+  const getFeatureIcon = (feature: string) => {
+    switch (feature) {
+      case 'wifi': return <Wifi className="h-4 w-4" />;
+      case 'parking': return <Car className="h-4 w-4" />;
+      case 'swimmingPool': return <Waves className="h-4 w-4" />;
+      default: return <Coffee className="h-4 w-4" />;
+    }
+  };
+
+  const PropertyCard = ({ property }: { property: Property }) => (
+    <Card className="overflow-hidden hover:shadow-lg transition-shadow duration-300 cursor-pointer group">
+      <div className="relative h-48 overflow-hidden">
+        <img 
+          src={property.images[0] || '/placeholder-property.jpg'} 
+          alt={property.title}
+          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+        />
+        <div className="absolute top-3 left-3">
+          <Badge className="bg-primary text-primary-foreground">
+            {t(property.property_type) || property.property_type}
+          </Badge>
+        </div>
+        <div className="absolute top-3 right-3">
+          <Badge variant="secondary" className="bg-background/80 text-foreground">
+            {property.price_type === 'daily' ? t('perNight') : property.price_type === 'weekly' ? t('perWeek') : t('perMonth')}
+          </Badge>
+        </div>
+      </div>
+      <CardHeader className="pb-2">
+        <CardTitle className="text-lg font-semibold text-foreground line-clamp-2">
+          {property.title}
+        </CardTitle>
+        <div className="flex items-center text-muted-foreground">
+          <MapPin className="h-4 w-4 mr-1" />
+          <span className="text-sm">{property.city}, {property.location}</span>
+        </div>
+      </CardHeader>
+      <CardContent className="pt-0">
+        <div className="flex items-center justify-between mb-3">
+          <div className="text-2xl font-bold text-primary">
+            {formatPrice(property.price, property.price_type)}
+          </div>
+        </div>
+        
+        <div className="flex items-center gap-4 text-muted-foreground text-sm mb-4">
+          {property.bedrooms && (
+            <div className="flex items-center">
+              <Bed className="h-4 w-4 mr-1" />
+              <span>{property.bedrooms}</span>
+            </div>
+          )}
+          {property.bathrooms && (
+            <div className="flex items-center">
+              <Bath className="h-4 w-4 mr-1" />
+              <span>{property.bathrooms}</span>
+            </div>
+          )}
+          <div className="flex items-center">
+            <Square className="h-4 w-4 mr-1" />
+            <span>{property.area} m²</span>
+          </div>
+        </div>
+
+        {/* Features */}
+        {property.features && (
+          <div className="flex items-center gap-2 mb-4">
+            {Object.entries(property.features).filter(([_, value]) => value).slice(0, 3).map(([key, _]) => (
+              <div key={key} className="flex items-center text-muted-foreground text-xs">
+                {getFeatureIcon(key)}
+              </div>
+            ))}
+          </div>
+        )}
+        
+        <Button 
+          className="w-full" 
+          onClick={() => navigate(`/property/${property.id}`)}
+        >
+          {t('bookNow')}
+        </Button>
+      </CardContent>
+    </Card>
+  );
 
   return (
     <div className="min-h-screen bg-background">
       <Navigation />
-      <ShortStayHeroSearch />
-      <main className="pt-8">
+      <main className="pt-20">
+        <ShortStayHeroSearch />
+        
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="mb-8">
-            <h1 className="text-4xl font-bold text-foreground mb-4 font-playfair">{t('shortStayTitle')}</h1>
-            <p className="text-lg text-muted-foreground font-inter">{t('shortStayDesc')}</p>
-          </div>
-          
-          <PropertyFilters onFilterChange={handleFilterChange} listingType="shortStay" />
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {displayProperties.map((property) => (
-              <Card 
-                key={property.id} 
-                className="cursor-pointer hover:shadow-lg transition-shadow"
-                onClick={() => navigate(`/property/${property.id}`)}
-              >
-                <div className="aspect-video bg-muted rounded-t-lg overflow-hidden">
-                  <img 
-                    src={property.image} 
-                    alt={property.title}
-                    className="w-full h-full object-cover"
-                  />
+          <div className="flex flex-col lg:flex-row gap-8">
+            {/* Filters Sidebar */}
+            <div className="lg:w-1/4">
+              <PropertyFilters 
+                onFilterChange={(filters) => {
+                  // Apply filters to properties
+                  let filtered = properties;
+                  
+                  if (filters.location) {
+                    filtered = filtered.filter(p => 
+                      p.city.toLowerCase().includes(filters.location.toLowerCase()) ||
+                      p.location.toLowerCase().includes(filters.location.toLowerCase())
+                    );
+                  }
+                  
+                  if (filters.propertyType !== 'all') {
+                    filtered = filtered.filter(p => p.property_type === filters.propertyType);
+                  }
+                  
+                  if (filters.bedrooms !== 'all') {
+                    filtered = filtered.filter(p => p.bedrooms === filters.bedrooms);
+                  }
+                  
+                  if (filters.bathrooms !== 'all') {
+                    filtered = filtered.filter(p => p.bathrooms === filters.bathrooms);
+                  }
+                  
+                  // Price filtering (adjusted for short-stay pricing)
+                  if (filters.minPrice[0] > 0 || filters.maxPrice[0] < 50000) {
+                    filtered = filtered.filter(p => {
+                      const price = parseInt(p.price.replace(/[^\d]/g, ''));
+                      return price >= filters.minPrice[0] && price <= filters.maxPrice[0];
+                    });
+                  }
+                  
+                  // Area filtering
+                  if (filters.minArea || filters.maxArea) {
+                    filtered = filtered.filter(p => {
+                      const area = parseInt(p.area);
+                      const minArea = filters.minArea ? parseInt(filters.minArea) : 0;
+                      const maxArea = filters.maxArea ? parseInt(filters.maxArea) : Infinity;
+                      return area >= minArea && area <= maxArea;
+                    });
+                  }
+                  
+                  setFilteredProperties(filtered);
+                }}
+                listingType="shortStay"
+              />
+            </div>
+            
+            {/* Properties Grid */}
+            <div className="lg:w-3/4">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-2xl font-bold text-foreground font-playfair">
+                  {t('shortStayProperties')}
+                </h2>
+                <div className="text-muted-foreground">
+                  {filteredProperties.length} {t('properties')} {t('found')}
                 </div>
-                <CardHeader>
-                  <div className="flex justify-between items-start">
-                    <CardTitle className="text-xl font-playfair">{property.title}</CardTitle>
-                    <Badge variant="secondary" className="font-inter">{property.type}</Badge>
+              </div>
+              
+              {isLoading ? (
+                <div className="flex items-center justify-center py-12">
+                  <Loader2 className="h-8 w-8 animate-spin" />
+                  <span className="ml-2">{t('loading')}</span>
+                </div>
+              ) : filteredProperties.length === 0 ? (
+                <div className="text-center py-12">
+                  <div className="text-lg font-semibold text-foreground mb-2">
+                    {t('noPropertiesFound')}
                   </div>
-                  <div className="flex items-center text-muted-foreground mb-2">
-                    <MapPin className="w-4 h-4 mr-1" />
-                    <span className="text-sm font-inter">{property.location}</span>
+                  <div className="text-muted-foreground">
+                    {t('adjustFiltersOrCheckLater')}
                   </div>
-                  <div className="flex items-center">
-                    <Star className="w-4 h-4 text-yellow-500 fill-current mr-1" />
-                    <span className="text-sm font-medium font-inter">{property.rating}</span>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex justify-between items-center mb-4">
-                    <span className="text-2xl font-bold text-primary font-playfair">{property.price}</span>
-                  </div>
-                  <div className="flex justify-between text-sm text-muted-foreground mb-4 font-inter">
-                    <div className="flex items-center">
-                      <Bed className="w-4 h-4 mr-1" />
-                      {property.beds}
-                    </div>
-                    <div className="flex items-center">
-                      <Bath className="w-4 h-4 mr-1" />
-                      {property.baths}
-                    </div>
-                    <div className="flex items-center">
-                      <Square className="w-4 h-4 mr-1" />
-                      {property.area}
-                    </div>
-                  </div>
-                  <Button 
-                    className="w-full bg-gradient-primary hover:shadow-elegant font-inter flex items-center justify-center min-h-[44px]" 
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      navigate(`/property/${property.id}`);
-                    }}
-                  >
-                    {t('bookNow')}
-                  </Button>
-                </CardContent>
-              </Card>
-            ))}
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                  {filteredProperties.map((property) => (
+                    <PropertyCard key={property.id} property={property} />
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
         </div>
+        
+        <AIChatBox />
       </main>
       <Footer />
-      <AIChatBox />
     </div>
   );
 };
