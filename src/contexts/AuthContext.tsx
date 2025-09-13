@@ -1,13 +1,16 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { supabase } from '@/integrations/supabase/client';
+import { User as SupabaseUser, Session } from '@supabase/supabase-js';
 
 export type UserRole = 'user' | 'host' | 'admin';
 
 interface User {
   id: string;
   email: string;
-  name: string;
+  name?: string;
   role: UserRole;
   isHost?: boolean;
+  emailConfirmed?: boolean;
 }
 
 interface AuthContextType {
@@ -36,56 +39,72 @@ interface AuthProviderProps {
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [user, setUser] = useState<User | null>(null);
+  const [session, setSession] = useState<Session | null>(null);
 
-  // Mock authentication - replace with Supabase later
   const login = async (email: string, password: string): Promise<boolean> => {
-    // Mock users for testing
-    const mockUsers: User[] = [
-      { id: '1', email: 'admin@holibayt.com', name: 'Admin User', role: 'admin' },
-      { id: '2', email: 'host@holibayt.com', name: 'Host User', role: 'host', isHost: true },
-      { id: '3', email: 'user@holibayt.com', name: 'Regular User', role: 'user' },
-    ];
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
 
-    const foundUser = mockUsers.find(u => u.email === email);
-    if (foundUser && password === 'password') {
-      setUser(foundUser);
-      localStorage.setItem('auth_user', JSON.stringify(foundUser));
+      if (error) {
+        console.error('Login error:', error.message);
+        return false;
+      }
+
+      // Check if email is confirmed
+      if (data.user && !data.user.email_confirmed_at) {
+        console.error('Email not verified');
+        return false;
+      }
+
       return true;
+    } catch (error) {
+      console.error('Login error:', error);
+      return false;
     }
-    return false;
   };
 
   const register = async (name: string, email: string, password: string): Promise<boolean> => {
-    // Mock registration - replace with Supabase later
-    // Check if user already exists
-    const existingUsers = ['admin@holibayt.com', 'host@holibayt.com', 'user@holibayt.com'];
-    if (existingUsers.includes(email)) {
-      return false; // User already exists
+    try {
+      const redirectUrl = `${window.location.origin}/`;
+      
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          emailRedirectTo: redirectUrl,
+          data: {
+            name: name
+          }
+        }
+      });
+
+      if (error) {
+        console.error('Registration error:', error.message);
+        return false;
+      }
+
+      return true;
+    } catch (error) {
+      console.error('Registration error:', error);
+      return false;
     }
-
-    // Create new user
-    const newUser: User = {
-      id: Date.now().toString(),
-      email,
-      name,
-      role: 'user'
-    };
-
-    setUser(newUser);
-    localStorage.setItem('auth_user', JSON.stringify(newUser));
-    return true;
   };
 
-  const logout = () => {
-    setUser(null);
-    localStorage.removeItem('auth_user');
+  const logout = async () => {
+    try {
+      await supabase.auth.signOut();
+    } catch (error) {
+      console.error('Logout error:', error);
+    }
   };
 
   const assignHostRole = () => {
     if (user && user.role === 'user') {
       const updatedUser = { ...user, role: 'host' as UserRole, isHost: true };
       setUser(updatedUser);
-      localStorage.setItem('auth_user', JSON.stringify(updatedUser));
     }
   };
 
@@ -94,10 +113,53 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   };
 
   useEffect(() => {
-    const savedUser = localStorage.getItem('auth_user');
-    if (savedUser) {
-      setUser(JSON.parse(savedUser));
-    }
+    // Set up auth state listener
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (event, session) => {
+        setSession(session);
+        
+        if (session?.user) {
+          // Only allow verified users
+          if (session.user.email_confirmed_at) {
+            const userData: User = {
+              id: session.user.id,
+              email: session.user.email || '',
+              name: session.user.user_metadata?.name || session.user.email?.split('@')[0] || '',
+              role: 'user', // Default role, can be enhanced with profiles table
+              emailConfirmed: true
+            };
+            setUser(userData);
+          } else {
+            setUser(null);
+          }
+        } else {
+          setUser(null);
+        }
+      }
+    );
+
+    // Check for existing session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+      
+      if (session?.user) {
+        // Only allow verified users
+        if (session.user.email_confirmed_at) {
+          const userData: User = {
+            id: session.user.id,
+            email: session.user.email || '',
+            name: session.user.user_metadata?.name || session.user.email?.split('@')[0] || '',
+            role: 'user',
+            emailConfirmed: true
+          };
+          setUser(userData);
+        } else {
+          setUser(null);
+        }
+      }
+    });
+
+    return () => subscription.unsubscribe();
   }, []);
 
   return (
