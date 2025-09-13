@@ -14,6 +14,8 @@ import AIChatBox from "@/components/AIChatBox";
 import PropertyDatePicker from "@/components/PropertyDatePicker";
 import { supabase } from "@/integrations/supabase/client";
 import { Loader2 } from "lucide-react";
+import ScheduleVisitModal from "@/components/ScheduleVisitModal";
+import MessageOwnerModal from "@/components/MessageOwnerModal";
 
 interface Property {
   id: string;
@@ -44,6 +46,8 @@ const Property = () => {
   const [property, setProperty] = useState<Property | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isScheduleModalOpen, setIsScheduleModalOpen] = useState(false);
+  const [isMessageModalOpen, setIsMessageModalOpen] = useState(false);
   
   useScrollToTop();
 
@@ -248,7 +252,10 @@ const Property = () => {
                     <p className="text-sm text-muted-foreground">
                       {t('scheduleVisitDescription') || 'Schedule a visit to see this property in person'}
                     </p>
-                    <Button className="w-full bg-gradient-primary hover:shadow-elegant">
+                    <Button 
+                      className="w-full bg-gradient-primary hover:shadow-elegant"
+                      onClick={() => setIsScheduleModalOpen(true)}
+                    >
                       <Calendar className="w-4 h-4 mr-2" />
                       {t('scheduleVisit') || 'Schedule Visit'}
                     </Button>
@@ -284,10 +291,14 @@ const Property = () => {
                       <Phone className="w-4 h-4 mr-2" />
                       {t('callBtn')}
                     </Button>
-                    <Button variant="outline" className="w-full font-inter">
-                      <Mail className="w-4 h-4 mr-2" />
-                      {t('sendMessageBtn')}
-                    </Button>
+                     <Button 
+                       variant="outline" 
+                       className="w-full font-inter"
+                       onClick={() => setIsMessageModalOpen(true)}
+                     >
+                       <Mail className="w-4 h-4 mr-2" />
+                       {t('sendMessageBtn')}
+                     </Button>
                   </div>
                 </CardContent>
               </Card>
@@ -323,6 +334,24 @@ const Property = () => {
       </main>
       <Footer />
       <AIChatBox />
+      
+      {/* Modals */}
+      {property && (
+        <>
+          <ScheduleVisitModal
+            isOpen={isScheduleModalOpen}
+            onClose={() => setIsScheduleModalOpen(false)}
+            propertyTitle={property.title}
+          />
+          <MessageOwnerModal
+            isOpen={isMessageModalOpen}
+            onClose={() => setIsMessageModalOpen(false)}
+            ownerName={property.contact_name}
+            ownerEmail={property.contact_email}
+            propertyTitle={property.title}
+          />
+        </>
+      )}
     </div>
   );
 };
