@@ -24,6 +24,7 @@ interface Property {
   full_address?: string;
   price: string;
   price_type: string;
+  category: string;
   bedrooms?: string;
   bathrooms?: string;
   area: string;
@@ -231,10 +232,29 @@ const Property = () => {
 
             {/* Sidebar */}
             <div className="space-y-6">
-              {/* Date Picker for Short Stay */}
-              <PropertyDatePicker 
-                onDateChange={(dates) => console.log("Selected dates:", dates)}
-              />
+              {/* Date Picker for Short Stay or Visit Scheduler for Sale/Rent */}
+              {property.category === 'short-stay' ? (
+                <PropertyDatePicker 
+                  onDateChange={(dates) => console.log("Selected dates:", dates)}
+                />
+              ) : (
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="font-playfair">
+                      {t('scheduleVisit') || 'Schedule Property Visit'}
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <p className="text-sm text-muted-foreground">
+                      {t('scheduleVisitDescription') || 'Schedule a visit to see this property in person'}
+                    </p>
+                    <Button className="w-full bg-gradient-primary hover:shadow-elegant">
+                      <Calendar className="w-4 h-4 mr-2" />
+                      {t('scheduleVisit') || 'Schedule Visit'}
+                    </Button>
+                  </CardContent>
+                </Card>
+              )}
 
               {/* Contact Owner */}
               <Card>
