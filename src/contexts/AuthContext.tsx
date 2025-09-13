@@ -113,17 +113,21 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     // Set up auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
+        console.log('Auth state change:', event, session?.user?.id);
         setSession(session);
         
       if (session?.user) {
+        console.log('Session user found, fetching profile for:', session.user.id);
         // Fetch user profile to get role
         setTimeout(async () => {
           try {
-            const { data: profile } = await supabase
+            const { data: profile, error } = await supabase
               .from('profiles')
               .select('*')
               .eq('id', session.user.id)
               .single();
+
+            console.log('Profile fetch result:', { profile, error });
 
             if (profile) {
               const userData: User = {
@@ -133,7 +137,11 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
                 role: profile.role as UserRole,
                 emailConfirmed: !!session.user.email_confirmed_at
               };
+              console.log('Setting user data:', userData);
               setUser(userData);
+            } else {
+              console.log('No profile found, setting user to null');
+              setUser(null);
             }
           } catch (error) {
             console.error('Error fetching profile:', error);
@@ -141,6 +149,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
           }
         }, 0);
       } else {
+        console.log('No session user, setting user to null');
         setUser(null);
       }
       }
