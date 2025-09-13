@@ -125,7 +125,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
               .from('profiles')
               .select('*')
               .eq('id', session.user.id)
-              .single();
+              .maybeSingle();
 
             console.log('Profile fetch result:', { profile, error });
 
@@ -161,11 +161,11 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       
       if (session?.user) {
         try {
-          const { data: profile } = await supabase
+          const { data: profile, error } = await supabase
             .from('profiles')
             .select('*')
             .eq('id', session.user.id)
-            .single();
+            .maybeSingle();
 
           if (profile) {
             const userData: User = {
