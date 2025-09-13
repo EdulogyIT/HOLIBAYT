@@ -135,10 +135,17 @@ const Navigation = () => {
                       <User className="h-4 w-4 mr-2" />
                       {t('myProfile')}
                     </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => navigate('/bookings')}>
-                      <Calendar className="h-4 w-4 mr-2" />
-                      {t('myBookings')}
-                    </DropdownMenuItem>
+                    {hasRole('admin') ? (
+                      <DropdownMenuItem onClick={() => navigate('/publish-property')}>
+                        <Home className="h-4 w-4 mr-2" />
+                        {t('publishProperty')}
+                      </DropdownMenuItem>
+                    ) : (
+                      <DropdownMenuItem onClick={() => navigate('/bookings')}>
+                        <Calendar className="h-4 w-4 mr-2" />
+                        {t('myBookings')}
+                      </DropdownMenuItem>
+                    )}
                     {hasRole('host') && (
                       <DropdownMenuItem onClick={() => navigate('/host/listings')}>
                         <Home className="h-4 w-4 mr-2" />
@@ -263,13 +270,23 @@ const Navigation = () => {
                       <User className="h-4 w-4 mr-2" />
                       {t('myProfile')}
                     </Button>
-                    <Button variant="ghost" className="font-inter font-medium justify-start" onClick={() => {
-                      navigate('/bookings');
-                      setIsMenuOpen(false);
-                    }}>
-                      <Calendar className="h-4 w-4 mr-2" />
-                      {t('myBookings')}
-                    </Button>
+                    {hasRole('admin') ? (
+                      <Button variant="ghost" className="font-inter font-medium justify-start" onClick={() => {
+                        navigate('/publish-property');
+                        setIsMenuOpen(false);
+                      }}>
+                        <Home className="h-4 w-4 mr-2" />
+                        {t('publishProperty')}
+                      </Button>
+                    ) : (
+                      <Button variant="ghost" className="font-inter font-medium justify-start" onClick={() => {
+                        navigate('/bookings');
+                        setIsMenuOpen(false);
+                      }}>
+                        <Calendar className="h-4 w-4 mr-2" />
+                        {t('myBookings')}
+                      </Button>
+                    )}
                      {hasRole('host') && (
                        <Button variant="ghost" className="font-inter font-medium justify-start" onClick={() => {
                          navigate('/host/listings');
