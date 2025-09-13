@@ -118,43 +118,66 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       (event, session) => {
         setSession(session);
         
-        if (session?.user) {
-          // Only allow verified users
-          if (session.user.email_confirmed_at) {
-            const userData: User = {
-              id: session.user.id,
-              email: session.user.email || '',
-              name: session.user.user_metadata?.name || session.user.email?.split('@')[0] || '',
-              role: 'user', // Default role, can be enhanced with profiles table
-              emailConfirmed: true
-            };
-            setUser(userData);
-          } else {
-            setUser(null);
-          }
+      if (session?.user) {
+        // Only allow verified users
+        if (session.user.email_confirmed_at) {
+          // Fetch user profile to get role
+          setTimeout(async () => {
+            try {
+              const { data: profile } = await supabase
+                .from('profiles')
+                .select('*')
+                .eq('id', session.user.id)
+                .single();
+
+              if (profile) {
+                const userData: User = {
+                  id: session.user.id,
+                  email: profile.email,
+                  name: profile.name || session.user.email?.split('@')[0] || '',
+                  role: profile.role as UserRole,
+                  emailConfirmed: true
+                };
+                setUser(userData);
+              }
+            } catch (error) {
+              console.error('Error fetching profile:', error);
+              setUser(null);
+            }
+          }, 0);
         } else {
           setUser(null);
         }
+      } else {
+        setUser(null);
+      }
       }
     );
 
     // Check for existing session
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
       setSession(session);
       
-      if (session?.user) {
-        // Only allow verified users
-        if (session.user.email_confirmed_at) {
-          const userData: User = {
-            id: session.user.id,
-            email: session.user.email || '',
-            name: session.user.user_metadata?.name || session.user.email?.split('@')[0] || '',
-            role: 'user',
-            emailConfirmed: true
-          };
-          setUser(userData);
-        } else {
-          setUser(null);
+      if (session?.user && session.user.email_confirmed_at) {
+        try {
+          const { data: profile } = await supabase
+            .from('profiles')
+            .select('*')
+            .eq('id', session.user.id)
+            .single();
+
+          if (profile) {
+            const userData: User = {
+              id: session.user.id,
+              email: profile.email,
+              name: profile.name || session.user.email?.split('@')[0] || '',
+              role: profile.role as UserRole,
+              emailConfirmed: true
+            };
+            setUser(userData);
+          }
+        } catch (error) {
+          console.error('Error fetching profile:', error);
         }
       }
     });
