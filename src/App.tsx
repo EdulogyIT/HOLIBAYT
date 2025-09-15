@@ -21,7 +21,8 @@ import PublishProperty from "./pages/PublishProperty";
 import Property from "./pages/Property";
 import City from "./pages/City";
 import ContactAdvisor from "./pages/ContactAdvisor";
-import UnifiedAuthPage from "./pages/auth/UnifiedAuthPage";
+import LoginPage from "./pages/auth/LoginPage";
+import RegisterPage from "./pages/auth/RegisterPage";
 import Bookings from "./pages/Bookings";
 import Profile from "./pages/Profile";
 import AdminDashboard from "./pages/admin/AdminDashboard";
@@ -72,9 +73,8 @@ const App = () => (
               <Route path="/contact-advisor" element={<ContactAdvisor />} />
               
               {/* Auth routes */}
-        <Route path="/login" element={<UnifiedAuthPage />} />
-        <Route path="/register" element={<UnifiedAuthPage />} />
-        <Route path="/auth" element={<UnifiedAuthPage />} />
+              <Route path="/login" element={<LoginPage />} />
+              <Route path="/register" element={<RegisterPage />} />
               
               {/* Host onboarding - requires login but not host role */}
               <Route path="/host/onboarding" element={
