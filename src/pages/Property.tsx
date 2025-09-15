@@ -34,10 +34,11 @@ interface Property {
   property_type: string;
   features?: any;
   description?: string;
-  contact_name: string;
-  contact_phone: string;
-  contact_email: string;
+  contact_name?: string;
+  contact_phone?: string;
+  contact_email?: string;
   created_at: string;
+  user_id?: string;
 }
 
 const Property = () => {
@@ -63,7 +64,7 @@ const Property = () => {
         .from('properties')
         .select('*')
         .eq('id', id)
-        .single();
+        .maybeSingle();
 
       if (error) {
         console.error('Error fetching property:', error);
@@ -71,7 +72,26 @@ const Property = () => {
         return;
       }
 
-      setProperty(data);
+      if (!data) {
+        setError('Property not found');
+        return;
+      }
+
+      // Check if user owns this property to show contact info
+      const { data: { user } } = await supabase.auth.getUser();
+      const isOwner = user && user.id === data.user_id;
+      
+      // For security, only show contact info if user owns the property
+      if (!isOwner) {
+        setProperty({
+          ...data,
+          contact_name: undefined,
+          contact_email: undefined,
+          contact_phone: undefined
+        });
+      } else {
+        setProperty(data);
+      }
     } catch (error) {
       console.error('Error fetching property:', error);
       setError('Failed to load property');
@@ -271,35 +291,54 @@ const Property = () => {
                     {t('contactOwner')}
                   </CardTitle>
                 </CardHeader>
-                 <CardContent className="space-y-4">
-                   <div>
-                     <h4 className="font-semibold mb-2 font-inter">{property.contact_name}</h4>
-                     <div className="space-y-2">
-                       <div className="flex items-center text-sm text-muted-foreground font-inter">
-                         <Phone className="w-4 h-4 mr-2" />
-                         {property.contact_phone}
-                       </div>
-                       <div className="flex items-center text-sm text-muted-foreground font-inter">
-                         <Mail className="w-4 h-4 mr-2" />
-                         {property.contact_email}
-                       </div>
-                     </div>
-                   </div>
-                  <Separator />
-                  <div className="space-y-3">
-                    <Button className="w-full bg-gradient-primary hover:shadow-elegant font-inter">
-                      <Phone className="w-4 h-4 mr-2" />
-                      {t('callBtn')}
-                    </Button>
-                     <Button 
-                       variant="outline" 
-                       className="w-full font-inter"
-                       onClick={() => setIsMessageModalOpen(true)}
-                     >
-                       <Mail className="w-4 h-4 mr-2" />
-                       {t('sendMessageBtn')}
-                     </Button>
-                  </div>
+                <CardContent className="space-y-4">
+                  {property.contact_name ? (
+                    // Show contact details for property owners
+                    <>
+                      <div>
+                        <h4 className="font-semibold mb-2 font-inter">{property.contact_name}</h4>
+                        <div className="space-y-2">
+                          <div className="flex items-center text-sm text-muted-foreground font-inter">
+                            <Phone className="w-4 h-4 mr-2" />
+                            {property.contact_phone}
+                          </div>
+                          <div className="flex items-center text-sm text-muted-foreground font-inter">
+                            <Mail className="w-4 h-4 mr-2" />
+                            {property.contact_email}
+                          </div>
+                        </div>
+                      </div>
+                      <Separator />
+                      <div className="space-y-3">
+                        <Button className="w-full bg-gradient-primary hover:shadow-elegant font-inter">
+                          <Phone className="w-4 h-4 mr-2" />
+                          {t('callBtn')}
+                        </Button>
+                        <Button 
+                          variant="outline" 
+                          className="w-full font-inter"
+                          onClick={() => setIsMessageModalOpen(true)}
+                        >
+                          <Mail className="w-4 h-4 mr-2" />
+                          {t('sendMessageBtn')}
+                        </Button>
+                      </div>
+                    </>
+                  ) : (
+                    // Secure contact interface for public users
+                    <div className="space-y-4">
+                      <p className="text-sm text-muted-foreground font-inter">
+                        {t('secureContactDescription') || 'Send a secure message to the property owner. Your contact information will only be shared if the owner responds.'}
+                      </p>
+                      <Button 
+                        className="w-full bg-gradient-primary hover:shadow-elegant font-inter"
+                        onClick={() => setIsMessageModalOpen(true)}
+                      >
+                        <Mail className="w-4 h-4 mr-2" />
+                        {t('contactOwnerSecure') || 'Contact Owner Securely'}
+                      </Button>
+                    </div>
+                  )}
                 </CardContent>
               </Card>
 
@@ -346,9 +385,11 @@ const Property = () => {
           <MessageOwnerModal
             isOpen={isMessageModalOpen}
             onClose={() => setIsMessageModalOpen(false)}
-            ownerName={property.contact_name}
-            ownerEmail={property.contact_email}
+            ownerName={property.contact_name || 'Property Owner'}
+            ownerEmail={property.contact_email || ''}
             propertyTitle={property.title}
+            propertyId={property.id}
+            isSecureMode={!property.contact_name}
           />
         </>
       )}
