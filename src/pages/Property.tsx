@@ -7,6 +7,7 @@ import { Separator } from "@/components/ui/separator";
 import { MapPin, Bed, Bath, Square, Phone, Mail, Calendar, User } from "lucide-react";
 import { useParams } from "react-router-dom";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useCurrency } from "@/contexts/CurrencyContext";
 import { useScrollToTop } from "@/hooks/useScrollToTop";
 import { useEffect, useState } from "react";
 import MapboxMap from "@/components/MapboxMap";
@@ -44,6 +45,7 @@ interface Property {
 const Property = () => {
   const { id } = useParams();
   const { t } = useLanguage();
+  const { formatPrice } = useCurrency();
   const [property, setProperty] = useState<Property | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -100,13 +102,7 @@ const Property = () => {
     }
   };
 
-  const formatPrice = (price: string, priceType: string) => {
-    const formattedPrice = `${price} ${t('currencyDA')}`;
-    if (priceType === 'monthly') return `${formattedPrice}/${t('month')}`;
-    if (priceType === 'daily') return `${formattedPrice}/${t('day')}`;
-    if (priceType === 'weekly') return `${formattedPrice}/${t('week')}`;
-    return formattedPrice;
-  };
+  // Remove the old formatPrice function as we now use useCurrency hook
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString();

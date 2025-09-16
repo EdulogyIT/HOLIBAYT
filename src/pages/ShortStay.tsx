@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { MapPin, Bed, Bath, Square, Loader2, Wifi, Car, Waves, Coffee } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useCurrency } from "@/contexts/CurrencyContext";
 import PropertyFilters from "@/components/PropertyFilters";
 import { useState, useEffect } from "react";
 import AIChatBox from "@/components/AIChatBox";
@@ -34,6 +35,7 @@ interface Property {
 const ShortStay = () => {
   const navigate = useNavigate();
   const { t } = useLanguage();
+  const { formatPrice } = useCurrency();
   const [properties, setProperties] = useState<Property[]>([]);
   const [filteredProperties, setFilteredProperties] = useState<Property[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -67,13 +69,7 @@ const ShortStay = () => {
     }
   };
 
-  const formatPrice = (price: string, priceType: string) => {
-    const formattedPrice = `${price} ${t('currencyDA')}`;
-    if (priceType === 'monthly') return `${formattedPrice}/${t('month')}`;
-    if (priceType === 'daily') return `${formattedPrice}/${t('day')}`;
-    if (priceType === 'weekly') return `${formattedPrice}/${t('week')}`;
-    return formattedPrice;
-  };
+  // Remove the old formatPrice function as we now use useCurrency hook
 
   const getFeatureIcon = (feature: string) => {
     switch (feature) {

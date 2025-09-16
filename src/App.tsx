@@ -4,6 +4,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { LanguageProvider } from "@/contexts/LanguageContext";
+import { CurrencyProvider } from "@/contexts/CurrencyContext";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { AdminLayout } from "@/components/layouts/AdminLayout";
@@ -40,6 +41,7 @@ const App = () => (
     <TooltipProvider>
       <AuthProvider>
         <LanguageProvider>
+          <CurrencyProvider>
           <ErrorBoundary>
             <Toaster />
             <Sonner />
@@ -119,6 +121,7 @@ const App = () => (
               </Routes>
             </BrowserRouter>
           </ErrorBoundary>
+          </CurrencyProvider>
         </LanguageProvider>
       </AuthProvider>
     </TooltipProvider>
