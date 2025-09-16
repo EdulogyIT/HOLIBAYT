@@ -77,24 +77,23 @@ export const AdminLayout = ({ children }: AdminLayoutProps) => {
             {/* Navigation */}
             <div className="p-4">
               <h3 className="text-sm font-medium text-muted-foreground mb-3">{t('admin.administration')}</h3>
-              <SidebarMenu>
+              <nav className="space-y-1">
                 {adminMenuItems.map((item) => (
-                  <SidebarMenuItem key={item.title}>
-                    <SidebarMenuButton asChild>
-                      <NavLink 
-                        to={item.url} 
-                        end={item.url === '/admin'}
-                        className={({ isActive }) => 
-                          isActive ? "bg-primary text-primary-foreground font-medium" : "hover:bg-muted"
-                        }
-                      >
-                        <item.icon className="mr-2 h-4 w-4" />
-                        <span>{item.title}</span>
-                      </NavLink>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
+                  <NavLink 
+                    key={item.title}
+                    to={item.url} 
+                    end={item.url === '/admin'}
+                    className={({ isActive }) => 
+                      `flex items-center px-3 py-2 rounded-md text-sm transition-colors ${
+                        isActive ? "bg-primary text-primary-foreground font-medium" : "hover:bg-muted"
+                      }`
+                    }
+                  >
+                    <item.icon className="mr-2 h-4 w-4" />
+                    <span>{item.title}</span>
+                  </NavLink>
                 ))}
-              </SidebarMenu>
+              </nav>
             </div>
 
             {/* User Actions */}
