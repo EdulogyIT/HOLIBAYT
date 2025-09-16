@@ -57,7 +57,7 @@ export const AdminLayout = ({ children }: AdminLayoutProps) => {
     <SidebarProvider>
       <div className="min-h-screen flex w-full">
         <Sidebar 
-          variant={isMobile ? "floating" : "sidebar"}
+          variant="sidebar"
           className="w-64"
           collapsible="none"
         >

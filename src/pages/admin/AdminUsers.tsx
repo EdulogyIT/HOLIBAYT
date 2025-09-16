@@ -30,8 +30,10 @@ import {
   Calendar,
   Shield,
   Ban,
-  CheckCircle
+  CheckCircle,
+  Clock
 } from 'lucide-react';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface AppUser {
   id: string;
@@ -88,6 +90,7 @@ const mockUsers: AppUser[] = [
 ];
 
 export default function AdminUsers() {
+  const { t } = useLanguage();
   const [users] = useState<AppUser[]>(mockUsers);
   const [searchTerm, setSearchTerm] = useState('');
   const [roleFilter, setRoleFilter] = useState<string>('all');
@@ -133,14 +136,14 @@ export default function AdminUsers() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-foreground">Gestion des Utilisateurs</h1>
+          <h1 className="text-3xl font-bold text-foreground">{t('admin.userManagement')}</h1>
           <p className="text-muted-foreground mt-2">
-            Gérez les utilisateurs, hôtes et leurs statuts
+            {t('admin.manageUsersHosts')}
           </p>
         </div>
         <Button>
           <User className="h-4 w-4 mr-2" />
-          Nouvel Utilisateur
+          {t('admin.newUser')}
         </Button>
       </div>
 
@@ -148,45 +151,45 @@ export default function AdminUsers() {
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Utilisateurs</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('admin.totalUsers')}</CardTitle>
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">2,543</div>
-            <p className="text-xs text-muted-foreground">+18% ce mois</p>
+            <p className="text-xs text-muted-foreground">+18% {t('admin.thisMonth')}</p>
           </CardContent>
         </Card>
         
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Hôtes Actifs</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('admin.activeHosts')}</CardTitle>
             <UserCheck className="h-4 w-4 text-blue-600" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">189</div>
-            <p className="text-xs text-muted-foreground">Propriétés publiées</p>
+            <p className="text-xs text-muted-foreground">{t('admin.propertiesPublished')}</p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Comptes Vérifiés</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('admin.verifiedAccounts')}</CardTitle>
             <Shield className="h-4 w-4 text-green-600" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">1,876</div>
-            <p className="text-xs text-muted-foreground">74% du total</p>
+            <p className="text-xs text-muted-foreground">74% {t('admin.ofTotal')}</p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">En Attente</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('admin.pending')}</CardTitle>
             <UserX className="h-4 w-4 text-yellow-600" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">56</div>
-            <p className="text-xs text-muted-foreground">Vérifications KYC</p>
+            <p className="text-xs text-muted-foreground">{t('admin.kycVerifications')}</p>
           </CardContent>
         </Card>
       </div>
@@ -198,7 +201,7 @@ export default function AdminUsers() {
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
               <Input
-                placeholder="Rechercher par nom ou email..."
+                placeholder={t('admin.searchByNameEmail')}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="pl-10"
@@ -207,25 +210,25 @@ export default function AdminUsers() {
             
             <Select value={roleFilter} onValueChange={setRoleFilter}>
               <SelectTrigger className="w-full sm:w-40">
-                <SelectValue placeholder="Rôle" />
+                <SelectValue placeholder={t('admin.role')} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">Tous les rôles</SelectItem>
-                <SelectItem value="user">Utilisateurs</SelectItem>
-                <SelectItem value="host">Hôtes</SelectItem>
-                <SelectItem value="admin">Admins</SelectItem>
+                <SelectItem value="all">{t('admin.allRoles')}</SelectItem>
+                <SelectItem value="user">{t('admin.users')}</SelectItem>
+                <SelectItem value="host">{t('admin.hosts')}</SelectItem>
+                <SelectItem value="admin">{t('admin.admins')}</SelectItem>
               </SelectContent>
             </Select>
 
             <Select value={statusFilter} onValueChange={setStatusFilter}>
               <SelectTrigger className="w-full sm:w-40">
-                <SelectValue placeholder="Statut" />
+                <SelectValue placeholder={t('admin.status')} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">Tous les statuts</SelectItem>
-                <SelectItem value="active">Actifs</SelectItem>
-                <SelectItem value="pending">En attente</SelectItem>
-                <SelectItem value="suspended">Suspendus</SelectItem>
+                <SelectItem value="all">{t('admin.allStatuses')}</SelectItem>
+                <SelectItem value="active">{t('admin.active')}</SelectItem>
+                <SelectItem value="pending">{t('admin.pending')}</SelectItem>
+                <SelectItem value="suspended">{t('admin.suspended')}</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -235,20 +238,20 @@ export default function AdminUsers() {
       {/* Users Table */}
       <Card>
         <CardHeader>
-          <CardTitle>Utilisateurs ({filteredUsers.length})</CardTitle>
+          <CardTitle>{t('admin.users')} ({filteredUsers.length})</CardTitle>
         </CardHeader>
         <CardContent>
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Utilisateur</TableHead>
-                <TableHead>Contact</TableHead>
-                <TableHead>Rôle</TableHead>
-                <TableHead>Statut</TableHead>
-                <TableHead>Vérification</TableHead>
-                <TableHead>Activité</TableHead>
-                <TableHead>Stats</TableHead>
-                <TableHead>Actions</TableHead>
+                <TableHead>{t('admin.user')}</TableHead>
+                <TableHead>{t('admin.contact')}</TableHead>
+                <TableHead>{t('admin.role')}</TableHead>
+                <TableHead>{t('admin.status')}</TableHead>
+                <TableHead>{t('admin.verification')}</TableHead>
+                <TableHead>{t('admin.activity')}</TableHead>
+                <TableHead>{t('admin.stats')}</TableHead>
+                <TableHead>{t('admin.actions')}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -298,30 +301,30 @@ export default function AdminUsers() {
                     </div>
                   </TableCell>
                   <TableCell>
-                    <div className="space-y-1 text-sm">
+                      <div className="space-y-1 text-sm">
                       <div className="flex items-center">
                         <Calendar className="h-3 w-3 mr-1 text-muted-foreground" />
-                        Inscrit: {user.joinDate}
+                        {t('admin.joined')}: {user.joinDate}
                       </div>
                       <div className="text-muted-foreground">
-                        Dernière activité: {user.lastActive}
+                        {t('admin.lastActivity')}: {user.lastActive}
                       </div>
                     </div>
                   </TableCell>
                   <TableCell>
                     <div className="space-y-1 text-sm">
                       {user.propertyCount && (
-                        <div>{user.propertyCount} propriétés</div>
+                        <div>{user.propertyCount} {t('admin.properties')}</div>
                       )}
                       {user.bookingCount !== undefined && (
-                        <div>{user.bookingCount} réservations</div>
+                        <div>{user.bookingCount} {t('admin.bookings')}</div>
                       )}
                     </div>
                   </TableCell>
                   <TableCell>
                     <div className="flex space-x-2">
                       <Button size="sm" variant="outline">
-                        Voir
+                        {t('admin.view')}
                       </Button>
                       <Button size="sm" variant="outline" className="text-red-600 hover:text-red-700">
                         <Ban className="h-4 w-4" />
@@ -337,6 +340,3 @@ export default function AdminUsers() {
     </div>
   );
 }
-
-// Fix the Clock import
-import { Clock } from 'lucide-react';
