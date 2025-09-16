@@ -17,6 +17,8 @@ interface AuthContextType {
   user: User | null;
   login: (email: string, password: string) => Promise<boolean>;
   register: (name: string, email: string, password: string) => Promise<{ success: boolean; needsConfirmation: boolean }>;
+  loginWithGoogle: () => Promise<void>;
+  loginWithFacebook: () => Promise<void>;
   logout: () => void;
   assignHostRole: () => Promise<void>;
   isAuthenticated: boolean;
@@ -87,6 +89,44 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     } catch (error) {
       console.error('Registration error:', error);
       return { success: false, needsConfirmation: false };
+    }
+  };
+
+  const loginWithGoogle = async (): Promise<void> => {
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: `${window.location.origin}/`
+        }
+      });
+      
+      if (error) {
+        console.error('Google login error:', error.message);
+        throw error;
+      }
+    } catch (error) {
+      console.error('Google login error:', error);
+      throw error;
+    }
+  };
+
+  const loginWithFacebook = async (): Promise<void> => {
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'facebook',
+        options: {
+          redirectTo: `${window.location.origin}/`
+        }
+      });
+      
+      if (error) {
+        console.error('Facebook login error:', error.message);
+        throw error;
+      }
+    } catch (error) {
+      console.error('Facebook login error:', error);
+      throw error;
     }
   };
 
@@ -215,10 +255,12 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       user,
       login,
       register,
+      loginWithGoogle,
+      loginWithFacebook,
       logout,
       assignHostRole,
       isAuthenticated: !!user,
-      hasRole
+      hasRole,
     }}>
       {children}
     </AuthContext.Provider>
