@@ -98,10 +98,26 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     }
   };
 
-  const assignHostRole = () => {
+  const assignHostRole = async () => {
     if (user && user.role === 'user') {
-      const updatedUser = { ...user, role: 'host' as UserRole, isHost: true };
-      setUser(updatedUser);
+      try {
+        // Update role in database
+        const { error } = await supabase
+          .from('profiles')
+          .update({ role: 'host' })
+          .eq('id', user.id);
+
+        if (error) {
+          console.error('Error updating host role:', error);
+          return;
+        }
+
+        // Update local state
+        const updatedUser = { ...user, role: 'host' as UserRole, isHost: true };
+        setUser(updatedUser);
+      } catch (error) {
+        console.error('Error assigning host role:', error);
+      }
     }
   };
 

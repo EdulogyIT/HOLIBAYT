@@ -129,7 +129,7 @@ export default function HostOnboarding() {
       }
 
       // Assign host role
-      assignHostRole();
+      await assignHostRole();
       
       toast({
         title: 'Welcome to hosting!',
