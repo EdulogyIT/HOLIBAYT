@@ -258,9 +258,22 @@ const Property = () => {
             <div className="space-y-6">
               {/* Date Picker for Short Stay or Visit Scheduler for Sale/Rent */}
               {property.category === 'short-stay' ? (
-                <PropertyDatePicker 
-                  onDateChange={(dates) => console.log("Selected dates:", dates)}
-                />
+                <div className="space-y-4">
+                  <PropertyDatePicker 
+                    onDateChange={(dates) => console.log("Selected dates:", dates)}
+                  />
+                  <Card>
+                    <CardContent className="pt-6">
+                      <Button 
+                        className="w-full bg-gradient-primary hover:shadow-elegant"
+                        size="lg"
+                      >
+                        <Calendar className="w-4 h-4 mr-2" />
+                        {t('bookNow')}
+                      </Button>
+                    </CardContent>
+                  </Card>
+                </div>
               ) : (
                 <Card>
                   <CardHeader>
