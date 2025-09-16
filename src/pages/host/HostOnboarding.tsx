@@ -91,6 +91,14 @@ export default function HostOnboarding() {
         }
       }
 
+      // Map form price type to database values
+      const mapPriceType = (category: string, priceType: string) => {
+        if (category === 'sale') return 'total';
+        if (category === 'rent') return 'monthly';
+        if (category === 'short-stay') return 'monthly';
+        return priceType;
+      };
+
       // Create property record
       const { error: insertError } = await supabase
         .from('properties')
@@ -108,7 +116,7 @@ export default function HostOnboarding() {
           area: formData.area,
           floor_number: formData.floor || null,
           price: formData.price,
-          price_type: formData.priceType,
+          price_type: mapPriceType(formData.category, formData.priceType),
           features: {},
           description: formData.description || null,
           contact_name: user.name || '',
