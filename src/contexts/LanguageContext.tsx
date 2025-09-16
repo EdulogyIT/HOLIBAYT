@@ -530,6 +530,25 @@ const allTranslations = {
     author5: 'Leila Benaissa',
     author6: 'Mohamed Kaci',
 
+    // Host dashboard translations
+    host: {
+      dashboard: 'Tableau de bord',
+      welcomeMessage: 'Bienvenue dans votre espace hôte',
+      activeProperties: 'Propriétés actives',
+      messagesReceived: 'Messages reçus',
+      monthlyRevenue: 'Revenus ce mois',
+      checkMessages: 'Consultez vos messages',
+      quickActions: 'Actions rapides',
+      publishProperty: 'Publier une propriété',
+      viewListings: 'Voir mes annonces',
+      messages: 'Messages',
+      recentProperties: 'Dernières propriétés',
+      publishedOn: 'Publié le',
+      active: 'Actif',
+      inactive: 'Inactif',
+      loadingProperties: 'Chargement de vos propriétés...'
+    },
+
     // Admin translations
     admin: {
       dashboard: 'Tableau de bord',
@@ -1102,6 +1121,25 @@ const allTranslations = {
     author4: 'Karim Hakim',
     author5: 'Leila Benaissa',
     author6: 'Mohamed Kaci',
+
+    // Host dashboard translations
+    host: {
+      dashboard: 'Dashboard',
+      welcomeMessage: 'Welcome to your host space',
+      activeProperties: 'Active properties',
+      messagesReceived: 'Messages received',
+      monthlyRevenue: 'Revenue this month',
+      checkMessages: 'Check your messages',
+      quickActions: 'Quick actions',
+      publishProperty: 'Publish property',
+      viewListings: 'View my listings',
+      messages: 'Messages',
+      recentProperties: 'Recent properties',
+      publishedOn: 'Published on',
+      active: 'Active',
+      inactive: 'Inactive',
+      loadingProperties: 'Loading your properties...'
+    },
 
     // Admin translations
     admin: {
@@ -1687,7 +1725,26 @@ const allTranslations = {
     february15: "15 فبراير 2024",
 
     // Reading times
-    readTime5: "10 دقائق قراءة"
+    readTime5: "10 دقائق قراءة",
+
+    // Host dashboard translations
+    host: {
+      dashboard: 'لوحة القيادة',
+      welcomeMessage: 'مرحباً بك في مساحة المضيف',
+      activeProperties: 'العقارات النشطة',
+      messagesReceived: 'الرسائل المستلمة',
+      monthlyRevenue: 'الإيرادات هذا الشهر',
+      checkMessages: 'راجع رسائلك',
+      quickActions: 'إجراءات سريعة',
+      publishProperty: 'نشر عقار',
+      viewListings: 'عرض إعلاناتي',
+      messages: 'الرسائل',
+      recentProperties: 'العقارات الأحدث',
+      publishedOn: 'نُشر في',
+      active: 'نشط',
+      inactive: 'غير نشط',
+      loadingProperties: 'جاري تحميل عقاراتك...'
+    }
   }
 };
 

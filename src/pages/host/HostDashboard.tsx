@@ -75,7 +75,7 @@ export default function HostDashboard() {
       <div className="flex items-center justify-center h-64">
         <div className="text-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
-          <p className="mt-2 text-muted-foreground">Chargement de vos propriétés...</p>
+          <p className="mt-2 text-muted-foreground">{t('host.loadingProperties')}</p>
         </div>
       </div>
     );
@@ -84,9 +84,9 @@ export default function HostDashboard() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold">Tableau de bord</h1>
+        <h1 className="text-3xl font-bold">{t('host.dashboard')}</h1>
         <p className="text-muted-foreground">
-          Bienvenue dans votre espace hôte
+          {t('host.welcomeMessage')}
         </p>
       </div>
 
@@ -94,7 +94,7 @@ export default function HostDashboard() {
       <div className="grid gap-4 md:grid-cols-3">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Propriétés actives</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('host.activeProperties')}</CardTitle>
             <Building2 className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -104,18 +104,18 @@ export default function HostDashboard() {
         
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Messages reçus</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('host.messagesReceived')}</CardTitle>
             <MessageSquare className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">-</div>
-            <p className="text-xs text-muted-foreground">Consultez vos messages</p>
+            <p className="text-xs text-muted-foreground">{t('host.checkMessages')}</p>
           </CardContent>
         </Card>
         
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Revenus ce mois</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('host.monthlyRevenue')}</CardTitle>
             <CalendarDays className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -127,21 +127,21 @@ export default function HostDashboard() {
       {/* Quick Actions */}
       <Card>
         <CardHeader>
-          <CardTitle>Actions rapides</CardTitle>
+          <CardTitle>{t('host.quickActions')}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex gap-4">
             <Button onClick={() => navigate('/publish-property')}>
               <Plus className="h-4 w-4 mr-2" />
-              Publier une propriété
+              {t('host.publishProperty')}
             </Button>
             <Button variant="outline" onClick={() => navigate('/host/listings')}>
               <Building2 className="h-4 w-4 mr-2" />
-              Voir mes annonces
+              {t('host.viewListings')}
             </Button>
             <Button variant="outline" onClick={() => navigate('/host/messages')}>
               <MessageSquare className="h-4 w-4 mr-2" />
-              Messages
+              {t('host.messages')}
             </Button>
           </div>
         </CardContent>
@@ -151,7 +151,7 @@ export default function HostDashboard() {
       {properties.length > 0 && (
         <Card>
           <CardHeader>
-            <CardTitle>Dernières propriétés</CardTitle>
+            <CardTitle>{t('host.recentProperties')}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
@@ -160,11 +160,11 @@ export default function HostDashboard() {
                   <div>
                     <p className="font-medium">{property.title}</p>
                     <p className="text-sm text-muted-foreground">
-                      {property.city} • Publié le {formatDate(property.created_at)}
+                      {property.city} • {t('host.publishedOn')} {formatDate(property.created_at)}
                     </p>
                   </div>
                   <Badge variant={property.status === 'active' ? 'default' : 'secondary'}>
-                    {property.status === 'active' ? 'Actif' : 'Inactif'}
+                    {property.status === 'active' ? t('host.active') : t('host.inactive')}
                   </Badge>
                 </div>
               ))}
