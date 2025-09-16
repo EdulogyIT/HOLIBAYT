@@ -14,6 +14,7 @@ import {
   MessageSquare
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { supabase } from '@/integrations/supabase/client';
 import { useNavigate } from 'react-router-dom';
 
@@ -33,6 +34,7 @@ interface Property {
 
 export default function HostListings() {
   const { user } = useAuth();
+  const { t } = useLanguage();
   const navigate = useNavigate();
   const [properties, setProperties] = useState<Property[]>([]);
   const [loading, setLoading] = useState(true);
@@ -65,8 +67,8 @@ export default function HostListings() {
 
   const formatPrice = (price: string, priceType: string) => {
     const formattedPrice = new Intl.NumberFormat('fr-DZ').format(parseInt(price));
-    if (priceType === 'monthly') return `${formattedPrice} DA/mois`;
-    if (priceType === 'daily') return `${formattedPrice} DA/jour`;
+    if (priceType === 'monthly') return `${formattedPrice} DA/${t('host.monthlyRevenue').includes('month') ? 'month' : 'mois'}`;
+    if (priceType === 'daily') return `${formattedPrice} DA/${t('host.monthlyRevenue').includes('month') ? 'day' : 'jour'}`;
     return `${formattedPrice} DA`;
   };
 
@@ -94,7 +96,7 @@ export default function HostListings() {
       <div className="flex items-center justify-center h-64">
         <div className="text-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
-          <p className="mt-2 text-muted-foreground">Chargement de vos annonces...</p>
+          <p className="mt-2 text-muted-foreground">{t('host.loadingProperties')}</p>
         </div>
       </div>
     );
@@ -104,14 +106,14 @@ export default function HostListings() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-foreground">Mes Annonces</h1>
+          <h1 className="text-3xl font-bold text-foreground">{t('host.listings')}</h1>
           <p className="text-muted-foreground mt-2">
-            Gérez vos propriétés et leurs performances
+            {t('host.manageProperties')}
           </p>
         </div>
         <Button onClick={() => navigate('/publish-property')}>
           <Plus className="h-4 w-4 mr-2" />
-          Nouvelle Annonce
+          {t('host.newListing')}
         </Button>
       </div>
 
@@ -119,7 +121,7 @@ export default function HostListings() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Annonces Actives</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('host.activeListings')}</CardTitle>
             <Building2 className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -130,23 +132,23 @@ export default function HostListings() {
         
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Messages</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('host.totalMessages')}</CardTitle>
             <MessageSquare className="h-4 w-4 text-blue-600" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">-</div>
-            <p className="text-xs text-muted-foreground">Messages reçus</p>
+            <p className="text-xs text-muted-foreground">{t('host.messagesReceived')}</p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Vues</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('host.totalViews')}</CardTitle>
             <Eye className="h-4 w-4 text-green-600" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">-</div>
-            <p className="text-xs text-muted-foreground">Ce mois</p>
+            <p className="text-xs text-muted-foreground">{t('host.thisMonth')}</p>
           </CardContent>
         </Card>
       </div>
@@ -168,7 +170,7 @@ export default function HostListings() {
                 <Badge 
                   className={`absolute top-3 left-3 ${getStatusColor(property.status)}`}
                 >
-                  {property.status === 'active' ? 'Actif' : property.status}
+                  {property.status === 'active' ? t('host.active') : property.status}
                 </Badge>
               </div>
               
@@ -191,24 +193,24 @@ export default function HostListings() {
 
                   <div className="text-sm text-muted-foreground">
                     <Badge variant="outline">
-                      {property.category === 'sale' ? 'Vente' : 
-                       property.category === 'rent' ? 'Location' : 'Séjour Court'}
+                      {property.category === 'sale' ? t('buy') : 
+                       property.category === 'rent' ? t('rent') : t('shortStay')}
                     </Badge>
                   </div>
 
                   <div className="flex items-center justify-between text-sm text-muted-foreground">
-                    <div>Créé le {formatDate(property.created_at)}</div>
+                    <div>{t('host.createdOn')} {formatDate(property.created_at)}</div>
                   </div>
 
                   <div className="flex space-x-2 pt-2">
                     <Button size="sm" variant="outline" className="flex-1"
                       onClick={() => navigate(`/property/${property.id}`)}>
                       <Eye className="h-4 w-4 mr-1" />
-                      Voir
+                      {t('host.view')}
                     </Button>
                     <Button size="sm" variant="outline" className="flex-1">
                       <Edit className="h-4 w-4 mr-1" />
-                      Modifier
+                      {t('host.edit')}
                     </Button>
                     <Button size="sm" variant="outline" className="text-red-600 hover:text-red-700">
                       <Trash2 className="h-4 w-4" />
@@ -223,13 +225,13 @@ export default function HostListings() {
         <Card className="text-center py-12">
           <CardContent>
             <Building2 className="h-16 w-16 mx-auto text-muted-foreground mb-4" />
-            <h3 className="text-lg font-semibold mb-2">Aucune annonce encore</h3>
+            <h3 className="text-lg font-semibold mb-2">{t('host.noListingsYet')}</h3>
             <p className="text-muted-foreground mb-6">
-              Créez votre première annonce pour commencer à recevoir des demandes
+              {t('host.createFirstListing')}
             </p>
             <Button onClick={() => navigate('/publish-property')}>
               <Plus className="h-4 w-4 mr-2" />
-              Créer ma première annonce
+              {t('host.createMyFirstListing')}
             </Button>
           </CardContent>
         </Card>

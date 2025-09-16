@@ -8,6 +8,7 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { supabase } from '@/integrations/supabase/client';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import PropertyCalendar from '@/components/PropertyCalendar';
 
 interface Property {
   id: string;
@@ -147,31 +148,36 @@ export default function HostDashboard() {
         </CardContent>
       </Card>
 
-      {/* Recent Activity */}
-      {properties.length > 0 && (
-        <Card>
-          <CardHeader>
-            <CardTitle>{t('host.recentProperties')}</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {properties.slice(0, 3).map((property) => (
-                <div key={property.id} className="flex items-center justify-between p-3 border rounded-lg">
-                  <div>
-                    <p className="font-medium">{property.title}</p>
-                    <p className="text-sm text-muted-foreground">
-                      {property.city} • {t('host.publishedOn')} {formatDate(property.created_at)}
-                    </p>
+      {/* Recent Activity and Calendar */}
+      <div className="grid gap-6 lg:grid-cols-2">
+        {properties.length > 0 && (
+          <Card>
+            <CardHeader>
+              <CardTitle>{t('host.recentProperties')}</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                {properties.slice(0, 3).map((property) => (
+                  <div key={property.id} className="flex items-center justify-between p-3 border rounded-lg">
+                    <div>
+                      <p className="font-medium">{property.title}</p>
+                      <p className="text-sm text-muted-foreground">
+                        {property.city} • {t('host.publishedOn')} {formatDate(property.created_at)}
+                      </p>
+                    </div>
+                    <Badge variant={property.status === 'active' ? 'default' : 'secondary'}>
+                      {property.status === 'active' ? t('host.active') : t('host.inactive')}
+                    </Badge>
                   </div>
-                  <Badge variant={property.status === 'active' ? 'default' : 'secondary'}>
-                    {property.status === 'active' ? t('host.active') : t('host.inactive')}
-                  </Badge>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-      )}
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        )}
+        
+        {/* Property Calendar */}
+        <PropertyCalendar />
+      </div>
     </div>
   );
 }

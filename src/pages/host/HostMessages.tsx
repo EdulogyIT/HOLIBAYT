@@ -13,7 +13,10 @@ import {
   X
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { supabase } from '@/integrations/supabase/client';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Textarea } from '@/components/ui/textarea';
 
 interface ContactRequest {
   id: string;
@@ -32,8 +35,11 @@ interface ContactRequest {
 
 export default function HostMessages() {
   const { user } = useAuth();
+  const { t } = useLanguage();
   const [messages, setMessages] = useState<ContactRequest[]>([]);
   const [loading, setLoading] = useState(true);
+  const [selectedMessage, setSelectedMessage] = useState<ContactRequest | null>(null);
+  const [replyText, setReplyText] = useState('');
 
   useEffect(() => {
     fetchMessages();
@@ -113,12 +119,27 @@ export default function HostMessages() {
 
   const getStatusLabel = (status: string) => {
     switch (status) {
-      case 'pending': return 'Nouveau';
-      case 'read': return 'Lu';
-      case 'replied': return 'Répondu';
-      case 'archived': return 'Archivé';
+      case 'pending': return t('host.newStatus');
+      case 'read': return t('host.readStatus');
+      case 'replied': return t('host.repliedStatus');
+      case 'archived': return t('host.archivedStatus');
       default: return status;
     }
+  };
+
+  const openChatModal = (message: ContactRequest) => {
+    setSelectedMessage(message);
+    setReplyText('');
+  };
+
+  const sendReply = async () => {
+    if (!selectedMessage || !replyText.trim()) return;
+    
+    // Here you would typically send the reply to your backend
+    // For now, we'll just update the status to replied
+    await updateMessageStatus(selectedMessage.id, 'replied');
+    setSelectedMessage(null);
+    setReplyText('');
   };
 
   const pendingCount = messages.filter(m => m.status === 'pending').length;
@@ -129,7 +150,7 @@ export default function HostMessages() {
       <div className="flex items-center justify-center h-64">
         <div className="text-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
-          <p className="mt-2 text-muted-foreground">Chargement des messages...</p>
+          <p className="mt-2 text-muted-foreground">{t('host.loadingMessages')}</p>
         </div>
       </div>
     );
@@ -138,9 +159,9 @@ export default function HostMessages() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold">Messages</h1>
+        <h1 className="text-3xl font-bold">{t('host.messagesPage')}</h1>
         <p className="text-muted-foreground">
-          Gérez les demandes de contact pour vos propriétés
+          {t('host.manageContactRequests')}
         </p>
       </div>
 
@@ -148,7 +169,7 @@ export default function HostMessages() {
       <div className="grid gap-4 md:grid-cols-3">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Messages non lus</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('host.unreadMessages')}</CardTitle>
             <MessageSquare className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -158,7 +179,7 @@ export default function HostMessages() {
         
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total messages</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('host.totalMessages')}</CardTitle>
             <Mail className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -168,7 +189,7 @@ export default function HostMessages() {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Taux de réponse</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('host.responseRate')}</CardTitle>
             <CheckCircle className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -237,15 +258,15 @@ export default function HostMessages() {
                           variant="outline"
                           onClick={() => updateMessageStatus(message.id, 'read')}
                         >
-                          Marquer comme lu
+                          {t('host.markAsRead')}
                         </Button>
                       )}
                       <Button 
                         size="sm"
-                        onClick={() => window.location.href = `mailto:${message.requester_email}?subject=Re: ${message.subject}`}
+                        onClick={() => openChatModal(message)}
                       >
-                        <Mail className="h-4 w-4 mr-1" />
-                        Répondre
+                        <MessageSquare className="h-4 w-4 mr-1" />
+                        {t('host.reply')}
                       </Button>
                       {message.requester_phone && (
                         <Button 
@@ -254,7 +275,7 @@ export default function HostMessages() {
                           onClick={() => window.location.href = `tel:${message.requester_phone}`}
                         >
                           <Phone className="h-4 w-4 mr-1" />
-                          Appeler
+                          {t('host.call')}
                         </Button>
                       )}
                       <Button 
@@ -263,7 +284,7 @@ export default function HostMessages() {
                         onClick={() => updateMessageStatus(message.id, 'archived')}
                       >
                         <X className="h-4 w-4 mr-1" />
-                        Archiver
+                        {t('host.archive')}
                       </Button>
                     </div>
                   </div>
@@ -276,13 +297,47 @@ export default function HostMessages() {
         <Card>
           <CardContent className="text-center py-12">
             <MessageSquare className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
-            <h3 className="text-lg font-semibold mb-2">Aucun message</h3>
+            <h3 className="text-lg font-semibold mb-2">{t('host.noMessages')}</h3>
             <p className="text-muted-foreground">
-              Vous n'avez reçu aucune demande de contact pour le moment.
+              {t('host.noContactRequests')}
             </p>
           </CardContent>
         </Card>
       )}
+
+      {/* Chat Modal */}
+      <Dialog open={!!selectedMessage} onOpenChange={() => setSelectedMessage(null)}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>
+              {t('host.reply')} - {selectedMessage?.requester_name}
+            </DialogTitle>
+          </DialogHeader>
+          
+          <div className="space-y-4">
+            <div className="bg-muted p-3 rounded-lg">
+              <p className="text-sm font-medium mb-1">{selectedMessage?.subject}</p>
+              <p className="text-sm text-muted-foreground">{selectedMessage?.message}</p>
+            </div>
+            
+            <Textarea
+              placeholder={`${t('host.reply')}...`}
+              value={replyText}
+              onChange={(e) => setReplyText(e.target.value)}
+              rows={4}
+            />
+            
+            <div className="flex gap-2 justify-end">
+              <Button variant="outline" onClick={() => setSelectedMessage(null)}>
+                {t('cancel')}
+              </Button>
+              <Button onClick={sendReply} disabled={!replyText.trim()}>
+                {t('host.reply')}
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
