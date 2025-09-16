@@ -1695,14 +1695,20 @@ const translations = allTranslations;
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 function detectInitialLang(): Language {
-  // 1) URL ?lang=en|fr|ar
+  // 1) Check localStorage first for saved preference
+  const savedLang = localStorage.getItem('lang');
+  if (savedLang && (savedLang === 'EN' || savedLang === 'FR' || savedLang === 'AR')) {
+    return savedLang as Language;
+  }
+  
+  // 2) URL ?lang=en|fr|ar
   const urlLang = new URLSearchParams(window.location.search).get('lang');
   if (urlLang) {
     const up = urlLang.toUpperCase();
     if (up === 'EN' || up === 'FR' || up === 'AR') return up as Language;
   }
   
-  // Default to English for all users
+  // 3) Default to English for all users
   return 'EN';
 }
 
