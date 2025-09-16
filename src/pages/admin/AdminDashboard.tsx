@@ -37,25 +37,25 @@ export default function AdminDashboard() {
 
   const kpiData = [
     {
-      title: 'Total Properties',
+      title: t('admin.totalProperties'),
       value: loading ? '...' : properties.length.toString(),
       change: '+' + Math.floor(Math.random() * 20 + 5) + '%',
       icon: Building2,
     },
     {
-      title: 'Active Properties',
+      title: t('admin.activeProperties'),
       value: loading ? '...' : activeProperties.toString(),
       change: '+' + Math.floor(Math.random() * 15 + 3) + '%',
       icon: CalendarDays,
     },
     {
-      title: 'Total Users',
+      title: t('admin.totalUsers'),
       value: loading ? '...' : profiles.length.toString(),
       change: '+' + Math.floor(Math.random() * 25 + 8) + '%',
       icon: Users,
     },
     {
-      title: 'Messages',
+      title: t('admin.messages'),
       value: loading ? '...' : Math.floor(Math.random() * 50 + 20).toString(),
       change: '+' + Math.floor(Math.random() * 30 + 10) + '%',
       icon: MessageSquare,
@@ -65,9 +65,9 @@ export default function AdminDashboard() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold">Dashboard</h1>
+        <h1 className="text-3xl font-bold">{t('admin.dashboard')}</h1>
         <p className="text-muted-foreground">
-          {t('overviewPlatform') || 'Overview of your platform performance'}
+          {t('admin.overviewPlatform')}
         </p>
       </div>
 
@@ -84,7 +84,7 @@ export default function AdminDashboard() {
             <CardContent>
               <div className="text-2xl font-bold">{kpi.value}</div>
               <p className="text-xs text-green-600">
-                {kpi.change} from last week
+                {kpi.change} {t('admin.fromLastWeek')}
               </p>
             </CardContent>
           </Card>
@@ -95,7 +95,7 @@ export default function AdminDashboard() {
       <div className="grid gap-6 md:grid-cols-2">
         <Card>
           <CardHeader>
-            <CardTitle>Recent Properties</CardTitle>
+            <CardTitle>{t('admin.recentProperties')}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
@@ -125,7 +125,7 @@ export default function AdminDashboard() {
 
         <Card>
           <CardHeader>
-            <CardTitle>Property Distribution</CardTitle>
+            <CardTitle>{t('admin.propertyDistribution')}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">

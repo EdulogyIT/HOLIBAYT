@@ -41,11 +41,11 @@ export const AdminLayout = ({ children }: AdminLayoutProps) => {
   const isMobile = useIsMobile();
 
   const adminMenuItems = [
-    { title: 'Dashboard', url: '/admin', icon: LayoutDashboard },
-    { title: 'Properties', url: '/admin/properties', icon: Building2 },
-    { title: 'Hosts & Guests', url: '/admin/users', icon: Users },
-    { title: 'Messages', url: '/admin/messages', icon: MessageSquare },
-    { title: 'Settings', url: '/admin/settings', icon: Settings },
+    { title: t('admin.dashboard'), url: '/admin', icon: LayoutDashboard },
+    { title: t('admin.properties'), url: '/admin/properties', icon: Building2 },
+    { title: t('admin.hostsGuests'), url: '/admin/users', icon: Users },
+    { title: t('admin.messages'), url: '/admin/messages', icon: MessageSquare },
+    { title: t('admin.settings'), url: '/admin/settings', icon: Settings },
   ];
 
   const handleLogout = () => {
@@ -76,7 +76,7 @@ export const AdminLayout = ({ children }: AdminLayoutProps) => {
 
             {/* Navigation */}
             <SidebarGroup>
-              <SidebarGroupLabel>Administration</SidebarGroupLabel>
+              <SidebarGroupLabel>{t('admin.administration')}</SidebarGroupLabel>
               <SidebarGroupContent>
                 <SidebarMenu>
                   {adminMenuItems.map((item) => (
@@ -120,19 +120,19 @@ export const AdminLayout = ({ children }: AdminLayoutProps) => {
                   <DropdownMenuItem asChild>
                     <NavLink to="/admin">
                       <LayoutDashboard className="mr-2 h-4 w-4" />
-                      Admin Console
+                      {t('admin.adminConsole')}
                     </NavLink>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
                     <NavLink to="/">
                       <Home className="mr-2 h-4 w-4" />
-                      Back to Site
+                      {t('admin.backToSite')}
                     </NavLink>
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={handleLogout} className="text-destructive">
                     <LogOut className="mr-2 h-4 w-4" />
-                    Logout
+                    {t('admin.logout')}
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
@@ -145,7 +145,7 @@ export const AdminLayout = ({ children }: AdminLayoutProps) => {
           <header className="h-16 border-b bg-background flex items-center px-4 md:px-6">
             <SidebarTrigger />
             <div className="ml-4">
-              <h1 className="text-lg md:text-xl font-semibold">Admin Panel</h1>
+              <h1 className="text-lg md:text-xl font-semibold">{t('admin.adminPanel')}</h1>
             </div>
           </header>
           
