@@ -9,8 +9,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
-import { CheckCircle, ArrowLeft, ArrowRight } from 'lucide-react';
+import { CheckCircle, ArrowLeft, ArrowRight, Upload, X } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { supabase } from '@/integrations/supabase/client';
 
 const steps = [
   { id: 1, title: 'Property Basics', description: 'Tell us about your property' },
@@ -24,35 +25,134 @@ const steps = [
 export default function HostOnboarding() {
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState({
+    category: '',
     title: '',
     type: '',
     capacity: '',
+    bedrooms: '',
+    bathrooms: '',
+    area: '',
+    floor: '',
     address: '',
     city: '',
-    nightly: '',
+    district: '',
+    price: '',
+    priceType: '',
     cleaning: '',
     minNights: '',
-    photos: [] as File[],
     houseRules: '',
     cancellation: '',
+    description: '',
   });
-  const { assignHostRole } = useAuth();
+  const [images, setImages] = useState<File[]>([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { assignHostRole, user } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
 
   const progress = (currentStep / steps.length) * 100;
 
-  const handleNext = () => {
+  const handleNext = async () => {
     if (currentStep < steps.length) {
       setCurrentStep(currentStep + 1);
     } else {
-      // Complete onboarding
+      await handleSubmit();
+    }
+  };
+
+  const handleSubmit = async () => {
+    if (!user) return;
+
+    setIsSubmitting(true);
+
+    try {
+      // Upload images first
+      const imageUrls: string[] = [];
+      
+      for (let i = 0; i < images.length; i++) {
+        const file = images[i];
+        const fileExt = file.name.split('.').pop();
+        const fileName = `${user.id}/${Date.now()}_${i}.${fileExt}`;
+        
+        const { data: uploadData, error: uploadError } = await supabase.storage
+          .from('property-images')
+          .upload(fileName, file);
+
+        if (uploadError) {
+          console.error('Image upload error:', uploadError);
+          continue;
+        }
+
+        if (uploadData) {
+          const { data: { publicUrl } } = supabase.storage
+            .from('property-images')
+            .getPublicUrl(uploadData.path);
+          imageUrls.push(publicUrl);
+        }
+      }
+
+      // Create property record
+      const { error: insertError } = await supabase
+        .from('properties')
+        .insert({
+          user_id: user.id,
+          category: formData.category,
+          property_type: formData.type,
+          title: formData.title,
+          location: formData.address,
+          city: formData.city,
+          district: formData.district || null,
+          full_address: formData.address,
+          bedrooms: formData.bedrooms || null,
+          bathrooms: formData.bathrooms || null,
+          area: formData.area,
+          floor_number: formData.floor || null,
+          price: formData.price,
+          price_type: formData.priceType,
+          features: {},
+          description: formData.description || null,
+          contact_name: user.name || '',
+          contact_phone: '',
+          contact_email: user.email,
+          images: imageUrls,
+          status: 'active'
+        });
+
+      if (insertError) {
+        console.error('Property insertion error:', insertError);
+        toast({
+          title: "Error",
+          description: "Failed to publish property. Please try again.",
+          variant: "destructive"
+        });
+        return;
+      }
+
+      // Assign host role
       assignHostRole();
+      
       toast({
         title: 'Welcome to hosting!',
-        description: 'Your host account has been activated successfully.',
+        description: 'Your property has been published successfully!',
       });
-      navigate('/host');
+
+      // Navigate to the appropriate category page
+      const categoryRoutes = {
+        'sale': '/buy',
+        'rent': '/rent',
+        'short-stay': '/short-stay'
+      };
+      navigate(categoryRoutes[formData.category as keyof typeof categoryRoutes] || '/host');
+
+    } catch (error) {
+      console.error('Property submission error:', error);
+      toast({
+        title: "Error",
+        description: "An unexpected error occurred. Please try again.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -62,11 +162,35 @@ export default function HostOnboarding() {
     }
   };
 
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      const newFiles = Array.from(e.target.files);
+      setImages(prev => [...prev, ...newFiles].slice(0, 10));
+    }
+  };
+
+  const removeImage = (index: number) => {
+    setImages(prev => prev.filter((_, i) => i !== index));
+  };
+
   const renderStepContent = () => {
     switch (currentStep) {
       case 1:
         return (
           <div className="space-y-4">
+            <div>
+              <Label htmlFor="category">Property Category</Label>
+              <Select value={formData.category} onValueChange={(value) => setFormData({ ...formData, category: value })}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select category" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="sale">For Sale</SelectItem>
+                  <SelectItem value="rent">For Rent</SelectItem>
+                  <SelectItem value="short-stay">Short Stay</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
             <div>
               <Label htmlFor="title">Property Title</Label>
               <Input
@@ -90,15 +214,45 @@ export default function HostOnboarding() {
                 </SelectContent>
               </Select>
             </div>
-            <div>
-              <Label htmlFor="capacity">Guest Capacity</Label>
-              <Input
-                id="capacity"
-                type="number"
-                value={formData.capacity}
-                onChange={(e) => setFormData({ ...formData, capacity: e.target.value })}
-                placeholder="4"
-              />
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="bedrooms">Bedrooms</Label>
+                <Input
+                  id="bedrooms"
+                  value={formData.bedrooms}
+                  onChange={(e) => setFormData({ ...formData, bedrooms: e.target.value })}
+                  placeholder="3"
+                />
+              </div>
+              <div>
+                <Label htmlFor="bathrooms">Bathrooms</Label>
+                <Input
+                  id="bathrooms"
+                  value={formData.bathrooms}
+                  onChange={(e) => setFormData({ ...formData, bathrooms: e.target.value })}
+                  placeholder="2"
+                />
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="area">Area (m²)</Label>
+                <Input
+                  id="area"
+                  value={formData.area}
+                  onChange={(e) => setFormData({ ...formData, area: e.target.value })}
+                  placeholder="120"
+                />
+              </div>
+              <div>
+                <Label htmlFor="floor">Floor Number</Label>
+                <Input
+                  id="floor"
+                  value={formData.floor}
+                  onChange={(e) => setFormData({ ...formData, floor: e.target.value })}
+                  placeholder="2"
+                />
+              </div>
             </div>
           </div>
         );
@@ -129,6 +283,15 @@ export default function HostOnboarding() {
                 </SelectContent>
               </Select>
             </div>
+            <div>
+              <Label htmlFor="district">District (Optional)</Label>
+              <Input
+                id="district"
+                value={formData.district}
+                onChange={(e) => setFormData({ ...formData, district: e.target.value })}
+                placeholder="Hydra, Sidi Bel Abbès, etc."
+              />
+            </div>
           </div>
         );
 
@@ -136,33 +299,65 @@ export default function HostOnboarding() {
         return (
           <div className="space-y-4">
             <div>
-              <Label htmlFor="nightly">Nightly Rate (DA)</Label>
+              <Label htmlFor="price">
+                {formData.category === 'sale' ? 'Sale Price (DA)' : 
+                 formData.category === 'rent' ? 'Monthly Rent (DA)' : 
+                 'Nightly Rate (DA)'}
+              </Label>
               <Input
-                id="nightly"
+                id="price"
                 type="number"
-                value={formData.nightly}
-                onChange={(e) => setFormData({ ...formData, nightly: e.target.value })}
-                placeholder="8000"
+                value={formData.price}
+                onChange={(e) => setFormData({ ...formData, price: e.target.value })}
+                placeholder={formData.category === 'sale' ? '50000000' : 
+                           formData.category === 'rent' ? '80000' : '8000'}
               />
             </div>
             <div>
-              <Label htmlFor="cleaning">Cleaning Fee (DA)</Label>
-              <Input
-                id="cleaning"
-                type="number"
-                value={formData.cleaning}
-                onChange={(e) => setFormData({ ...formData, cleaning: e.target.value })}
-                placeholder="2000"
-              />
+              <Label htmlFor="priceType">Price Type</Label>
+              <Select value={formData.priceType} onValueChange={(value) => setFormData({ ...formData, priceType: value })}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select price type" />
+                </SelectTrigger>
+                <SelectContent>
+                  {formData.category === 'sale' && <SelectItem value="fixed">Fixed Price</SelectItem>}
+                  {formData.category === 'sale' && <SelectItem value="negotiable">Negotiable</SelectItem>}
+                  {formData.category === 'rent' && <SelectItem value="monthly">Monthly</SelectItem>}
+                  {formData.category === 'short-stay' && <SelectItem value="per-night">Per Night</SelectItem>}
+                </SelectContent>
+              </Select>
             </div>
+            {formData.category === 'short-stay' && (
+              <>
+                <div>
+                  <Label htmlFor="cleaning">Cleaning Fee (DA)</Label>
+                  <Input
+                    id="cleaning"
+                    type="number"
+                    value={formData.cleaning}
+                    onChange={(e) => setFormData({ ...formData, cleaning: e.target.value })}
+                    placeholder="2000"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="minNights">Minimum Nights</Label>
+                  <Input
+                    id="minNights"
+                    type="number"
+                    value={formData.minNights}
+                    onChange={(e) => setFormData({ ...formData, minNights: e.target.value })}
+                    placeholder="2"
+                  />
+                </div>
+              </>
+            )}
             <div>
-              <Label htmlFor="minNights">Minimum Nights</Label>
-              <Input
-                id="minNights"
-                type="number"
-                value={formData.minNights}
-                onChange={(e) => setFormData({ ...formData, minNights: e.target.value })}
-                placeholder="2"
+              <Label htmlFor="description">Description</Label>
+              <Textarea
+                id="description"
+                value={formData.description}
+                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                placeholder="Describe your property..."
               />
             </div>
           </div>
@@ -174,13 +369,49 @@ export default function HostOnboarding() {
             <div>
               <Label>Property Photos</Label>
               <div className="border-2 border-dashed border-muted-foreground/25 rounded-lg p-6 text-center">
-                <p className="text-muted-foreground">
+                <Upload className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
+                <p className="text-muted-foreground mb-4">
                   Upload high-quality photos of your property
                 </p>
-                <Button variant="outline" className="mt-2">
+                <input
+                  type="file"
+                  multiple
+                  accept="image/*"
+                  onChange={handleImageUpload}
+                  className="hidden"
+                  id="image-upload"
+                />
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => document.getElementById('image-upload')?.click()}
+                >
                   Choose Files
                 </Button>
               </div>
+              
+              {images.length > 0 && (
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-4">
+                  {images.map((image, index) => (
+                    <div key={index} className="relative">
+                      <img
+                        src={URL.createObjectURL(image)}
+                        alt={`Preview ${index + 1}`}
+                        className="w-full h-24 object-cover rounded-md"
+                      />
+                      <Button
+                        type="button"
+                        variant="destructive"
+                        size="sm"
+                        className="absolute top-1 right-1 h-6 w-6 p-0"
+                        onClick={() => removeImage(index)}
+                      >
+                        <X className="h-3 w-3" />
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
         );
@@ -241,8 +472,12 @@ export default function HostOnboarding() {
                   <span className="font-medium">{formData.city || 'Not set'}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span>Nightly Rate:</span>
-                  <span className="font-medium">DA {formData.nightly || '0'}</span>
+                  <span>Category:</span>
+                  <span className="font-medium capitalize">{formData.category || 'Not set'}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Price:</span>
+                  <span className="font-medium">DA {formData.price || '0'}</span>
                 </div>
               </CardContent>
             </Card>
@@ -323,9 +558,9 @@ export default function HostOnboarding() {
               Previous
             </Button>
           )}
-          <Button onClick={handleNext}>
-            {currentStep === steps.length ? 'Finish & Publish' : 'Next'}
-            {currentStep < steps.length && <ArrowRight className="h-4 w-4 ml-2" />}
+          <Button onClick={handleNext} disabled={isSubmitting}>
+            {isSubmitting ? 'Publishing...' : currentStep === steps.length ? 'Finish & Publish' : 'Next'}
+            {currentStep < steps.length && !isSubmitting && <ArrowRight className="h-4 w-4 ml-2" />}
           </Button>
         </div>
       </div>
