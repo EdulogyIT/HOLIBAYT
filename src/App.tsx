@@ -33,6 +33,7 @@ import AdminUsers from "./pages/admin/AdminUsers";
 import HostDashboard from "./pages/host/HostDashboard";
 import HostOnboarding from "./pages/host/HostOnboarding";
 import HostListings from "./pages/host/HostListings";
+import HostMessages from "./pages/host/HostMessages";
 
 const queryClient = new QueryClient();
 
@@ -109,7 +110,7 @@ const App = () => (
                       <Route index element={<HostDashboard />} />
                       <Route path="calendar" element={<div>Host Calendar - Coming Soon</div>} />
                       <Route path="listings" element={<HostListings />} />
-                      <Route path="messages" element={<div>Host Messages - Coming Soon</div>} />
+                      <Route path="messages" element={<HostMessages />} />
                       <Route path="payouts" element={<div>Host Payouts - Coming Soon</div>} />
                     </Routes>
                   </HostLayout>

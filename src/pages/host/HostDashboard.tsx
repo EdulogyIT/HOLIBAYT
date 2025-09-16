@@ -84,73 +84,91 @@ export default function HostDashboard() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold">Mes Propriétés</h1>
+        <h1 className="text-3xl font-bold">Tableau de bord</h1>
         <p className="text-muted-foreground">
-          Gérez vos annonces et suivez leurs performances
+          Bienvenue dans votre espace hôte
         </p>
       </div>
 
-      {properties.length > 0 ? (
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {properties.map((property) => (
-            <Card key={property.id}>
-              <CardHeader>
-                <div className="flex items-start justify-between">
+      {/* Quick Stats */}
+      <div className="grid gap-4 md:grid-cols-3">
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Propriétés actives</CardTitle>
+            <Building2 className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{properties.filter(p => p.status === 'active').length}</div>
+          </CardContent>
+        </Card>
+        
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Messages reçus</CardTitle>
+            <MessageSquare className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">-</div>
+            <p className="text-xs text-muted-foreground">Consultez vos messages</p>
+          </CardContent>
+        </Card>
+        
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Revenus ce mois</CardTitle>
+            <CalendarDays className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">0 DA</div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Quick Actions */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Actions rapides</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex gap-4">
+            <Button onClick={() => navigate('/publish-property')}>
+              <Plus className="h-4 w-4 mr-2" />
+              Publier une propriété
+            </Button>
+            <Button variant="outline" onClick={() => navigate('/host/listings')}>
+              <Building2 className="h-4 w-4 mr-2" />
+              Voir mes annonces
+            </Button>
+            <Button variant="outline" onClick={() => navigate('/host/messages')}>
+              <MessageSquare className="h-4 w-4 mr-2" />
+              Messages
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Recent Activity */}
+      {properties.length > 0 && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Dernières propriétés</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              {properties.slice(0, 3).map((property) => (
+                <div key={property.id} className="flex items-center justify-between p-3 border rounded-lg">
                   <div>
-                    <CardTitle className="text-lg">{property.title}</CardTitle>
-                    <p className="text-sm text-muted-foreground mt-1">
-                      {property.property_type} • {property.city}, {property.district}
+                    <p className="font-medium">{property.title}</p>
+                    <p className="text-sm text-muted-foreground">
+                      {property.city} • Publié le {formatDate(property.created_at)}
                     </p>
                   </div>
                   <Badge variant={property.status === 'active' ? 'default' : 'secondary'}>
                     {property.status === 'active' ? 'Actif' : 'Inactif'}
                   </Badge>
                 </div>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <span className="text-2xl font-bold text-primary">
-                      {formatPrice(property.price, property.price_type)}
-                    </span>
-                    <Badge variant="outline">
-                      {property.category === 'sale' ? 'Vente' : 
-                       property.category === 'rent' ? 'Location' : 'Séjour Court'}
-                    </Badge>
-                  </div>
-                  
-                  <div className="text-sm text-muted-foreground">
-                    Publié le {formatDate(property.created_at)}
-                  </div>
-                  
-                  <div className="flex gap-2">
-                    <Button size="sm" variant="outline" className="flex-1" 
-                      onClick={() => navigate(`/property/${property.id}`)}>
-                      <Building2 className="h-4 w-4 mr-1" />
-                      Voir
-                    </Button>
-                    <Button size="sm" variant="outline" className="flex-1">
-                      <MessageSquare className="h-4 w-4 mr-1" />
-                      Messages
-                    </Button>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      ) : (
-        <Card>
-          <CardContent className="text-center py-12">
-            <Building2 className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
-            <h3 className="text-lg font-semibold mb-2">Aucune propriété publiée</h3>
-            <p className="text-muted-foreground mb-6">
-              Commencez par publier votre première propriété pour la voir apparaître ici.
-            </p>
-            <Button onClick={() => navigate('/publish-property')}>
-              <Plus className="h-4 w-4 mr-2" />
-              Publier une propriété
-            </Button>
+              ))}
+            </div>
           </CardContent>
         </Card>
       )}
