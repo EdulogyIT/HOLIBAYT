@@ -75,29 +75,27 @@ export const AdminLayout = ({ children }: AdminLayoutProps) => {
             </div>
 
             {/* Navigation */}
-            <SidebarGroup>
-              <SidebarGroupLabel>{t('admin.administration')}</SidebarGroupLabel>
-              <SidebarGroupContent>
-                <SidebarMenu>
-                  {adminMenuItems.map((item) => (
-                    <SidebarMenuItem key={item.title}>
-                      <SidebarMenuButton asChild>
-                        <NavLink 
-                          to={item.url} 
-                          end={item.url === '/admin'}
-                          className={({ isActive }) => 
-                            isActive ? "bg-primary text-primary-foreground font-medium" : "hover:bg-muted"
-                          }
-                        >
-                          <item.icon className="mr-2 h-4 w-4" />
-                          <span>{item.title}</span>
-                        </NavLink>
-                      </SidebarMenuButton>
-                    </SidebarMenuItem>
-                  ))}
-                </SidebarMenu>
-              </SidebarGroupContent>
-            </SidebarGroup>
+            <div className="p-4">
+              <h3 className="text-sm font-medium text-muted-foreground mb-3">{t('admin.administration')}</h3>
+              <SidebarMenu>
+                {adminMenuItems.map((item) => (
+                  <SidebarMenuItem key={item.title}>
+                    <SidebarMenuButton asChild>
+                      <NavLink 
+                        to={item.url} 
+                        end={item.url === '/admin'}
+                        className={({ isActive }) => 
+                          isActive ? "bg-primary text-primary-foreground font-medium" : "hover:bg-muted"
+                        }
+                      >
+                        <item.icon className="mr-2 h-4 w-4" />
+                        <span>{item.title}</span>
+                      </NavLink>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                ))}
+              </SidebarMenu>
+            </div>
 
             {/* User Actions */}
             <div className="mt-auto p-4 border-t">
