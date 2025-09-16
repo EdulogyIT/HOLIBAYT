@@ -18,7 +18,7 @@ interface AuthContextType {
   login: (email: string, password: string) => Promise<boolean>;
   register: (name: string, email: string, password: string) => Promise<{ success: boolean; needsConfirmation: boolean }>;
   logout: () => void;
-  assignHostRole: () => void;
+  assignHostRole: () => Promise<void>;
   isAuthenticated: boolean;
   hasRole: (role: UserRole) => boolean;
 }
@@ -99,13 +99,18 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   };
 
   const assignHostRole = async () => {
+    console.log('assignHostRole called, current user:', user);
     if (user && user.role === 'user') {
       try {
+        console.log('Updating role to host for user ID:', user.id);
         // Update role in database
-        const { error } = await supabase
+        const { data, error } = await supabase
           .from('profiles')
-          .update({ role: 'host' })
-          .eq('id', user.id);
+          .update({ role: 'host', updated_at: new Date().toISOString() })
+          .eq('id', user.id)
+          .select();
+
+        console.log('Database update result:', { data, error });
 
         if (error) {
           console.error('Error updating host role:', error);
@@ -114,10 +119,13 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
         // Update local state
         const updatedUser = { ...user, role: 'host' as UserRole, isHost: true };
+        console.log('Updating local user state to:', updatedUser);
         setUser(updatedUser);
       } catch (error) {
         console.error('Error assigning host role:', error);
       }
+    } else {
+      console.log('assignHostRole: User not eligible for host role', { user: user?.role });
     }
   };
 
