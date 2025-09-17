@@ -1,9 +1,8 @@
 import { Button } from "@/components/ui/button";
-import { Menu, X, Globe, LogOut, Settings, User, Home, Calendar, DollarSign } from "lucide-react";
+import { Menu, X, Globe, LogOut, Settings, User, Home, Calendar } from "lucide-react";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { useCurrency } from "@/contexts/CurrencyContext";
 import { useAuth } from "@/contexts/AuthContext";
 import LoginModal from "@/components/LoginModal";
 import {
@@ -19,7 +18,6 @@ const Navigation = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const { currentLang, setCurrentLang, t } = useLanguage();
-  const { currentCurrency, setCurrentCurrency } = useCurrency();
   const { isAuthenticated, user, logout, hasRole } = useAuth();
   const navigate = useNavigate();
 
@@ -29,20 +27,10 @@ const Navigation = () => {
     { code: "AR", name: "العربية", flag: "🇩🇿" }
   ];
 
-  const currencies = [
-    { code: "USD", name: "US Dollar", symbol: "$" },
-    { code: "DZD", name: "Algerian Dinar", symbol: "DA" },
-    { code: "EUR", name: "Euro", symbol: "€" }
-  ];
 
   const handleLanguageChange = (lang: 'FR' | 'EN' | 'AR') => {
     setCurrentLang(lang);
     setIsMenuOpen(false); // Close mobile menu when changing language
-  };
-
-  const handleCurrencyChange = (currency: 'USD' | 'DZD' | 'EUR') => {
-    setCurrentCurrency(currency);
-    setIsMenuOpen(false); // Close mobile menu when changing currency
   };
 
   const handleLogout = () => {
@@ -88,7 +76,7 @@ const Navigation = () => {
             </Link>
           </div>
 
-          {/* Language & Currency Switchers & CTA Buttons */}
+          {/* Language Switcher & CTA Buttons */}
           <div className="hidden md:flex items-center space-x-4">
             {/* Language Switcher */}
             <DropdownMenu>
@@ -107,28 +95,6 @@ const Navigation = () => {
                     <span>{lang.flag}</span>
                     <span>{lang.name}</span>
                     {currentLang === lang.code && <span className="ml-auto text-primary">✓</span>}
-                  </DropdownMenuItem>
-                ))}
-              </DropdownMenuContent>
-            </DropdownMenu>
-
-            {/* Currency Switcher */}
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" className="font-inter">
-                  <DollarSign className="h-5 w-5" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                {currencies.map((currency) => (
-                  <DropdownMenuItem 
-                    key={currency.code}
-                    onClick={() => handleCurrencyChange(currency.code as any)}
-                    className="flex items-center space-x-2"
-                  >
-                    <span>{currency.symbol}</span>
-                    <span>{currency.name}</span>
-                    {currentCurrency === currency.code && <span className="ml-auto text-primary">✓</span>}
                   </DropdownMenuItem>
                 ))}
               </DropdownMenuContent>
@@ -271,30 +237,6 @@ const Navigation = () => {
                   </DropdownMenuContent>
                 </DropdownMenu>
 
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" className="font-inter font-medium justify-start">
-                      <DollarSign className="h-4 w-4 mr-2" />
-                      {currencies.find(c => c.code === currentCurrency)?.symbol} {currentCurrency}
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent>
-                    {currencies.map((currency) => (
-                      <DropdownMenuItem 
-                        key={currency.code}
-                        onClick={() => {
-                          handleCurrencyChange(currency.code as any);
-                          setIsMenuOpen(false);
-                        }}
-                        className="flex items-center space-x-2"
-                      >
-                        <span>{currency.symbol}</span>
-                        <span>{currency.name}</span>
-                        {currentCurrency === currency.code && <span className="ml-auto text-primary">✓</span>}
-                      </DropdownMenuItem>
-                    ))}
-                  </DropdownMenuContent>
-                </DropdownMenu>
 
                 {!isAuthenticated ? (
                   <>

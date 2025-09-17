@@ -1,10 +1,10 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { useLanguage } from './LanguageContext';
 
 type Currency = 'USD' | 'DZD' | 'EUR';
 
 interface CurrencyContextType {
   currentCurrency: Currency;
-  setCurrentCurrency: (currency: Currency) => void;
   formatPrice: (amount: string | number, priceType?: string) => string;
   getCurrencySymbol: () => string;
 }
@@ -44,14 +44,27 @@ interface CurrencyProviderProps {
 }
 
 export const CurrencyProvider = ({ children }: CurrencyProviderProps) => {
+  const { currentLang } = useLanguage();
+  
+  // Map language to currency
+  const getCurrencyFromLanguage = (lang: string): Currency => {
+    switch (lang) {
+      case 'EN': return 'USD';
+      case 'FR': return 'EUR';
+      case 'AR': return 'DZD';
+      default: return 'DZD';
+    }
+  };
+
   const [currentCurrency, setCurrentCurrency] = useState<Currency>(() => {
-    const saved = localStorage.getItem('holibayt-currency');
-    return (saved as Currency) || 'DZD';
+    return getCurrencyFromLanguage(currentLang);
   });
 
+  // Update currency when language changes
   useEffect(() => {
-    localStorage.setItem('holibayt-currency', currentCurrency);
-  }, [currentCurrency]);
+    const newCurrency = getCurrencyFromLanguage(currentLang);
+    setCurrentCurrency(newCurrency);
+  }, [currentLang]);
 
   const formatPrice = (amount: string | number, priceType?: string): string => {
     let numAmount = typeof amount === 'string' ? parseFloat(amount) : amount;
@@ -94,7 +107,6 @@ export const CurrencyProvider = ({ children }: CurrencyProviderProps) => {
 
   const value = {
     currentCurrency,
-    setCurrentCurrency,
     formatPrice,
     getCurrencySymbol
   };
