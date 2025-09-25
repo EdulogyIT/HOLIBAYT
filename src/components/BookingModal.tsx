@@ -34,7 +34,15 @@ export const BookingModal: React.FC<BookingModalProps> = ({ property, trigger })
   const { isAuthenticated } = useAuth();
 
   // Calculate booking details
-  const basePrice = parseFloat(property.price) || 0;
+  const rawPrice = parseFloat(property.price) || 0;
+  // Convert price from cents to dollars
+  const priceInDollars = rawPrice / 100;
+  
+  // Convert monthly price to nightly for short-stay bookings
+  const basePrice = property.price_type === 'monthly' && property.category === 'short-stay' 
+    ? priceInDollars / 30.44  // Average days per month
+    : priceInDollars;
+    
   const nights = checkInDate && checkOutDate ? 
     Math.max(1, differenceInDays(parseISO(checkOutDate), parseISO(checkInDate))) : 0;
   
