@@ -152,8 +152,20 @@ serve(async (req) => {
       }
     }
 
-    // Create Stripe checkout session
+    // Create Stripe checkout session with dynamic pricing
     const origin = req.headers.get("origin") || "https://preview--holibaith-79.lovable.app";
+    
+    // Create product name based on payment type and property
+    const productName = paymentType === 'booking_fee' 
+      ? `Booking Fee - ${property.title}`
+      : paymentType === 'security_deposit'
+      ? `Security Deposit - ${property.title}`
+      : paymentType === 'earnest_money'
+      ? `Earnest Money - ${property.title}`
+      : paymentType === 'property_sale'
+      ? `Property Purchase - ${property.title}`
+      : `Payment - ${property.title}`;
+
     const session = await stripe.checkout.sessions.create({
       customer: customerId,
       customer_email: customerId ? undefined : user.email,
@@ -162,8 +174,8 @@ serve(async (req) => {
           price_data: {
             currency: currency.toLowerCase(),
             product_data: {
-              name: `${paymentType.replace('_', ' ').toUpperCase()} - ${property.title}`,
-              description: description || `Payment for ${property.title}`,
+              name: productName,
+              description: description || `${paymentType.replace('_', ' ')} for ${property.title}`,
             },
             unit_amount: Math.round(amount * 100), // Convert to cents
           },
