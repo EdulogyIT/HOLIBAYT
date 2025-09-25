@@ -13,6 +13,8 @@ import { useEffect, useState } from "react";
 import MapboxMap from "@/components/MapboxMap";
 import AIChatBox from "@/components/AIChatBox";
 import PropertyDatePicker from "@/components/PropertyDatePicker";
+import { PaymentButton } from "@/components/PaymentButton";
+import { BookingModal } from "@/components/BookingModal";
 import { supabase } from "@/integrations/supabase/client";
 import { Loader2 } from "lucide-react";
 import ScheduleVisitModal from "@/components/ScheduleVisitModal";
@@ -252,7 +254,7 @@ const Property = () => {
 
             {/* Sidebar */}
             <div className="space-y-6">
-              {/* Date Picker for Short Stay or Visit Scheduler for Sale/Rent */}
+              {/* Booking/Visit Section */}
               {property.category === 'short-stay' ? (
                 <div className="space-y-4">
                   <PropertyDatePicker 
@@ -260,16 +262,50 @@ const Property = () => {
                   />
                   <Card>
                     <CardContent className="pt-6">
-                      <Button 
-                        className="w-full bg-gradient-primary hover:shadow-elegant"
-                        size="lg"
-                      >
-                        <Calendar className="w-4 h-4 mr-2" />
-                        {t('bookNow')}
-                      </Button>
+                      <BookingModal 
+                        property={{
+                          id: property.id,
+                          title: property.title,
+                          price: property.price,
+                          price_type: property.price_type,
+                          category: property.category
+                        }}
+                      />
                     </CardContent>
                   </Card>
                 </div>
+              ) : property.category === 'sale' ? (
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="font-playfair">
+                      {t('purchaseProperty') || 'Purchase Property'}
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <p className="text-sm text-muted-foreground">
+                      {t('purchaseDescription') || 'Interested in purchasing this property? Pay earnest money to secure your offer.'}
+                    </p>
+                    <div className="space-y-2">
+                      <Button 
+                        className="w-full bg-gradient-primary hover:shadow-elegant"
+                        onClick={() => setIsScheduleModalOpen(true)}
+                      >
+                        <Calendar className="w-4 h-4 mr-2" />
+                        {t('scheduleVisit') || 'Schedule Visit'}
+                      </Button>
+                      <PaymentButton
+                        propertyId={property.id}
+                        paymentType="earnest_money"
+                        amount={Math.min(10000, parseFloat(property.price) * 0.05)} // 5% earnest money, max $10,000
+                        currency="USD"
+                        description={`Earnest money for ${property.title}`}
+                        className="w-full"
+                      >
+                        Pay Earnest Money
+                      </PaymentButton>
+                    </div>
+                  </CardContent>
+                </Card>
               ) : (
                 <Card>
                   <CardHeader>
@@ -281,13 +317,25 @@ const Property = () => {
                     <p className="text-sm text-muted-foreground">
                       {t('scheduleVisitDescription') || 'Schedule a visit to see this property in person'}
                     </p>
-                    <Button 
-                      className="w-full bg-gradient-primary hover:shadow-elegant"
-                      onClick={() => setIsScheduleModalOpen(true)}
-                    >
-                      <Calendar className="w-4 h-4 mr-2" />
-                      {t('scheduleVisit') || 'Schedule Visit'}
-                    </Button>
+                    <div className="space-y-2">
+                      <Button 
+                        className="w-full bg-gradient-primary hover:shadow-elegant"
+                        onClick={() => setIsScheduleModalOpen(true)}
+                      >
+                        <Calendar className="w-4 h-4 mr-2" />
+                        {t('scheduleVisit') || 'Schedule Visit'}
+                      </Button>
+                      <PaymentButton
+                        propertyId={property.id}
+                        paymentType="security_deposit"
+                        amount={500} // Standard security deposit
+                        currency="USD"
+                        description={`Security deposit for ${property.title}`}
+                        className="w-full"
+                      >
+                        Pay Security Deposit
+                      </PaymentButton>
+                    </div>
                   </CardContent>
                 </Card>
               )}

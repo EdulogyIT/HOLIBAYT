@@ -35,6 +35,8 @@ import HostOnboarding from "./pages/host/HostOnboarding";
 import HostListings from "./pages/host/HostListings";
 import HostMessages from "./pages/host/HostMessages";
 import PropertyCalendar from "@/components/PropertyCalendar";
+import PaymentSuccess from "./pages/PaymentSuccess";
+import PaymentCancelled from "./pages/PaymentCancelled";
 
 const queryClient = new QueryClient();
 
@@ -75,6 +77,10 @@ const App = () => (
               <Route path="/property/:id" element={<Property />} />
               <Route path="/city/:cityId" element={<City />} />
               <Route path="/contact-advisor" element={<ContactAdvisor />} />
+              
+              {/* Payment routes */}
+              <Route path="/payment-success" element={<PaymentSuccess />} />
+              <Route path="/payment-cancelled" element={<PaymentCancelled />} />
               
               {/* Auth routes */}
               <Route path="/login" element={<LoginPage />} />

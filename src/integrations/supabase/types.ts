@@ -14,6 +14,75 @@ export type Database = {
   }
   public: {
     Tables: {
+      bookings: {
+        Row: {
+          booking_fee: number
+          check_in_date: string
+          check_out_date: string
+          contact_phone: string | null
+          created_at: string
+          guests_count: number
+          id: string
+          payment_id: string | null
+          property_id: string
+          security_deposit: number
+          special_requests: string | null
+          status: string
+          total_amount: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          booking_fee?: number
+          check_in_date: string
+          check_out_date: string
+          contact_phone?: string | null
+          created_at?: string
+          guests_count?: number
+          id?: string
+          payment_id?: string | null
+          property_id: string
+          security_deposit?: number
+          special_requests?: string | null
+          status?: string
+          total_amount: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          booking_fee?: number
+          check_in_date?: string
+          check_out_date?: string
+          contact_phone?: string | null
+          created_at?: string
+          guests_count?: number
+          id?: string
+          payment_id?: string | null
+          property_id?: string
+          security_deposit?: number
+          special_requests?: string | null
+          status?: string
+          total_amount?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bookings_payment_id_fkey"
+            columns: ["payment_id"]
+            isOneToOne: false
+            referencedRelation: "payments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bookings_property_id_fkey"
+            columns: ["property_id"]
+            isOneToOne: false
+            referencedRelation: "properties"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       contact_requests: {
         Row: {
           created_at: string
@@ -54,6 +123,68 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "contact_requests_property_id_fkey"
+            columns: ["property_id"]
+            isOneToOne: false
+            referencedRelation: "properties"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      payments: {
+        Row: {
+          amount: number
+          completed_at: string | null
+          created_at: string
+          currency: string
+          description: string | null
+          id: string
+          metadata: Json | null
+          payment_type: Database["public"]["Enums"]["payment_type"]
+          property_id: string
+          refunded_at: string | null
+          status: Database["public"]["Enums"]["payment_status"]
+          stripe_checkout_session_id: string | null
+          stripe_payment_intent_id: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          completed_at?: string | null
+          created_at?: string
+          currency?: string
+          description?: string | null
+          id?: string
+          metadata?: Json | null
+          payment_type: Database["public"]["Enums"]["payment_type"]
+          property_id: string
+          refunded_at?: string | null
+          status?: Database["public"]["Enums"]["payment_status"]
+          stripe_checkout_session_id?: string | null
+          stripe_payment_intent_id?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          completed_at?: string | null
+          created_at?: string
+          currency?: string
+          description?: string | null
+          id?: string
+          metadata?: Json | null
+          payment_type?: Database["public"]["Enums"]["payment_type"]
+          property_id?: string
+          refunded_at?: string | null
+          status?: Database["public"]["Enums"]["payment_status"]
+          stripe_checkout_session_id?: string | null
+          stripe_payment_intent_id?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payments_property_id_fkey"
             columns: ["property_id"]
             isOneToOne: false
             referencedRelation: "properties"
@@ -178,6 +309,18 @@ export type Database = {
     }
     Enums: {
       app_role: "user" | "host" | "admin"
+      payment_status:
+        | "pending"
+        | "completed"
+        | "failed"
+        | "refunded"
+        | "cancelled"
+      payment_type:
+        | "booking_fee"
+        | "security_deposit"
+        | "earnest_money"
+        | "property_sale"
+        | "monthly_rent"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -306,6 +449,20 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["user", "host", "admin"],
+      payment_status: [
+        "pending",
+        "completed",
+        "failed",
+        "refunded",
+        "cancelled",
+      ],
+      payment_type: [
+        "booking_fee",
+        "security_deposit",
+        "earnest_money",
+        "property_sale",
+        "monthly_rent",
+      ],
     },
   },
 } as const
