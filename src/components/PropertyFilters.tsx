@@ -125,45 +125,45 @@ const PropertyFilters = ({ onFilterChange, listingType }: PropertyFiltersProps) 
       {isOpen && (
         <Card className="border border-border">
           <CardContent className="p-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {/* Location */}
               <div className="space-y-2">
-                <Label className="font-inter font-medium">{t('location') || 'Location'}</Label>
+                <Label className="font-inter font-medium text-sm">{t('location') || 'Location'}</Label>
                 <Input
-                  placeholder={t('cityOrDistrict') || 'City Or District'}
+                  placeholder={t('cityOrDistrict') || 'City or District'}
                   value={filters.location}
                   onChange={(e) => handleFilterChange('location', e.target.value)}
-                  className="font-inter"
+                  className="font-inter text-sm"
                 />
               </div>
 
               {/* Property Type */}
               <div className="space-y-2">
-                <Label className="font-inter font-medium">{t('propertyType') || 'Type de propriété'}</Label>
+                <Label className="font-inter font-medium text-sm">{t('propertyType') || 'Property Type'}</Label>
                 <Select value={filters.propertyType} onValueChange={(value) => handleFilterChange('propertyType', value)}>
-                  <SelectTrigger className="font-inter">
-                    <SelectValue placeholder="Sélectionner" />
+                  <SelectTrigger className="font-inter text-sm">
+                    <SelectValue placeholder={t('selectType') || 'Select'} />
                   </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">{t('allTypes') || 'Tous Les Types'}</SelectItem>
+                  <SelectContent className="bg-background border border-border z-50">
+                    <SelectItem value="all">{t('allTypes') || 'All Types'}</SelectItem>
                     <SelectItem value="villa">{t('villaFilter') || 'Villa'}</SelectItem>
-                    <SelectItem value="apartment">{t('apartment') || 'Appartement'}</SelectItem>
+                    <SelectItem value="apartment">{t('apartment') || 'Apartment'}</SelectItem>
                     <SelectItem value="studio">{t('studio') || 'Studio'}</SelectItem>
                     <SelectItem value="duplex">{t('duplexFilter') || 'Duplex'}</SelectItem>
-                    <SelectItem value="house">{t('house') || 'Maison'}</SelectItem>
+                    <SelectItem value="house">{t('house') || 'House'}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
 
               {/* Bedrooms */}
               <div className="space-y-2">
-                <Label className="font-inter font-medium">{t('bedrooms') || 'Chambres'}</Label>
+                <Label className="font-inter font-medium text-sm">{t('bedrooms') || 'Bedrooms'}</Label>
                 <Select value={filters.bedrooms} onValueChange={(value) => handleFilterChange('bedrooms', value)}>
-                  <SelectTrigger className="font-inter">
-                    <SelectValue placeholder={t('number') || 'Nombre'} />
+                  <SelectTrigger className="font-inter text-sm">
+                    <SelectValue placeholder={t('number') || 'Any'} />
                   </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">{t('all') || 'Tout'}</SelectItem>
+                  <SelectContent className="bg-background border border-border z-50">
+                    <SelectItem value="all">{t('all') || 'All'}</SelectItem>
                     <SelectItem value="1">1+</SelectItem>
                     <SelectItem value="2">2+</SelectItem>
                     <SelectItem value="3">3+</SelectItem>
@@ -175,13 +175,13 @@ const PropertyFilters = ({ onFilterChange, listingType }: PropertyFiltersProps) 
 
               {/* Bathrooms */}
               <div className="space-y-2">
-                <Label className="font-inter font-medium">{t('bathrooms') || 'Salles De Bain'}</Label>
+                <Label className="font-inter font-medium text-sm">{t('bathrooms') || 'Bathrooms'}</Label>
                 <Select value={filters.bathrooms} onValueChange={(value) => handleFilterChange('bathrooms', value)}>
-                  <SelectTrigger className="font-inter">
-                    <SelectValue placeholder={t('number') || 'Nombre'} />
+                  <SelectTrigger className="font-inter text-sm">
+                    <SelectValue placeholder={t('number') || 'Any'} />
                   </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">{t('all') || 'Tout'}</SelectItem>
+                  <SelectContent className="bg-background border border-border z-50">
+                    <SelectItem value="all">{t('all') || 'All'}</SelectItem>
                     <SelectItem value="1">1+</SelectItem>
                     <SelectItem value="2">2+</SelectItem>
                     <SelectItem value="3">3+</SelectItem>
@@ -190,26 +190,27 @@ const PropertyFilters = ({ onFilterChange, listingType }: PropertyFiltersProps) 
                 </Select>
               </div>
 
-              {/* Surface Area */}
+              {/* Min Area */}
               <div className="space-y-2">
-                <Label className="font-inter font-medium">{t('minArea') || 'Surface Min (m²)'}</Label>
+                <Label className="font-inter font-medium text-sm">{t('minArea') || 'Min Area (m²)'}</Label>
                 <Input
                   type="number"
-                  placeholder={t('areaPlaceholder') || 'Ex: 50'}
+                  placeholder="50"
                   value={filters.minArea}
                   onChange={(e) => handleFilterChange('minArea', e.target.value)}
-                  className="font-inter"
+                  className="font-inter text-sm"
                 />
               </div>
 
+              {/* Max Area */}
               <div className="space-y-2">
-                <Label className="font-inter font-medium">{t('maxArea') || 'Surface Max (m²)'}</Label>
+                <Label className="font-inter font-medium text-sm">{t('maxArea') || 'Max Area (m²)'}</Label>
                 <Input
                   type="number"
-                  placeholder={t('maxAreaPlaceholder') || 'Ex: 200'}
+                  placeholder="200"
                   value={filters.maxArea}
                   onChange={(e) => handleFilterChange('maxArea', e.target.value)}
-                  className="font-inter"
+                  className="font-inter text-sm"
                 />
               </div>
             </div>

@@ -33,26 +33,19 @@ export const BookingModal: React.FC<BookingModalProps> = ({ property, trigger })
   const { formatPrice, currentCurrency } = useCurrency();
   const { isAuthenticated } = useAuth();
 
-  // Calculate booking details
+  // Calculate booking details - treat property price as the actual daily/monthly rate
   const rawPrice = parseFloat(property.price) || 0;
   
-  // Check if price seems unreasonably high (likely data error)
-  const isUnreasonablePrice = rawPrice > 100000; // More than $1000 even before conversion
-  
-  // Convert price from cents to dollars, with fallback for unreasonable prices
-  let priceInDollars;
-  if (isUnreasonablePrice) {
-    // Assume the price was entered as dollars instead of cents
-    priceInDollars = rawPrice / 10000; // Divide by 10000 instead of 100
-    console.warn(`Property ${property.id} has unreasonably high price ${rawPrice}, treating as dollars*100`);
-  } else {
-    priceInDollars = rawPrice / 100;
-  }
+  // The price is stored as the actual rate (not in cents)
+  let basePrice = rawPrice;
   
   // Convert monthly price to nightly for short-stay bookings
-  const basePrice = property.price_type === 'monthly' && property.category === 'short-stay' 
-    ? priceInDollars / 30.44  // Average days per month
-    : priceInDollars;
+  if (property.price_type === 'monthly' && property.category === 'short-stay') {
+    basePrice = rawPrice / 30.44; // Average days per month
+  } else if (property.price_type === 'weekly' && property.category === 'short-stay') {
+    basePrice = rawPrice / 7; // Convert weekly to daily
+  }
+  // For daily prices, use as is
     
   const nights = checkInDate && checkOutDate ? 
     Math.max(1, differenceInDays(parseISO(checkOutDate), parseISO(checkInDate))) : 0;

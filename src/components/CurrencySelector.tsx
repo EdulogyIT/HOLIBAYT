@@ -9,7 +9,7 @@ import { useCurrency, Currency } from "@/contexts/CurrencyContext";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 const CurrencySelector = () => {
-  const { currentCurrency } = useCurrency();
+  const { currentCurrency, setCurrency } = useCurrency();
   const { t } = useLanguage();
   
   const currencies = [
@@ -18,8 +18,6 @@ const CurrencySelector = () => {
     { code: "DZD" as Currency, name: "Algerian Dinar", symbol: "DA" }
   ];
 
-  // Note: Currency selection is now handled automatically by language selection
-  // This component is for display only - currency changes with language
   const currentCurrencyInfo = currencies.find(c => c.code === currentCurrency);
 
   return (
@@ -29,13 +27,22 @@ const CurrencySelector = () => {
           <DollarSign className="h-5 w-5" />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="bg-background border border-border">
-        <div className="px-3 py-2 text-sm font-medium text-foreground">
-          {t('currentCurrency')}: {currentCurrencyInfo?.name} ({currentCurrencyInfo?.symbol})
+      <DropdownMenuContent align="end" className="bg-background border border-border z-50">
+        <div className="px-3 py-2 text-sm font-medium text-foreground border-b">
+          {t('selectCurrency') || 'Select Currency'}
         </div>
-        <div className="px-3 py-2 text-xs text-muted-foreground">
-          {t('currencyChangesWithLanguage')}
-        </div>
+        {currencies.map((currency) => (
+          <button
+            key={currency.code}
+            onClick={() => setCurrency(currency.code)}
+            className={`w-full px-3 py-2 text-sm text-left hover:bg-accent hover:text-accent-foreground flex items-center justify-between ${
+              currentCurrency === currency.code ? 'bg-accent text-accent-foreground' : ''
+            }`}
+          >
+            <span>{currency.name}</span>
+            <span className="text-xs text-muted-foreground">{currency.symbol}</span>
+          </button>
+        ))}
       </DropdownMenuContent>
     </DropdownMenu>
   );

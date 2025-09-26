@@ -1,5 +1,4 @@
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { useLanguage } from './LanguageContext';
+import { createContext, useContext, useState, ReactNode } from 'react';
 
 type Currency = 'USD' | 'DZD' | 'EUR';
 
@@ -7,6 +6,7 @@ interface CurrencyContextType {
   currentCurrency: Currency;
   formatPrice: (amount: string | number, priceType?: string) => string;
   getCurrencySymbol: () => string;
+  setCurrency: (currency: Currency) => void;
 }
 
 const currencyConfig = {
@@ -44,43 +44,35 @@ interface CurrencyProviderProps {
 }
 
 export const CurrencyProvider = ({ children }: CurrencyProviderProps) => {
-  const { currentLang } = useLanguage();
-  
-  // Map language to currency
-  const getCurrencyFromLanguage = (lang: string): Currency => {
-    switch (lang) {
-      case 'EN': return 'USD';
-      case 'FR': return 'EUR';
-      case 'AR': return 'DZD';
-      default: return 'DZD';
-    }
-  };
-
+  // Independent currency selection - not tied to language
   const [currentCurrency, setCurrentCurrency] = useState<Currency>(() => {
-    return getCurrencyFromLanguage(currentLang);
+    const saved = localStorage.getItem('selectedCurrency');
+    return (saved as Currency) || 'USD';
   });
 
-  // Update currency when language changes
-  useEffect(() => {
-    const newCurrency = getCurrencyFromLanguage(currentLang);
-    setCurrentCurrency(newCurrency);
-  }, [currentLang]);
+  const setCurrency = (currency: Currency) => {
+    setCurrentCurrency(currency);
+    localStorage.setItem('selectedCurrency', currency);
+  };
 
   const formatPrice = (amount: string | number, priceType?: string): string => {
     let numAmount = typeof amount === 'string' ? parseFloat(amount) : amount;
     
     if (isNaN(numAmount)) return '0';
 
-    // Convert from DZD to target currency
+    // Assume property prices are stored in DZD (base currency)
+    // Convert to target currency if different
+    let convertedAmount = numAmount;
     if (currentCurrency !== 'DZD') {
-      numAmount = numAmount * exchangeRates[currentCurrency];
+      // Convert from DZD to target currency
+      convertedAmount = numAmount * exchangeRates[currentCurrency];
     }
 
     const config = currencyConfig[currentCurrency];
     const formattedAmount = new Intl.NumberFormat('en-US', {
       minimumFractionDigits: 0,
       maximumFractionDigits: currentCurrency === 'DZD' ? 0 : 2,
-    }).format(numAmount);
+    }).format(convertedAmount);
 
     let result = '';
     if (config.position === 'before') {
@@ -96,6 +88,12 @@ export const CurrencyProvider = ({ children }: CurrencyProviderProps) => {
       result += '/day';
     } else if (priceType === 'weeklyPrice') {
       result += '/week';
+    } else if (priceType === 'monthly') {
+      result += '/month';
+    } else if (priceType === 'daily') {
+      result += '/day';
+    } else if (priceType === 'weekly') {
+      result += '/week';
     }
 
     return result;
@@ -108,7 +106,8 @@ export const CurrencyProvider = ({ children }: CurrencyProviderProps) => {
   const value = {
     currentCurrency,
     formatPrice,
-    getCurrencySymbol
+    getCurrencySymbol,
+    setCurrency
   };
 
   return (

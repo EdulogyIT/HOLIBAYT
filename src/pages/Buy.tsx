@@ -42,6 +42,19 @@ const Buy = () => {
   
   useScrollToTop();
 
+  // Handle URL search parameters
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const location = urlParams.get('location');
+    if (location && properties.length > 0) {
+      const filtered = properties.filter(p => 
+        p.city.toLowerCase().includes(location.toLowerCase()) ||
+        p.location.toLowerCase().includes(location.toLowerCase())
+      );
+      setFilteredProperties(filtered);
+    }
+  }, [properties]);
+
   useEffect(() => {
     fetchProperties();
   }, []);
