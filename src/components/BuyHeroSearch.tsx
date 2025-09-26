@@ -1,22 +1,39 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Search, MapPin, DollarSign, Home } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import buyHeroBg from "@/assets/buy-hero-bg.jpg";
 
 const BuyHeroSearch = () => {
   const { t } = useLanguage();
   const navigate = useNavigate();
+  const location = useLocation();
   
   const [formData, setFormData] = useState({
     location: '',
     propertyType: '',
     budget: ''
   });
+
+  // Populate form from URL parameters on mount
+  useEffect(() => {
+    const urlParams = new URLSearchParams(location.search);
+    const locationParam = urlParams.get('location');
+    const typeParam = urlParams.get('type');
+    const budgetParam = urlParams.get('budget');
+    
+    if (locationParam || typeParam || budgetParam) {
+      setFormData({
+        location: locationParam || '',
+        propertyType: typeParam || '',
+        budget: budgetParam || ''
+      });
+    }
+  }, [location.search]);
 
   const updateFormField = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
