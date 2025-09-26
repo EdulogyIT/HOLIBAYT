@@ -48,37 +48,37 @@ const ShortStay = () => {
 
   // Handle URL search parameters and apply initial filtering
   useEffect(() => {
-    if (properties.length > 0) {
-      const urlParams = new URLSearchParams(window.location.search);
-      const location = urlParams.get('location');
-      const checkIn = urlParams.get('checkIn');
-      const checkOut = urlParams.get('checkOut');
-      const travelers = urlParams.get('travelers');
-      
-      let filtered = [...properties];
-      
-      if (location) {
-        filtered = filtered.filter(p => 
-          p.city.toLowerCase().includes(location.toLowerCase()) ||
-          p.location.toLowerCase().includes(location.toLowerCase())
-        );
-      }
-      
-      // Note: Date and traveler filtering could be added here in the future
-      // For now, we just filter by location from the search
-      
-      setFilteredProperties(filtered);
-    } else {
-      // No URL parameters, show all properties
-      setFilteredProperties(properties);
+    console.log('Processing URL search parameters...');
+    console.log('Properties loaded:', properties.length);
+    
+    const urlParams = new URLSearchParams(window.location.search);
+    const location = urlParams.get('location');
+    const checkIn = urlParams.get('checkIn');
+    const checkOut = urlParams.get('checkOut');
+    const travelers = urlParams.get('travelers');
+    
+    console.log('URL Parameters:', { location, checkIn, checkOut, travelers });
+    
+    let filtered = [...properties];
+    console.log('Initial properties:', filtered.length);
+    
+    if (location) {
+      filtered = filtered.filter(p => 
+        p.city.toLowerCase().includes(location.toLowerCase()) ||
+        p.location.toLowerCase().includes(location.toLowerCase())
+      );
+      console.log('After location filter:', filtered.length);
     }
+    
+    // Note: Date and traveler filtering could be added here in the future
+    // For now, we just filter by location from the search
+    
+    console.log('Final filtered properties:', filtered.length);
+    setFilteredProperties(filtered);
   }, [properties]);
 
-  useEffect(() => {
-    fetchProperties();
-  }, []);
-
   const fetchProperties = async () => {
+    console.log('Fetching properties...');
     try {
       const { data, error } = await supabase
         .from('properties')
@@ -91,6 +91,9 @@ const ShortStay = () => {
         console.error('Error fetching properties:', error);
         return;
       }
+
+      console.log('Fetched properties:', data?.length || 0);
+      console.log('Sample properties:', data?.slice(0, 3));
 
       setProperties(data || []);
       setFilteredProperties(data || []);

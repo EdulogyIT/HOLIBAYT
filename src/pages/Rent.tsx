@@ -48,47 +48,49 @@ const Rent = () => {
 
   // Handle URL search parameters and apply initial filtering
   useEffect(() => {
-    if (properties.length > 0) {
-      const urlParams = new URLSearchParams(window.location.search);
-      const location = urlParams.get('location');
-      const type = urlParams.get('type');
-      const maxRent = urlParams.get('maxRent');
-      
-      let filtered = [...properties];
-      
-      if (location) {
-        filtered = filtered.filter(p => 
-          p.city.toLowerCase().includes(location.toLowerCase()) ||
-          p.location.toLowerCase().includes(location.toLowerCase())
-        );
-      }
-      
-      if (type) {
-        filtered = filtered.filter(p => p.property_type.toLowerCase() === type.toLowerCase());
-      }
-      
-      if (maxRent) {
-        const maxRentAmount = parseInt(maxRent.replace(/[^\d]/g, ''));
-        if (!isNaN(maxRentAmount)) {
-          filtered = filtered.filter(p => {
-            const price = parseInt(p.price.replace(/[^\d]/g, ''));
-            return price <= maxRentAmount;
-          });
-        }
-      }
-      
-      setFilteredProperties(filtered);
-    } else {
-      // No URL parameters, show all properties
-      setFilteredProperties(properties);
+    console.log('Processing URL search parameters...');
+    console.log('Properties loaded:', properties.length);
+    
+    const urlParams = new URLSearchParams(window.location.search);
+    const location = urlParams.get('location');
+    const type = urlParams.get('type');
+    const maxRent = urlParams.get('maxRent');
+    
+    console.log('URL Parameters:', { location, type, maxRent });
+    
+    let filtered = [...properties];
+    console.log('Initial properties:', filtered.length);
+    
+    if (location) {
+      filtered = filtered.filter(p => 
+        p.city.toLowerCase().includes(location.toLowerCase()) ||
+        p.location.toLowerCase().includes(location.toLowerCase())
+      );
+      console.log('After location filter:', filtered.length);
     }
+    
+    if (type && type !== 'all') {
+      filtered = filtered.filter(p => p.property_type.toLowerCase() === type.toLowerCase());
+      console.log('After type filter:', filtered.length);
+    }
+    
+    if (maxRent && maxRent !== '0') {
+      const maxRentAmount = parseInt(maxRent.replace(/[^\d]/g, ''));
+      if (!isNaN(maxRentAmount) && maxRentAmount > 0) {
+        filtered = filtered.filter(p => {
+          const price = parseInt(p.price.replace(/[^\d]/g, ''));
+          return price <= maxRentAmount;
+        });
+        console.log('After rent filter:', filtered.length);
+      }
+    }
+    
+    console.log('Final filtered properties:', filtered.length);
+    setFilteredProperties(filtered);
   }, [properties]);
 
-  useEffect(() => {
-    fetchProperties();
-  }, []);
-
   const fetchProperties = async () => {
+    console.log('Fetching properties...');
     try {
       const { data, error } = await supabase
         .from('properties')
@@ -101,6 +103,9 @@ const Rent = () => {
         console.error('Error fetching properties:', error);
         return;
       }
+
+      console.log('Fetched properties:', data?.length || 0);
+      console.log('Sample properties:', data?.slice(0, 3));
 
       setProperties(data || []);
       setFilteredProperties(data || []);
