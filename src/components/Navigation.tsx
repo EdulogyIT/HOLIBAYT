@@ -5,6 +5,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useAuth } from "@/contexts/AuthContext";
 import LoginModal from "@/components/LoginModal";
+import CurrencySelector from "@/components/CurrencySelector";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -76,8 +77,11 @@ const Navigation = () => {
             </Link>
           </div>
 
-          {/* Language Switcher & CTA Buttons */}
+          {/* Language & Currency Switchers & CTA Buttons */}
           <div className="hidden md:flex items-center space-x-4">
+            {/* Currency Selector */}
+            <CurrencySelector />
+            
             {/* Language Switcher */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -85,7 +89,7 @@ const Navigation = () => {
                   <Globe className="h-5 w-5" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
+              <DropdownMenuContent align="end" className="bg-background border border-border">
                 {languages.map((lang) => (
                   <DropdownMenuItem 
                     key={lang.code}
@@ -212,6 +216,11 @@ const Navigation = () => {
                     {t('blog')}
                   </Link>
               <div className="flex flex-col space-y-2 pt-4 border-t border-border">
+                {/* Currency Selector Mobile */}
+                <div className="flex items-center">
+                  <CurrencySelector />
+                </div>
+                
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button variant="ghost" className="font-inter font-medium justify-start">
@@ -219,7 +228,7 @@ const Navigation = () => {
                       {languages.find(l => l.code === currentLang)?.name}
                     </Button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent>
+                  <DropdownMenuContent className="bg-background border border-border">
                     {languages.map((lang) => (
                       <DropdownMenuItem 
                         key={lang.code}

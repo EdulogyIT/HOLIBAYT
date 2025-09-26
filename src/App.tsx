@@ -19,6 +19,7 @@ import About from "./pages/About";
 import Blog from "./pages/Blog";
 import BlogPost from "./pages/BlogPost";
 import PublishProperty from "./pages/PublishProperty";
+import EditProperty from "./pages/EditProperty";
 import Property from "./pages/Property";
 import City from "./pages/City";
 import ContactAdvisor from "./pages/ContactAdvisor";
@@ -62,6 +63,11 @@ const App = () => (
               <Route path="/publish-property" element={
                 <ProtectedRoute requireAuth>
                   <PublishProperty />
+                </ProtectedRoute>
+              } />
+              <Route path="/edit-property/:id" element={
+                <ProtectedRoute requireAuth>
+                  <EditProperty />
                 </ProtectedRoute>
               } />
               <Route path="/bookings" element={

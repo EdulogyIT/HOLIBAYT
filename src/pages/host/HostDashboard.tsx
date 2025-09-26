@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { CalendarDays, MessageSquare, Phone, CheckCircle, Building2, Plus } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useCurrency } from '@/contexts/CurrencyContext';
 import { supabase } from '@/integrations/supabase/client';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -26,6 +27,7 @@ interface Property {
 export default function HostDashboard() {
   const { user } = useAuth();
   const { t } = useLanguage();
+  const { formatPrice } = useCurrency();
   const navigate = useNavigate();
   const [properties, setProperties] = useState<Property[]>([]);
   const [loading, setLoading] = useState(true);
@@ -54,13 +56,6 @@ export default function HostDashboard() {
     } finally {
       setLoading(false);
     }
-  };
-
-  const formatPrice = (price: string, priceType: string) => {
-    const formattedPrice = new Intl.NumberFormat('fr-DZ').format(parseInt(price));
-    if (priceType === 'monthly') return `${formattedPrice} DA/mois`;
-    if (priceType === 'daily') return `${formattedPrice} DA/jour`;
-    return `${formattedPrice} DA`;
   };
 
   const formatDate = (dateString: string) => {
@@ -120,7 +115,7 @@ export default function HostDashboard() {
             <CalendarDays className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">0 DA</div>
+            <div className="text-2xl font-bold">{formatPrice(0)}</div>
           </CardContent>
         </Card>
       </div>

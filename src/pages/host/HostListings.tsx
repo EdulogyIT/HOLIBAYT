@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useCurrency } from '@/contexts/CurrencyContext';
 import { supabase } from '@/integrations/supabase/client';
 import { useNavigate } from 'react-router-dom';
 
@@ -35,6 +36,7 @@ interface Property {
 export default function HostListings() {
   const { user } = useAuth();
   const { t } = useLanguage();
+  const { formatPrice } = useCurrency();
   const navigate = useNavigate();
   const [properties, setProperties] = useState<Property[]>([]);
   const [loading, setLoading] = useState(true);
@@ -63,13 +65,6 @@ export default function HostListings() {
     } finally {
       setLoading(false);
     }
-  };
-
-  const formatPrice = (price: string, priceType: string) => {
-    const formattedPrice = new Intl.NumberFormat('fr-DZ').format(parseInt(price));
-    if (priceType === 'monthly') return `${formattedPrice} DA/${t('host.monthlyRevenue').includes('month') ? 'month' : 'mois'}`;
-    if (priceType === 'daily') return `${formattedPrice} DA/${t('host.monthlyRevenue').includes('month') ? 'day' : 'jour'}`;
-    return `${formattedPrice} DA`;
   };
 
   const formatDate = (dateString: string) => {
@@ -208,11 +203,33 @@ export default function HostListings() {
                       <Eye className="h-4 w-4 mr-1" />
                       {t('host.view')}
                     </Button>
-                    <Button size="sm" variant="outline" className="flex-1">
+                    <Button size="sm" variant="outline" className="flex-1"
+                      onClick={() => navigate(`/edit-property/${property.id}`)}>
                       <Edit className="h-4 w-4 mr-1" />
                       {t('host.edit')}
                     </Button>
-                    <Button size="sm" variant="outline" className="text-red-600 hover:text-red-700">
+                    <Button 
+                      size="sm" 
+                      variant="outline" 
+                      className="text-red-600 hover:text-red-700"
+                      onClick={async () => {
+                        if (window.confirm(t('host.confirmDelete') || 'Are you sure you want to delete this property?')) {
+                          try {
+                            const { error } = await supabase
+                              .from('properties')
+                              .delete()
+                              .eq('id', property.id);
+                            
+                            if (error) {
+                              console.error('Error deleting property:', error);
+                            } else {
+                              fetchHostProperties(); // Refresh the list
+                            }
+                          } catch (error) {
+                            console.error('Error deleting property:', error);
+                          }
+                        }
+                      }}>
                       <Trash2 className="h-4 w-4" />
                     </Button>
                   </div>

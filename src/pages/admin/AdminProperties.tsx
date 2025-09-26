@@ -80,11 +80,6 @@ export default function AdminProperties() {
     }
   };
 
-  const formatPrice = (price: string) => {
-    const numPrice = parseInt(price);
-    return `DA ${numPrice.toLocaleString()}`;
-  };
-
   const activeProperties = properties.filter(p => p.status === 'active').length;
   const pendingProperties = properties.filter(p => p.status === 'pending').length;
   const suspendedProperties = properties.filter(p => p.status === 'suspended').length;
@@ -239,7 +234,7 @@ export default function AdminProperties() {
                       </div>
                     </TableCell>
                     <TableCell>{property.contact_name}</TableCell>
-                    <TableCell>{formatPrice(property.price)}</TableCell>
+                    <TableCell>{property.price} DA</TableCell>
                     <TableCell>
                       <Badge className={getStatusColor(property.status || 'active')}>
                         {property.status || 'active'}
