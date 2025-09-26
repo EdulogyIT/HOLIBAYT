@@ -23,7 +23,7 @@ const BuyHeroSearch = () => {
   };
 
   const isFormValid = () => {
-    return formData.location.trim() !== '' && formData.propertyType !== '' && formData.budget.trim() !== '';
+    return formData.location.trim() !== '';
   };
 
   const handleSearch = () => {

@@ -26,10 +26,7 @@ const ShortStayHeroSearch = () => {
   };
 
   const isFormValid = () => {
-    return formData.location.trim() !== '' && 
-           formData.dateRange?.from && 
-           formData.dateRange?.to && 
-           formData.travelers.trim() !== '';
+    return formData.location.trim() !== '';
   };
 
   const handleSearch = () => {

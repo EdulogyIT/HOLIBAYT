@@ -23,7 +23,7 @@ const RentHeroSearch = () => {
   };
 
   const isFormValid = () => {
-    return formData.location.trim() !== '' && formData.housingType !== '' && formData.maxRent.trim() !== '';
+    return formData.location.trim() !== '';
   };
 
   const handleSearch = () => {
