@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, ReactNode } from 'react';
 
-type Currency = 'USD' | 'DZD' | 'EUR';
+export type Currency = 'USD' | 'DZD' | 'EUR';
 
 interface CurrencyContextType {
   currentCurrency: Currency;
@@ -14,19 +14,19 @@ const currencyConfig = {
     symbol: '$',
     code: 'USD',
     name: 'US Dollar',
-    position: 'before' // $100
+    position: 'before' as const // $100
   },
   DZD: {
     symbol: 'DA',
     code: 'DZD', 
     name: 'Algerian Dinar',
-    position: 'after' // 100 DA
+    position: 'after' as const // 100 DA
   },
   EUR: {
     symbol: '€',
     code: 'EUR',
     name: 'Euro',
-    position: 'before' // €100
+    position: 'before' as const // €100
   }
 };
 
@@ -46,13 +46,21 @@ interface CurrencyProviderProps {
 export const CurrencyProvider = ({ children }: CurrencyProviderProps) => {
   // Independent currency selection - not tied to language
   const [currentCurrency, setCurrentCurrency] = useState<Currency>(() => {
-    const saved = localStorage.getItem('selectedCurrency');
-    return (saved as Currency) || 'USD';
+    try {
+      const saved = localStorage.getItem('selectedCurrency');
+      return (saved as Currency) || 'USD';
+    } catch {
+      return 'USD';
+    }
   });
 
   const setCurrency = (currency: Currency) => {
     setCurrentCurrency(currency);
-    localStorage.setItem('selectedCurrency', currency);
+    try {
+      localStorage.setItem('selectedCurrency', currency);
+    } catch {
+      // Handle localStorage errors gracefully
+    }
   };
 
   const formatPrice = (amount: string | number, priceType?: string): string => {
@@ -82,17 +90,11 @@ export const CurrencyProvider = ({ children }: CurrencyProviderProps) => {
     }
 
     // Add price type suffix if provided
-    if (priceType === 'monthlyPrice') {
+    if (priceType === 'monthlyPrice' || priceType === 'monthly') {
       result += '/month';
-    } else if (priceType === 'dailyPrice') {
+    } else if (priceType === 'dailyPrice' || priceType === 'daily') {
       result += '/day';
-    } else if (priceType === 'weeklyPrice') {
-      result += '/week';
-    } else if (priceType === 'monthly') {
-      result += '/month';
-    } else if (priceType === 'daily') {
-      result += '/day';
-    } else if (priceType === 'weekly') {
+    } else if (priceType === 'weeklyPrice' || priceType === 'weekly') {
       result += '/week';
     }
 
@@ -103,7 +105,7 @@ export const CurrencyProvider = ({ children }: CurrencyProviderProps) => {
     return currencyConfig[currentCurrency].symbol;
   };
 
-  const value = {
+  const contextValue: CurrencyContextType = {
     currentCurrency,
     formatPrice,
     getCurrencySymbol,
@@ -111,13 +113,13 @@ export const CurrencyProvider = ({ children }: CurrencyProviderProps) => {
   };
 
   return (
-    <CurrencyContext.Provider value={value}>
+    <CurrencyContext.Provider value={contextValue}>
       {children}
     </CurrencyContext.Provider>
   );
 };
 
-export const useCurrency = () => {
+export const useCurrency = (): CurrencyContextType => {
   const context = useContext(CurrencyContext);
   if (context === undefined) {
     throw new Error('useCurrency must be used within a CurrencyProvider');
@@ -126,4 +128,3 @@ export const useCurrency = () => {
 };
 
 export { currencyConfig };
-export type { Currency };
