@@ -125,134 +125,141 @@ const PropertyFilters = ({ onFilterChange, listingType }: PropertyFiltersProps) 
       {isOpen && (
         <Card className="border border-border">
           <CardContent className="p-6">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {/* Location */}
-              <div className="space-y-2">
-                <Label className="font-inter font-medium text-sm">{t('location') || 'Location'}</Label>
-                <Input
-                  placeholder={t('cityOrDistrict') || 'City or District'}
-                  value={filters.location}
-                  onChange={(e) => handleFilterChange('location', e.target.value)}
-                  className="font-inter text-sm"
-                />
+            {/* Filter Inputs - Better Layout */}
+            <div className="space-y-4">
+              {/* Row 1: Location and Property Type */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label className="font-inter font-medium text-sm">{t('location') || 'Location'}</Label>
+                  <Input
+                    placeholder={t('cityOrDistrict') || 'City or District'}
+                    value={filters.location}
+                    onChange={(e) => handleFilterChange('location', e.target.value)}
+                    className="font-inter text-sm"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label className="font-inter font-medium text-sm">{t('propertyType') || 'Property Type'}</Label>
+                  <Select value={filters.propertyType} onValueChange={(value) => handleFilterChange('propertyType', value)}>
+                    <SelectTrigger className="font-inter text-sm">
+                      <SelectValue placeholder={t('selectType') || 'Select'} />
+                    </SelectTrigger>
+                    <SelectContent className="bg-background border border-border z-50">
+                      <SelectItem value="all">{t('allTypes') || 'All Types'}</SelectItem>
+                      <SelectItem value="villa">{t('villaFilter') || 'Villa'}</SelectItem>
+                      <SelectItem value="apartment">{t('apartment') || 'Apartment'}</SelectItem>
+                      <SelectItem value="studio">{t('studio') || 'Studio'}</SelectItem>
+                      <SelectItem value="duplex">{t('duplexFilter') || 'Duplex'}</SelectItem>
+                      <SelectItem value="house">{t('house') || 'House'}</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
 
-              {/* Property Type */}
-              <div className="space-y-2">
-                <Label className="font-inter font-medium text-sm">{t('propertyType') || 'Property Type'}</Label>
-                <Select value={filters.propertyType} onValueChange={(value) => handleFilterChange('propertyType', value)}>
-                  <SelectTrigger className="font-inter text-sm">
-                    <SelectValue placeholder={t('selectType') || 'Select'} />
-                  </SelectTrigger>
-                  <SelectContent className="bg-background border border-border z-50">
-                    <SelectItem value="all">{t('allTypes') || 'All Types'}</SelectItem>
-                    <SelectItem value="villa">{t('villaFilter') || 'Villa'}</SelectItem>
-                    <SelectItem value="apartment">{t('apartment') || 'Apartment'}</SelectItem>
-                    <SelectItem value="studio">{t('studio') || 'Studio'}</SelectItem>
-                    <SelectItem value="duplex">{t('duplexFilter') || 'Duplex'}</SelectItem>
-                    <SelectItem value="house">{t('house') || 'House'}</SelectItem>
-                  </SelectContent>
-                </Select>
+              {/* Row 2: Bedrooms and Bathrooms */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label className="font-inter font-medium text-sm">{t('bedrooms') || 'Bedrooms'}</Label>
+                  <Select value={filters.bedrooms} onValueChange={(value) => handleFilterChange('bedrooms', value)}>
+                    <SelectTrigger className="font-inter text-sm">
+                      <SelectValue placeholder={t('number') || 'Any'} />
+                    </SelectTrigger>
+                    <SelectContent className="bg-background border border-border z-50">
+                      <SelectItem value="all">{t('all') || 'All'}</SelectItem>
+                      <SelectItem value="1">1+</SelectItem>
+                      <SelectItem value="2">2+</SelectItem>
+                      <SelectItem value="3">3+</SelectItem>
+                      <SelectItem value="4">4+</SelectItem>
+                      <SelectItem value="5">5+</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-2">
+                  <Label className="font-inter font-medium text-sm">{t('bathrooms') || 'Bathrooms'}</Label>
+                  <Select value={filters.bathrooms} onValueChange={(value) => handleFilterChange('bathrooms', value)}>
+                    <SelectTrigger className="font-inter text-sm">
+                      <SelectValue placeholder={t('number') || 'Any'} />
+                    </SelectTrigger>
+                    <SelectContent className="bg-background border border-border z-50">
+                      <SelectItem value="all">{t('all') || 'All'}</SelectItem>
+                      <SelectItem value="1">1+</SelectItem>
+                      <SelectItem value="2">2+</SelectItem>
+                      <SelectItem value="3">3+</SelectItem>
+                      <SelectItem value="4">4+</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
 
-              {/* Bedrooms */}
-              <div className="space-y-2">
-                <Label className="font-inter font-medium text-sm">{t('bedrooms') || 'Bedrooms'}</Label>
-                <Select value={filters.bedrooms} onValueChange={(value) => handleFilterChange('bedrooms', value)}>
-                  <SelectTrigger className="font-inter text-sm">
-                    <SelectValue placeholder={t('number') || 'Any'} />
-                  </SelectTrigger>
-                  <SelectContent className="bg-background border border-border z-50">
-                    <SelectItem value="all">{t('all') || 'All'}</SelectItem>
-                    <SelectItem value="1">1+</SelectItem>
-                    <SelectItem value="2">2+</SelectItem>
-                    <SelectItem value="3">3+</SelectItem>
-                    <SelectItem value="4">4+</SelectItem>
-                    <SelectItem value="5">5+</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+              {/* Row 3: Area */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label className="font-inter font-medium text-sm">{t('minArea') || 'Min Area (m²)'}</Label>
+                  <Input
+                    type="number"
+                    placeholder="50"
+                    value={filters.minArea}
+                    onChange={(e) => handleFilterChange('minArea', e.target.value)}
+                    className="font-inter text-sm"
+                  />
+                </div>
 
-              {/* Bathrooms */}
-              <div className="space-y-2">
-                <Label className="font-inter font-medium text-sm">{t('bathrooms') || 'Bathrooms'}</Label>
-                <Select value={filters.bathrooms} onValueChange={(value) => handleFilterChange('bathrooms', value)}>
-                  <SelectTrigger className="font-inter text-sm">
-                    <SelectValue placeholder={t('number') || 'Any'} />
-                  </SelectTrigger>
-                  <SelectContent className="bg-background border border-border z-50">
-                    <SelectItem value="all">{t('all') || 'All'}</SelectItem>
-                    <SelectItem value="1">1+</SelectItem>
-                    <SelectItem value="2">2+</SelectItem>
-                    <SelectItem value="3">3+</SelectItem>
-                    <SelectItem value="4">4+</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              {/* Min Area */}
-              <div className="space-y-2">
-                <Label className="font-inter font-medium text-sm">{t('minArea') || 'Min Area (m²)'}</Label>
-                <Input
-                  type="number"
-                  placeholder="50"
-                  value={filters.minArea}
-                  onChange={(e) => handleFilterChange('minArea', e.target.value)}
-                  className="font-inter text-sm"
-                />
-              </div>
-
-              {/* Max Area */}
-              <div className="space-y-2">
-                <Label className="font-inter font-medium text-sm">{t('maxArea') || 'Max Area (m²)'}</Label>
-                <Input
-                  type="number"
-                  placeholder="200"
-                  value={filters.maxArea}
-                  onChange={(e) => handleFilterChange('maxArea', e.target.value)}
-                  className="font-inter text-sm"
-                />
+                <div className="space-y-2">
+                  <Label className="font-inter font-medium text-sm">{t('maxArea') || 'Max Area (m²)'}</Label>
+                  <Input
+                    type="number"
+                    placeholder="200"
+                    value={filters.maxArea}
+                    onChange={(e) => handleFilterChange('maxArea', e.target.value)}
+                    className="font-inter text-sm"
+                  />
+                </div>
               </div>
             </div>
 
             {/* Price Range */}
-            <div className="mt-6 space-y-4">
-              <Label className="font-inter font-medium">{getPriceLabel()}</Label>
+            <div className="space-y-4">
+              <Label className="font-inter font-medium text-sm">{getPriceLabel()}</Label>
               
-              {/* Minimum Price */}
-              <div className="space-y-2">
-                <Label className="font-inter text-sm">{t('minPrice') || 'Prix Minimum'}</Label>
-                <div className="px-2">
-                  <Slider
-                    min={0}
-                    max={getMaxPrice()}
-                    step={listingType === 'buy' ? 50000 : listingType === 'rent' ? 5000 : 1000}
-                    value={filters.minPrice}
-                    onValueChange={(value) => handleFilterChange('minPrice', value)}
-                    className="w-full"
-                  />
-                  <div className="flex justify-between text-sm text-muted-foreground font-inter mt-2">
-                    <span>0 DA</span>
-                    <span>{filters.minPrice[0].toLocaleString()} DA</span>
+              {/* Price Range Sliders */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* Minimum Price */}
+                <div className="space-y-2">
+                  <Label className="font-inter text-xs text-muted-foreground">{t('minPrice') || 'Min Price'}</Label>
+                  <div className="px-2">
+                    <Slider
+                      min={0}
+                      max={getMaxPrice()}
+                      step={listingType === 'buy' ? 50000 : listingType === 'rent' ? 5000 : 1000}
+                      value={filters.minPrice}
+                      onValueChange={(value) => handleFilterChange('minPrice', value)}
+                      className="w-full"
+                    />
+                    <div className="flex justify-between text-xs text-muted-foreground font-inter mt-1">
+                      <span>0 DA</span>
+                      <span>{filters.minPrice[0].toLocaleString()} DA</span>
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              {/* Maximum Price */}
-              <div className="space-y-2">
-                <Label className="font-inter text-sm">{t('maxPrice') || 'Prix Maximum'}</Label>
-                <div className="px-2">
-                  <Slider
-                    min={0}
-                    max={getMaxPrice()}
-                    step={listingType === 'buy' ? 50000 : listingType === 'rent' ? 5000 : 1000}
-                    value={filters.maxPrice}
-                    onValueChange={(value) => handleFilterChange('maxPrice', value)}
-                    className="w-full"
-                  />
-                  <div className="flex justify-between text-sm text-muted-foreground font-inter mt-2">
-                    <span>0 DA</span>
-                    <span>{filters.maxPrice[0].toLocaleString()} DA</span>
+                {/* Maximum Price */}
+                <div className="space-y-2">
+                  <Label className="font-inter text-xs text-muted-foreground">{t('maxPrice') || 'Max Price'}</Label>
+                  <div className="px-2">
+                    <Slider
+                      min={0}
+                      max={getMaxPrice()}
+                      step={listingType === 'buy' ? 50000 : listingType === 'rent' ? 5000 : 1000}
+                      value={filters.maxPrice}
+                      onValueChange={(value) => handleFilterChange('maxPrice', value)}
+                      className="w-full"
+                    />
+                    <div className="flex justify-between text-xs text-muted-foreground font-inter mt-1">
+                      <span>0 DA</span>
+                      <span>{filters.maxPrice[0].toLocaleString()} DA</span>
+                    </div>
                   </div>
                 </div>
               </div>

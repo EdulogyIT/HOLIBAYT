@@ -42,16 +42,35 @@ const ShortStay = () => {
   
   useScrollToTop();
 
-  // Handle URL search parameters
   useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const location = urlParams.get('location');
-    if (location && properties.length > 0) {
-      const filtered = properties.filter(p => 
-        p.city.toLowerCase().includes(location.toLowerCase()) ||
-        p.location.toLowerCase().includes(location.toLowerCase())
-      );
+    fetchProperties();
+  }, []);
+
+  // Handle URL search parameters and apply initial filtering
+  useEffect(() => {
+    if (properties.length > 0) {
+      const urlParams = new URLSearchParams(window.location.search);
+      const location = urlParams.get('location');
+      const checkIn = urlParams.get('checkIn');
+      const checkOut = urlParams.get('checkOut');
+      const travelers = urlParams.get('travelers');
+      
+      let filtered = [...properties];
+      
+      if (location) {
+        filtered = filtered.filter(p => 
+          p.city.toLowerCase().includes(location.toLowerCase()) ||
+          p.location.toLowerCase().includes(location.toLowerCase())
+        );
+      }
+      
+      // Note: Date and traveler filtering could be added here in the future
+      // For now, we just filter by location from the search
+      
       setFilteredProperties(filtered);
+    } else {
+      // No URL parameters, show all properties
+      setFilteredProperties(properties);
     }
   }, [properties]);
 

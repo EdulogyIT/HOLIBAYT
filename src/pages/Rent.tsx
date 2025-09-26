@@ -42,16 +42,45 @@ const Rent = () => {
   
   useScrollToTop();
 
-  // Handle URL search parameters
   useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const location = urlParams.get('location');
-    if (location && properties.length > 0) {
-      const filtered = properties.filter(p => 
-        p.city.toLowerCase().includes(location.toLowerCase()) ||
-        p.location.toLowerCase().includes(location.toLowerCase())
-      );
+    fetchProperties();
+  }, []);
+
+  // Handle URL search parameters and apply initial filtering
+  useEffect(() => {
+    if (properties.length > 0) {
+      const urlParams = new URLSearchParams(window.location.search);
+      const location = urlParams.get('location');
+      const type = urlParams.get('type');
+      const maxRent = urlParams.get('maxRent');
+      
+      let filtered = [...properties];
+      
+      if (location) {
+        filtered = filtered.filter(p => 
+          p.city.toLowerCase().includes(location.toLowerCase()) ||
+          p.location.toLowerCase().includes(location.toLowerCase())
+        );
+      }
+      
+      if (type) {
+        filtered = filtered.filter(p => p.property_type.toLowerCase() === type.toLowerCase());
+      }
+      
+      if (maxRent) {
+        const maxRentAmount = parseInt(maxRent.replace(/[^\d]/g, ''));
+        if (!isNaN(maxRentAmount)) {
+          filtered = filtered.filter(p => {
+            const price = parseInt(p.price.replace(/[^\d]/g, ''));
+            return price <= maxRentAmount;
+          });
+        }
+      }
+      
       setFilteredProperties(filtered);
+    } else {
+      // No URL parameters, show all properties
+      setFilteredProperties(properties);
     }
   }, [properties]);
 

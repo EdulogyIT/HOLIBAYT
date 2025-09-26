@@ -42,18 +42,51 @@ const Buy = () => {
   
   useScrollToTop();
 
-  // Handle URL search parameters
   useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const location = urlParams.get('location');
-    if (location && properties.length > 0) {
-      const filtered = properties.filter(p => 
-        p.city.toLowerCase().includes(location.toLowerCase()) ||
-        p.location.toLowerCase().includes(location.toLowerCase())
-      );
+    fetchProperties();
+  }, []);
+
+  // Handle URL search parameters and apply initial filtering
+  useEffect(() => {
+    if (properties.length > 0) {
+      const urlParams = new URLSearchParams(window.location.search);
+      const location = urlParams.get('location');
+      const type = urlParams.get('type');
+      const budget = urlParams.get('budget');
+      
+      let filtered = [...properties];
+      
+      if (location) {
+        filtered = filtered.filter(p => 
+          p.city.toLowerCase().includes(location.toLowerCase()) ||
+          p.location.toLowerCase().includes(location.toLowerCase())
+        );
+      }
+      
+      if (type) {
+        filtered = filtered.filter(p => p.property_type.toLowerCase() === type.toLowerCase());
+      }
+      
+      if (budget) {
+        const maxBudget = parseInt(budget.replace(/[^\d]/g, ''));
+        if (!isNaN(maxBudget)) {
+          filtered = filtered.filter(p => {
+            const price = parseInt(p.price.replace(/[^\d]/g, ''));
+            return price <= maxBudget;
+          });
+        }
+      }
+      
       setFilteredProperties(filtered);
+    } else {
+      // No URL parameters, show all properties
+      setFilteredProperties(properties);
     }
   }, [properties]);
+
+  useEffect(() => {
+    fetchProperties();
+  }, []);
 
   useEffect(() => {
     fetchProperties();
