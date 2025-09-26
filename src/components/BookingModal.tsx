@@ -35,8 +35,19 @@ export const BookingModal: React.FC<BookingModalProps> = ({ property, trigger })
 
   // Calculate booking details
   const rawPrice = parseFloat(property.price) || 0;
-  // Convert price from cents to dollars
-  const priceInDollars = rawPrice / 100;
+  
+  // Check if price seems unreasonably high (likely data error)
+  const isUnreasonablePrice = rawPrice > 100000; // More than $1000 even before conversion
+  
+  // Convert price from cents to dollars, with fallback for unreasonable prices
+  let priceInDollars;
+  if (isUnreasonablePrice) {
+    // Assume the price was entered as dollars instead of cents
+    priceInDollars = rawPrice / 10000; // Divide by 10000 instead of 100
+    console.warn(`Property ${property.id} has unreasonably high price ${rawPrice}, treating as dollars*100`);
+  } else {
+    priceInDollars = rawPrice / 100;
+  }
   
   // Convert monthly price to nightly for short-stay bookings
   const basePrice = property.price_type === 'monthly' && property.category === 'short-stay' 

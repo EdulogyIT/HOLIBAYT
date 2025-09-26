@@ -61,6 +61,11 @@ serve(async (req) => {
     
     logStep("Payment request parsed", { propertyId, paymentType, amount, currency });
 
+    // Validate amount is reasonable (between $1 and $50,000)
+    if (amount < 1 || amount > 50000) {
+      throw new Error(`Invalid payment amount: $${amount}. Amount must be between $1 and $50,000`);
+    }
+
     // Verify property exists and get property details
     const { data: property, error: propertyError } = await supabaseClient
       .from('properties')
