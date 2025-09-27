@@ -123,33 +123,11 @@ serve(async (req) => {
     if (paymentError) throw new Error(`Failed to create payment: ${paymentError.message}`);
     logStep("Payment record created", { paymentId: payment.id });
 
-    // ---- Create booking row if relevant (service-role)
+    // ---- Store booking data in payment metadata for later use
+    // Don't create booking record until payment is confirmed
     let bookingId: string | null = null;
     if (bookingData && (paymentType === "booking_fee" || paymentType === "security_deposit")) {
-      const { data: booking, error: bookingError } = await dbClient
-        .from("bookings")
-        .insert({
-          user_id: user.id,
-          property_id: propertyId,
-          payment_id: payment.id,
-          check_in_date: bookingData.checkInDate,
-          check_out_date: bookingData.checkOutDate,
-          guests_count: bookingData.guestsCount,
-          total_amount: amount,
-          booking_fee: paymentType === "booking_fee" ? amount : 0,
-          security_deposit: paymentType === "security_deposit" ? amount : 0,
-          special_requests: bookingData.specialRequests,
-          contact_phone: bookingData.contactPhone,
-          status: "pending",
-        })
-        .select()
-        .single();
-      if (bookingError) {
-        logStep("Booking creation failed", { error: bookingError.message });
-      } else {
-        bookingId = booking.id;
-        logStep("Booking record created", { bookingId });
-      }
+      logStep("Booking data stored in payment metadata", { bookingData });
     }
 
     // ---- Build redirect base URL (prefer APP_URL)
