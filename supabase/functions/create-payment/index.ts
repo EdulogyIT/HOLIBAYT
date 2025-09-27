@@ -139,7 +139,17 @@ serve(async (req) => {
     // ---- Build redirect base URL (prefer Origin header, fallback to APP_URL)
     const origin = req.headers.get("origin");
     const appUrl = Deno.env.get("APP_URL");
-    const baseUrl = (origin || appUrl || "").replace(/\/$/, "");
+    let baseUrl = origin || appUrl || "";
+    
+    // Fix malformed URLs
+    if (baseUrl && !baseUrl.startsWith("http")) {
+      baseUrl = `https://${baseUrl}`;
+    }
+    if (baseUrl === "https:/holibayt.vercel.app") {
+      baseUrl = "https://holibayt.vercel.app";
+    }
+    
+    baseUrl = baseUrl.replace(/\/$/, "");
     if (!baseUrl) throw new Error("No origin header or APP_URL configured");
     logStep("Origin header received", { origin });
     logStep("Using base URL", { baseUrl });

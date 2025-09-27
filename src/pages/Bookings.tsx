@@ -84,6 +84,7 @@ const Bookings = () => {
           )
         `)
         .eq('user_id', user.id)
+        .neq('status', 'cancelled')
         .order('check_in_date', { ascending: false });
 
       if (fetchError) {
