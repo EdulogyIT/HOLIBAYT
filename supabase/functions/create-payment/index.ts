@@ -1,6 +1,6 @@
 // supabase/functions/create-payment/index.ts
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
-import Stripe from "https://esm.sh/stripe@14.21.0?target=deno";
+import Stripe from "https://esm.sh/stripe@14.25.0?target=deno";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.2";
 
 const corsHeaders = {
@@ -67,6 +67,8 @@ serve(async (req) => {
     const authHeader = req.headers.get("Authorization");
     if (!authHeader) throw new Error("No authorization header provided");
     const token = authHeader.replace("Bearer ", "");
+    
+    logStep("Authenticating user");
     const { data: userData, error: userError } = await authClient.auth.getUser(token);
     if (userError) throw new Error(`Authentication error: ${userError.message}`);
     const user = userData.user;
@@ -74,6 +76,7 @@ serve(async (req) => {
     logStep("User authenticated", { userId: user.id, email: user.email });
 
     // ---- Parse input
+    logStep("Parsing request body");
     const body: PaymentRequest = await req.json();
     const { propertyId, paymentType, amount, description, bookingData } = body;
 
@@ -93,7 +96,12 @@ serve(async (req) => {
     logStep("Property verified", { propertyTitle: property.title });
 
     // ---- Stripe
-    const stripe = new Stripe(STRIPE_SECRET_KEY, { apiVersion: "2024-06-20" });
+    logStep("Initializing Stripe", { hasSecretKey: !!STRIPE_SECRET_KEY });
+    const stripe = new Stripe(STRIPE_SECRET_KEY, { 
+      apiVersion: "2024-06-20",
+      typescript: true,
+    });
+    logStep("Stripe initialized successfully");
 
     // Reuse or create customer
     let customerId: string | undefined;
@@ -224,7 +232,9 @@ serve(async (req) => {
     );
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
-    logStep("ERROR", { message });
+    const stack = err instanceof Error ? err.stack : '';
+    logStep("ERROR", { message, stack });
+    console.error("Full error details:", err);
     return new Response(JSON.stringify({ error: message }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 500,
