@@ -67,9 +67,9 @@ serve(async (req) => {
     
     logStep("Payment request parsed", { propertyId, paymentType, amount, currency });
 
-  // Validate amount is reasonable (between $1 and $50,000)
+  // Validate amount is reasonable (between €1 and €50,000)
   if (amount < 1 || amount > 500000) {
-    throw new Error(`Invalid payment amount: $${amount}. Amount must be between $1 and $500,000. Note: For testing, if you see very large amounts, the property price might be in a different currency (DZD) - try converting it first.`);
+    throw new Error(`Invalid payment amount: €${amount}. Amount must be between €1 and €500,000.`);
   }
 
     // Verify property exists and get property details using service role
@@ -167,8 +167,8 @@ serve(async (req) => {
     const origin = req.headers.get("origin");
     logStep("Origin header received", { origin });
     
-    // Use a proper fallback URL - this should match your actual domain
-    const baseUrl = origin || "https://vsruezynaanqprobpvrr.supabase.co";
+    // Use the correct Lovable project URL
+    const baseUrl = origin || "https://3dd61bb1-f699-4ed6-bf34-b26425a72fac.lovableproject.com";
     logStep("Using base URL", { baseUrl });
     
     // Create product name based on payment type and property

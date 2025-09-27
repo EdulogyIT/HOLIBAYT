@@ -35,7 +35,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({ property, trigger })
   const { isAuthenticated } = useAuth();
 
   // ---- Stripe constraints ----
-  const MIN_EUR = 50; // Stripe minimum charge in EUR for test accounts
+  const MIN_EUR = 1; // Reduced minimum to allow small payments
 
   // Calculate booking details - treat property price as EUR only
   const basePrice = Number(property.price) || 0;
@@ -61,8 +61,8 @@ export const BookingModal: React.FC<BookingModalProps> = ({ property, trigger })
   const isFormValid = Boolean(checkInDate && checkOutDate && nights > 0 && guestsCount > 0);
 
   // Clamp amounts to Stripe's min for the API payload (and use for button enabled state)
-  const totalForStripe = Math.max(MIN_EUR, Number.isFinite(totalAmount) ? Number(totalAmount) : 0);
-  const depositForStripe = Math.max(MIN_EUR, Number.isFinite(securityDeposit) ? Number(securityDeposit) : 0);
+  const totalForStripe = Number.isFinite(totalAmount) && totalAmount >= MIN_EUR ? Number(totalAmount) : MIN_EUR;
+  const depositForStripe = Number.isFinite(securityDeposit) && securityDeposit >= MIN_EUR ? Number(securityDeposit) : MIN_EUR;
 
   const canPayBooking = isFormValid && totalForStripe >= MIN_EUR;
   const canPayDeposit = isFormValid && depositForStripe >= MIN_EUR;
