@@ -6,12 +6,7 @@ import { CheckCircle, Home, Calendar } from 'lucide-react';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
 import { useToast } from '@/hooks/use-toast';
-import { createClient } from '@supabase/supabase-js';
-
-const supabase = createClient(
-  import.meta.env.VITE_SUPABASE_URL!,
-  import.meta.env.VITE_SUPABASE_ANON_KEY!
-);
+import { supabase } from '@/integrations/supabase/client';
 
 export default function PaymentSuccess() {
   const [searchParams] = useSearchParams();
