@@ -164,7 +164,12 @@ serve(async (req) => {
     }
 
     // Create Stripe checkout session with dynamic pricing
-    const origin = req.headers.get("origin") || "https://3dd61bb1-f699-4ed6-bf34-b26425a72fac.lovableproject.com";
+    const origin = req.headers.get("origin");
+    logStep("Origin header received", { origin });
+    
+    // Use a proper fallback URL - this should match your actual domain
+    const baseUrl = origin || "https://vsruezynaanqprobpvrr.supabase.co";
+    logStep("Using base URL", { baseUrl });
     
     // Create product name based on payment type and property
     const productName = paymentType === 'booking_fee' 
@@ -194,8 +199,8 @@ serve(async (req) => {
         },
       ],
       mode: "payment",
-      success_url: `${origin}/payment-success?session_id={CHECKOUT_SESSION_ID}&payment_id=${payment.id}`,
-      cancel_url: `${origin}/payment-cancelled?payment_id=${payment.id}`,
+      success_url: `${baseUrl}/payment-success?session_id={CHECKOUT_SESSION_ID}&payment_id=${payment.id}`,
+      cancel_url: `${baseUrl}/payment-cancelled?payment_id=${payment.id}`,
       metadata: {
         payment_id: payment.id,
         property_id: propertyId,
