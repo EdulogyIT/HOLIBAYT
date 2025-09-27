@@ -7,6 +7,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { supabase } from '@/integrations/supabase/client';
 import { CalendarDays, Building2 } from 'lucide-react';
+import { eachDayOfInterval, parseISO, format } from 'date-fns';
 
 interface Property {
   id: string;
@@ -23,10 +24,17 @@ export default function PropertyCalendar() {
   const [selectedProperty, setSelectedProperty] = useState<string>('');
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
   const [loading, setLoading] = useState(true);
+  const [bookedDates, setBookedDates] = useState<Date[]>([]);
 
   useEffect(() => {
     fetchProperties();
   }, [user]);
+
+  useEffect(() => {
+    if (selectedProperty) {
+      fetchBookedDates();
+    }
+  }, [selectedProperty]);
 
   const fetchProperties = async () => {
     if (!user) return;
@@ -51,6 +59,35 @@ export default function PropertyCalendar() {
       console.error('Error fetching properties:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchBookedDates = async () => {
+    if (!selectedProperty) return;
+    
+    try {
+      const { data, error } = await supabase
+        .from('bookings')
+        .select('check_in_date, check_out_date')
+        .eq('property_id', selectedProperty)
+        .eq('status', 'confirmed');
+
+      if (error) {
+        console.error('Error fetching booked dates:', error);
+        return;
+      }
+
+      const dates: Date[] = [];
+      data?.forEach(booking => {
+        const checkIn = parseISO(booking.check_in_date);
+        const checkOut = parseISO(booking.check_out_date);
+        const interval = eachDayOfInterval({ start: checkIn, end: checkOut });
+        dates.push(...interval);
+      });
+
+      setBookedDates(dates);
+    } catch (error) {
+      console.error('Error fetching booked dates:', error);
     }
   };
 
@@ -128,6 +165,17 @@ export default function PropertyCalendar() {
           onSelect={setSelectedDate}
           className="rounded-md border"
           fromDate={new Date()}
+          disabled={(date) => {
+            return bookedDates.some(bookedDate => 
+              format(bookedDate, 'yyyy-MM-dd') === format(date, 'yyyy-MM-dd')
+            );
+          }}
+          modifiers={{
+            booked: bookedDates
+          }}
+          modifiersStyles={{
+            booked: { backgroundColor: 'hsl(var(--destructive))', color: 'hsl(var(--destructive-foreground))' }
+          }}
         />
         
         {currentProperty && (
@@ -135,7 +183,7 @@ export default function PropertyCalendar() {
             <p className="font-medium text-sm mb-2">{currentProperty.title}</p>
             <div className="flex items-center gap-2">
               <Badge variant="outline" className="text-xs">
-                Available for booking
+                {bookedDates.length > 0 ? `${bookedDates.length} days booked` : 'Available for booking'}
               </Badge>
               <Badge variant={currentProperty.category === 'rent' ? 'default' : currentProperty.category === 'buy' ? 'secondary' : 'destructive'} className="text-xs">
                 {currentProperty.category}
@@ -146,12 +194,27 @@ export default function PropertyCalendar() {
         
         {selectedDate && (
           <div className="text-center p-4 border-2 border-dashed border-muted-foreground/20 rounded-lg">
-            <p className="text-sm text-muted-foreground">
-              {selectedDate.toLocaleDateString()} - Available
-            </p>
-            <p className="text-xs text-muted-foreground mt-1">
-              No bookings yet for this date
-            </p>
+            {bookedDates.some(bookedDate => 
+              format(bookedDate, 'yyyy-MM-dd') === format(selectedDate, 'yyyy-MM-dd')
+            ) ? (
+              <>
+                <p className="text-sm text-destructive font-medium">
+                  {selectedDate.toLocaleDateString()} - Booked
+                </p>
+                <p className="text-xs text-muted-foreground mt-1">
+                  This date is not available
+                </p>
+              </>
+            ) : (
+              <>
+                <p className="text-sm text-muted-foreground">
+                  {selectedDate.toLocaleDateString()} - Available
+                </p>
+                <p className="text-xs text-muted-foreground mt-1">
+                  No bookings for this date
+                </p>
+              </>
+            )}
           </div>
         )}
       </CardContent>

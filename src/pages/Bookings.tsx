@@ -198,7 +198,11 @@ const Bookings = () => {
 
               <div className="flex gap-2 pt-2">
                 {!isPast && (
-                  <Button variant="outline" size="sm">
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={() => window.open(`/property/${booking.properties.id}`, '_blank')}
+                  >
                     View Details
                   </Button>
                 )}
