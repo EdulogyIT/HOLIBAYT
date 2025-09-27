@@ -308,17 +308,17 @@ export default function HostOnboarding() {
           <div className="space-y-4">
             <div>
               <Label htmlFor="price">
-                {formData.category === 'sale' ? 'Sale Price (DA)' : 
-                 formData.category === 'rent' ? 'Monthly Rent (DA)' : 
-                 'Nightly Rate (DA)'}
+                {formData.category === 'sale' ? 'Sale Price (EUR)' : 
+                 formData.category === 'rent' ? 'Monthly Rent (EUR)' : 
+                 'Nightly Rate (EUR)'}
               </Label>
               <Input
                 id="price"
                 type="number"
                 value={formData.price}
                 onChange={(e) => setFormData({ ...formData, price: e.target.value })}
-                placeholder={formData.category === 'sale' ? '50000000' : 
-                           formData.category === 'rent' ? '80000' : '8000'}
+                placeholder={formData.category === 'sale' ? '350000' : 
+                           formData.category === 'rent' ? '800' : '80'}
               />
             </div>
             <div>
@@ -338,13 +338,13 @@ export default function HostOnboarding() {
             {formData.category === 'short-stay' && (
               <>
                 <div>
-                  <Label htmlFor="cleaning">Cleaning Fee (DA)</Label>
+                  <Label htmlFor="cleaning">Cleaning Fee (EUR)</Label>
                   <Input
                     id="cleaning"
                     type="number"
                     value={formData.cleaning}
                     onChange={(e) => setFormData({ ...formData, cleaning: e.target.value })}
-                    placeholder="2000"
+                    placeholder="20"
                   />
                 </div>
                 <div>

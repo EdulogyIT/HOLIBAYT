@@ -368,10 +368,10 @@ const PublishPropertySteps = ({ onSubmit, isSubmitting = false }: PublishPropert
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <Label htmlFor="price">{t('priceDZD')} *</Label>
+                  <Label htmlFor="price">Price (EUR) *</Label>
                   <Input
                     id="price"
-                    placeholder={t('priceExample')}
+                    placeholder="e.g., 150000"
                     value={formData.price}
                     onChange={(e) => handleInputChange("price", e.target.value)}
                   />
