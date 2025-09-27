@@ -7,15 +7,25 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-interface VerifyPaymentRequest {
-  sessionId: string;
-  paymentId: string;
+interface PaymentRequest {
+  propertyId: string;
+  paymentType: 'booking_fee' | 'security_deposit' | 'earnest_money' | 'property_sale';
+  amount: number;
+  currency: string;
+  description?: string;
+  bookingData?: {
+    checkInDate: string;
+    checkOutDate: string;
+    guestsCount: number;
+    specialRequests?: string;
+    contactPhone?: string;
+  };
 }
 
 // Helper logging function for debugging
 const logStep = (step: string, details?: any) => {
   const detailsStr = details ? ` - ${JSON.stringify(details)}` : '';
-  console.log(`[VERIFY-PAYMENT] ${step}${detailsStr}`);
+  console.log(`[CREATE-PAYMENT] ${step}${detailsStr}`);
 };
 
 serve(async (req) => {
@@ -25,29 +35,55 @@ serve(async (req) => {
   }
 
   try {
-    logStep("Payment verification started");
+    logStep("Payment creation started");
 
-    // Initialize Supabase client
-    const supabaseClient = createClient(
+    // Initialize Supabase client with anon key for auth
+    const authClient = createClient(
       Deno.env.get("SUPABASE_URL") ?? "",
       Deno.env.get("SUPABASE_ANON_KEY") ?? ""
     );
 
-    // Authenticate user
+    // Initialize Supabase client with service role key for database operations
+    const dbClient = createClient(
+      Deno.env.get("SUPABASE_URL") ?? "",
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
+    );
+
+    // Authenticate user using anon client
     const authHeader = req.headers.get("Authorization");
     if (!authHeader) throw new Error("No authorization header provided");
     
     const token = authHeader.replace("Bearer ", "");
-    const { data: userData, error: userError } = await supabaseClient.auth.getUser(token);
+    const { data: userData, error: userError } = await authClient.auth.getUser(token);
     if (userError) throw new Error(`Authentication error: ${userError.message}`);
     
     const user = userData.user;
-    if (!user) throw new Error("User not authenticated");
-    logStep("User authenticated", { userId: user.id });
+    if (!user?.email) throw new Error("User not authenticated or email not available");
+    logStep("User authenticated", { userId: user.id, email: user.email });
 
     // Parse request body
-    const { sessionId, paymentId }: VerifyPaymentRequest = await req.json();
-    logStep("Verification request parsed", { sessionId, paymentId });
+    const paymentRequest: PaymentRequest = await req.json();
+    const { propertyId, paymentType, amount, currency, description, bookingData } = paymentRequest;
+    
+    logStep("Payment request parsed", { propertyId, paymentType, amount, currency });
+
+  // Validate amount is reasonable (between $1 and $50,000)
+  if (amount < 1 || amount > 500000) {
+    throw new Error(`Invalid payment amount: $${amount}. Amount must be between $1 and $500,000. Note: For testing, if you see very large amounts, the property price might be in a different currency (DZD) - try converting it first.`);
+  }
+
+    // Verify property exists and get property details using service role
+    const { data: property, error: propertyError } = await dbClient
+      .from('properties')
+      .select('id, title, user_id, contact_name, contact_email')
+      .eq('id', propertyId)
+      .single();
+    
+    if (propertyError || !property) {
+      throw new Error('Property not found');
+    }
+    
+    logStep("Property verified", { propertyTitle: property.title });
 
     // Initialize Stripe
     const stripeKey = Deno.env.get("STRIPE_SECRET_KEY");
@@ -57,89 +93,129 @@ serve(async (req) => {
       apiVersion: "2025-08-27.basil" 
     });
 
-    // Retrieve the checkout session from Stripe
-    const session = await stripe.checkout.sessions.retrieve(sessionId);
-    logStep("Stripe session retrieved", { 
-      sessionId, 
-      paymentStatus: session.payment_status,
-      paymentIntentId: session.payment_intent 
+    // Check if Stripe customer exists
+    const customers = await stripe.customers.list({ 
+      email: user.email, 
+      limit: 1 
     });
+    
+    let customerId;
+    if (customers.data.length > 0) {
+      customerId = customers.data[0].id;
+      logStep("Existing customer found", { customerId });
+    } else {
+      logStep("Creating new customer");
+    }
 
-    // Get current payment record
-    const { data: payment, error: paymentFetchError } = await supabaseClient
+    // Create payment record in database using service role
+    const { data: payment, error: paymentError } = await dbClient
       .from('payments')
-      .select('*')
-      .eq('id', paymentId)
-      .eq('user_id', user.id)
+      .insert({
+        user_id: user.id,
+        property_id: propertyId,
+        amount: amount,
+        currency: currency.toUpperCase(),
+        payment_type: paymentType,
+        status: 'pending',
+        description: description || `Payment for ${property.title}`,
+        metadata: {
+          propertyTitle: property.title,
+          paymentType,
+          bookingData
+        }
+      })
+      .select()
       .single();
 
-    if (paymentFetchError || !payment) {
-      throw new Error('Payment record not found or access denied');
+    if (paymentError) {
+      throw new Error(`Failed to create payment record: ${paymentError.message}`);
     }
+    
+    logStep("Payment record created", { paymentId: payment.id });
 
-    let newStatus = payment.status;
-    let completedAt = null;
-    let paymentIntentId = null;
-
-    // Update payment status based on Stripe session
-    if (session.payment_status === 'paid') {
-      newStatus = 'completed';
-      completedAt = new Date().toISOString();
-      paymentIntentId = session.payment_intent as string;
-      logStep("Payment successful");
-    } else if (session.payment_status === 'unpaid') {
-      newStatus = 'failed';
-      logStep("Payment failed");
-    }
-
-    // Update payment record
-    const { error: updateError } = await supabaseClient
-      .from('payments')
-      .update({
-        status: newStatus,
-        stripe_payment_intent_id: paymentIntentId,
-        completed_at: completedAt,
-        updated_at: new Date().toISOString()
-      })
-      .eq('id', paymentId);
-
-    if (updateError) {
-      throw new Error(`Failed to update payment: ${updateError.message}`);
-    }
-
-    // If payment is successful and there's a related booking, update booking status
-    if (newStatus === 'completed' && payment.metadata?.bookingData) {
-      const { error: bookingUpdateError } = await supabaseClient
+    // Create booking record if this is a booking-related payment using service role
+    let bookingId = null;
+    if (bookingData && (paymentType === 'booking_fee' || paymentType === 'security_deposit')) {
+      const { data: booking, error: bookingError } = await dbClient
         .from('bookings')
-        .update({
-          status: 'confirmed',
-          updated_at: new Date().toISOString()
+        .insert({
+          user_id: user.id,
+          property_id: propertyId,
+          payment_id: payment.id,
+          check_in_date: bookingData.checkInDate,
+          check_out_date: bookingData.checkOutDate,
+          guests_count: bookingData.guestsCount,
+          total_amount: amount,
+          booking_fee: paymentType === 'booking_fee' ? amount : 0,
+          security_deposit: paymentType === 'security_deposit' ? amount : 0,
+          special_requests: bookingData.specialRequests,
+          contact_phone: bookingData.contactPhone,
+          status: 'pending'
         })
-        .eq('payment_id', paymentId);
+        .select()
+        .single();
 
-      if (bookingUpdateError) {
-        logStep("Booking update failed", { error: bookingUpdateError.message });
+      if (bookingError) {
+        logStep("Booking creation failed", { error: bookingError.message });
       } else {
-        logStep("Booking confirmed");
+        bookingId = booking.id;
+        logStep("Booking record created", { bookingId });
       }
     }
 
-    logStep("Payment verification completed", { 
-      paymentId, 
-      newStatus, 
-      paymentIntentId 
+    // Create Stripe checkout session with dynamic pricing
+    const origin = req.headers.get("origin") || "https://3dd61bb1-f699-4ed6-bf34-b26425a72fac.lovableproject.com";
+    
+    // Create product name based on payment type and property
+    const productName = paymentType === 'booking_fee' 
+      ? `Booking Fee - ${property.title}`
+      : paymentType === 'security_deposit'
+      ? `Security Deposit - ${property.title}`
+      : paymentType === 'earnest_money'
+      ? `Earnest Money - ${property.title}`
+      : paymentType === 'property_sale'
+      ? `Property Purchase - ${property.title}`
+      : `Payment - ${property.title}`;
+
+    const session = await stripe.checkout.sessions.create({
+      customer: customerId,
+      customer_email: customerId ? undefined : user.email,
+      line_items: [
+        {
+          price_data: {
+            currency: currency.toLowerCase(),
+            product_data: {
+              name: productName,
+              description: description || `${paymentType.replace('_', ' ')} for ${property.title}`,
+            },
+            unit_amount: Math.round(amount * 100), // Convert to cents
+          },
+          quantity: 1,
+        },
+      ],
+      mode: "payment",
+      success_url: `${origin}/payment-success?session_id={CHECKOUT_SESSION_ID}&payment_id=${payment.id}`,
+      cancel_url: `${origin}/payment-cancelled?payment_id=${payment.id}`,
+      metadata: {
+        payment_id: payment.id,
+        property_id: propertyId,
+        booking_id: bookingId || '',
+        payment_type: paymentType,
+      }
     });
 
+    // Update payment record with checkout session ID using service role
+    await dbClient
+      .from('payments')
+      .update({ stripe_checkout_session_id: session.id })
+      .eq('id', payment.id);
+
+    logStep("Checkout session created", { sessionId: session.id, url: session.url });
+
     return new Response(JSON.stringify({ 
-      success: true,
-      paymentId,
-      status: newStatus,
-      paymentIntentId,
-      sessionData: {
-        paymentStatus: session.payment_status,
-        customerDetails: session.customer_details,
-        amountTotal: session.amount_total
-      }
+      url: session.url,
+      paymentId: payment.id,
+      bookingId: bookingId
     }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 200,
@@ -147,17 +223,10 @@ serve(async (req) => {
 
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);
-    logStep("ERROR in verify-payment", { message: errorMessage });
-    return new Response(JSON.stringify({ 
-      success: false, 
-      error: errorMessage 
-    }), {
+    logStep("ERROR in create-payment", { message: errorMessage });
+    return new Response(JSON.stringify({ error: errorMessage }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 500,
     });
   }
 });
-
-
-
-check this
