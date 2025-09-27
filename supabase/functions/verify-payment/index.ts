@@ -27,15 +27,10 @@ serve(async (req) => {
   try {
     logStep("Payment verification started");
 
-    // Initialize Supabase clients (auth client + service client for DB writes)
-    const authClient = createClient(
+    // Initialize Supabase client
+    const supabaseClient = createClient(
       Deno.env.get("SUPABASE_URL") ?? "",
       Deno.env.get("SUPABASE_ANON_KEY") ?? ""
-    );
-    
-    const dbClient = createClient(
-      Deno.env.get("SUPABASE_URL") ?? "",
-      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
     );
 
     // Authenticate user
@@ -43,7 +38,7 @@ serve(async (req) => {
     if (!authHeader) throw new Error("No authorization header provided");
     
     const token = authHeader.replace("Bearer ", "");
-    const { data: userData, error: userError } = await authClient.auth.getUser(token);
+    const { data: userData, error: userError } = await supabaseClient.auth.getUser(token);
     if (userError) throw new Error(`Authentication error: ${userError.message}`);
     
     const user = userData.user;
@@ -70,8 +65,8 @@ serve(async (req) => {
       paymentIntentId: session.payment_intent 
     });
 
-    // Get current payment record (using auth client for security)
-    const { data: payment, error: paymentFetchError } = await authClient
+    // Get current payment record
+    const { data: payment, error: paymentFetchError } = await supabaseClient
       .from('payments')
       .select('*')
       .eq('id', paymentId)
@@ -97,8 +92,8 @@ serve(async (req) => {
       logStep("Payment failed");
     }
 
-    // Update payment record (using service client for DB writes)
-    const { error: updateError } = await dbClient
+    // Update payment record
+    const { error: updateError } = await supabaseClient
       .from('payments')
       .update({
         status: newStatus,
@@ -112,33 +107,20 @@ serve(async (req) => {
       throw new Error(`Failed to update payment: ${updateError.message}`);
     }
 
-    // If payment is successful and there's booking data, create the booking (using service client)
+    // If payment is successful and there's a related booking, update booking status
     if (newStatus === 'completed' && payment.metadata?.bookingData) {
-      const bookingData = payment.metadata.bookingData;
-      
-      const { data: booking, error: bookingCreateError } = await dbClient
+      const { error: bookingUpdateError } = await supabaseClient
         .from('bookings')
-        .insert({
-          user_id: user.id,
-          property_id: payment.property_id,
-          payment_id: paymentId,
-          check_in_date: bookingData.checkInDate,
-          check_out_date: bookingData.checkOutDate,
-          guests_count: bookingData.guestsCount,
-          total_amount: payment.amount,
-          booking_fee: payment.payment_type === 'booking_fee' ? payment.amount : 0,
-          security_deposit: payment.payment_type === 'security_deposit' ? payment.amount : 0,
-          special_requests: bookingData.specialRequests,
-          contact_phone: bookingData.contactPhone,
+        .update({
           status: 'confirmed',
+          updated_at: new Date().toISOString()
         })
-        .select()
-        .single();
+        .eq('payment_id', paymentId);
 
-      if (bookingCreateError) {
-        logStep("Booking creation failed", { error: bookingCreateError.message });
+      if (bookingUpdateError) {
+        logStep("Booking update failed", { error: bookingUpdateError.message });
       } else {
-        logStep("Booking created successfully", { bookingId: booking.id });
+        logStep("Booking confirmed");
       }
     }
 

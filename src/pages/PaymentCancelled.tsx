@@ -1,38 +1,16 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { XCircle, ArrowLeft, Home } from 'lucide-react';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
-import { supabase } from '@/integrations/supabase/client';
 
 export default function PaymentCancelled() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   
   const paymentId = searchParams.get('payment_id');
-
-  // Clean up pending payment when user cancels
-  useEffect(() => {
-    (async () => {
-      if (!paymentId) return;
-      
-      try {
-        const { data: { session } } = await supabase.auth.getSession();
-        if (!session?.access_token) return;
-
-        // Delete pending payment and any associated booking
-        await supabase
-          .from('payments')
-          .delete()
-          .eq('id', paymentId)
-          .eq('status', 'pending');
-      } catch (error) {
-        console.error('Error cleaning up cancelled payment:', error);
-      }
-    })();
-  }, [paymentId]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 to-yellow-100">
