@@ -1,26 +1,18 @@
-// supabase/functions/create-payment/index.ts
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import Stripe from "https://esm.sh/stripe@14.25.0?target=deno";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.2";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers":
-    "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
   "Access-Control-Allow-Methods": "POST, OPTIONS",
 };
 
-type PaymentType =
-  | "booking_fee"
-  | "security_deposit"
-  | "earnest_money"
-  | "property_sale";
-
 interface PaymentRequest {
   propertyId: string;
-  paymentType: PaymentType;
-  amount: number;       // expected in EUR
-  currency?: string;    // ignored; we always create session in EUR
+  paymentType: 'booking_fee' | 'security_deposit' | 'earnest_money' | 'property_sale';
+  amount: number;
+  currency?: string;
   description?: string;
   bookingData?: {
     checkInDate: string;
@@ -31,101 +23,117 @@ interface PaymentRequest {
   };
 }
 
-const logStep = (step: string, details?: unknown) =>
-  console.log(`[CREATE-PAYMENT] ${step}${details ? " - " + JSON.stringify(details) : ""}`);
-
 serve(async (req) => {
+  console.log(`[CREATE-PAYMENT] ${new Date().toISOString()} - Request received: ${req.method}`);
+
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    logStep("Payment creation started");
-
-    // ---- Env
-    const SUPABASE_URL = Deno.env.get("SUPABASE_URL") ?? "";
-    const SUPABASE_ANON_KEY = Deno.env.get("SUPABASE_ANON_KEY") ?? "";
-    const SUPABASE_SERVICE_ROLE =
-      Deno.env.get("SUPABASE_SERVICE_ROLE") ??
-      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ??
-      "";
+    // Environment variables
+    const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
+    const SUPABASE_ANON_KEY = Deno.env.get("SUPABASE_ANON_KEY");
+    const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
     const STRIPE_SECRET_KEY = Deno.env.get("STRIPE_SECRET_KEY");
-    if (!SUPABASE_URL || !SUPABASE_ANON_KEY || !SUPABASE_SERVICE_ROLE) {
-      throw new Error("Missing Supabase environment variables.");
+
+    console.log("[CREATE-PAYMENT] Environment check:", {
+      hasSupabaseUrl: !!SUPABASE_URL,
+      hasAnonKey: !!SUPABASE_ANON_KEY,
+      hasServiceKey: !!SUPABASE_SERVICE_ROLE_KEY,
+      hasStripeKey: !!STRIPE_SECRET_KEY
+    });
+
+    if (!SUPABASE_URL || !SUPABASE_ANON_KEY || !SUPABASE_SERVICE_ROLE_KEY || !STRIPE_SECRET_KEY) {
+      throw new Error("Missing required environment variables");
     }
-    if (!STRIPE_SECRET_KEY) throw new Error("STRIPE_SECRET_KEY is not set");
 
-    // ---- Two-client pattern
-    const authClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
-      auth: { persistSession: false },
-    });
-    const dbClient = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE, {
-      auth: { persistSession: false },
-    });
+    // Create Supabase clients
+    const authClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    const dbClient = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
 
-    // ---- Auth (anon client)
+    // Authentication
     const authHeader = req.headers.get("Authorization");
-    if (!authHeader) throw new Error("No authorization header provided");
-    const token = authHeader.replace("Bearer ", "");
-    
-    logStep("Authenticating user");
-    const { data: userData, error: userError } = await authClient.auth.getUser(token);
-    if (userError) throw new Error(`Authentication error: ${userError.message}`);
-    const user = userData.user;
-    if (!user?.email) throw new Error("User not authenticated or email missing");
-    logStep("User authenticated", { userId: user.id, email: user.email });
+    if (!authHeader) {
+      throw new Error("No authorization header");
+    }
 
-    // ---- Parse input
-    logStep("Parsing request body");
+    console.log("[CREATE-PAYMENT] Authenticating user...");
+    const token = authHeader.replace("Bearer ", "");
+    const { data: userData, error: userError } = await authClient.auth.getUser(token);
+    
+    if (userError || !userData.user?.email) {
+      console.log("[CREATE-PAYMENT] Authentication failed:", userError);
+      throw new Error("Authentication failed");
+    }
+
+    const user = userData.user;
+    console.log("[CREATE-PAYMENT] User authenticated:", user.email);
+
+    // Parse request body
+    console.log("[CREATE-PAYMENT] Parsing request body...");
     const body: PaymentRequest = await req.json();
+    console.log("[CREATE-PAYMENT] Request body:", body);
+
     const { propertyId, paymentType, amount, description, bookingData } = body;
 
-    logStep("Payment request parsed", { propertyId, paymentType, amount, currency: 'EUR' });
-    // Guard – amounts in EUR
-    if (amount < 0.5 || amount > 500000) {
-      throw new Error(`Invalid payment amount: €${amount}. Must be between €0.50 and €500,000.`);
+    if (!propertyId || !paymentType || !amount) {
+      throw new Error("Missing required fields: propertyId, paymentType, amount");
     }
 
-    // ---- Property (service-role: DB writes/reads)
+    if (amount < 0.5 || amount > 500000) {
+      throw new Error(`Invalid amount: ${amount}. Must be between 0.5 and 500,000`);
+    }
+
+    // Get property details
+    console.log("[CREATE-PAYMENT] Fetching property...");
     const { data: property, error: propertyError } = await dbClient
       .from("properties")
-      .select("id, title, user_id, contact_name, contact_email, owner_account_id")
+      .select("id, title, user_id, owner_account_id")
       .eq("id", propertyId)
       .single();
-    if (propertyError || !property) throw new Error("Property not found");
-    logStep("Property verified", { propertyTitle: property.title });
 
-    // ---- Stripe
-    logStep("Initializing Stripe", { hasSecretKey: !!STRIPE_SECRET_KEY });
-    const stripe = new Stripe(STRIPE_SECRET_KEY, { 
-      apiVersion: "2024-06-20",
-      typescript: true,
-    });
-    logStep("Stripe initialized successfully");
-
-    // Reuse or create customer
-    let customerId: string | undefined;
-    const existing = await stripe.customers.list({ email: user.email, limit: 1 });
-    if (existing.data.length) {
-      customerId = existing.data[0].id;
-      logStep("Existing customer found", { customerId });
-    } else {
-      logStep("Creating new customer");
-      const newCustomer = await stripe.customers.create({
-        email: user.email,
-        name: user.user_metadata?.name || user.email.split('@')[0]
-      });
-      customerId = newCustomer.id;
-      logStep("New customer created", { customerId });
+    if (propertyError || !property) {
+      console.log("[CREATE-PAYMENT] Property fetch failed:", propertyError);
+      throw new Error("Property not found");
     }
 
-    // ---- Create payment row (service-role)
+    console.log("[CREATE-PAYMENT] Property found:", property.title);
+
+    // Initialize Stripe
+    console.log("[CREATE-PAYMENT] Initializing Stripe...");
+    const stripe = new Stripe(STRIPE_SECRET_KEY, { 
+      apiVersion: "2024-06-20"
+    });
+
+    // Find or create Stripe customer
+    console.log("[CREATE-PAYMENT] Finding/creating customer...");
+    const existingCustomers = await stripe.customers.list({ 
+      email: user.email, 
+      limit: 1 
+    });
+
+    let customerId;
+    if (existingCustomers.data.length > 0) {
+      customerId = existingCustomers.data[0].id;
+      console.log("[CREATE-PAYMENT] Found existing customer:", customerId);
+    } else {
+      const newCustomer = await stripe.customers.create({
+        email: user.email,
+        name: user.user_metadata?.name || (user.email ? user.email.split('@')[0] : 'User')
+      });
+      customerId = newCustomer.id;
+      console.log("[CREATE-PAYMENT] Created new customer:", customerId);
+    }
+
+    // Create payment record in database
+    console.log("[CREATE-PAYMENT] Creating payment record...");
     const { data: payment, error: paymentError } = await dbClient
       .from("payments")
       .insert({
         user_id: user.id,
         property_id: propertyId,
-        amount,                 // store EUR amount
+        amount: amount,
         currency: "EUR",
         payment_type: paymentType,
         status: "pending",
@@ -134,110 +142,90 @@ serve(async (req) => {
       })
       .select()
       .single();
-    if (paymentError) throw new Error(`Failed to create payment: ${paymentError.message}`);
-    logStep("Payment record created", { paymentId: payment.id });
 
-    // ---- Store booking data in payment metadata for later use
-    // Don't create booking record until payment is confirmed
-    let bookingId: string | null = null;
-    if (bookingData && (paymentType === "booking_fee" || paymentType === "security_deposit")) {
-      logStep("Booking data stored in payment metadata", { bookingData });
+    if (paymentError || !payment) {
+      console.log("[CREATE-PAYMENT] Payment creation failed:", paymentError);
+      throw new Error("Failed to create payment record");
     }
 
-    // ---- Build redirect base URL (prefer Origin header, fallback to APP_URL)
+    console.log("[CREATE-PAYMENT] Payment record created:", payment.id);
+
+    // Determine redirect URLs
     const origin = req.headers.get("origin");
-    const appUrl = Deno.env.get("APP_URL");
-    let baseUrl = origin || appUrl || "";
+    let baseUrl = origin || "https://holibayt.vercel.app";
     
-    // Fix malformed URLs
     if (baseUrl && !baseUrl.startsWith("http")) {
       baseUrl = `https://${baseUrl}`;
     }
-    if (baseUrl === "https:/holibayt.vercel.app") {
-      baseUrl = "https://holibayt.vercel.app";
-    }
     
-    baseUrl = baseUrl.replace(/\/$/, "");
-    if (!baseUrl) throw new Error("No origin header or APP_URL configured");
-    logStep("Origin header received", { origin });
-    logStep("Using base URL", { baseUrl });
+    console.log("[CREATE-PAYMENT] Using base URL:", baseUrl);
 
-    // ---- Product name
-    const productName =
-      paymentType === "booking_fee"
-        ? `Booking Fee - ${property.title}`
-        : paymentType === "security_deposit"
-        ? `Security Deposit - ${property.title}`
-        : paymentType === "earnest_money"
-        ? `Earnest Money - ${property.title}`
-        : paymentType === "property_sale"
-        ? `Property Purchase - ${property.title}`
-        : `Payment - ${property.title}`;
-
-    // ---- Amount to cents, currency locked to EUR
-    const amountCents = Math.round(amount * 100);
-
-    // Optional platform fee via Connect (example: 4.8% on booking_fee)
-    const commissionRate = 0.048;
-    const useSplit = paymentType === "booking_fee" && property.owner_account_id;
-    const applicationFee = Math.round(amountCents * commissionRate);
-
-    const session = await stripe.checkout.sessions.create({
-      mode: "payment",
+    // Create Stripe checkout session
+    console.log("[CREATE-PAYMENT] Creating Stripe session...");
+    const productName = `${paymentType.replace(/_/g, " ")} - ${property.title}`;
+    
+    const sessionData = {
+      mode: "payment" as const,
       customer: customerId,
-      customer_email: customerId ? undefined : user.email,
-      line_items: [
-        {
-          quantity: 1,
-          price_data: {
-            currency: "eur",
-            unit_amount: amountCents,
-            product_data: {
-              name: productName,
-              description:
-                description || `${paymentType.replace(/_/g, " ")} for ${property.title}`,
-            },
+      line_items: [{
+        quantity: 1,
+        price_data: {
+          currency: "eur",
+          unit_amount: Math.round(amount * 100),
+          product_data: {
+            name: productName,
+            description: description || `${paymentType.replace(/_/g, " ")} for ${property.title}`,
           },
         },
-      ],
-      ...(useSplit
-        ? {
-            payment_intent_data: {
-              application_fee_amount: applicationFee,
-              transfer_data: { destination: property.owner_account_id },
-            },
-          }
-        : {}),
+      }],
       success_url: `${baseUrl}/payment-success?session_id={CHECKOUT_SESSION_ID}&payment_id=${payment.id}`,
       cancel_url: `${baseUrl}/payment-cancelled?payment_id=${payment.id}`,
       metadata: {
         payment_id: payment.id,
         property_id: propertyId,
-        booking_id: bookingId || "",
         payment_type: paymentType,
       },
-    });
+    };
 
-    // ---- Save session id (service-role)
+    console.log("[CREATE-PAYMENT] Session data:", JSON.stringify(sessionData, null, 2));
+    
+    const session = await stripe.checkout.sessions.create(sessionData);
+    console.log("[CREATE-PAYMENT] Stripe session created:", session.id);
+
+    // Update payment record with session ID
     await dbClient
       .from("payments")
       .update({ stripe_checkout_session_id: session.id })
       .eq("id", payment.id);
 
-    logStep("Checkout session created", { sessionId: session.id, url: session.url });
+    console.log("[CREATE-PAYMENT] Payment updated with session ID");
 
     return new Response(
-      JSON.stringify({ url: session.url, paymentId: payment.id, bookingId }),
-      { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 200 },
+      JSON.stringify({ 
+        url: session.url, 
+        paymentId: payment.id 
+      }),
+      { 
+        headers: { ...corsHeaders, "Content-Type": "application/json" }, 
+        status: 200 
+      }
     );
-  } catch (err) {
-    const message = err instanceof Error ? err.message : String(err);
-    const stack = err instanceof Error ? err.stack : '';
-    logStep("ERROR", { message, stack });
-    console.error("Full error details:", err);
-    return new Response(JSON.stringify({ error: message }), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-      status: 500,
-    });
+
+  } catch (error) {
+    console.error("[CREATE-PAYMENT] ERROR:", error);
+    console.error("[CREATE-PAYMENT] ERROR STACK:", error instanceof Error ? error.stack : 'No stack trace');
+    
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    
+    return new Response(
+      JSON.stringify({ 
+        error: errorMessage,
+        timestamp: new Date().toISOString()
+      }),
+      { 
+        headers: { ...corsHeaders, "Content-Type": "application/json" }, 
+        status: 500 
+      }
+    );
   }
 });
