@@ -26,8 +26,9 @@ interface Property {
   area: string | number;
   images: string[];
   property_type: string;
-  features?: Record<string, boolean>;
+  features?: any;
   description?: string;
+  commission_rate?: number;
   contact_name: string;
   contact_phone: string;
 }

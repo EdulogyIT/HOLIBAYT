@@ -32,6 +32,7 @@ import HostDashboard from "./pages/host/HostDashboard";
 import HostOnboarding from "./pages/host/HostOnboarding";
 import HostListings from "./pages/host/HostListings";
 import HostMessages from "./pages/host/HostMessages";
+import HostPayouts from "./pages/host/HostPayouts";
 import PropertyCalendar from "@/components/PropertyCalendar";
 import PaymentSuccess from "./pages/PaymentSuccess";
 import PaymentCancelled from "./pages/PaymentCancelled";
@@ -117,7 +118,7 @@ const App = () => (
                       <Route path="calendar" element={<PropertyCalendar />} />
                       <Route path="listings" element={<HostListings />} />
                       <Route path="messages" element={<HostMessages />} />
-                      <Route path="payouts" element={<div>Host Payouts - Coming Soon</div>} />
+                      <Route path="payouts" element={<HostPayouts />} />
                     </Routes>
                   </HostLayout>
                 </ProtectedRoute>

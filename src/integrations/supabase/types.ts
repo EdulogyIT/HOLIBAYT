@@ -83,6 +83,66 @@ export type Database = {
           },
         ]
       }
+      commission_transactions: {
+        Row: {
+          commission_amount: number
+          commission_rate: number
+          created_at: string | null
+          host_amount: number
+          host_user_id: string
+          id: string
+          payment_id: string
+          property_id: string
+          status: string
+          stripe_transfer_id: string | null
+          total_amount: number
+          updated_at: string | null
+        }
+        Insert: {
+          commission_amount: number
+          commission_rate: number
+          created_at?: string | null
+          host_amount: number
+          host_user_id: string
+          id?: string
+          payment_id: string
+          property_id: string
+          status?: string
+          stripe_transfer_id?: string | null
+          total_amount: number
+          updated_at?: string | null
+        }
+        Update: {
+          commission_amount?: number
+          commission_rate?: number
+          created_at?: string | null
+          host_amount?: number
+          host_user_id?: string
+          id?: string
+          payment_id?: string
+          property_id?: string
+          status?: string
+          stripe_transfer_id?: string | null
+          total_amount?: number
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "commission_transactions_payment_id_fkey"
+            columns: ["payment_id"]
+            isOneToOne: false
+            referencedRelation: "payments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "commission_transactions_property_id_fkey"
+            columns: ["property_id"]
+            isOneToOne: false
+            referencedRelation: "properties"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       contact_requests: {
         Row: {
           created_at: string
@@ -129,6 +189,66 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      host_payment_accounts: {
+        Row: {
+          account_holder_name: string
+          account_number: string
+          account_type: string
+          bank_address: string | null
+          bank_name: string
+          country: string
+          created_at: string | null
+          currency: string
+          iban: string | null
+          id: string
+          is_active: boolean | null
+          is_verified: boolean | null
+          routing_number: string | null
+          stripe_account_id: string | null
+          swift_code: string | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          account_holder_name: string
+          account_number: string
+          account_type?: string
+          bank_address?: string | null
+          bank_name: string
+          country?: string
+          created_at?: string | null
+          currency?: string
+          iban?: string | null
+          id?: string
+          is_active?: boolean | null
+          is_verified?: boolean | null
+          routing_number?: string | null
+          stripe_account_id?: string | null
+          swift_code?: string | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          account_holder_name?: string
+          account_number?: string
+          account_type?: string
+          bank_address?: string | null
+          bank_name?: string
+          country?: string
+          created_at?: string | null
+          currency?: string
+          iban?: string | null
+          id?: string
+          is_active?: boolean | null
+          is_verified?: boolean | null
+          routing_number?: string | null
+          stripe_account_id?: string | null
+          swift_code?: string | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
       }
       payments: {
         Row: {
@@ -226,6 +346,7 @@ export type Database = {
           bedrooms: string | null
           category: string
           city: string
+          commission_rate: number | null
           contact_email: string
           contact_name: string
           contact_phone: string
@@ -252,6 +373,7 @@ export type Database = {
           bedrooms?: string | null
           category: string
           city: string
+          commission_rate?: number | null
           contact_email: string
           contact_name: string
           contact_phone: string
@@ -278,6 +400,7 @@ export type Database = {
           bedrooms?: string | null
           category?: string
           city?: string
+          commission_rate?: number | null
           contact_email?: string
           contact_name?: string
           contact_phone?: string
