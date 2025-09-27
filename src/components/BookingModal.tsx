@@ -53,6 +53,16 @@ export const BookingModal: React.FC<BookingModalProps> = ({ property, trigger })
       ? Math.max(1, differenceInDays(parseISO(checkOutDate), parseISO(checkInDate)))
       : 0;
 
+  console.log('BookingModal Debug:', {
+    propertyPrice: property.price,
+    priceType: property.price_type,
+    category: property.category,
+    basePrice,
+    dailyPrice,
+    nights,
+    subtotal: dailyPrice * nights
+  });
+
   const subtotal = dailyPrice * nights;
   const bookingFee = Math.round(subtotal * 0.05 * 100) / 100; // 5% booking fee
   const securityDeposit = Math.round(subtotal * 0.2 * 100) / 100; // 20% security deposit
