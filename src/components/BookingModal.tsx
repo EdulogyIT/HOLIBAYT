@@ -11,6 +11,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { format, differenceInDays, parseISO } from 'date-fns';
+import { supabase } from '@/integrations/supabase/client';
 
 interface BookingModalProps {
   property: {
@@ -81,28 +82,31 @@ export const BookingModal: React.FC<BookingModalProps> = ({ property, trigger })
       return;
     }
 
-    const bookingId = generateBookingId();
     try {
-      const res = await fetch('/api/checkout-booking', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          bookingId,
+      const { data, error } = await supabase.functions.invoke('create-payment', {
+        body: {
           propertyId: property.id,
-          totalEUR: Number(totalForStripe.toFixed(2)),
-          commissionRate: 0.048,
-        }),
+          paymentType: 'booking_fee',
+          amount: totalForStripe,
+          currency: 'EUR',
+          description: `Booking fee for ${property.title}`,
+          bookingData: {
+            checkInDate,
+            checkOutDate,
+            guestsCount,
+            specialRequests,
+            contactPhone,
+          }
+        }
       });
       
-      if (!res.ok) {
-        const errorText = await res.text();
-        console.error('API Error:', res.status, errorText);
-        alert(`Payment failed: ${res.status} ${errorText || 'Unknown error'}`);
+      if (error) {
+        console.error('Payment creation error:', error);
+        alert(`Payment failed: ${error.message || 'Unknown error'}`);
         return;
       }
       
-      const data = await res.json();
-      if (data.url) {
+      if (data?.url) {
         window.location.href = data.url;
       } else {
         alert('No redirect URL received from payment provider');
@@ -119,27 +123,31 @@ export const BookingModal: React.FC<BookingModalProps> = ({ property, trigger })
       return;
     }
 
-    const bookingId = generateBookingId();
     try {
-      const res = await fetch('/api/checkout-deposit', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          bookingId,
+      const { data, error } = await supabase.functions.invoke('create-payment', {
+        body: {
           propertyId: property.id,
-          depositEUR: Number(depositForStripe.toFixed(2)),
-        }),
+          paymentType: 'security_deposit',
+          amount: depositForStripe,
+          currency: 'EUR',
+          description: `Security deposit for ${property.title}`,
+          bookingData: {
+            checkInDate,
+            checkOutDate,
+            guestsCount,
+            specialRequests,
+            contactPhone,
+          }
+        }
       });
       
-      if (!res.ok) {
-        const errorText = await res.text();
-        console.error('API Error:', res.status, errorText);
-        alert(`Deposit payment failed: ${res.status} ${errorText || 'Unknown error'}`);
+      if (error) {
+        console.error('Deposit payment error:', error);
+        alert(`Deposit payment failed: ${error.message || 'Unknown error'}`);
         return;
       }
       
-      const data = await res.json();
-      if (data.url) {
+      if (data?.url) {
         window.location.href = data.url;
       } else {
         alert('No redirect URL received from payment provider');
