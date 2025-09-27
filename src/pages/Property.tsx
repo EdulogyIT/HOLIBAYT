@@ -293,16 +293,31 @@ const Property = () => {
                         <Calendar className="w-4 h-4 mr-2" />
                         {t('scheduleVisit') || 'Schedule Visit'}
                       </Button>
-                      <PaymentButton
-                        propertyId={property.id}
-                        paymentType="earnest_money"
-                        amount={Math.min(10000, parseFloat(property.price.replace(/[^0-9.-]+/g,"")) * 0.05)} // 5% earnest money, max €10,000
-                        currency="EUR"
-                        description={`Earnest money for ${property.title}`}
-                        className="w-full"
-                      >
-                        Pay Earnest Money ({formatPrice(Math.min(10000, parseFloat(property.price.replace(/[^0-9.-]+/g,"")) * 0.05))})
-                      </PaymentButton>
+                      {(() => {
+                        // Handle currency conversion like in BookingModal
+                        const rawPrice = parseFloat(property.price.replace(/[^0-9.-]+/g,"")) || 0;
+                        let convertedPrice = rawPrice;
+                        
+                        // If price seems to be in DZD (very large numbers), convert to EUR
+                        if (rawPrice > 1_000_000) {
+                          convertedPrice = rawPrice / 135; // Rough DZD to EUR conversion
+                        }
+                        
+                        const earnestMoneyAmount = Math.min(10000, convertedPrice * 0.05); // 5% earnest money, max €10,000
+                        
+                        return (
+                          <PaymentButton
+                            propertyId={property.id}
+                            paymentType="earnest_money"
+                            amount={earnestMoneyAmount}
+                            currency="EUR"
+                            description={`Earnest money for ${property.title}`}
+                            className="w-full"
+                          >
+                            Pay Earnest Money ({formatPrice(earnestMoneyAmount)})
+                          </PaymentButton>
+                        );
+                      })()}
                     </div>
                   </CardContent>
                 </Card>
@@ -325,16 +340,31 @@ const Property = () => {
                         <Calendar className="w-4 h-4 mr-2" />
                         {t('scheduleVisit') || 'Schedule Visit'}
                       </Button>
-                      <PaymentButton
-                        propertyId={property.id}
-                        paymentType="security_deposit"
-                        amount={Math.round(parseFloat(property.price.replace(/[^0-9.-]+/g,"")) * 0.2)} // 20% security deposit
-                        currency="EUR"
-                        description={`Security deposit for ${property.title}`}
-                        className="w-full"
-                      >
-                        Pay Security Deposit ({formatPrice(Math.round(parseFloat(property.price.replace(/[^0-9.-]+/g,"")) * 0.2))})
-                      </PaymentButton>
+                      {(() => {
+                        // Handle currency conversion like in BookingModal
+                        const rawPrice = parseFloat(property.price.replace(/[^0-9.-]+/g,"")) || 0;
+                        let convertedPrice = rawPrice;
+                        
+                        // If price seems to be in DZD (very large numbers), convert to EUR
+                        if (rawPrice > 1_000_000) {
+                          convertedPrice = rawPrice / 135; // Rough DZD to EUR conversion
+                        }
+                        
+                        const securityDepositAmount = Math.round(convertedPrice * 0.2); // 20% security deposit
+                        
+                        return (
+                          <PaymentButton
+                            propertyId={property.id}
+                            paymentType="security_deposit"
+                            amount={securityDepositAmount}
+                            currency="EUR"
+                            description={`Security deposit for ${property.title}`}
+                            className="w-full"
+                          >
+                            Pay Security Deposit ({formatPrice(securityDepositAmount)})
+                          </PaymentButton>
+                        );
+                      })()}
                     </div>
                   </CardContent>
                 </Card>
