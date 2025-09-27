@@ -56,16 +56,15 @@ export const BookingModal: React.FC<BookingModalProps> = ({ property, trigger })
   const subtotal = dailyPrice * nights;
   const bookingFee = Math.round(subtotal * 0.05 * 100) / 100; // 5% booking fee
   const securityDeposit = Math.round(subtotal * 0.2 * 100) / 100; // 20% security deposit
-  const totalAmount = subtotal + bookingFee;
+  let totalAmount = subtotal + bookingFee;
+
+  // Apply minimum EUR constraint and round to 2 decimals
+  const finalTotalAmount = Math.max(MIN_EUR, Math.round(totalAmount * 100) / 100);
+  const finalSecurityDeposit = Math.max(MIN_EUR, Math.round(securityDeposit * 100) / 100);
 
   const isFormValid = Boolean(checkInDate && checkOutDate && nights > 0 && guestsCount > 0);
-
-  // Clamp amounts to Stripe's min for the API payload (and use for button enabled state)
-  const totalForStripe = Number.isFinite(totalAmount) && totalAmount >= MIN_EUR ? Number(totalAmount) : MIN_EUR;
-  const depositForStripe = Number.isFinite(securityDeposit) && securityDeposit >= MIN_EUR ? Number(securityDeposit) : MIN_EUR;
-
-  const canPayBooking = isFormValid && totalForStripe >= MIN_EUR;
-  const canPayDeposit = isFormValid && depositForStripe >= MIN_EUR;
+  const canPayBooking = isFormValid && finalTotalAmount >= MIN_EUR;
+  const canPayDeposit = isFormValid && finalSecurityDeposit >= MIN_EUR;
 
   const generateBookingId = () => `bk_${Date.now()}_${Math.random().toString(36).slice(2, 11)}`;
 
@@ -80,7 +79,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({ property, trigger })
         body: {
           propertyId: property.id,
           paymentType: 'booking_fee',
-          amount: totalForStripe,
+          amount: finalTotalAmount,
           currency: 'EUR',
           description: `Booking fee for ${property.title}`,
           bookingData: {
@@ -121,7 +120,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({ property, trigger })
         body: {
           propertyId: property.id,
           paymentType: 'security_deposit',
-          amount: depositForStripe,
+          amount: finalSecurityDeposit,
           currency: 'EUR',
           description: `Security deposit for ${property.title}`,
           bookingData: {
@@ -263,12 +262,12 @@ export const BookingModal: React.FC<BookingModalProps> = ({ property, trigger })
                   <Separator />
                   <div className="flex justify-between font-semibold">
                     <span>Total</span>
-                    <span>{formatPrice(totalAmount)}</span>
+                    <span>{formatPrice(finalTotalAmount)}</span>
                   </div>
                   <div className="text-xs text-gray-600">
                     <div className="flex items-center gap-1">
                       <Clock className="w-3 h-3" />
-                      Security deposit: {formatPrice(securityDeposit)} (refundable)
+                      Security deposit: {formatPrice(finalSecurityDeposit)} (refundable)
                     </div>
                   </div>
                 </>
@@ -292,7 +291,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({ property, trigger })
                     disabled={!canPayBooking}
                   >
                     <CreditCard className="w-4 h-4 mr-2" />
-                    Pay {formatPrice(totalForStripe)}
+                    Pay {formatPrice(finalTotalAmount)}
                   </Button>
                   {!canPayBooking && (
                     <div className="text-xs text-muted-foreground">
@@ -309,7 +308,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({ property, trigger })
                         size="lg"
                         disabled={!canPayDeposit}
                       >
-                        Pay Security Deposit: {formatPrice(depositForStripe)}
+                        Pay Security Deposit: {formatPrice(finalSecurityDeposit)}
                       </Button>
                       {!canPayDeposit && (
                         <div className="text-xs text-muted-foreground">
