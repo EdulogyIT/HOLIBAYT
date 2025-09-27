@@ -359,6 +359,7 @@ export type Database = {
           id: string
           images: string[] | null
           location: string
+          owner_account_id: string | null
           price: string
           price_type: string
           property_type: string
@@ -386,6 +387,7 @@ export type Database = {
           id?: string
           images?: string[] | null
           location: string
+          owner_account_id?: string | null
           price: string
           price_type: string
           property_type: string
@@ -413,6 +415,7 @@ export type Database = {
           id?: string
           images?: string[] | null
           location?: string
+          owner_account_id?: string | null
           price?: string
           price_type?: string
           property_type?: string

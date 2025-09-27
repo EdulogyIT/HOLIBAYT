@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Calendar, Users, CreditCard, Clock } from 'lucide-react';
-import { PaymentButton } from '@/components/PaymentButton';
+
 import { useCurrency } from '@/contexts/CurrencyContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -72,10 +72,61 @@ export const BookingModal: React.FC<BookingModalProps> = ({ property, trigger })
     contactPhone
   };
 
-  const handleBookingSuccess = (paymentId: string, bookingId?: string) => {
-    console.log('Booking successful:', { paymentId, bookingId });
-    setOpen(false);
-    // You might want to show a success message or redirect
+  const generateBookingId = () => {
+    return `bk_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+  };
+
+  const handlePayBooking = async () => {
+    const bookingId = generateBookingId();
+    
+    try {
+      const res = await fetch("/api/checkout-booking", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          bookingId,
+          propertyId: property.id,
+          totalEUR: totalAmount,
+          commissionRate: 0.048, // 4.8% commission
+        }),
+      });
+      
+      const data = await res.json();
+      if (!res.ok) {
+        console.error(data.error);
+        return;
+      }
+      
+      window.location.href = data.url;
+    } catch (error) {
+      console.error('Payment error:', error);
+    }
+  };
+
+  const handlePayDeposit = async () => {
+    const bookingId = generateBookingId();
+    
+    try {
+      const res = await fetch("/api/checkout-deposit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          bookingId,
+          propertyId: property.id,
+          depositEUR: securityDeposit,
+        }),
+      });
+      
+      const data = await res.json();
+      if (!res.ok) {
+        console.error(data.error);
+        return;
+      }
+      
+      window.location.href = data.url;
+    } catch (error) {
+      console.error('Deposit payment error:', error);
+    }
   };
 
   const defaultTrigger = (
@@ -210,33 +261,24 @@ export const BookingModal: React.FC<BookingModalProps> = ({ property, trigger })
 
               {isFormValid && (
                 <div className="space-y-2">
-                  <PaymentButton
-                    propertyId={property.id}
-                    paymentType="booking_fee"
-                    amount={totalAmount}
-                    currency={currentCurrency}
-                    description={`Booking for ${property.title} (${nights} night${nights !== 1 ? 's' : ''})`}
-                    bookingData={bookingData}
-                    onSuccess={handleBookingSuccess}
+                  <Button
+                    onClick={handlePayBooking}
                     className="w-full"
+                    size="lg"
                   >
                     <CreditCard className="w-4 h-4 mr-2" />
                     Pay {formatPrice(totalAmount)}
-                  </PaymentButton>
+                  </Button>
                   
                   {securityDeposit > 0 && (
-                    <PaymentButton
-                      propertyId={property.id}
-                      paymentType="security_deposit"
-                      amount={securityDeposit}
-                      currency={currentCurrency}
-                      description={`Security deposit for ${property.title}`}
-                      bookingData={bookingData}
-                      onSuccess={handleBookingSuccess}
+                    <Button
+                      onClick={handlePayDeposit}
+                      variant="outline"
                       className="w-full"
+                      size="lg"
                     >
                       Pay Security Deposit: {formatPrice(securityDeposit)}
-                    </PaymentButton>
+                    </Button>
                   )}
                 </div>
               )}
