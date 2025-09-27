@@ -37,22 +37,15 @@ export const BookingModal: React.FC<BookingModalProps> = ({ property, trigger })
   // ---- Stripe constraints ----
   const MIN_EUR = 50; // Stripe minimum charge in EUR for test accounts
 
-  // Calculate booking details - treat property price as the actual daily/monthly rate
-  const rawPrice = Number(property.price) || 0;
-
-  // Handle currency conversion if price seems to be in DZD (very large numbers)
-  let basePrice = rawPrice;
-  if (rawPrice > 1_000_000) {
-    // Likely DZD -> rough conversion to USD/EUR territory for testing
-    basePrice = rawPrice / 135;
-    console.log(`Converting from DZD to USD-ish: ${rawPrice} DZD ≈ ${basePrice.toFixed(2)}`);
-  }
+  // Calculate booking details - treat property price as EUR only
+  const basePrice = Number(property.price) || 0;
 
   // Convert monthly/weekly price to nightly when short-stay
+  let dailyPrice = basePrice;
   if (property.price_type === 'monthly' && property.category === 'short-stay') {
-    basePrice = basePrice / 30.44;
+    dailyPrice = basePrice / 30.44;
   } else if (property.price_type === 'weekly' && property.category === 'short-stay') {
-    basePrice = basePrice / 7;
+    dailyPrice = basePrice / 7;
   }
 
   const nights =
@@ -60,9 +53,9 @@ export const BookingModal: React.FC<BookingModalProps> = ({ property, trigger })
       ? Math.max(1, differenceInDays(parseISO(checkOutDate), parseISO(checkInDate)))
       : 0;
 
-  const subtotal = basePrice * nights;
-  const bookingFee = Math.max(50, subtotal * 0.05); // 5% min €50 (adjust if you like)
-  const securityDeposit = Math.min(500, subtotal * 0.2); // 20% max €500
+  const subtotal = dailyPrice * nights;
+  const bookingFee = Math.round(subtotal * 0.05 * 100) / 100; // 5% booking fee
+  const securityDeposit = Math.round(subtotal * 0.2 * 100) / 100; // 20% security deposit
   const totalAmount = subtotal + bookingFee;
 
   const isFormValid = Boolean(checkInDate && checkOutDate && nights > 0 && guestsCount > 0);
@@ -259,7 +252,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({ property, trigger })
                 <>
                   <div className="flex justify-between text-sm">
                     <span>
-                      {formatPrice(basePrice)} × {nights} night{nights !== 1 ? 's' : ''}
+                      {formatPrice(dailyPrice)} × {nights} night{nights !== 1 ? 's' : ''}
                     </span>
                     <span>{formatPrice(subtotal)}</span>
                   </div>

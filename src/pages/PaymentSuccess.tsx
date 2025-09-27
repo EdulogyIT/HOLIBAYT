@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -15,14 +15,21 @@ export default function PaymentSuccess() {
   const sessionId = searchParams.get('session_id');
   const paymentId = searchParams.get('payment_id');
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (sessionId && paymentId) {
       toast({
         title: "Payment Successful!",
         description: "Your payment has been processed successfully.",
       });
+      
+      // Auto-redirect to bookings after 5 seconds
+      const timer = setTimeout(() => {
+        navigate('/bookings');
+      }, 5000);
+      
+      return () => clearTimeout(timer);
     }
-  }, [sessionId, paymentId, toast]);
+  }, [sessionId, paymentId, toast, navigate]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-100">
@@ -37,7 +44,8 @@ export default function PaymentSuccess() {
               Payment Successful!
             </CardTitle>
             <p className="text-gray-600 mt-2">
-              Thank you for your payment. Your transaction has been processed successfully.
+              Thank you for your payment. Your transaction has been processed successfully. 
+              You will be redirected to your bookings page automatically in 5 seconds.
             </p>
           </CardHeader>
           <CardContent>

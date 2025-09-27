@@ -294,16 +294,9 @@ const Property = () => {
                         {t('scheduleVisit') || 'Schedule Visit'}
                       </Button>
                       {(() => {
-                        // Handle currency conversion like in BookingModal
-                        const rawPrice = parseFloat(property.price.replace(/[^0-9.-]+/g,"")) || 0;
-                        let convertedPrice = rawPrice;
-                        
-                        // If price seems to be in DZD (very large numbers), convert to EUR
-                        if (rawPrice > 1_000_000) {
-                          convertedPrice = rawPrice / 135; // Rough DZD to EUR conversion
-                        }
-                        
-                        const earnestMoneyAmount = Math.min(10000, convertedPrice * 0.05); // 5% earnest money, max €10,000
+                        // Calculate earnest money as 5% of property price in EUR
+                        const propertyPrice = parseFloat(property.price.replace(/[^0-9.-]+/g,"")) || 0;
+                        const earnestMoneyAmount = Math.round(propertyPrice * 0.05 * 100) / 100; // 5% earnest money
                         
                         return (
                           <PaymentButton
@@ -341,16 +334,9 @@ const Property = () => {
                         {t('scheduleVisit') || 'Schedule Visit'}
                       </Button>
                       {(() => {
-                        // Handle currency conversion like in BookingModal
-                        const rawPrice = parseFloat(property.price.replace(/[^0-9.-]+/g,"")) || 0;
-                        let convertedPrice = rawPrice;
-                        
-                        // If price seems to be in DZD (very large numbers), convert to EUR
-                        if (rawPrice > 1_000_000) {
-                          convertedPrice = rawPrice / 135; // Rough DZD to EUR conversion
-                        }
-                        
-                        const securityDepositAmount = Math.round(convertedPrice * 0.2); // 20% security deposit
+                        // Calculate security deposit as 20% of property price in EUR
+                        const propertyPrice = parseFloat(property.price.replace(/[^0-9.-]+/g,"")) || 0;
+                        const securityDepositAmount = Math.round(propertyPrice * 0.2 * 100) / 100; // 20% security deposit
                         
                         return (
                           <PaymentButton
