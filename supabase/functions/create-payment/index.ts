@@ -77,9 +77,7 @@ serve(async (req) => {
     const body: PaymentRequest = await req.json();
     const { propertyId, paymentType, amount, description, bookingData } = body;
 
-    if (!propertyId || !paymentType || !Number.isFinite(amount)) {
-      throw new Error("Invalid payload: propertyId/paymentType/amount required.");
-    }
+    logStep("Payment request parsed", { propertyId, paymentType, amount, currency: 'EUR' });
     // Guard – amounts in EUR
     if (amount < 0.5 || amount > 500000) {
       throw new Error(`Invalid payment amount: €${amount}. Must be between €0.50 and €500,000.`);
@@ -102,7 +100,15 @@ serve(async (req) => {
     const existing = await stripe.customers.list({ email: user.email, limit: 1 });
     if (existing.data.length) {
       customerId = existing.data[0].id;
-      logStep("Existing customer", { customerId });
+      logStep("Existing customer found", { customerId });
+    } else {
+      logStep("Creating new customer");
+      const newCustomer = await stripe.customers.create({
+        email: user.email,
+        name: user.user_metadata?.name || user.email.split('@')[0]
+      });
+      customerId = newCustomer.id;
+      logStep("New customer created", { customerId });
     }
 
     // ---- Create payment row (service-role)
@@ -130,10 +136,13 @@ serve(async (req) => {
       logStep("Booking data stored in payment metadata", { bookingData });
     }
 
-    // ---- Build redirect base URL (prefer APP_URL)
-    const appUrl = (Deno.env.get("APP_URL") || req.headers.get("origin") || "").replace(/\/$/, "");
-    if (!appUrl) throw new Error("APP_URL not configured and no Origin header present");
-    logStep("Using base URL", { appUrl });
+    // ---- Build redirect base URL (prefer Origin header, fallback to APP_URL)
+    const origin = req.headers.get("origin");
+    const appUrl = Deno.env.get("APP_URL");
+    const baseUrl = (origin || appUrl || "").replace(/\/$/, "");
+    if (!baseUrl) throw new Error("No origin header or APP_URL configured");
+    logStep("Origin header received", { origin });
+    logStep("Using base URL", { baseUrl });
 
     // ---- Product name
     const productName =
@@ -181,8 +190,8 @@ serve(async (req) => {
             },
           }
         : {}),
-      success_url: `${appUrl}/payment-success?session_id={CHECKOUT_SESSION_ID}&payment_id=${payment.id}`,
-      cancel_url: `${appUrl}/payment-cancelled?payment_id=${payment.id}`,
+      success_url: `${baseUrl}/payment-success?session_id={CHECKOUT_SESSION_ID}&payment_id=${payment.id}`,
+      cancel_url: `${baseUrl}/payment-cancelled?payment_id=${payment.id}`,
       metadata: {
         payment_id: payment.id,
         property_id: propertyId,
