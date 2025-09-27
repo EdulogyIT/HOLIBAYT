@@ -164,7 +164,7 @@ serve(async (req) => {
     }
 
     // Create Stripe checkout session with dynamic pricing
-    const origin = req.headers.get("origin") || "https://preview--holibaith-79.lovable.app";
+    const origin = req.headers.get("origin") || "https://3dd61bb1-f699-4ed6-bf34-b26425a72fac.lovableproject.com";
     
     // Create product name based on payment type and property
     const productName = paymentType === 'booking_fee' 
