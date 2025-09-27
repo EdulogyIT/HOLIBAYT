@@ -30,102 +30,95 @@ export const BookingModal: React.FC<BookingModalProps> = ({ property, trigger })
   const [guestsCount, setGuestsCount] = useState(1);
   const [specialRequests, setSpecialRequests] = useState('');
   const [contactPhone, setContactPhone] = useState('');
-  const { formatPrice, currentCurrency } = useCurrency();
+  const { formatPrice } = useCurrency();
   const { isAuthenticated } = useAuth();
 
+  // ---- Stripe constraints ----
+  const MIN_EUR = 0.5; // Stripe minimum charge in EUR
+
   // Calculate booking details - treat property price as the actual daily/monthly rate
-  const rawPrice = parseFloat(property.price) || 0;
-  
+  const rawPrice = Number(property.price) || 0;
+
   // Handle currency conversion if price seems to be in DZD (very large numbers)
   let basePrice = rawPrice;
-  if (rawPrice > 1000000) {
-    // Likely in DZD, convert to USD (approximate rate: 1 USD = 135 DZD)
+  if (rawPrice > 1_000_000) {
+    // Likely DZD -> rough conversion to USD/EUR territory for testing
     basePrice = rawPrice / 135;
-    console.log(`Converting from DZD to USD: ${rawPrice} DZD ≈ ${basePrice.toFixed(2)} USD`);
-  } else {
-    basePrice = rawPrice;
+    console.log(`Converting from DZD to USD-ish: ${rawPrice} DZD ≈ ${basePrice.toFixed(2)}`);
   }
-  
-  // Convert monthly price to nightly for short-stay bookings
+
+  // Convert monthly/weekly price to nightly when short-stay
   if (property.price_type === 'monthly' && property.category === 'short-stay') {
-    basePrice = basePrice / 30.44; // Average days per month
+    basePrice = basePrice / 30.44;
   } else if (property.price_type === 'weekly' && property.category === 'short-stay') {
-    basePrice = basePrice / 7; // Convert weekly to daily
+    basePrice = basePrice / 7;
   }
-  // For daily prices, use as is
-    
-  const nights = checkInDate && checkOutDate ? 
-    Math.max(1, differenceInDays(parseISO(checkOutDate), parseISO(checkInDate))) : 0;
-  
+
+  const nights =
+    checkInDate && checkOutDate
+      ? Math.max(1, differenceInDays(parseISO(checkOutDate), parseISO(checkInDate)))
+      : 0;
+
   const subtotal = basePrice * nights;
-  const bookingFee = Math.max(50, subtotal * 0.05); // 5% booking fee, minimum $50
-  const securityDeposit = Math.min(500, subtotal * 0.2); // 20% security deposit, max $500
+  const bookingFee = Math.max(50, subtotal * 0.05); // 5% min €50 (adjust if you like)
+  const securityDeposit = Math.min(500, subtotal * 0.2); // 20% max €500
   const totalAmount = subtotal + bookingFee;
 
-  const isFormValid = checkInDate && checkOutDate && nights > 0 && guestsCount > 0;
+  const isFormValid = Boolean(checkInDate && checkOutDate && nights > 0 && guestsCount > 0);
 
-  const bookingData = {
-    checkInDate,
-    checkOutDate,
-    guestsCount,
-    specialRequests,
-    contactPhone
-  };
+  // Clamp amounts to Stripe's min for the API payload (and use for button enabled state)
+  const totalForStripe = Math.max(MIN_EUR, Number.isFinite(totalAmount) ? Number(totalAmount) : 0);
+  const depositForStripe = Math.max(MIN_EUR, Number.isFinite(securityDeposit) ? Number(securityDeposit) : 0);
 
-  const generateBookingId = () => {
-    return `bk_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-  };
+  const canPayBooking = isFormValid && totalForStripe >= MIN_EUR;
+  const canPayDeposit = isFormValid && depositForStripe >= MIN_EUR;
+
+  const generateBookingId = () => `bk_${Date.now()}_${Math.random().toString(36).slice(2, 11)}`;
 
   const handlePayBooking = async () => {
     const bookingId = generateBookingId();
-    
     try {
-      const res = await fetch("/api/checkout-booking", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+      const res = await fetch('/api/checkout-booking', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           bookingId,
           propertyId: property.id,
-          totalEUR: totalAmount,
+          totalEUR: Number(totalForStripe.toFixed(2)), // send NUMBER, not formatted string
           commissionRate: 0.048, // 4.8% commission
         }),
       });
-      
       const data = await res.json();
       if (!res.ok) {
         console.error(data.error);
         return;
       }
-      
       window.location.href = data.url;
-    } catch (error) {
-      console.error('Payment error:', error);
+    } catch (err) {
+      console.error('Payment error:', err);
     }
   };
 
   const handlePayDeposit = async () => {
     const bookingId = generateBookingId();
-    
     try {
-      const res = await fetch("/api/checkout-deposit", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+      const res = await fetch('/api/checkout-deposit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           bookingId,
           propertyId: property.id,
-          depositEUR: securityDeposit,
+          depositEUR: Number(depositForStripe.toFixed(2)), // send NUMBER
         }),
       });
-      
       const data = await res.json();
       if (!res.ok) {
         console.error(data.error);
         return;
       }
-      
       window.location.href = data.url;
-    } catch (error) {
-      console.error('Deposit payment error:', error);
+    } catch (err) {
+      console.error('Deposit payment error:', err);
     }
   };
 
@@ -147,9 +140,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({ property, trigger })
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        {trigger || defaultTrigger}
-      </DialogTrigger>
+      <DialogTrigger asChild>{trigger || defaultTrigger}</DialogTrigger>
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
@@ -157,7 +148,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({ property, trigger })
             Book {property.title}
           </DialogTitle>
         </DialogHeader>
-        
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Booking Form */}
           <div className="space-y-4">
@@ -231,7 +222,9 @@ export const BookingModal: React.FC<BookingModalProps> = ({ property, trigger })
               {nights > 0 && (
                 <>
                   <div className="flex justify-between text-sm">
-                    <span>{formatPrice(basePrice)} × {nights} night{nights !== 1 ? 's' : ''}</span>
+                    <span>
+                      {formatPrice(basePrice)} × {nights} night{nights !== 1 ? 's' : ''}
+                    </span>
                     <span>{formatPrice(subtotal)}</span>
                   </div>
                   <div className="flex justify-between text-sm">
@@ -254,8 +247,10 @@ export const BookingModal: React.FC<BookingModalProps> = ({ property, trigger })
 
               {checkInDate && checkOutDate && (
                 <div className="bg-blue-50 p-3 rounded-lg text-sm">
-                  <strong>Stay dates:</strong><br />
-                  {format(parseISO(checkInDate), 'MMM dd, yyyy')} - {format(parseISO(checkOutDate), 'MMM dd, yyyy')}
+                  <strong>Stay dates:</strong>
+                  <br />
+                  {format(parseISO(checkInDate), 'MMM dd, yyyy')} -{' '}
+                  {format(parseISO(checkOutDate), 'MMM dd, yyyy')}
                 </div>
               )}
 
@@ -265,20 +260,34 @@ export const BookingModal: React.FC<BookingModalProps> = ({ property, trigger })
                     onClick={handlePayBooking}
                     className="w-full"
                     size="lg"
+                    disabled={!canPayBooking}
                   >
                     <CreditCard className="w-4 h-4 mr-2" />
-                    Pay {formatPrice(totalAmount)}
+                    Pay {formatPrice(totalForStripe)}
                   </Button>
-                  
+                  {!canPayBooking && (
+                    <div className="text-xs text-muted-foreground">
+                      Minimum Stripe charge is €0.50. Increase price/nights to proceed.
+                    </div>
+                  )}
+
                   {securityDeposit > 0 && (
-                    <Button
-                      onClick={handlePayDeposit}
-                      variant="outline"
-                      className="w-full"
-                      size="lg"
-                    >
-                      Pay Security Deposit: {formatPrice(securityDeposit)}
-                    </Button>
+                    <>
+                      <Button
+                        onClick={handlePayDeposit}
+                        variant="outline"
+                        className="w-full"
+                        size="lg"
+                        disabled={!canPayDeposit}
+                      >
+                        Pay Security Deposit: {formatPrice(depositForStripe)}
+                      </Button>
+                      {!canPayDeposit && (
+                        <div className="text-xs text-muted-foreground">
+                          Minimum Stripe charge is €0.50 for deposits as well.
+                        </div>
+                      )}
+                    </>
                   )}
                 </div>
               )}
