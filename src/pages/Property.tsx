@@ -296,12 +296,12 @@ const Property = () => {
                       <PaymentButton
                         propertyId={property.id}
                         paymentType="earnest_money"
-                        amount={Math.min(10000, parseFloat(property.price) * 0.05)} // 5% earnest money, max $10,000
-                        currency="USD"
+                        amount={Math.min(10000, parseFloat(property.price.replace(/[^0-9.-]+/g,"")) * 0.05)} // 5% earnest money, max €10,000
+                        currency="EUR"
                         description={`Earnest money for ${property.title}`}
                         className="w-full"
                       >
-                        Pay Earnest Money
+                        Pay Earnest Money ({formatPrice(Math.min(10000, parseFloat(property.price.replace(/[^0-9.-]+/g,"")) * 0.05))})
                       </PaymentButton>
                     </div>
                   </CardContent>
@@ -328,12 +328,12 @@ const Property = () => {
                       <PaymentButton
                         propertyId={property.id}
                         paymentType="security_deposit"
-                        amount={500} // Standard security deposit
-                        currency="USD"
+                        amount={Math.round(parseFloat(property.price.replace(/[^0-9.-]+/g,"")) * 0.2)} // 20% security deposit
+                        currency="EUR"
                         description={`Security deposit for ${property.title}`}
                         className="w-full"
                       >
-                        Pay Security Deposit
+                        Pay Security Deposit ({formatPrice(Math.round(parseFloat(property.price.replace(/[^0-9.-]+/g,"")) * 0.2))})
                       </PaymentButton>
                     </div>
                   </CardContent>
