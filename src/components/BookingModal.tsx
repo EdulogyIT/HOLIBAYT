@@ -34,7 +34,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({ property, trigger })
   const { isAuthenticated } = useAuth();
 
   // ---- Stripe constraints ----
-  const MIN_EUR = 0.5; // Stripe minimum charge in EUR
+  const MIN_EUR = 50; // Stripe minimum charge in EUR for test accounts
 
   // Calculate booking details - treat property price as the actual daily/monthly rate
   const rawPrice = Number(property.price) || 0;
@@ -76,6 +76,11 @@ export const BookingModal: React.FC<BookingModalProps> = ({ property, trigger })
   const generateBookingId = () => `bk_${Date.now()}_${Math.random().toString(36).slice(2, 11)}`;
 
   const handlePayBooking = async () => {
+    if (!canPayBooking) {
+      alert(`Minimum payment amount is €${MIN_EUR}. Please increase nights or price.`);
+      return;
+    }
+
     const bookingId = generateBookingId();
     try {
       const res = await fetch('/api/checkout-booking', {
@@ -84,22 +89,36 @@ export const BookingModal: React.FC<BookingModalProps> = ({ property, trigger })
         body: JSON.stringify({
           bookingId,
           propertyId: property.id,
-          totalEUR: Number(totalForStripe.toFixed(2)), // send NUMBER, not formatted string
-          commissionRate: 0.048, // 4.8% commission
+          totalEUR: Number(totalForStripe.toFixed(2)),
+          commissionRate: 0.048,
         }),
       });
-      const data = await res.json();
+      
       if (!res.ok) {
-        console.error(data.error);
+        const errorText = await res.text();
+        console.error('API Error:', res.status, errorText);
+        alert(`Payment failed: ${res.status} ${errorText || 'Unknown error'}`);
         return;
       }
-      window.location.href = data.url;
+      
+      const data = await res.json();
+      if (data.url) {
+        window.location.href = data.url;
+      } else {
+        alert('No redirect URL received from payment provider');
+      }
     } catch (err) {
       console.error('Payment error:', err);
+      alert(`Payment failed: ${err.message || 'Network error'}`);
     }
   };
 
   const handlePayDeposit = async () => {
+    if (!canPayDeposit) {
+      alert(`Minimum deposit amount is €${MIN_EUR}.`);
+      return;
+    }
+
     const bookingId = generateBookingId();
     try {
       const res = await fetch('/api/checkout-deposit', {
@@ -108,17 +127,26 @@ export const BookingModal: React.FC<BookingModalProps> = ({ property, trigger })
         body: JSON.stringify({
           bookingId,
           propertyId: property.id,
-          depositEUR: Number(depositForStripe.toFixed(2)), // send NUMBER
+          depositEUR: Number(depositForStripe.toFixed(2)),
         }),
       });
-      const data = await res.json();
+      
       if (!res.ok) {
-        console.error(data.error);
+        const errorText = await res.text();
+        console.error('API Error:', res.status, errorText);
+        alert(`Deposit payment failed: ${res.status} ${errorText || 'Unknown error'}`);
         return;
       }
-      window.location.href = data.url;
+      
+      const data = await res.json();
+      if (data.url) {
+        window.location.href = data.url;
+      } else {
+        alert('No redirect URL received from payment provider');
+      }
     } catch (err) {
       console.error('Deposit payment error:', err);
+      alert(`Deposit payment failed: ${err.message || 'Network error'}`);
     }
   };
 
@@ -267,7 +295,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({ property, trigger })
                   </Button>
                   {!canPayBooking && (
                     <div className="text-xs text-muted-foreground">
-                      Minimum Stripe charge is €0.50. Increase price/nights to proceed.
+                      Minimum charge is €{MIN_EUR}. Increase price/nights to proceed.
                     </div>
                   )}
 
@@ -284,7 +312,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({ property, trigger })
                       </Button>
                       {!canPayDeposit && (
                         <div className="text-xs text-muted-foreground">
-                          Minimum Stripe charge is €0.50 for deposits as well.
+                          Minimum charge is €{MIN_EUR} for deposits as well.
                         </div>
                       )}
                     </>
