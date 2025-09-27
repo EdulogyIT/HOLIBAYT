@@ -37,18 +37,24 @@ serve(async (req) => {
   try {
     logStep("Payment creation started");
 
-    // Initialize Supabase client
-    const supabaseClient = createClient(
+    // Initialize Supabase client with anon key for auth
+    const authClient = createClient(
       Deno.env.get("SUPABASE_URL") ?? "",
       Deno.env.get("SUPABASE_ANON_KEY") ?? ""
     );
 
-    // Authenticate user
+    // Initialize Supabase client with service role key for database operations
+    const dbClient = createClient(
+      Deno.env.get("SUPABASE_URL") ?? "",
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
+    );
+
+    // Authenticate user using anon client
     const authHeader = req.headers.get("Authorization");
     if (!authHeader) throw new Error("No authorization header provided");
     
     const token = authHeader.replace("Bearer ", "");
-    const { data: userData, error: userError } = await supabaseClient.auth.getUser(token);
+    const { data: userData, error: userError } = await authClient.auth.getUser(token);
     if (userError) throw new Error(`Authentication error: ${userError.message}`);
     
     const user = userData.user;
@@ -66,8 +72,8 @@ serve(async (req) => {
     throw new Error(`Invalid payment amount: $${amount}. Amount must be between $1 and $500,000. Note: For testing, if you see very large amounts, the property price might be in a different currency (DZD) - try converting it first.`);
   }
 
-    // Verify property exists and get property details
-    const { data: property, error: propertyError } = await supabaseClient
+    // Verify property exists and get property details using service role
+    const { data: property, error: propertyError } = await dbClient
       .from('properties')
       .select('id, title, user_id, contact_name, contact_email')
       .eq('id', propertyId)
@@ -101,8 +107,8 @@ serve(async (req) => {
       logStep("Creating new customer");
     }
 
-    // Create payment record in database
-    const { data: payment, error: paymentError } = await supabaseClient
+    // Create payment record in database using service role
+    const { data: payment, error: paymentError } = await dbClient
       .from('payments')
       .insert({
         user_id: user.id,
@@ -127,10 +133,10 @@ serve(async (req) => {
     
     logStep("Payment record created", { paymentId: payment.id });
 
-    // Create booking record if this is a booking-related payment
+    // Create booking record if this is a booking-related payment using service role
     let bookingId = null;
     if (bookingData && (paymentType === 'booking_fee' || paymentType === 'security_deposit')) {
-      const { data: booking, error: bookingError } = await supabaseClient
+      const { data: booking, error: bookingError } = await dbClient
         .from('bookings')
         .insert({
           user_id: user.id,
@@ -198,8 +204,8 @@ serve(async (req) => {
       }
     });
 
-    // Update payment record with checkout session ID
-    await supabaseClient
+    // Update payment record with checkout session ID using service role
+    await dbClient
       .from('payments')
       .update({ stripe_checkout_session_id: session.id })
       .eq('id', payment.id);
