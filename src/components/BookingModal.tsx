@@ -36,14 +36,21 @@ export const BookingModal: React.FC<BookingModalProps> = ({ property, trigger })
   // Calculate booking details - treat property price as the actual daily/monthly rate
   const rawPrice = parseFloat(property.price) || 0;
   
-  // The price is stored as the actual rate (not in cents)
+  // Handle currency conversion if price seems to be in DZD (very large numbers)
   let basePrice = rawPrice;
+  if (rawPrice > 1000000) {
+    // Likely in DZD, convert to USD (approximate rate: 1 USD = 135 DZD)
+    basePrice = rawPrice / 135;
+    console.log(`Converting from DZD to USD: ${rawPrice} DZD ≈ ${basePrice.toFixed(2)} USD`);
+  } else {
+    basePrice = rawPrice;
+  }
   
   // Convert monthly price to nightly for short-stay bookings
   if (property.price_type === 'monthly' && property.category === 'short-stay') {
-    basePrice = rawPrice / 30.44; // Average days per month
+    basePrice = basePrice / 30.44; // Average days per month
   } else if (property.price_type === 'weekly' && property.category === 'short-stay') {
-    basePrice = rawPrice / 7; // Convert weekly to daily
+    basePrice = basePrice / 7; // Convert weekly to daily
   }
   // For daily prices, use as is
     
