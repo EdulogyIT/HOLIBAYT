@@ -24,6 +24,7 @@ import LoginPage from "./pages/auth/LoginPage";
 import RegisterPage from "./pages/auth/RegisterPage";
 import Bookings from "./pages/Bookings";
 import Profile from "./pages/Profile";
+import Messages from "./pages/Messages";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminProfile from "./pages/admin/AdminProfile";
 import AdminProperties from "./pages/admin/AdminProperties";
@@ -74,6 +75,11 @@ const App = () => (
               <Route path="/profile" element={
                 <ProtectedRoute requireAuth>
                   <Profile />
+                </ProtectedRoute>
+              } />
+              <Route path="/messages" element={
+                <ProtectedRoute requireAuth>
+                  <Messages />
                 </ProtectedRoute>
               } />
               <Route path="/property/:id" element={<Property />} />

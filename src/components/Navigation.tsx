@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Menu, X, Globe, LogOut, Settings, User, Home, Calendar } from "lucide-react";
+import { Menu, X, Globe, LogOut, Settings, User, Home, Calendar, MessageCircle } from "lucide-react";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -141,6 +141,10 @@ const Navigation = () => {
                       <User className="h-4 w-4 mr-2" />
                       {t('myProfile')}
                     </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => navigate('/messages')}>
+                      <MessageCircle className="h-4 w-4 mr-2" />
+                      Messages
+                    </DropdownMenuItem>
                     {hasRole('admin') ? (
                       <DropdownMenuItem onClick={() => navigate('/publish-property')}>
                         <Home className="h-4 w-4 mr-2" />
@@ -281,6 +285,13 @@ const Navigation = () => {
                     }}>
                       <User className="h-4 w-4 mr-2" />
                       {t('myProfile')}
+                    </Button>
+                    <Button variant="ghost" className="font-inter font-medium justify-start" onClick={() => {
+                      navigate('/messages');
+                      setIsMenuOpen(false);
+                    }}>
+                      <MessageCircle className="h-4 w-4 mr-2" />
+                      Messages
                     </Button>
                     {hasRole('admin') ? (
                       <Button variant="ghost" className="font-inter font-medium justify-start" onClick={() => {

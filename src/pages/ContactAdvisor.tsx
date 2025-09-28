@@ -98,11 +98,21 @@ const ContactAdvisor = () => {
               Get personalized guidance from our certified property experts. We're here to help you make informed decisions with confidence.
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
-              <Button size="lg" variant="secondary" className="font-inter font-semibold text-lg px-8 py-4">
+              <Button 
+                size="lg" 
+                variant="secondary" 
+                className="font-inter font-semibold text-lg px-8 py-4"
+                onClick={() => window.location.href = '/messages?start=true'}
+              >
                 <MessageCircle className="h-5 w-5 mr-2" />
                 Start Chat
               </Button>
-              <Button size="lg" variant="secondary" className="font-inter font-semibold text-lg px-8 py-4">
+              <Button 
+                size="lg" 
+                variant="secondary" 
+                className="font-inter font-semibold text-lg px-8 py-4"
+                onClick={() => window.open('tel:+213021999999')}
+              >
                 <Phone className="h-5 w-5 mr-2" />
                 Call Now
               </Button>
