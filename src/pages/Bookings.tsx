@@ -113,11 +113,12 @@ const Bookings = () => {
 
   // Separate bookings into upcoming and past
   const now = new Date();
+  now.setHours(0, 0, 0, 0); // Set to start of today for accurate comparison
   const upcomingBookings = bookings.filter(booking => 
-    new Date(booking.check_in_date) >= now
+    new Date(booking.check_out_date) > now
   );
   const pastBookings = bookings.filter(booking => 
-    new Date(booking.check_in_date) < now
+    new Date(booking.check_out_date) <= now
   );
 
   const getStatusColor = (status: string) => {
