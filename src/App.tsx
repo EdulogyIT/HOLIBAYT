@@ -77,11 +77,7 @@ const App = () => (
                   <Profile />
                 </ProtectedRoute>
               } />
-              <Route path="/messages" element={
-                <ProtectedRoute requireAuth>
-                  <Messages />
-                </ProtectedRoute>
-              } />
+              <Route path="/messages" element={<Messages />} />
               <Route path="/property/:id" element={<Property />} />
               <Route path="/city/:cityId" element={<City />} />
               <Route path="/contact-advisor" element={<ContactAdvisor />} />
