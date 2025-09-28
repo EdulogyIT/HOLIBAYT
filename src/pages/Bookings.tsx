@@ -12,6 +12,7 @@ import { useEffect, useState } from "react";
 import { format } from "date-fns";
 import { useCurrency } from "@/contexts/CurrencyContext";
 import { useToast } from "@/hooks/use-toast";
+import { CancelBookingButton } from "@/components/CancelBookingButton";
 
 interface BookingWithProperty {
   id: string;
@@ -137,6 +138,11 @@ const Bookings = () => {
     window.open(`mailto:${hostEmail}?subject=${subject}&body=${body}`);
   };
 
+  const handleBookingCancelled = () => {
+    // Refresh bookings after cancellation
+    fetchBookings();
+  };
+
   const BookingCard = ({ booking, isPast = false }: { booking: BookingWithProperty; isPast?: boolean }) => {
     const property = booking.properties;
     const primaryImage = property?.images?.[0];
@@ -217,6 +223,13 @@ const Bookings = () => {
                     <MessageCircle className="h-4 w-4 mr-1" />
                     Message Host
                   </Button>
+                )}
+                {!isPast && (booking.status === 'confirmed' || booking.status === 'pending') && (
+                  <CancelBookingButton
+                    bookingId={booking.id}
+                    totalAmount={booking.total_amount}
+                    onCancelSuccess={handleBookingCancelled}
+                  />
                 )}
                 {isPast && (
                   <Button variant="outline" size="sm">

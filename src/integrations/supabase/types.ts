@@ -17,6 +17,7 @@ export type Database = {
       bookings: {
         Row: {
           booking_fee: number
+          cancelled_at: string | null
           check_in_date: string
           check_out_date: string
           contact_phone: string | null
@@ -25,6 +26,7 @@ export type Database = {
           id: string
           payment_id: string | null
           property_id: string
+          refund_amount: number | null
           security_deposit: number
           special_requests: string | null
           status: string
@@ -34,6 +36,7 @@ export type Database = {
         }
         Insert: {
           booking_fee?: number
+          cancelled_at?: string | null
           check_in_date: string
           check_out_date: string
           contact_phone?: string | null
@@ -42,6 +45,7 @@ export type Database = {
           id?: string
           payment_id?: string | null
           property_id: string
+          refund_amount?: number | null
           security_deposit?: number
           special_requests?: string | null
           status?: string
@@ -51,6 +55,7 @@ export type Database = {
         }
         Update: {
           booking_fee?: number
+          cancelled_at?: string | null
           check_in_date?: string
           check_out_date?: string
           contact_phone?: string | null
@@ -59,6 +64,7 @@ export type Database = {
           id?: string
           payment_id?: string | null
           property_id?: string
+          refund_amount?: number | null
           security_deposit?: number
           special_requests?: string | null
           status?: string
