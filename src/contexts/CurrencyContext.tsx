@@ -4,7 +4,7 @@ export type Currency = 'USD' | 'DZD' | 'EUR';
 
 interface CurrencyContextType {
   currentCurrency: Currency;
-  formatPrice: (amount: string | number, priceType?: string) => string;
+  formatPrice: (amount: string | number, priceType?: string, currency?: string) => string;
   getCurrencySymbol: () => string;
   setCurrency: (currency: Currency) => void;
 }
@@ -63,24 +63,22 @@ export const CurrencyProvider = ({ children }: CurrencyProviderProps) => {
     }
   };
 
-  const formatPrice = (amount: string | number, priceType?: string): string => {
+  const formatPrice = (amount: string | number, priceType?: string, currency?: string): string => {
     let numAmount = typeof amount === 'string' ? parseFloat(amount) : amount;
     
     if (isNaN(numAmount)) return '0';
 
-    // Assume property prices are stored in DZD (base currency)
-    // Convert to target currency if different
-    let convertedAmount = numAmount;
-    if (currentCurrency !== 'DZD') {
-      // Convert from DZD to target currency
-      convertedAmount = numAmount * exchangeRates[currentCurrency];
-    }
-
-    const config = currencyConfig[currentCurrency];
+    // CRITICAL FIX: Don't convert prices - they're already in their native currency
+    // Properties store prices in EUR/USD/DZD directly, no conversion needed
+    // Only format the display based on the currency preference
+    
+    const displayCurrency = currency || currentCurrency;
+    const config = currencyConfig[displayCurrency];
+    
     const formattedAmount = new Intl.NumberFormat('en-US', {
       minimumFractionDigits: 0,
-      maximumFractionDigits: currentCurrency === 'DZD' ? 0 : 2,
-    }).format(convertedAmount);
+      maximumFractionDigits: displayCurrency === 'DZD' ? 0 : 2,
+    }).format(numAmount);
 
     let result = '';
     if (config.position === 'before') {
