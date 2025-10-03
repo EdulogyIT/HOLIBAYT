@@ -311,7 +311,7 @@ export default function AdminUsers() {
               <SelectTrigger className="w-full sm:w-40 bg-background">
                 <SelectValue placeholder={t('admin.role')} />
               </SelectTrigger>
-              <SelectContent className="bg-background z-50">
+              <SelectContent className="bg-popover z-[100]" position="popper" sideOffset={5}>
                 <SelectItem value="all">{t('admin.allRoles')}</SelectItem>
                 <SelectItem value="user">{t('admin.users')}</SelectItem>
                 <SelectItem value="host">{t('admin.hosts')}</SelectItem>
@@ -323,7 +323,7 @@ export default function AdminUsers() {
               <SelectTrigger className="w-full sm:w-40 bg-background">
                 <SelectValue placeholder={t('admin.status')} />
               </SelectTrigger>
-              <SelectContent className="bg-background z-50">
+              <SelectContent className="bg-popover z-[100]" position="popper" sideOffset={5}>
                 <SelectItem value="all">{t('admin.allStatuses')}</SelectItem>
                 <SelectItem value="active">{t('admin.active')}</SelectItem>
                 <SelectItem value="pending">{t('admin.pending')}</SelectItem>
