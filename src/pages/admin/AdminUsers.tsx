@@ -308,26 +308,26 @@ export default function AdminUsers() {
             </div>
             
             <Select value={roleFilter} onValueChange={setRoleFilter}>
-              <SelectTrigger className="w-full sm:w-40 bg-background">
+              <SelectTrigger className="w-full sm:w-40 bg-background border border-input">
                 <SelectValue placeholder={t('admin.role')} />
               </SelectTrigger>
-              <SelectContent className="bg-popover z-[100]" position="popper" sideOffset={5}>
-                <SelectItem value="all">{t('admin.allRoles')}</SelectItem>
-                <SelectItem value="user">{t('admin.users')}</SelectItem>
-                <SelectItem value="host">{t('admin.hosts')}</SelectItem>
-                <SelectItem value="admin">{t('admin.admins')}</SelectItem>
+              <SelectContent className="bg-background border border-input shadow-lg z-[9999]" position="popper" sideOffset={5}>
+                <SelectItem value="all" className="cursor-pointer hover:bg-accent">{t('admin.allRoles')}</SelectItem>
+                <SelectItem value="user" className="cursor-pointer hover:bg-accent">{t('admin.users')}</SelectItem>
+                <SelectItem value="host" className="cursor-pointer hover:bg-accent">{t('admin.hosts')}</SelectItem>
+                <SelectItem value="admin" className="cursor-pointer hover:bg-accent">{t('admin.admins')}</SelectItem>
               </SelectContent>
             </Select>
 
             <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger className="w-full sm:w-40 bg-background">
+              <SelectTrigger className="w-full sm:w-40 bg-background border border-input">
                 <SelectValue placeholder={t('admin.status')} />
               </SelectTrigger>
-              <SelectContent className="bg-popover z-[100]" position="popper" sideOffset={5}>
-                <SelectItem value="all">{t('admin.allStatuses')}</SelectItem>
-                <SelectItem value="active">{t('admin.active')}</SelectItem>
-                <SelectItem value="pending">{t('admin.pending')}</SelectItem>
-                <SelectItem value="suspended">{t('admin.suspended')}</SelectItem>
+              <SelectContent className="bg-background border border-input shadow-lg z-[9999]" position="popper" sideOffset={5}>
+                <SelectItem value="all" className="cursor-pointer hover:bg-accent">{t('admin.allStatuses')}</SelectItem>
+                <SelectItem value="active" className="cursor-pointer hover:bg-accent">{t('admin.active')}</SelectItem>
+                <SelectItem value="pending" className="cursor-pointer hover:bg-accent">{t('admin.pending')}</SelectItem>
+                <SelectItem value="suspended" className="cursor-pointer hover:bg-accent">{t('admin.suspended')}</SelectItem>
               </SelectContent>
             </Select>
           </div>
