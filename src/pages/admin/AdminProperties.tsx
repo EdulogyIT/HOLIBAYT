@@ -159,8 +159,10 @@ export default function AdminProperties() {
 
       if (error) throw error;
 
+      console.log('Property approved, creating notification for user:', property.user_id);
+
       // Create notification for the property owner
-      await supabase
+      const { data: notificationData, error: notificationError } = await supabase
         .from('notifications')
         .insert({
           user_id: property.user_id,
@@ -168,13 +170,25 @@ export default function AdminProperties() {
           message: `Your property "${property.title}" has been approved and is now live!`,
           type: 'property_approval',
           related_id: propertyId
+        })
+        .select();
+
+      if (notificationError) {
+        console.error('Error creating notification:', notificationError);
+        console.error('Notification details:', {
+          user_id: property.user_id,
+          property_id: propertyId,
+          property_title: property.title
         });
+        toast.warning('Property approved but failed to send notification');
+      } else {
+        console.log('Notification created successfully:', notificationData);
+        toast.success('Property approved and host notified');
+      }
 
       setProperties(properties.map(p => 
         p.id === propertyId ? { ...p, status: 'active' } : p
       ));
-      
-      toast.success('Property approved and host notified');
     } catch (error) {
       console.error('Error approving property:', error);
       toast.error('Failed to approve property');
@@ -197,8 +211,10 @@ export default function AdminProperties() {
 
       if (error) throw error;
 
+      console.log('Property rejected, creating notification for user:', property.user_id);
+
       // Create notification for the property owner
-      await supabase
+      const { data: notificationData, error: notificationError } = await supabase
         .from('notifications')
         .insert({
           user_id: property.user_id,
@@ -206,13 +222,26 @@ export default function AdminProperties() {
           message: `Your property "${property.title}" was rejected. Reason: ${reason}`,
           type: 'property_rejection',
           related_id: propertyId
+        })
+        .select();
+
+      if (notificationError) {
+        console.error('Error creating notification:', notificationError);
+        console.error('Notification details:', {
+          user_id: property.user_id,
+          property_id: propertyId,
+          property_title: property.title,
+          reason: reason
         });
+        toast.warning('Property rejected but failed to send notification');
+      } else {
+        console.log('Notification created successfully:', notificationData);
+        toast.success('Property rejected and host notified');
+      }
 
       setProperties(properties.map(p => 
         p.id === propertyId ? { ...p, status: 'suspended' } : p
       ));
-      
-      toast.success('Property rejected and host notified');
     } catch (error) {
       console.error('Error rejecting property:', error);
       toast.error('Failed to reject property');
