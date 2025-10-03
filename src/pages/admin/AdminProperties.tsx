@@ -29,7 +29,9 @@ import {
   Plus,
   Download,
   FileText,
-  FileSpreadsheet
+  FileSpreadsheet,
+  Check,
+  X
 } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { supabase } from '@/integrations/supabase/client';
@@ -140,6 +142,80 @@ export default function AdminProperties() {
     } finally {
       setDeleteDialogOpen(false);
       setPropertyToDelete(null);
+    }
+  };
+
+  const handleApprove = async (propertyId: string) => {
+    try {
+      const property = properties.find(p => p.id === propertyId);
+      if (!property) return;
+
+      // Update property status
+      const { error } = await supabase
+        .from('properties')
+        .update({ status: 'active' })
+        .eq('id', propertyId);
+
+      if (error) throw error;
+
+      // Send approval email
+      await supabase.functions.invoke('send-property-approval-email', {
+        body: {
+          propertyId,
+          hostEmail: property.contact_email,
+          hostName: property.contact_name,
+          propertyTitle: property.title,
+          status: 'approved'
+        }
+      });
+
+      setProperties(properties.map(p => 
+        p.id === propertyId ? { ...p, status: 'active' } : p
+      ));
+      
+      toast.success('Property approved and host notified');
+    } catch (error) {
+      console.error('Error approving property:', error);
+      toast.error('Failed to approve property');
+    }
+  };
+
+  const handleReject = async (propertyId: string) => {
+    const reason = prompt('Please provide a reason for rejection:');
+    if (!reason) return;
+
+    try {
+      const property = properties.find(p => p.id === propertyId);
+      if (!property) return;
+
+      // Update property status
+      const { error } = await supabase
+        .from('properties')
+        .update({ status: 'suspended' })
+        .eq('id', propertyId);
+
+      if (error) throw error;
+
+      // Send rejection email
+      await supabase.functions.invoke('send-property-approval-email', {
+        body: {
+          propertyId,
+          hostEmail: property.contact_email,
+          hostName: property.contact_name,
+          propertyTitle: property.title,
+          status: 'rejected',
+          reason
+        }
+      });
+
+      setProperties(properties.map(p => 
+        p.id === propertyId ? { ...p, status: 'suspended' } : p
+      ));
+      
+      toast.success('Property rejected and host notified');
+    } catch (error) {
+      console.error('Error rejecting property:', error);
+      toast.error('Failed to reject property');
     }
   };
 
@@ -367,6 +443,28 @@ export default function AdminProperties() {
                     <TableCell>{new Date(property.created_at).toLocaleDateString()}</TableCell>
                     <TableCell>
                       <div className="flex space-x-2">
+                        {property.status === 'pending' && (
+                          <>
+                            <Button 
+                              size="sm" 
+                              variant="ghost"
+                              className="text-green-600 hover:text-green-700"
+                              onClick={() => handleApprove(property.id)}
+                              title="Approve Property"
+                            >
+                              <Check className="h-4 w-4" />
+                            </Button>
+                            <Button 
+                              size="sm" 
+                              variant="ghost"
+                              className="text-red-600 hover:text-red-700"
+                              onClick={() => handleReject(property.id)}
+                              title="Reject Property"
+                            >
+                              <X className="h-4 w-4" />
+                            </Button>
+                          </>
+                        )}
                         <Button 
                           size="sm" 
                           variant="ghost"

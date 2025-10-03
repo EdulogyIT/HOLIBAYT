@@ -80,7 +80,7 @@ const PublishProperty = () => {
           contact_phone: formData.phoneNumber,
           contact_email: formData.email,
           images: imageUrls,
-          status: 'active'
+          status: 'pending' // Requires admin approval
         });
 
       if (insertError) {
