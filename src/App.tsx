@@ -111,6 +111,7 @@ const App = () => (
                       <Route path="profile" element={<AdminProfile />} />
                       <Route path="properties" element={<AdminProperties />} />
                       <Route path="users" element={<AdminUsers />} />
+                      <Route path="users/:userId" element={<Profile />} />
                       <Route path="messages" element={<AdminMessages />} />
                       <Route path="settings" element={<AdminSettings />} />
                     </Routes>

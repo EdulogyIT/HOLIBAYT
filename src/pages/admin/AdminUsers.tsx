@@ -186,8 +186,7 @@ export default function AdminUsers() {
   };
 
   const handleViewUser = (userId: string) => {
-    // Navigate to user profile or show details
-    navigate(`/profile/${userId}`);
+    navigate(`/admin/users/${userId}`);
   };
 
   const handleBlockUser = async () => {
@@ -311,11 +310,11 @@ export default function AdminUsers() {
               <SelectTrigger className="w-full sm:w-40 bg-background border border-input">
                 <SelectValue placeholder={t('admin.role')} />
               </SelectTrigger>
-              <SelectContent className="bg-background border border-input shadow-lg z-[9999]" position="popper" sideOffset={5}>
+              <SelectContent className="bg-background border border-input shadow-lg z-[9999]" sideOffset={5}>
                 <SelectItem value="all" className="cursor-pointer hover:bg-accent">{t('admin.allRoles')}</SelectItem>
                 <SelectItem value="user" className="cursor-pointer hover:bg-accent">{t('admin.users')}</SelectItem>
-                <SelectItem value="host" className="cursor-pointer hover:bg-accent">{t('admin.hosts')}</SelectItem>
-                <SelectItem value="admin" className="cursor-pointer hover:bg-accent">{t('admin.admins')}</SelectItem>
+                <SelectItem value="host" className="cursor-pointer hover:bg-accent">Hosts</SelectItem>
+                <SelectItem value="admin" className="cursor-pointer hover:bg-accent">Admins</SelectItem>
               </SelectContent>
             </Select>
 

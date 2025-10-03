@@ -1,6 +1,8 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useParams } from 'react-router-dom';
+import { supabase } from '@/integrations/supabase/client';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -37,7 +39,30 @@ import {
 const Profile = () => {
   const { user, logout, hasRole } = useAuth();
   const { t, currentLang } = useLanguage();
+  const { userId } = useParams();
   const [isEditing, setIsEditing] = useState(false);
+  const [viewedUser, setViewedUser] = useState<any>(null);
+  const [loading, setLoading] = useState(false);
+
+  const isViewingOtherUser = userId && userId !== user?.id;
+  const displayUser = isViewingOtherUser ? viewedUser : user;
+
+  useEffect(() => {
+    if (isViewingOtherUser && hasRole('admin')) {
+      setLoading(true);
+      supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', userId)
+        .single()
+        .then(({ data, error }) => {
+          if (!error && data) {
+            setViewedUser(data);
+          }
+          setLoading(false);
+        });
+    }
+  }, [userId, isViewingOtherUser, hasRole]);
 
   const translations = {
     en: {
@@ -216,8 +241,12 @@ const Profile = () => {
     toast.success(currentLang === 'AR' ? 'تم تسجيل الخروج.' : currentLang === 'FR' ? 'Déconnecté avec succès.' : 'Successfully logged out.');
   };
 
-  if (!user) {
+  if (!user || (isViewingOtherUser && loading)) {
     return <div>Loading...</div>;
+  }
+
+  if (isViewingOtherUser && !displayUser) {
+    return <div>User not found.</div>;
   }
 
   return (
@@ -229,9 +258,9 @@ const Profile = () => {
         <div className="mb-8 animate-scale-in">
           <div className="flex items-center gap-6 mb-6 p-6 rounded-2xl bg-gradient-primary shadow-elegant">
             <Avatar className="h-20 w-20 ring-4 ring-white/20 shadow-lg">
-              <AvatarImage src="" alt={user.name} />
+              <AvatarImage src="" alt={displayUser?.name || displayUser?.email} />
               <AvatarFallback className="text-2xl bg-white/20 text-white backdrop-blur-sm">
-                {user.name.split(' ').map(n => n[0]).join('').toUpperCase()}
+                {(displayUser?.name || displayUser?.email || 'U').split(' ').map((n: string) => n[0]).join('').toUpperCase()}
               </AvatarFallback>
             </Avatar>
             <div>
@@ -244,26 +273,28 @@ const Profile = () => {
           </div>
 
           {/* Quick Actions */}
-          <div className="flex flex-wrap gap-3">
-            <Button variant="outline" size="sm" className="hover-scale bg-white/50 backdrop-blur-sm border-white/20">
-              <Edit className="h-4 w-4 mr-2" />
-              {currentTranslations.editProfile}
-            </Button>
-            <Button variant="outline" size="sm" className="hover-scale bg-white/50 backdrop-blur-sm border-white/20">
-              <BookOpen className="h-4 w-4 mr-2" />
-              {currentTranslations.myBookings}
-            </Button>
-            {hasRole('host') && (
+          {!isViewingOtherUser && (
+            <div className="flex flex-wrap gap-3">
               <Button variant="outline" size="sm" className="hover-scale bg-white/50 backdrop-blur-sm border-white/20">
-                <Home className="h-4 w-4 mr-2" />
-                {currentTranslations.publishProperty}
+                <Edit className="h-4 w-4 mr-2" />
+                {currentTranslations.editProfile}
               </Button>
-            )}
-            <Button variant="outline" size="sm" onClick={handleLogout} className="hover-scale bg-white/50 backdrop-blur-sm border-white/20">
-              <LogOut className="h-4 w-4 mr-2" />
-              {currentTranslations.signOut}
-            </Button>
-          </div>
+              <Button variant="outline" size="sm" className="hover-scale bg-white/50 backdrop-blur-sm border-white/20">
+                <BookOpen className="h-4 w-4 mr-2" />
+                {currentTranslations.myBookings}
+              </Button>
+              {hasRole('host') && (
+                <Button variant="outline" size="sm" className="hover-scale bg-white/50 backdrop-blur-sm border-white/20">
+                  <Home className="h-4 w-4 mr-2" />
+                  {currentTranslations.publishProperty}
+                </Button>
+              )}
+              <Button variant="outline" size="sm" onClick={handleLogout} className="hover-scale bg-white/50 backdrop-blur-sm border-white/20">
+                <LogOut className="h-4 w-4 mr-2" />
+                {currentTranslations.signOut}
+              </Button>
+            </div>
+          )}
         </div>
 
         {/* Metrics Cards */}
