@@ -104,7 +104,7 @@ export default function CreateBlog() {
       if (error) throw error;
 
       toast.success(`Blog post ${status === 'published' ? 'published' : 'saved as draft'} successfully`);
-      navigate('/host/dashboard');
+      navigate('/admin/dashboard');
     } catch (error) {
       console.error('Error creating blog post:', error);
       toast.error('Failed to create blog post');
@@ -116,7 +116,7 @@ export default function CreateBlog() {
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-4">
-        <Button variant="ghost" onClick={() => navigate('/host/dashboard')}>
+        <Button variant="ghost" onClick={() => navigate('/admin/dashboard')}>
           <ArrowLeft className="h-4 w-4 mr-2" />
           {t('host.backToDashboard') || 'Back to Dashboard'}
         </Button>
@@ -235,7 +235,7 @@ export default function CreateBlog() {
               <Button
                 type="button"
                 variant="outline"
-                onClick={() => navigate('/host/dashboard')}
+                onClick={() => navigate('/admin/dashboard')}
                 disabled={isSubmitting}
               >
                 {t('cancel') || 'Cancel'}

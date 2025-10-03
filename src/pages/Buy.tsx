@@ -127,7 +127,7 @@ const Buy = () => {
     <Card className="overflow-hidden hover:shadow-lg transition-shadow duration-300 cursor-pointer group">
       <div className="relative h-48 overflow-hidden">
         <img
-          src={property.images?.[0] || "/placeholder-property.jpg"}
+          src={property.images?.[0] || "/lovable-uploads/b974fb79-9873-41fb-b3ad-9b4bf38b8a77.png"}
           alt={property.title}
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
         />

@@ -113,6 +113,7 @@ const App = () => (
                       <Route path="users" element={<AdminUsers />} />
                       <Route path="users/:userId" element={<Profile />} />
                       <Route path="messages" element={<AdminMessages />} />
+                      <Route path="create-blog" element={<CreateBlog />} />
                       <Route path="settings" element={<AdminSettings />} />
                     </Routes>
                   </AdminLayout>
@@ -129,7 +130,6 @@ const App = () => (
                       <Route path="listings" element={<HostListings />} />
                       <Route path="messages" element={<HostMessages />} />
                       <Route path="payouts" element={<HostPayouts />} />
-                      <Route path="create-blog" element={<CreateBlog />} />
                     </Routes>
                   </HostLayout>
                 </ProtectedRoute>

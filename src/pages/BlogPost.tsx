@@ -7,6 +7,8 @@ import { Badge } from "@/components/ui/badge";
 import { Calendar, User, Clock, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
+import { BlogSocialShare } from "@/components/BlogSocialShare";
+import { BlogComments } from "@/components/BlogComments";
 
 // Import blog images
 import blogRealEstateFuture from "@/assets/blog-real-estate-future.jpg";
@@ -554,6 +556,10 @@ const BlogPost = () => {
                 </Badge>
               ))}
             </div>
+
+            <BlogSocialShare title={post.title} />
+            
+            <BlogComments blogPostId={id || ''} />
           </div>
         </article>
       </main>
