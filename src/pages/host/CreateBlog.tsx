@@ -118,14 +118,14 @@ export default function CreateBlog() {
       <div className="flex items-center gap-4">
         <Button variant="ghost" onClick={() => navigate('/admin/dashboard')}>
           <ArrowLeft className="h-4 w-4 mr-2" />
-          {t('host.backToDashboard') || 'Back to Dashboard'}
+          Back to Dashboard
         </Button>
       </div>
 
       <div>
-        <h1 className="text-3xl font-bold">{t('host.createBlogPost') || 'Create Blog Post'}</h1>
+        <h1 className="text-3xl font-bold">Create your blog</h1>
         <p className="text-muted-foreground">
-          {t('host.shareBlogContent') || 'Share your insights and experiences with the community'}
+          Share your insights and experiences with the community
         </p>
       </div>
 
@@ -242,10 +242,10 @@ export default function CreateBlog() {
               </Button>
               <Button type="submit" disabled={isSubmitting}>
                 {isSubmitting 
-                  ? (t('host.saving') || 'Saving...') 
+                  ? 'Saving...' 
                   : status === 'published' 
-                    ? (t('host.publishBlog') || 'Publish Blog') 
-                    : (t('host.saveDraft') || 'Save as Draft')
+                    ? 'Publish Now' 
+                    : 'Save as Draft'
                 }
               </Button>
             </div>

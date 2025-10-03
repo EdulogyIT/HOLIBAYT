@@ -27,7 +27,9 @@ import {
   Search,
   Filter,
   Plus,
-  Download
+  Download,
+  FileText,
+  FileSpreadsheet
 } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { supabase } from '@/integrations/supabase/client';
@@ -43,6 +45,13 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { exportToExcel, exportToPDF, exportToWord } from '@/utils/exportData';
 
 
 export default function AdminProperties() {
@@ -134,6 +143,53 @@ export default function AdminProperties() {
     }
   };
 
+  const handleExport = (format: 'excel' | 'pdf' | 'word') => {
+    if (filteredProperties.length === 0) {
+      toast.error('No properties to export');
+      return;
+    }
+
+    // Prepare data for export
+    const exportData = filteredProperties.map(property => ({
+      'Property ID': property.id.slice(0, 8),
+      'Title': property.title,
+      'Category': property.category,
+      'City': property.city,
+      'Location': property.location,
+      'Owner': property.contact_name,
+      'Price': `${property.price} DA`,
+      'Status': property.status || 'active',
+      'Created Date': new Date(property.created_at).toLocaleDateString(),
+      'Property Type': property.property_type,
+      'Area': property.area,
+      'Bedrooms': property.bedrooms || 'N/A',
+      'Bathrooms': property.bathrooms || 'N/A',
+    }));
+
+    const filename = `properties_export_${new Date().toISOString().split('T')[0]}`;
+    const title = 'Properties Export Report';
+
+    try {
+      switch (format) {
+        case 'excel':
+          exportToExcel(exportData, filename);
+          toast.success('Exported to Excel successfully');
+          break;
+        case 'pdf':
+          exportToPDF(exportData, filename, title);
+          toast.success('PDF export initiated - check your print dialog');
+          break;
+        case 'word':
+          exportToWord(exportData, filename, title);
+          toast.success('Exported to Word successfully');
+          break;
+      }
+    } catch (error) {
+      console.error('Export error:', error);
+      toast.error('Failed to export data');
+    }
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -144,10 +200,28 @@ export default function AdminProperties() {
           </p>
         </div>
         <div className="flex space-x-3">
-          <Button variant="outline">
-            <Download className="h-4 w-4 mr-2" />
-            Export
-          </Button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline">
+                <Download className="h-4 w-4 mr-2" />
+                Export
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-48">
+              <DropdownMenuItem onClick={() => handleExport('excel')}>
+                <FileSpreadsheet className="h-4 w-4 mr-2" />
+                Export to Excel
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => handleExport('pdf')}>
+                <FileText className="h-4 w-4 mr-2" />
+                Export to PDF
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => handleExport('word')}>
+                <FileText className="h-4 w-4 mr-2" />
+                Export to Word
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
           <Button>
             <Plus className="h-4 w-4 mr-2" />
             New Property

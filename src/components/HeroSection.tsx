@@ -11,6 +11,7 @@ import { useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import algeriaHero from "@/assets/algeria-architecture-hero.jpg";
 import { DateRangePicker } from "@/components/DateRangePicker";
+import LocationAutocomplete from "@/components/LocationAutocomplete";
 
 const HeroSection = () => {
   const { t } = useLanguage();
@@ -351,17 +352,13 @@ const HeroSection = () => {
           {/* Dynamic Search Card */}
           <Card className="max-w-6xl mx-auto p-3 sm:p-4 md:p-6 lg:p-8 bg-card/90 backdrop-blur-md border-border/30 shadow-elegant rounded-2xl sm:rounded-3xl">
             <div className="flex flex-col gap-3 sm:gap-4 lg:flex-row">
-              {/* Location Input */}
-              <div className="flex-2 relative">
-                <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
-                <Input
-                  type="text"
-                  placeholder={getSearchPlaceholder()}
-                  value={formData.location}
-                  onChange={(e) => updateFormField('location', e.target.value)}
-                  className="h-10 sm:h-12 pl-10 font-inter text-sm bg-background border border-input"
-                />
-              </div>
+              {/* Location Input with Autocomplete */}
+              <LocationAutocomplete
+                value={formData.location}
+                onChange={(value) => updateFormField('location', value)}
+                placeholder={getSearchPlaceholder()}
+                className="h-10 sm:h-12 font-inter text-sm"
+              />
               
               {/* Dynamic Fields */}
               <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 lg:flex-1">
