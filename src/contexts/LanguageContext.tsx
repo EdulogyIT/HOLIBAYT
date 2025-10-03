@@ -1495,6 +1495,8 @@ const allTranslations = {
     expertAdvisors: 'مستشارون خبراء',
     averageRating: 'التقييم المتوسط',
     averageResponseTime: 'متوسط وقت الاستجابة',
+    satisfactionRate: 'معدل الرضا',
+    trustedExperts: 'خبراء موثوقون',
     sendMessage: 'أرسل رسالة',
     fullName: 'الاسم الكامل',
     yourFullName: 'اسمك الكامل',
@@ -1511,7 +1513,7 @@ const allTranslations = {
     needImmediateHelp: 'تحتاج مساعدة فورية؟',
     call247Hotline: 'اتصل بخط الطوارئ الخاص بنا على مدار الساعة',
     
-    // Property and publish property translations  
+    // Property and publish property translations
     propertyTypeTranslation: 'نوع العقار',
     forSale: 'للبيع',
     forRent: 'للإيجار',
