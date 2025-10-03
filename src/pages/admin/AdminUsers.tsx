@@ -19,6 +19,16 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 import { 
   Users, 
   User, 
@@ -31,10 +41,13 @@ import {
   Shield,
   Ban,
   CheckCircle,
-  Clock
+  Clock,
+  Eye
 } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { supabase } from '@/integrations/supabase/client';
+import { useNavigate } from 'react-router-dom';
+import { useToast } from '@/hooks/use-toast';
 
 interface AppUser {
   id: string;
@@ -52,11 +65,14 @@ interface AppUser {
 
 export default function AdminUsers() {
   const { t } = useLanguage();
+  const navigate = useNavigate();
+  const { toast } = useToast();
   const [users, setUsers] = useState<AppUser[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [roleFilter, setRoleFilter] = useState<string>('all');
   const [statusFilter, setStatusFilter] = useState<string>('all');
+  const [userToBlock, setUserToBlock] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -169,6 +185,43 @@ export default function AdminUsers() {
     }
   };
 
+  const handleViewUser = (userId: string) => {
+    // Navigate to user profile or show details
+    navigate(`/profile/${userId}`);
+  };
+
+  const handleBlockUser = async () => {
+    if (!userToBlock) return;
+
+    try {
+      // Update user status to suspended
+      const { error } = await supabase
+        .from('profiles')
+        .update({ role: 'user' })
+        .eq('id', userToBlock);
+
+      if (error) throw error;
+
+      toast({
+        title: "User blocked",
+        description: "The user has been blocked successfully.",
+      });
+
+      // Refresh users list
+      setUsers(users.map(u => 
+        u.id === userToBlock ? { ...u, status: 'suspended' as const } : u
+      ));
+      setUserToBlock(null);
+    } catch (error) {
+      console.error('Error blocking user:', error);
+      toast({
+        title: "Error",
+        description: "Failed to block user. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
   if (loading) {
     return <div className="flex justify-center items-center h-64">Loading...</div>;
   }
@@ -255,10 +308,10 @@ export default function AdminUsers() {
             </div>
             
             <Select value={roleFilter} onValueChange={setRoleFilter}>
-              <SelectTrigger className="w-full sm:w-40">
+              <SelectTrigger className="w-full sm:w-40 bg-background">
                 <SelectValue placeholder={t('admin.role')} />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="bg-background z-50">
                 <SelectItem value="all">{t('admin.allRoles')}</SelectItem>
                 <SelectItem value="user">{t('admin.users')}</SelectItem>
                 <SelectItem value="host">{t('admin.hosts')}</SelectItem>
@@ -267,10 +320,10 @@ export default function AdminUsers() {
             </Select>
 
             <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger className="w-full sm:w-40">
+              <SelectTrigger className="w-full sm:w-40 bg-background">
                 <SelectValue placeholder={t('admin.status')} />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="bg-background z-50">
                 <SelectItem value="all">{t('admin.allStatuses')}</SelectItem>
                 <SelectItem value="active">{t('admin.active')}</SelectItem>
                 <SelectItem value="pending">{t('admin.pending')}</SelectItem>
@@ -289,15 +342,15 @@ export default function AdminUsers() {
         <CardContent>
           <Table>
             <TableHeader>
-              <TableRow>
-                <TableHead>{t('admin.user')}</TableHead>
-                <TableHead>{t('admin.contact')}</TableHead>
-                <TableHead>{t('admin.role')}</TableHead>
-                <TableHead>{t('admin.status')}</TableHead>
-                <TableHead>{t('admin.verification')}</TableHead>
-                <TableHead>{t('admin.activity')}</TableHead>
-                <TableHead>{t('admin.stats')}</TableHead>
-                <TableHead>{t('admin.actions')}</TableHead>
+              <TableRow className="border-b">
+                <TableHead className="font-semibold text-foreground">User</TableHead>
+                <TableHead className="font-semibold text-foreground">Contact</TableHead>
+                <TableHead className="font-semibold text-foreground">Role</TableHead>
+                <TableHead className="font-semibold text-foreground">Status</TableHead>
+                <TableHead className="font-semibold text-foreground">Verification</TableHead>
+                <TableHead className="font-semibold text-foreground">Activity</TableHead>
+                <TableHead className="font-semibold text-foreground">Stats</TableHead>
+                <TableHead className="font-semibold text-foreground">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -369,10 +422,20 @@ export default function AdminUsers() {
                   </TableCell>
                   <TableCell>
                     <div className="flex space-x-2">
-                      <Button size="sm" variant="outline">
-                        {t('admin.view')}
+                      <Button 
+                        size="sm" 
+                        variant="outline"
+                        onClick={() => handleViewUser(user.id)}
+                      >
+                        <Eye className="h-4 w-4 mr-1" />
+                        View
                       </Button>
-                      <Button size="sm" variant="outline" className="text-red-600 hover:text-red-700">
+                      <Button 
+                        size="sm" 
+                        variant="outline" 
+                        className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                        onClick={() => setUserToBlock(user.id)}
+                      >
                         <Ban className="h-4 w-4" />
                       </Button>
                     </div>
@@ -383,6 +446,24 @@ export default function AdminUsers() {
           </Table>
         </CardContent>
       </Card>
+
+      {/* Block User Confirmation Dialog */}
+      <AlertDialog open={!!userToBlock} onOpenChange={() => setUserToBlock(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Block User</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to block this user? They will lose access to their account and all associated data.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleBlockUser} className="bg-red-600 hover:bg-red-700">
+              Block User
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
