@@ -46,21 +46,45 @@ const Profile = () => {
 
   const isViewingOtherUser = userId && userId !== user?.id;
   const displayUser = isViewingOtherUser ? viewedUser : user;
+  const [userStats, setUserStats] = useState({
+    propertiesCount: 0,
+    bookingsCount: 0,
+  });
 
   useEffect(() => {
     if (isViewingOtherUser && hasRole('admin')) {
       setLoading(true);
-      supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', userId)
-        .single()
-        .then(({ data, error }) => {
-          if (!error && data) {
-            setViewedUser(data);
-          }
-          setLoading(false);
-        });
+      const fetchUserData = async () => {
+        // Fetch profile
+        const { data: profileData, error: profileError } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', userId)
+          .single();
+
+        if (!profileError && profileData) {
+          setViewedUser(profileData);
+
+          // Fetch properties count
+          const { count: propertiesCount } = await supabase
+            .from('properties')
+            .select('*', { count: 'exact', head: true })
+            .eq('user_id', userId);
+
+          // Fetch bookings count
+          const { count: bookingsCount } = await supabase
+            .from('bookings')
+            .select('*', { count: 'exact', head: true })
+            .eq('user_id', userId);
+
+          setUserStats({
+            propertiesCount: propertiesCount || 0,
+            bookingsCount: bookingsCount || 0,
+          });
+        }
+        setLoading(false);
+      };
+      fetchUserData();
     }
   }, [userId, isViewingOtherUser, hasRole]);
 
@@ -253,7 +277,7 @@ const Profile = () => {
     <div className="min-h-screen bg-gradient-to-br from-background via-background/50 to-accent/10 animate-fade-in">
       <Navigation />
       
-      <main className="container mx-auto px-4 py-8 mt-20">
+      <main className="container mx-auto px-4 py-8">
         {/* Header */}
         <div className="mb-8 animate-scale-in">
           <div className="flex items-center gap-6 mb-6 p-6 rounded-2xl bg-gradient-primary shadow-elegant">
@@ -298,34 +322,22 @@ const Profile = () => {
         </div>
 
         {/* Metrics Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <Card className="hover-scale bg-gradient-to-br from-card to-accent/10 border-accent/20 shadow-elegant">
-            <CardContent className="p-6">
-              <div className="text-3xl font-bold bg-gradient-primary bg-clip-text text-transparent">12</div>
-              <div className="text-sm text-muted-foreground font-medium">{currentTranslations.savedProperties}</div>
-            </CardContent>
-          </Card>
-          <Card className="hover-scale bg-gradient-to-br from-card to-accent/10 border-accent/20 shadow-elegant">
-            <CardContent className="p-6">
-              <div className="text-3xl font-bold bg-gradient-primary bg-clip-text text-transparent">3</div>
-              <div className="text-sm text-muted-foreground font-medium">{currentTranslations.savedSearches}</div>
-            </CardContent>
-          </Card>
-          <Card className="hover-scale bg-gradient-to-br from-card to-accent/10 border-accent/20 shadow-elegant">
-            <CardContent className="p-6">
-              <div className="text-3xl font-bold bg-gradient-primary bg-clip-text text-transparent">2</div>
-              <div className="text-sm text-muted-foreground font-medium">{currentTranslations.upcomingBookings}</div>
-            </CardContent>
-          </Card>
-          {hasRole('host') && (
+        {isViewingOtherUser && (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
             <Card className="hover-scale bg-gradient-to-br from-card to-accent/10 border-accent/20 shadow-elegant">
               <CardContent className="p-6">
-                <div className="text-3xl font-bold bg-gradient-primary bg-clip-text text-transparent">5</div>
-                <div className="text-sm text-muted-foreground font-medium">{currentTranslations.activeListings}</div>
+                <div className="text-3xl font-bold bg-gradient-primary bg-clip-text text-transparent">{userStats.propertiesCount}</div>
+                <div className="text-sm text-muted-foreground font-medium">Properties</div>
               </CardContent>
             </Card>
-          )}
-        </div>
+            <Card className="hover-scale bg-gradient-to-br from-card to-accent/10 border-accent/20 shadow-elegant">
+              <CardContent className="p-6">
+                <div className="text-3xl font-bold bg-gradient-primary bg-clip-text text-transparent">{userStats.bookingsCount}</div>
+                <div className="text-sm text-muted-foreground font-medium">Bookings</div>
+              </CardContent>
+            </Card>
+          </div>
+        )}
 
         {/* Main Content */}
         <Tabs defaultValue="personal" className="space-y-8 animate-fade-in">
@@ -367,11 +379,11 @@ const Profile = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2">
                     <Label htmlFor="displayName" className="text-primary font-medium">{currentTranslations.displayName}</Label>
-                    <Input id="displayName" defaultValue={user.name} className="border-accent/30 focus:border-primary transition-colors" />
+                    <Input id="displayName" defaultValue={displayUser?.name || ''} disabled={isViewingOtherUser} className="border-accent/30 focus:border-primary transition-colors" />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="email" className="text-primary font-medium">{currentTranslations.email}</Label>
-                    <Input id="email" defaultValue={user.email} disabled className="border-accent/30 bg-muted/50" />
+                    <Input id="email" defaultValue={displayUser?.email || ''} disabled className="border-accent/30 bg-muted/50" />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="phone" className="text-primary font-medium">{currentTranslations.phone}</Label>

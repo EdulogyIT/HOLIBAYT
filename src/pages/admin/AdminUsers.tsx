@@ -271,12 +271,12 @@ export default function AdminUsers() {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">{t('admin.verifiedAccounts')}</CardTitle>
+            <CardTitle className="text-sm font-medium">Verified Accounts</CardTitle>
             <Shield className="h-4 w-4 text-green-600" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{verifiedUsers}</div>
-            <p className="text-xs text-muted-foreground">{((verifiedUsers/totalUsers)*100).toFixed(0)}% {t('admin.ofTotal')}</p>
+            <p className="text-xs text-muted-foreground">{((verifiedUsers/totalUsers)*100).toFixed(0)}% of total</p>
           </CardContent>
         </Card>
 
