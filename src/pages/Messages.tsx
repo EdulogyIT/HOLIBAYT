@@ -21,10 +21,12 @@ interface Conversation {
   conversation_type: string;
   property_id: string | null;
   recipient_id: string | null;
+  user_id: string;
   properties?: {
     id: string;
     title: string;
   } | null;
+  other_user_name?: string;
 }
 
 interface Message {
@@ -64,7 +66,33 @@ const Messages = () => {
         .order('updated_at', { ascending: false });
 
       if (error) throw error;
-      setConversations(data || []);
+      
+      // Fetch profiles for the other users in conversations
+      if (data && data.length > 0) {
+        const otherUserIds = data.map(conv => 
+          conv.user_id === user.id ? conv.recipient_id : conv.user_id
+        ).filter(Boolean);
+        
+        const { data: profilesData } = await supabase
+          .from('profiles')
+          .select('id, name, email')
+          .in('id', otherUserIds);
+        
+        const enrichedConvs = data.map(conv => {
+          const otherUserId = conv.user_id === user.id ? conv.recipient_id : conv.user_id;
+          const otherUserProfile = profilesData?.find(p => p.id === otherUserId);
+          
+          return {
+            ...conv,
+            other_user_name: otherUserProfile?.name || 
+              (conv.conversation_type === 'support' ? 'Support Team' : 'Unknown User')
+          };
+        });
+        
+        setConversations(enrichedConvs);
+      } else {
+        setConversations([]);
+      }
     } catch (error) {
       console.error('Error fetching conversations:', error);
       toast({
@@ -278,29 +306,34 @@ const Messages = () => {
                           selectedConversation === conversation.id ? 'bg-muted' : ''
                         }`}
                       >
-                        <div className="font-medium">
-                          {conversation.conversation_type === 'property_inquiry' && conversation.properties
-                            ? `Property Inquiry: ${conversation.properties.title}`
-                            : conversation.conversation_type === 'host_to_host'
-                            ? 'Host Conversation'
-                            : conversation.subject || 'General Inquiry'}
-                        </div>
-                        <div className="text-sm text-muted-foreground">
-                          {format(new Date(conversation.updated_at), 'MMM dd, HH:mm')}
-                        </div>
-                        <div className="flex items-center gap-2 mt-1">
-                          <div className="text-xs text-muted-foreground">
-                            Status: {conversation.status}
+                        <div className="flex items-start gap-3">
+                          <div className="flex-shrink-0 w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+                            <User className="h-5 w-5 text-primary" />
                           </div>
-                          {conversation.conversation_type && (
-                            <div className="text-xs px-2 py-0.5 bg-primary/10 text-primary rounded">
-                              {conversation.conversation_type === 'property_inquiry' 
-                                ? 'Property' 
-                                : conversation.conversation_type === 'host_to_host'
-                                ? 'Host Chat'
-                                : 'Support'}
+                          <div className="flex-1 min-w-0">
+                            <div className="font-medium">
+                              {conversation.other_user_name || 'Unknown User'}
                             </div>
-                          )}
+                            <div className="text-sm text-muted-foreground truncate">
+                              {conversation.conversation_type === 'property_inquiry' && conversation.properties
+                                ? `Property: ${conversation.properties.title}`
+                                : conversation.subject || 'General Inquiry'}
+                            </div>
+                            <div className="text-xs text-muted-foreground mt-1">
+                              {format(new Date(conversation.updated_at), 'MMM dd, HH:mm')}
+                            </div>
+                            <div className="flex items-center gap-2 mt-1">
+                              {conversation.conversation_type && (
+                                <div className="text-xs px-2 py-0.5 bg-primary/10 text-primary rounded">
+                                  {conversation.conversation_type === 'property_inquiry' 
+                                    ? 'Property' 
+                                    : conversation.conversation_type === 'host_to_host'
+                                    ? 'Host Chat'
+                                    : 'Support'}
+                                </div>
+                              )}
+                            </div>
+                          </div>
                         </div>
                       </div>
                     ))
@@ -314,7 +347,7 @@ const Messages = () => {
               <CardHeader>
                 <CardTitle>
                   {selectedConversation 
-                    ? conversations.find(c => c.id === selectedConversation)?.subject || 'General Inquiry'
+                    ? conversations.find(c => c.id === selectedConversation)?.other_user_name || 'Unknown User'
                     : 'Select a conversation'
                   }
                 </CardTitle>

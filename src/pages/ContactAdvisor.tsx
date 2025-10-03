@@ -159,7 +159,14 @@ const ContactAdvisor = () => {
                 size="lg" 
                 variant="secondary" 
                 className="font-inter font-semibold text-lg px-8 py-4"
-                onClick={() => window.location.href = '/messages?start=true'}
+                onClick={async () => {
+                  const { data: { user } } = await supabase.auth.getUser();
+                  if (!user) {
+                    window.location.href = '/login?redirect=/contact-advisor';
+                  } else {
+                    window.location.href = '/messages';
+                  }
+                }}
               >
                 <MessageCircle className="h-5 w-5 mr-2" />
                 Start Chat

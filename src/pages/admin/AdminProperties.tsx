@@ -31,15 +31,30 @@ import {
 } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
+import { useNavigate } from 'react-router-dom';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 
 export default function AdminProperties() {
   const { t } = useLanguage();
+  const navigate = useNavigate();
   const [properties, setProperties] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [typeFilter, setTypeFilter] = useState<string>('all');
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [propertyToDelete, setPropertyToDelete] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchProperties = async () => {
@@ -83,6 +98,41 @@ export default function AdminProperties() {
   const activeProperties = properties.filter(p => p.status === 'active').length;
   const pendingProperties = properties.filter(p => p.status === 'pending').length;
   const suspendedProperties = properties.filter(p => p.status === 'suspended').length;
+
+  const handleView = (propertyId: string) => {
+    window.open(`/property/${propertyId}`, '_blank');
+  };
+
+  const handleEdit = (propertyId: string) => {
+    navigate(`/host/listings/edit/${propertyId}`);
+  };
+
+  const handleDeleteClick = (propertyId: string) => {
+    setPropertyToDelete(propertyId);
+    setDeleteDialogOpen(true);
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (!propertyToDelete) return;
+
+    try {
+      const { error } = await supabase
+        .from('properties')
+        .delete()
+        .eq('id', propertyToDelete);
+
+      if (error) throw error;
+
+      toast.success('Property deleted successfully');
+      setProperties(properties.filter(p => p.id !== propertyToDelete));
+    } catch (error) {
+      console.error('Error deleting property:', error);
+      toast.error('Failed to delete property');
+    } finally {
+      setDeleteDialogOpen(false);
+      setPropertyToDelete(null);
+    }
+  };
 
   return (
     <div className="space-y-6">
@@ -243,13 +293,29 @@ export default function AdminProperties() {
                     <TableCell>{new Date(property.created_at).toLocaleDateString()}</TableCell>
                     <TableCell>
                       <div className="flex space-x-2">
-                        <Button size="sm" variant="ghost">
+                        <Button 
+                          size="sm" 
+                          variant="ghost"
+                          onClick={() => handleView(property.id)}
+                          title="View Property"
+                        >
                           <Eye className="h-4 w-4" />
                         </Button>
-                        <Button size="sm" variant="ghost">
+                        <Button 
+                          size="sm" 
+                          variant="ghost"
+                          onClick={() => handleEdit(property.id)}
+                          title="Edit Property"
+                        >
                           <Edit className="h-4 w-4" />
                         </Button>
-                        <Button size="sm" variant="ghost" className="text-red-600 hover:text-red-700">
+                        <Button 
+                          size="sm" 
+                          variant="ghost" 
+                          className="text-red-600 hover:text-red-700"
+                          onClick={() => handleDeleteClick(property.id)}
+                          title="Delete Property"
+                        >
                           <Trash2 className="h-4 w-4" />
                         </Button>
                       </div>
@@ -261,6 +327,28 @@ export default function AdminProperties() {
           )}
         </CardContent>
       </Card>
+
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete the property
+              and remove it from the database.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction 
+              onClick={handleDeleteConfirm}
+              className="bg-red-600 hover:bg-red-700"
+            >
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

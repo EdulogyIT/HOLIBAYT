@@ -84,10 +84,10 @@ export default function AdminMessages() {
 
       if (convError) throw convError;
 
-      // Fetch profiles for each conversation
       if (convData && convData.length > 0) {
+        // Fetch profiles for all user_ids
         const userIds = [...new Set(convData.map(c => c.user_id))];
-        const { data: profileData, error: profileError } = await supabase
+        const { data: profilesData, error: profileError } = await supabase
           .from('profiles')
           .select('id, name, email')
           .in('id', userIds);
@@ -97,10 +97,10 @@ export default function AdminMessages() {
         // Merge profiles into conversations
         const enrichedConvs = convData.map(conv => ({
           ...conv,
-          profiles: profileData?.find(p => p.id === conv.user_id) || { name: 'Unknown', email: '' }
+          profiles: profilesData?.find(p => p.id === conv.user_id) || { name: 'Unknown User', email: '' }
         }));
 
-        setConversations(enrichedConvs);
+        setConversations(enrichedConvs as any);
       } else {
         setConversations([]);
       }
