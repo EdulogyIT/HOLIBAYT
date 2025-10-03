@@ -43,6 +43,7 @@ const AIChatBox = () => {
   const [inputValue, setInputValue] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const lastUserMessageRef = useRef<string>("");
 
   // Initialize messages with welcome message and update when language changes
   useEffect(() => {
@@ -56,22 +57,16 @@ const AIChatBox = () => {
       }]);
       setIsInitialized(true);
     } else {
-      // Language change - add language change notice and new welcome message
-      const languageChangeMessage: Message = {
-        id: Date.now(),
-        text: currentLang === 'AR' ? 'تم تغيير اللغة. كيف يمكنني مساعدتك؟' : 
-              currentLang === 'EN' ? 'Language changed. How can I help you?' : 
-              'Langue changée. Comment puis-je vous aider ?',
-        isBot: true,
-        timestamp: new Date()
-      };
-      
-      setMessages([{
-        id: 1,
-        text: getWelcomeMessage(),
-        isBot: true,
-        timestamp: new Date()
-      }, languageChangeMessage]);
+      // Language change - update only the welcome message without clearing history
+      setMessages(prev => {
+        const filteredMessages = prev.filter(msg => !msg.isBot || prev.indexOf(msg) > 0);
+        return [{
+          id: 1,
+          text: getWelcomeMessage(),
+          isBot: true,
+          timestamp: new Date()
+        }, ...filteredMessages];
+      });
     }
   }, [currentLang]); // Re-run when language changes
 
@@ -86,9 +81,10 @@ const AIChatBox = () => {
   const handleSend = async () => {
     if (!inputValue.trim()) return;
 
+    const currentInput = inputValue;
     const userMessage: Message = {
       id: Date.now(),
-      text: inputValue,
+      text: currentInput,
       isBot: false,
       timestamp: new Date()
     };
@@ -96,10 +92,11 @@ const AIChatBox = () => {
     setMessages(prev => [...prev, userMessage]);
     setInputValue("");
     setIsTyping(true);
+    lastUserMessageRef.current = currentInput;
 
     // Simulate AI response
     setTimeout(() => {
-      const botResponse = generateBotResponse(inputValue);
+      const botResponse = generateBotResponse(currentInput);
       const botMessage: Message = {
         id: Date.now() + 1,
         text: botResponse,

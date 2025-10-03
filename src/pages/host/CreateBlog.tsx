@@ -134,13 +134,13 @@ export default function CreateBlog() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <FileText className="h-5 w-5" />
-              {t('host.blogDetails') || 'Blog Details'}
+              Blog Details
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-6">
             {/* Title */}
             <div className="space-y-2">
-              <Label htmlFor="title">{t('host.blogTitle') || 'Title'} *</Label>
+              <Label htmlFor="title">Title *</Label>
               <Input
                 id="title"
                 value={title}
@@ -152,7 +152,7 @@ export default function CreateBlog() {
 
             {/* Author Name */}
             <div className="space-y-2">
-              <Label htmlFor="authorName">{t('host.authorName') || 'Author Name'} *</Label>
+              <Label htmlFor="authorName">Author Name *</Label>
               <Input
                 id="authorName"
                 value={authorName}
@@ -164,7 +164,7 @@ export default function CreateBlog() {
 
             {/* Category */}
             <div className="space-y-2">
-              <Label htmlFor="category">{t('host.category') || 'Category'}</Label>
+              <Label htmlFor="category">Category</Label>
               <Select value={category} onValueChange={setCategory}>
                 <SelectTrigger>
                   <SelectValue />
@@ -181,7 +181,7 @@ export default function CreateBlog() {
 
             {/* Image Upload */}
             <div className="space-y-2">
-              <Label htmlFor="image">{t('host.blogImage') || 'Featured Image'}</Label>
+              <Label htmlFor="image">Featured Image</Label>
               <div className="flex items-center gap-4">
                 <Input
                   id="image"
@@ -205,7 +205,7 @@ export default function CreateBlog() {
 
             {/* Content */}
             <div className="space-y-2">
-              <Label htmlFor="content">{t('host.content') || 'Content'} *</Label>
+              <Label htmlFor="content">Content *</Label>
               <Textarea
                 id="content"
                 value={content}
@@ -218,7 +218,7 @@ export default function CreateBlog() {
 
             {/* Status */}
             <div className="space-y-2">
-              <Label htmlFor="status">{t('host.status') || 'Status'}</Label>
+              <Label htmlFor="status">Status</Label>
               <Select value={status} onValueChange={(value: 'draft' | 'published') => setStatus(value)}>
                 <SelectTrigger>
                   <SelectValue />
