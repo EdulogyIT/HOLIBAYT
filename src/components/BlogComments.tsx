@@ -58,17 +58,9 @@ export const BlogComments = ({ blogPostId }: BlogCommentsProps) => {
   }, [blogPostId]);
 
   const fetchComments = async () => {
-    const { data, error } = await supabase
+    const { data: commentsData, error } = await supabase
       .from('blog_comments')
-      .select(`
-        id,
-        content,
-        created_at,
-        updated_at,
-        user_id,
-        parent_comment_id,
-        profiles:user_id (name)
-      `)
+      .select('*')
       .eq('blog_post_id', blogPostId)
       .order('created_at', { ascending: true });
 
@@ -77,10 +69,24 @@ export const BlogComments = ({ blogPostId }: BlogCommentsProps) => {
       return;
     }
 
+    if (!commentsData) {
+      setComments([]);
+      return;
+    }
+
+    // Fetch user profiles separately
+    const userIds = [...new Set(commentsData.map(c => c.user_id))];
+    const { data: profiles } = await supabase
+      .from('profiles')
+      .select('id, name')
+      .in('id', userIds);
+
+    const profileMap = new Map(profiles?.map(p => [p.id, p.name]) || []);
+
     // Transform data and organize into threaded structure
-    const commentsWithNames = data.map((comment: any) => ({
+    const commentsWithNames = commentsData.map((comment: any) => ({
       ...comment,
-      user_name: comment.profiles?.name || 'Anonymous',
+      user_name: profileMap.get(comment.user_id) || 'Anonymous',
     }));
 
     // Organize into parent-child structure
@@ -299,7 +305,7 @@ export const BlogComments = ({ blogPostId }: BlogCommentsProps) => {
               />
               <div className="flex gap-2">
                 <Button size="sm" onClick={() => handleSubmitReply(comment.id)} disabled={loading}>
-                  {t("postReply") || "Post Reply"}
+                  Post Reply
                 </Button>
                 <Button size="sm" variant="outline" onClick={() => setReplyTo(null)}>
                   {t("cancel") || "Cancel"}
@@ -338,7 +344,7 @@ export const BlogComments = ({ blogPostId }: BlogCommentsProps) => {
             className="min-h-[100px]"
           />
           <Button onClick={handleSubmitComment} disabled={loading || !newComment.trim()}>
-            {t("postComment") || "Post Comment"}
+            Post Comment
           </Button>
         </div>
       ) : (

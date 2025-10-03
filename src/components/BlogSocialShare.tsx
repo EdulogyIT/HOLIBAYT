@@ -57,7 +57,7 @@ export const BlogSocialShare = ({ title, url = window.location.href }: BlogSocia
   return (
     <div className="border-t border-border pt-8 mt-8">
       <h3 className="text-xl font-semibold mb-4 text-foreground">
-        {t("shareArticle") || "Share this article"}
+        Share Article
       </h3>
       <div className="flex flex-wrap gap-3">
         {navigator.share && (
@@ -116,7 +116,7 @@ export const BlogSocialShare = ({ title, url = window.location.href }: BlogSocia
           className="gap-2"
         >
           <LinkIcon className="w-4 h-4" />
-          {t("copyLink") || "Copy Link"}
+          Copy Link
         </Button>
       </div>
     </div>
