@@ -43,27 +43,71 @@ const MessageOwnerModal = ({ isOpen, onClose, ownerName, ownerEmail, propertyTit
     setIsSubmitting(true);
 
     try {
-      const { error } = await supabase
-        .from('contact_requests')
-        .insert({
-          property_id: propertyId,
-          requester_name: senderName,
-          requester_email: senderEmail,
-          requester_phone: senderPhone || null,
-          subject,
-          message,
+      // Get current user
+      const { data: { user } } = await supabase.auth.getUser();
+
+      // Get property owner's user_id
+      const { data: propertyData, error: propError } = await supabase
+        .from('properties')
+        .select('user_id')
+        .eq('id', propertyId)
+        .single();
+
+      if (propError) throw propError;
+
+      if (user && propertyData) {
+        // Create a conversation in the messages table
+        const { data: conversation, error: convError } = await supabase
+          .from('conversations')
+          .insert({
+            user_id: user.id,
+            recipient_id: propertyData.user_id,
+            property_id: propertyId,
+            subject: subject,
+            conversation_type: 'property_inquiry',
+            status: 'active'
+          })
+          .select()
+          .single();
+
+        if (convError) throw convError;
+
+        // Create the initial message
+        const { error: msgError } = await supabase
+          .from('messages')
+          .insert({
+            conversation_id: conversation.id,
+            sender_id: user.id,
+            content: message,
+            message_type: 'text'
+          });
+
+        if (msgError) throw msgError;
+
+        toast({
+          title: "Message Sent Successfully",
+          description: "Your message has been sent to the property owner. Check your Messages page for replies.",
         });
+      } else {
+        // Fallback to contact_requests if user is not logged in
+        const { error } = await supabase
+          .from('contact_requests')
+          .insert({
+            property_id: propertyId,
+            requester_name: senderName,
+            requester_email: senderEmail,
+            requester_phone: senderPhone || null,
+            subject,
+            message,
+          });
 
-      if (error) {
-        throw error;
+        if (error) throw error;
+
+        toast({
+          title: "Message Sent Successfully",
+          description: "Your contact request has been sent to the property owner.",
+        });
       }
-
-      toast({
-        title: "Message Sent Successfully",
-        description: isSecureMode 
-          ? "Your secure contact request has been sent to the property owner. They will contact you if interested."
-          : `Your message has been sent to ${ownerName}`,
-      });
       
       // Reset form
       setSenderName("");
@@ -74,7 +118,7 @@ const MessageOwnerModal = ({ isOpen, onClose, ownerName, ownerEmail, propertyTit
       
       onClose();
     } catch (error) {
-      console.error('Error sending contact request:', error);
+      console.error('Error sending message:', error);
       toast({
         title: "Failed to Send Message",
         description: "There was an error sending your message. Please try again.",

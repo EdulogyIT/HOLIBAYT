@@ -126,10 +126,14 @@ export default function HostDashboard() {
           <CardTitle>{t('host.quickActions')}</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="flex gap-4">
+          <div className="flex flex-wrap gap-4">
             <Button onClick={() => navigate('/publish-property')}>
               <Plus className="h-4 w-4 mr-2" />
               {t('host.publishProperty')}
+            </Button>
+            <Button variant="outline" onClick={() => navigate('/host/create-blog')}>
+              <Plus className="h-4 w-4 mr-2" />
+              {t('host.createBlog') || 'Create Blog'}
             </Button>
             <Button variant="outline" onClick={() => navigate('/host/listings')}>
               <Building2 className="h-4 w-4 mr-2" />

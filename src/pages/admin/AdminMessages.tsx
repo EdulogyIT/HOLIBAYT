@@ -26,10 +26,17 @@ interface Conversation {
   status: string;
   created_at: string;
   updated_at: string;
+  conversation_type: string;
+  property_id: string | null;
+  recipient_id: string | null;
   profiles?: {
     name: string;
     email: string;
   };
+  properties?: {
+    id: string;
+    title: string;
+  } | null;
 }
 
 interface Message {
@@ -63,10 +70,16 @@ export default function AdminMessages() {
 
   const fetchConversations = async () => {
     try {
-      // Fetch conversations
+      // Fetch all conversations with property details
       const { data: convData, error: convError } = await supabase
         .from('conversations')
-        .select('*')
+        .select(`
+          *,
+          properties:property_id (
+            id,
+            title
+          )
+        `)
         .order('updated_at', { ascending: false });
 
       if (convError) throw convError;
@@ -262,8 +275,21 @@ export default function AdminMessages() {
                           </Badge>
                         </div>
                         <p className="text-sm text-muted-foreground truncate mb-1">
-                          {conv.subject}
+                          {conv.conversation_type === 'property_inquiry' && conv.properties
+                            ? `Property: ${conv.properties.title}`
+                            : conv.conversation_type === 'host_to_host'
+                            ? 'Host-to-Host Conversation'
+                            : conv.subject}
                         </p>
+                        {conv.conversation_type && (
+                          <Badge variant="outline" className="text-xs mt-1">
+                            {conv.conversation_type === 'property_inquiry' 
+                              ? 'Property Inquiry' 
+                              : conv.conversation_type === 'host_to_host'
+                              ? 'Host Chat'
+                              : 'Support'}
+                          </Badge>
+                        )}
                         <div className="flex items-center gap-1 text-xs text-muted-foreground">
                           <Clock className="h-3 w-3" />
                           {formatDistanceToNow(new Date(conv.updated_at), { addSuffix: true })}

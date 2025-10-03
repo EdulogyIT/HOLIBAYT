@@ -14,6 +14,45 @@ export type Database = {
   }
   public: {
     Tables: {
+      blog_posts: {
+        Row: {
+          author_name: string
+          category: string | null
+          content: string
+          created_at: string | null
+          id: string
+          image_url: string | null
+          status: string | null
+          title: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          author_name: string
+          category?: string | null
+          content: string
+          created_at?: string | null
+          id?: string
+          image_url?: string | null
+          status?: string | null
+          title: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          author_name?: string
+          category?: string | null
+          content?: string
+          created_at?: string | null
+          id?: string
+          image_url?: string | null
+          status?: string | null
+          title?: string
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       bookings: {
         Row: {
           booking_fee: number
@@ -199,8 +238,11 @@ export type Database = {
       conversations: {
         Row: {
           admin_id: string | null
+          conversation_type: string | null
           created_at: string
           id: string
+          property_id: string | null
+          recipient_id: string | null
           status: string
           subject: string | null
           updated_at: string
@@ -208,8 +250,11 @@ export type Database = {
         }
         Insert: {
           admin_id?: string | null
+          conversation_type?: string | null
           created_at?: string
           id?: string
+          property_id?: string | null
+          recipient_id?: string | null
           status?: string
           subject?: string | null
           updated_at?: string
@@ -217,14 +262,25 @@ export type Database = {
         }
         Update: {
           admin_id?: string | null
+          conversation_type?: string | null
           created_at?: string
           id?: string
+          property_id?: string | null
+          recipient_id?: string | null
           status?: string
           subject?: string | null
           updated_at?: string
           user_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "conversations_property_id_fkey"
+            columns: ["property_id"]
+            isOneToOne: false
+            referencedRelation: "properties"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       host_payment_accounts: {
         Row: {

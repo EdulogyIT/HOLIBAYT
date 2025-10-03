@@ -18,6 +18,13 @@ interface Conversation {
   created_at: string;
   updated_at: string;
   admin_id: string | null;
+  conversation_type: string;
+  property_id: string | null;
+  recipient_id: string | null;
+  properties?: {
+    id: string;
+    title: string;
+  } | null;
 }
 
 interface Message {
@@ -39,15 +46,21 @@ const Messages = () => {
   const [loading, setLoading] = useState(true);
   const [sendingMessage, setSendingMessage] = useState(false);
 
-  // Fetch conversations
+  // Fetch conversations - includes all types: support, property inquiries, host-to-host
   const fetchConversations = async () => {
     if (!user) return;
     
     try {
       const { data, error } = await supabase
         .from('conversations')
-        .select('*')
-        .eq('user_id', user.id)
+        .select(`
+          *,
+          properties:property_id (
+            id,
+            title
+          )
+        `)
+        .or(`user_id.eq.${user.id},recipient_id.eq.${user.id}`)
         .order('updated_at', { ascending: false });
 
       if (error) throw error;
@@ -265,12 +278,29 @@ const Messages = () => {
                           selectedConversation === conversation.id ? 'bg-muted' : ''
                         }`}
                       >
-                        <div className="font-medium">{conversation.subject || 'General Inquiry'}</div>
+                        <div className="font-medium">
+                          {conversation.conversation_type === 'property_inquiry' && conversation.properties
+                            ? `Property Inquiry: ${conversation.properties.title}`
+                            : conversation.conversation_type === 'host_to_host'
+                            ? 'Host Conversation'
+                            : conversation.subject || 'General Inquiry'}
+                        </div>
                         <div className="text-sm text-muted-foreground">
                           {format(new Date(conversation.updated_at), 'MMM dd, HH:mm')}
                         </div>
-                        <div className="text-xs text-muted-foreground mt-1">
-                          Status: {conversation.status}
+                        <div className="flex items-center gap-2 mt-1">
+                          <div className="text-xs text-muted-foreground">
+                            Status: {conversation.status}
+                          </div>
+                          {conversation.conversation_type && (
+                            <div className="text-xs px-2 py-0.5 bg-primary/10 text-primary rounded">
+                              {conversation.conversation_type === 'property_inquiry' 
+                                ? 'Property' 
+                                : conversation.conversation_type === 'host_to_host'
+                                ? 'Host Chat'
+                                : 'Support'}
+                            </div>
+                          )}
                         </div>
                       </div>
                     ))
