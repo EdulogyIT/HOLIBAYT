@@ -3,23 +3,28 @@ import { CalendarDays, Users, Building2, DollarSign, MessageSquare } from 'lucid
 import { useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useNavigate } from 'react-router-dom';
 
 export default function AdminDashboard() {
   const { t } = useLanguage();
+  const navigate = useNavigate();
   const [properties, setProperties] = useState<any[]>([]);
   const [profiles, setProfiles] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [messagesCount, setMessagesCount] = useState(0);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [propertiesResult, profilesResult] = await Promise.all([
+        const [propertiesResult, profilesResult, conversationsResult] = await Promise.all([
           supabase.from('properties').select('*'),
-          supabase.from('profiles').select('*')
+          supabase.from('profiles').select('*'),
+          supabase.from('conversations').select('id')
         ]);
 
         if (propertiesResult.data) setProperties(propertiesResult.data);
         if (profilesResult.data) setProfiles(profilesResult.data);
+        if (conversationsResult.data) setMessagesCount(conversationsResult.data.length);
       } catch (error) {
         console.error('Error fetching admin data:', error);
       } finally {
@@ -41,24 +46,31 @@ export default function AdminDashboard() {
       value: loading ? '...' : properties.length.toString(),
       change: '+' + Math.floor(Math.random() * 20 + 5) + '%',
       icon: Building2,
+      onClick: () => navigate('/admin/properties')
     },
     {
       title: t('admin.activeProperties'),
       value: loading ? '...' : activeProperties.toString(),
       change: '+' + Math.floor(Math.random() * 15 + 3) + '%',
       icon: CalendarDays,
+      onClick: () => {
+        navigate('/admin/properties');
+        // The properties page will handle the filtering
+      }
     },
     {
       title: t('admin.totalUsers'),
       value: loading ? '...' : profiles.length.toString(),
       change: '+' + Math.floor(Math.random() * 25 + 8) + '%',
       icon: Users,
+      onClick: () => navigate('/admin/users')
     },
     {
       title: t('admin.messages'),
-      value: loading ? '...' : Math.floor(Math.random() * 50 + 20).toString(),
+      value: loading ? '...' : messagesCount.toString(),
       change: '+' + Math.floor(Math.random() * 30 + 10) + '%',
       icon: MessageSquare,
+      onClick: () => navigate('/admin/messages')
     },
   ];
 
@@ -74,7 +86,11 @@ export default function AdminDashboard() {
       {/* KPI Cards */}
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
         {kpiData.map((kpi) => (
-          <Card key={kpi.title}>
+          <Card 
+            key={kpi.title} 
+            className="cursor-pointer hover:shadow-lg transition-shadow"
+            onClick={kpi.onClick}
+          >
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">
                 {kpi.title}

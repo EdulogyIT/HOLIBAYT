@@ -115,7 +115,8 @@ const AIChatBox = () => {
       FR: {
         buy: "Je peux vous aider à trouver des propriétés à vendre ! Notre section achat propose des appartements, villas et propriétés commerciales à travers l'Algérie. Quel type de propriété recherchez-vous et dans quelle ville ?",
         rent: "Parfait ! Nous avons de nombreuses propriétés de location disponibles. Recherchez-vous une location à long terme ou à court terme ? Quelle ville vous intéresse - Alger, Oran, Constantine ou Annaba ?",
-        stay: "Parfait pour les séjours courts ! Nous proposons des hôtels, appartements meublés et locations de vacances. Combien de nuits prévoyez-vous de rester et quelle ville préférez-vous ?",
+        stay: "Excellent choix ! Pour les séjours courts, pouvez-vous me dire dans quelle ville vous souhaitez séjourner (Alger, Oran, Constantine ou Annaba) ?",
+        stayFollowup: "Merci ! Combien de nuits prévoyez-vous de rester ?",
         price: "Les prix des propriétés varient selon l'emplacement et le type. À Alger, les appartements commencent à partir de 8M DZD, tandis qu'à Oran vous pouvez trouver d'excellentes options à partir de 5M DZD. Souhaitez-vous des prix spécifiques pour une zone particulière ?",
         location: "Nous couvrons les principales villes algériennes : Alger (capitale), Oran (côte ouest), Constantine (est) et Annaba (nord-est). Chaque ville a ses caractéristiques uniques. Quelle ville vous intéresse le plus ?",
         contact: "Vous pouvez parler à nos conseillers experts via notre page Contacter un Conseiller ! Nous offrons un support téléphonique (+213 21 123 456), email (support@holibayt.com), ou chat en direct. Ils sont disponibles 24/7.",
@@ -125,7 +126,8 @@ const AIChatBox = () => {
       EN: {
         buy: "I can help you find properties for sale! Our buy section features apartments, villas, and commercial properties across Algeria. What type of property are you looking for and in which city?",
         rent: "Great! We have many rental properties available. Are you looking for a long-term rental or short-term? Which city interests you - Alger, Oran, Constantine, or Annaba?",
-        stay: "Perfect for short stays! We offer hotels, furnished apartments, and vacation rentals. How many nights are you planning to stay and which city would you prefer?",
+        stay: "Perfect choice! For short stays, can you tell me which city you'd like to stay in (Alger, Oran, Constantine, or Annaba)?",
+        stayFollowup: "Thank you! How many nights are you planning to stay?",
         price: "Property prices vary by location and type. In Alger, apartments start from 8M DZD, while in Oran you can find great options from 5M DZD. Would you like specific pricing for a particular area?",
         location: "We cover major Algerian cities: Alger (capital), Oran (west coast), Constantine (east), and Annaba (northeast). Each city has unique characteristics. Which location interests you most?",
         contact: "You can speak to our expert advisors through our Contact Advisor page! We offer phone support (+213 21 123 456), email (support@holibayt.com), or live chat. They're available 24/7.",
@@ -135,7 +137,8 @@ const AIChatBox = () => {
       AR: {
         buy: "يمكنني مساعدتك في العثور على عقارات للبيع! قسم الشراء لدينا يضم شقق وفيلات وعقارات تجارية في جميع أنحاء الجزائر. ما نوع العقار الذي تبحث عنه وفي أي مدينة؟",
         rent: "رائع! لدينا العديد من العقارات المتاحة للإيجار. هل تبحث عن إيجار طويل الأمد أم قصير الأمد؟ أي مدينة تهمك - الجزائر، وهران، قسنطينة أم عنابة؟",
-        stay: "مثالي للإقامات القصيرة! نحن نقدم فنادق وشقق مفروشة وإيجارات عطلات. كم ليلة تخطط للإقامة وأي مدينة تفضل؟",
+        stay: "اختيار ممتاز! للإقامات القصيرة، هل يمكنك إخباري في أي مدينة ترغب في الإقامة (الجزائر، وهران، قسنطينة أم عنابة)؟",
+        stayFollowup: "شكرا! كم ليلة تخطط للإقامة؟",
         price: "أسعار العقارات تختلف حسب الموقع والنوع. في الجزائر العاصمة، تبدأ الشقق من 8 مليون دج، بينما في وهران يمكنك العثور على خيارات رائعة من 5 مليون دج. هل تريد أسعار محددة لمنطقة معينة؟",
         location: "نحن نغطي المدن الجزائرية الرئيسية: الجزائر (العاصمة)، وهران (الساحل الغربي)، قسنطينة (الشرق) وعنابة (الشمال الشرقي). كل مدينة لها خصائصها الفريدة. أي موقع يهمك أكثر؟",
         contact: "يمكنك التحدث مع مستشارينا الخبراء من خلال صفحة اتصل بمستشار! نحن نقدم دعم هاتفي (+213 21 123 456)، بريد إلكتروني (support@holibayt.com)، أو محادثة مباشرة. متاحون 24/7.",
@@ -146,6 +149,11 @@ const AIChatBox = () => {
 
     const langResponses = responses[currentLang] || responses.FR;
     
+    // Check if previous message was about stay/nights to provide follow-up
+    const prevMsg = lastUserMessageRef.current.toLowerCase();
+    const hasNightsInfo = /\d+\s*(night|nuit|ليلة)/i.test(input);
+    const hasCityInfo = /(alger|oran|constantine|annaba|الجزائر|وهران|قسنطينة|عنابة)/i.test(input);
+    
     if (input.includes("buy") || input.includes("purchase") || input.includes("acheter") || input.includes("شراء")) {
       return langResponses.buy;
     }
@@ -155,7 +163,25 @@ const AIChatBox = () => {
     }
     
     if (input.includes("short") || input.includes("stay") || input.includes("hotel") || input.includes("séjour") || input.includes("إقامة")) {
+      // If they mentioned city but not nights, ask for nights
+      if (hasCityInfo && !hasNightsInfo) {
+        return langResponses.stayFollowup;
+      }
       return langResponses.stay;
+    }
+    
+    // If they give nights info and previous was about stay
+    if (hasNightsInfo && (prevMsg.includes("stay") || prevMsg.includes("séjour") || prevMsg.includes("إقامة") || prevMsg.includes("night"))) {
+      return currentLang === 'FR' 
+        ? "Parfait ! Vous pouvez maintenant visiter notre page 'Séjours Courts' pour trouver les meilleures options correspondant à votre séjour. Ou contactez nos conseillers pour une assistance personnalisée !"
+        : currentLang === 'EN'
+        ? "Perfect! You can now visit our 'Short Stay' page to find the best options for your stay. Or contact our advisors for personalized assistance!"
+        : "ممتاز! يمكنك الآن زيارة صفحة 'الإقامة القصيرة' للعثور على أفضل الخيارات لإقامتك. أو اتصل بمستشارينا للحصول على مساعدة شخصية!";
+    }
+    
+    // If they give city info
+    if (hasCityInfo && !hasNightsInfo && (prevMsg.includes("stay") || prevMsg.includes("séjour") || prevMsg.includes("إقامة"))) {
+      return langResponses.stayFollowup;
     }
     
     if (input.includes("price") || input.includes("cost") || input.includes("prix") || input.includes("سعر")) {

@@ -31,7 +31,8 @@ import {
   FileText,
   FileSpreadsheet,
   Check,
-  X
+  X,
+  Ban
 } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { supabase } from '@/integrations/supabase/client';
@@ -158,16 +159,16 @@ export default function AdminProperties() {
 
       if (error) throw error;
 
-      // Send approval email
-      await supabase.functions.invoke('send-property-approval-email', {
-        body: {
-          propertyId,
-          hostEmail: property.contact_email,
-          hostName: property.contact_name,
-          propertyTitle: property.title,
-          status: 'approved'
-        }
-      });
+      // Create notification for the property owner
+      await supabase
+        .from('notifications')
+        .insert({
+          user_id: property.user_id,
+          title: 'Property Approved',
+          message: `Your property "${property.title}" has been approved and is now live!`,
+          type: 'property_approval',
+          related_id: propertyId
+        });
 
       setProperties(properties.map(p => 
         p.id === propertyId ? { ...p, status: 'active' } : p
@@ -196,17 +197,16 @@ export default function AdminProperties() {
 
       if (error) throw error;
 
-      // Send rejection email
-      await supabase.functions.invoke('send-property-approval-email', {
-        body: {
-          propertyId,
-          hostEmail: property.contact_email,
-          hostName: property.contact_name,
-          propertyTitle: property.title,
-          status: 'rejected',
-          reason
-        }
-      });
+      // Create notification for the property owner
+      await supabase
+        .from('notifications')
+        .insert({
+          user_id: property.user_id,
+          title: 'Property Rejected',
+          message: `Your property "${property.title}" was rejected. Reason: ${reason}`,
+          type: 'property_rejection',
+          related_id: propertyId
+        });
 
       setProperties(properties.map(p => 
         p.id === propertyId ? { ...p, status: 'suspended' } : p
@@ -441,7 +441,7 @@ export default function AdminProperties() {
                       </Badge>
                     </TableCell>
                     <TableCell>{new Date(property.created_at).toLocaleDateString()}</TableCell>
-                    <TableCell>
+                     <TableCell>
                       <div className="flex space-x-2">
                         {property.status === 'pending' && (
                           <>
@@ -464,6 +464,17 @@ export default function AdminProperties() {
                               <X className="h-4 w-4" />
                             </Button>
                           </>
+                        )}
+                        {property.status === 'active' && (
+                          <Button 
+                            size="sm" 
+                            variant="ghost"
+                            className="text-orange-600 hover:text-orange-700"
+                            onClick={() => handleReject(property.id)}
+                            title="Suspend Property"
+                          >
+                            <Ban className="h-4 w-4" />
+                          </Button>
                         )}
                         <Button 
                           size="sm" 
