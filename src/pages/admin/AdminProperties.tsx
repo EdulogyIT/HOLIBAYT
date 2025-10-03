@@ -104,7 +104,7 @@ export default function AdminProperties() {
   };
 
   const handleEdit = (propertyId: string) => {
-    navigate(`/host/listings/edit/${propertyId}`);
+    navigate(`/edit-property/${propertyId}`);
   };
 
   const handleDeleteClick = (propertyId: string) => {

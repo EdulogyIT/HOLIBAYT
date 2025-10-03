@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -34,6 +34,7 @@ import {
   Clock
 } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { supabase } from '@/integrations/supabase/client';
 
 interface AppUser {
   id: string;
@@ -49,52 +50,88 @@ interface AppUser {
   bookingCount?: number;
 }
 
-const mockUsers: AppUser[] = [
-  {
-    id: 'U001',
-    name: 'Ahmed Benali',
-    email: 'ahmed.benali@email.com',
-    phone: '+213 555 123 456',
-    role: 'host',
-    status: 'active',
-    verificationStatus: 'verified',
-    joinDate: '2024-01-15',
-    lastActive: '2024-01-20',
-    propertyCount: 3,
-    bookingCount: 45
-  },
-  {
-    id: 'U002',
-    name: 'Fatima Khediri',
-    email: 'fatima.khediri@email.com',
-    phone: '+213 555 234 567',
-    role: 'user',
-    status: 'active',
-    verificationStatus: 'verified',
-    joinDate: '2024-01-10',
-    lastActive: '2024-01-19',
-    bookingCount: 12
-  },
-  {
-    id: 'U003',
-    name: 'Youcef Meziane',
-    email: 'youcef.meziane@email.com',
-    role: 'host',
-    status: 'pending',
-    verificationStatus: 'pending',
-    joinDate: '2024-01-18',
-    lastActive: '2024-01-18',
-    propertyCount: 1,
-    bookingCount: 0
-  }
-];
-
 export default function AdminUsers() {
   const { t } = useLanguage();
-  const [users] = useState<AppUser[]>(mockUsers);
+  const [users, setUsers] = useState<AppUser[]>([]);
+  const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [roleFilter, setRoleFilter] = useState<string>('all');
   const [statusFilter, setStatusFilter] = useState<string>('all');
+
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        // Fetch profiles
+        const { data: profilesData, error: profilesError } = await supabase
+          .from('profiles')
+          .select('*')
+          .order('created_at', { ascending: false });
+
+        if (profilesError) throw profilesError;
+
+        // Fetch user roles
+        const { data: rolesData, error: rolesError } = await supabase
+          .from('user_roles')
+          .select('user_id, role');
+
+        if (rolesError) throw rolesError;
+
+        // Fetch property counts
+        const { data: propertiesData, error: propertiesError } = await supabase
+          .from('properties')
+          .select('user_id');
+
+        if (propertiesError) throw propertiesError;
+
+        // Fetch booking counts
+        const { data: bookingsData, error: bookingsError } = await supabase
+          .from('bookings')
+          .select('user_id');
+
+        if (bookingsError) throw bookingsError;
+
+        // Process data
+        const propertyCountMap = propertiesData.reduce((acc, prop) => {
+          acc[prop.user_id] = (acc[prop.user_id] || 0) + 1;
+          return acc;
+        }, {} as Record<string, number>);
+
+        const bookingCountMap = bookingsData.reduce((acc, booking) => {
+          acc[booking.user_id] = (acc[booking.user_id] || 0) + 1;
+          return acc;
+        }, {} as Record<string, number>);
+
+        const usersWithRoles = profilesData.map(profile => {
+          const userRoles = rolesData.filter(r => r.user_id === profile.id);
+          const primaryRole = userRoles.find(r => r.role === 'admin')?.role || 
+                            userRoles.find(r => r.role === 'host')?.role || 
+                            'user';
+
+          return {
+            id: profile.id,
+            name: profile.name || 'Unknown',
+            email: profile.email,
+            phone: undefined,
+            role: primaryRole as 'user' | 'host' | 'admin',
+            status: 'active' as const,
+            verificationStatus: 'verified' as const,
+            joinDate: new Date(profile.created_at).toLocaleDateString(),
+            lastActive: new Date(profile.updated_at).toLocaleDateString(),
+            propertyCount: propertyCountMap[profile.id] || 0,
+            bookingCount: bookingCountMap[profile.id] || 0,
+          };
+        });
+
+        setUsers(usersWithRoles);
+      } catch (error) {
+        console.error('Error fetching users:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUsers();
+  }, []);
 
   const filteredUsers = users.filter(user => {
     const matchesSearch = user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -132,6 +169,15 @@ export default function AdminUsers() {
     }
   };
 
+  if (loading) {
+    return <div className="flex justify-center items-center h-64">Loading...</div>;
+  }
+
+  const totalUsers = users.length;
+  const activeHosts = users.filter(u => u.role === 'host').length;
+  const verifiedUsers = users.filter(u => u.verificationStatus === 'verified').length;
+  const pendingUsers = users.filter(u => u.verificationStatus === 'pending').length;
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -155,8 +201,8 @@ export default function AdminUsers() {
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">2,543</div>
-            <p className="text-xs text-muted-foreground">+18% {t('admin.thisMonth')}</p>
+            <div className="text-2xl font-bold">{totalUsers}</div>
+            <p className="text-xs text-muted-foreground">{t('admin.registeredUsers')}</p>
           </CardContent>
         </Card>
         
@@ -166,7 +212,7 @@ export default function AdminUsers() {
             <UserCheck className="h-4 w-4 text-blue-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">189</div>
+            <div className="text-2xl font-bold">{activeHosts}</div>
             <p className="text-xs text-muted-foreground">{t('admin.propertiesPublished')}</p>
           </CardContent>
         </Card>
@@ -177,8 +223,8 @@ export default function AdminUsers() {
             <Shield className="h-4 w-4 text-green-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">1,876</div>
-            <p className="text-xs text-muted-foreground">74% {t('admin.ofTotal')}</p>
+            <div className="text-2xl font-bold">{verifiedUsers}</div>
+            <p className="text-xs text-muted-foreground">{((verifiedUsers/totalUsers)*100).toFixed(0)}% {t('admin.ofTotal')}</p>
           </CardContent>
         </Card>
 
@@ -188,7 +234,7 @@ export default function AdminUsers() {
             <UserX className="h-4 w-4 text-yellow-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">56</div>
+            <div className="text-2xl font-bold">{pendingUsers}</div>
             <p className="text-xs text-muted-foreground">{t('admin.kycVerifications')}</p>
           </CardContent>
         </Card>
