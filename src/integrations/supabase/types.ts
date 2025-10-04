@@ -527,27 +527,36 @@ export type Database = {
       }
       profiles: {
         Row: {
+          average_rating: number | null
           created_at: string
           email: string
           id: string
+          is_superhost: boolean | null
           name: string | null
           role: Database["public"]["Enums"]["app_role"]
+          total_reviews: number | null
           updated_at: string
         }
         Insert: {
+          average_rating?: number | null
           created_at?: string
           email: string
           id: string
+          is_superhost?: boolean | null
           name?: string | null
           role?: Database["public"]["Enums"]["app_role"]
+          total_reviews?: number | null
           updated_at?: string
         }
         Update: {
+          average_rating?: number | null
           created_at?: string
           email?: string
           id?: string
+          is_superhost?: boolean | null
           name?: string | null
           role?: Database["public"]["Enums"]["app_role"]
+          total_reviews?: number | null
           updated_at?: string
         }
         Relationships: []
@@ -650,6 +659,72 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      reviews: {
+        Row: {
+          accuracy_rating: number | null
+          booking_id: string | null
+          checkin_rating: number | null
+          cleanliness_rating: number | null
+          comment: string | null
+          communication_rating: number | null
+          created_at: string | null
+          id: string
+          location_rating: number | null
+          property_id: string
+          rating: number
+          updated_at: string | null
+          user_id: string
+          value_rating: number | null
+        }
+        Insert: {
+          accuracy_rating?: number | null
+          booking_id?: string | null
+          checkin_rating?: number | null
+          cleanliness_rating?: number | null
+          comment?: string | null
+          communication_rating?: number | null
+          created_at?: string | null
+          id?: string
+          location_rating?: number | null
+          property_id: string
+          rating: number
+          updated_at?: string | null
+          user_id: string
+          value_rating?: number | null
+        }
+        Update: {
+          accuracy_rating?: number | null
+          booking_id?: string | null
+          checkin_rating?: number | null
+          cleanliness_rating?: number | null
+          comment?: string | null
+          communication_rating?: number | null
+          created_at?: string | null
+          id?: string
+          location_rating?: number | null
+          property_id?: string
+          rating?: number
+          updated_at?: string | null
+          user_id?: string
+          value_rating?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reviews_booking_id_fkey"
+            columns: ["booking_id"]
+            isOneToOne: false
+            referencedRelation: "bookings"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reviews_property_id_fkey"
+            columns: ["property_id"]
+            isOneToOne: false
+            referencedRelation: "properties"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_roles: {
         Row: {

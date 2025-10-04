@@ -19,6 +19,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Loader2 } from "lucide-react";
 import ScheduleVisitModal from "@/components/ScheduleVisitModal";
 import MessageOwnerModal from "@/components/MessageOwnerModal";
+import { PropertyReviews } from "@/components/PropertyReviews";
 
 interface Property {
   id: string;
@@ -244,13 +245,21 @@ const Property = () => {
                      ))}
                    </div>
                  </CardContent>
-              </Card>
-               {/* Map */}
-               <MapboxMap 
-                 location={`${property.city}, ${property.location}`}
-                 address={property.full_address || `${property.city}, ${property.location}`}
-               />
-            </div>
+               </Card>
+                {/* Map */}
+                <MapboxMap 
+                  location={`${property.city}, ${property.location}`}
+                  address={property.full_address || `${property.city}, ${property.location}`}
+                />
+                
+                {/* Reviews Section - Only for Short Stay */}
+                {property.category === 'short-stay' && property.user_id && (
+                  <PropertyReviews 
+                    propertyId={property.id}
+                    hostUserId={property.user_id}
+                  />
+                )}
+             </div>
 
             {/* Sidebar */}
             <div className="space-y-6">

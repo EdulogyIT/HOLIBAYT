@@ -135,11 +135,6 @@ const Buy = () => {
   const PropertyCard = ({ property }: { property: Property }) => (
     <Card className="overflow-hidden hover:shadow-lg transition-shadow duration-300 cursor-pointer group">
       <div className="relative h-48 overflow-hidden">
-        <img
-          src={property.images?.[0] || "/lovable-uploads/b974fb79-9873-41fb-b3ad-9b4bf38b8a77.png"}
-          alt={property.title}
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-        />
         <PropertyBadges 
           isHotDeal={property.is_hot_deal}
           isVerified={property.is_verified}
@@ -148,6 +143,11 @@ const Buy = () => {
         <WishlistButton 
           isInWishlist={wishlistIds.has(property.id)}
           onToggle={() => toggleWishlist(property.id)}
+        />
+        <img
+          src={property.images?.[0] || "/lovable-uploads/b974fb79-9873-41fb-b3ad-9b4bf38b8a77.png"}
+          alt={property.title}
+          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
         />
       </div>
       <CardHeader className="pb-2">

@@ -32,7 +32,8 @@ import {
   FileSpreadsheet,
   Check,
   X,
-  Ban
+  Ban,
+  Award
 } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { supabase } from '@/integrations/supabase/client';
@@ -55,6 +56,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { exportToExcel, exportToPDF, exportToWord } from '@/utils/exportData';
+import { BadgeManagementDialog } from '@/components/admin/BadgeManagementDialog';
 
 
 export default function AdminProperties() {
@@ -67,6 +69,8 @@ export default function AdminProperties() {
   const [typeFilter, setTypeFilter] = useState<string>('all');
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [propertyToDelete, setPropertyToDelete] = useState<string | null>(null);
+  const [badgeDialogOpen, setBadgeDialogOpen] = useState(false);
+  const [selectedProperty, setSelectedProperty] = useState<any>(null);
 
   useEffect(() => {
     const fetchProperties = async () => {
@@ -122,6 +126,11 @@ export default function AdminProperties() {
   const handleDeleteClick = (propertyId: string) => {
     setPropertyToDelete(propertyId);
     setDeleteDialogOpen(true);
+  };
+
+  const handleBadgeClick = (property: any) => {
+    setSelectedProperty(property);
+    setBadgeDialogOpen(true);
   };
 
   const handleDeleteConfirm = async () => {
@@ -524,7 +533,15 @@ export default function AdminProperties() {
                           >
                             <Ban className="h-4 w-4" />
                           </Button>
-                        )}
+                         )}
+                        <Button 
+                          size="sm" 
+                          variant="ghost"
+                          onClick={() => handleBadgeClick(property)}
+                          title="Manage Badges"
+                        >
+                          <Award className="h-4 w-4" />
+                        </Button>
                         <Button 
                           size="sm" 
                           variant="ghost"
@@ -581,6 +598,24 @@ export default function AdminProperties() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* Badge Management Dialog */}
+      {selectedProperty && (
+        <BadgeManagementDialog
+          isOpen={badgeDialogOpen}
+          onClose={() => setBadgeDialogOpen(false)}
+          propertyId={selectedProperty.id}
+          currentBadges={{
+            is_hot_deal: selectedProperty.is_hot_deal || false,
+            is_verified: selectedProperty.is_verified || false,
+            is_new: selectedProperty.is_new || false,
+          }}
+          onUpdate={() => {
+            // Refresh properties list
+            window.location.reload();
+          }}
+        />
+      )}
     </div>
   );
 }

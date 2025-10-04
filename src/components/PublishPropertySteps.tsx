@@ -536,7 +536,13 @@ const PublishPropertySteps = ({ onSubmit, isSubmitting = false }: PublishPropert
         </Button>
         
         <div className="flex space-x-4">
-          <Button type="button" variant="outline">{t('cancel')}</Button>
+          <Button 
+            type="button" 
+            variant="outline" 
+            onClick={() => window.history.back()}
+          >
+            {t('cancel')}
+          </Button>
           
           {currentStep < 4 ? (
             <Button 
