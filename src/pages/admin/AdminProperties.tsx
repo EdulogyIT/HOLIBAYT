@@ -149,40 +149,60 @@ export default function AdminProperties() {
   const handleApprove = async (propertyId: string) => {
     try {
       const property = properties.find(p => p.id === propertyId);
-      if (!property) return;
+      if (!property) {
+        console.error('Property not found:', propertyId);
+        toast.error('Property not found');
+        return;
+      }
+
+      console.log('Starting approval for property:', {
+        id: property.id,
+        title: property.title,
+        owner_id: property.user_id,
+        current_status: property.status
+      });
 
       // Update property status
-      const { error } = await supabase
+      const { error: updateError } = await supabase
         .from('properties')
         .update({ status: 'active' })
         .eq('id', propertyId);
 
-      if (error) throw error;
+      if (updateError) {
+        console.error('Error updating property status:', updateError);
+        throw updateError;
+      }
 
-      console.log('Property approved, creating notification for user:', property.user_id);
+      console.log('Property status updated to active, now creating notification...');
 
       // Create notification for the property owner
+      const notificationPayload = {
+        user_id: property.user_id,
+        title: 'Property Approved',
+        message: `Your property "${property.title}" has been approved and is now live!`,
+        type: 'property_approval',
+        related_id: propertyId
+      };
+
+      console.log('Inserting notification with payload:', notificationPayload);
+
       const { data: notificationData, error: notificationError } = await supabase
         .from('notifications')
-        .insert({
-          user_id: property.user_id,
-          title: 'Property Approved',
-          message: `Your property "${property.title}" has been approved and is now live!`,
-          type: 'property_approval',
-          related_id: propertyId
-        })
+        .insert(notificationPayload)
         .select();
 
       if (notificationError) {
-        console.error('Error creating notification:', notificationError);
-        console.error('Notification details:', {
-          user_id: property.user_id,
-          property_id: propertyId,
-          property_title: property.title
+        console.error('❌ NOTIFICATION INSERT FAILED:', {
+          error: notificationError,
+          code: notificationError.code,
+          message: notificationError.message,
+          details: notificationError.details,
+          hint: notificationError.hint,
+          payload: notificationPayload
         });
         toast.warning('Property approved but failed to send notification');
       } else {
-        console.log('Notification created successfully:', notificationData);
+        console.log('✅ Notification created successfully:', notificationData);
         toast.success('Property approved and host notified');
       }
 
@@ -190,7 +210,7 @@ export default function AdminProperties() {
         p.id === propertyId ? { ...p, status: 'active' } : p
       ));
     } catch (error) {
-      console.error('Error approving property:', error);
+      console.error('Error in handleApprove:', error);
       toast.error('Failed to approve property');
     }
   };
