@@ -26,13 +26,14 @@ interface Property {
   location: string;
   city: string;
   price: string;
+  price_type?: string;
   price_currency?: string;
   images: string[];
   category: string;
 }
 
 interface InteractivePropertyMapProps {
-  currentProperty: Property & { price_currency?: string };
+  currentProperty: Property & { price_type?: string; price_currency?: string };
 }
 
 // Algerian city coordinates
@@ -71,7 +72,7 @@ const InteractivePropertyMap = ({ currentProperty }: InteractivePropertyMapProps
     try {
       const { data, error } = await supabase
         .from('properties')
-        .select('id, title, location, city, price, images, category')
+        .select('id, title, location, city, price, price_type, images, category')
         .eq('status', 'active')
         .eq('category', currentProperty.category)
         .eq('city', currentProperty.city)
@@ -80,12 +81,7 @@ const InteractivePropertyMap = ({ currentProperty }: InteractivePropertyMapProps
 
       if (error) throw error;
       
-      const mappedData = (data || []).map(prop => ({
-        ...prop,
-        price_currency: 'DZD'
-      }));
-      
-      setNearbyProperties(mappedData);
+      setNearbyProperties(data || []);
     } catch (error) {
       console.error('Error fetching nearby properties:', error);
     } finally {
@@ -107,10 +103,10 @@ const InteractivePropertyMap = ({ currentProperty }: InteractivePropertyMapProps
   });
 
   // Create custom icon for nearby properties
-  const createNearbyIcon = (price: string) => {
+  const createNearbyIcon = (price: string, priceType?: string, priceCurrency?: string) => {
     return L.divIcon({
       html: `<div style="background: hsl(var(--accent)); color: white; padding: 4px 8px; border-radius: 4px; font-weight: 600; font-size: 12px; white-space: nowrap; box-shadow: 0 2px 4px rgba(0,0,0,0.2); border: 2px solid white;">
-        ${formatPrice(parseFloat(price), 'DZD')}
+        ${formatPrice(parseFloat(price), priceType, priceCurrency || 'EUR')}
       </div>`,
       className: 'price-marker',
       iconSize: [60, 30],
@@ -158,7 +154,7 @@ const InteractivePropertyMap = ({ currentProperty }: InteractivePropertyMapProps
                   <h3 className="font-semibold text-sm mb-1">{currentProperty.title}</h3>
                   <p className="text-xs text-muted-foreground mb-1">{currentProperty.location}</p>
                   <p className="font-bold text-primary">
-                    {formatPrice(parseFloat(currentProperty.price), currentProperty.price_currency || 'DZD')}
+                    {formatPrice(parseFloat(currentProperty.price), currentProperty.price_type, currentProperty.price_currency || 'EUR')}
                   </p>
                   <p className="text-xs mt-1 text-center font-medium">Current Property</p>
                 </div>
@@ -170,7 +166,7 @@ const InteractivePropertyMap = ({ currentProperty }: InteractivePropertyMapProps
               <Marker
                 key={property.id}
                 position={getMarkerPosition(index)}
-                icon={createNearbyIcon(property.price)}
+                icon={createNearbyIcon(property.price, property.price_type, property.price_currency)}
                 eventHandlers={{
                   click: () => navigate(`/property/${property.id}`),
                 }}
@@ -187,7 +183,7 @@ const InteractivePropertyMap = ({ currentProperty }: InteractivePropertyMapProps
                     <h3 className="font-semibold text-sm mb-1">{property.title}</h3>
                     <p className="text-xs text-muted-foreground mb-1">{property.location}</p>
                     <p className="font-bold text-primary">
-                      {formatPrice(parseFloat(property.price), property.price_currency || 'DZD')}
+                      {formatPrice(parseFloat(property.price), property.price_type, property.price_currency || 'EUR')}
                     </p>
                     <p className="text-xs mt-1 text-primary hover:underline">Click to view →</p>
                   </div>
