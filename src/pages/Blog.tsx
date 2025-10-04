@@ -116,7 +116,7 @@ const Blog = () => {
                   className="cursor-pointer hover:bg-primary hover:text-primary-foreground transition-colors capitalize"
                   onClick={() => setSelectedCategory(category)}
                 >
-                  {category}
+                  {t(category) || category}
                 </Badge>
               ))}
             </div>
@@ -153,7 +153,9 @@ const Blog = () => {
                     )}
                     <CardHeader>
                       <div className="flex items-center justify-between mb-2">
-                        <Badge variant="secondary" className="capitalize">{post.category}</Badge>
+                        <Badge variant="secondary" className="capitalize">
+                          {t(post.category) || post.category}
+                        </Badge>
                       </div>
                       <CardTitle className="text-xl font-playfair group-hover:text-primary transition-colors">
                         {post.title}
