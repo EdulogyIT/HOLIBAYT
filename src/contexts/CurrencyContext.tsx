@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, ReactNode } from 'react';
+import { useLanguage } from './LanguageContext';
 
 export type Currency = 'USD' | 'DZD' | 'EUR';
 
@@ -44,6 +45,8 @@ interface CurrencyProviderProps {
 }
 
 export const CurrencyProvider = ({ children }: CurrencyProviderProps) => {
+  const { t } = useLanguage();
+  
   // Independent currency selection - not tied to language
   const [currentCurrency, setCurrentCurrency] = useState<Currency>(() => {
     try {
@@ -87,13 +90,13 @@ export const CurrencyProvider = ({ children }: CurrencyProviderProps) => {
       result = `${formattedAmount} ${config.symbol}`;
     }
 
-    // Add price type suffix if provided
+    // Add price type suffix if provided (translated)
     if (priceType === 'monthlyPrice' || priceType === 'monthly') {
-      result += '/month';
+      result += t('perMonth') || '/month';
     } else if (priceType === 'dailyPrice' || priceType === 'daily') {
-      result += '/day';
+      result += t('perDay') || '/day';
     } else if (priceType === 'weeklyPrice' || priceType === 'weekly') {
-      result += '/week';
+      result += t('perWeek') || '/week';
     }
 
     return result;

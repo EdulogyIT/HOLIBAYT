@@ -214,7 +214,7 @@ const Property = () => {
                      <div className="flex items-center text-center">
                        <Square className="w-6 h-6 mr-2 text-primary" />
                        <div>
-                         <div className="font-semibold font-inter">{property.area} m²</div>
+                         <div className="font-semibold font-inter">{property.area} {t('areaUnit')}</div>
                          <div className="text-sm text-muted-foreground font-inter">{t('areaField')}</div>
                        </div>
                      </div>

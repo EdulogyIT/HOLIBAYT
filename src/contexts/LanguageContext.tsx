@@ -50,6 +50,9 @@ const allTranslations = {
     perWeek: '/semaine',
     perMonth: '/mois',
     perNight: '/nuit',
+    day: 'jour',
+    week: 'semaine',
+    month: 'mois',
     
     // Common
     search: 'Rechercher',
@@ -388,7 +391,7 @@ const allTranslations = {
     subscribe: 'S\'abonner',
     backToBlog: "Retour au Blog",
     
-    // Property types
+    // Property types (specific property type translations)
     propertyVilla: 'Villa',
     propertyAppartement: 'Appartement', 
     propertyDuplex: 'Duplex',
@@ -398,6 +401,7 @@ const allTranslations = {
     propertyChambre: 'Chambre',
     propertySuite: 'Suite',
     propertyPenthouse: 'Penthouse',
+    appartement: 'Appartement',
     
     // Pricing units
     currencyDA: 'DA',
@@ -676,6 +680,9 @@ const allTranslations = {
     perWeek: '/week',
     perMonth: '/month',
     perNight: '/night',
+    day: 'day',
+    week: 'week',
+    month: 'month',
     
     // Common
     search: 'Search',
@@ -1016,7 +1023,7 @@ const allTranslations = {
     subscribe: 'Subscribe',
     backToBlog: "Back to Blog",
     
-    // Property types
+    // Property types (specific property type translations)
     propertyVilla: 'Villa',
     propertyAppartement: 'Apartment', 
     propertyDuplex: 'Duplex',
@@ -1026,6 +1033,7 @@ const allTranslations = {
     propertyChambre: 'Room',
     propertySuite: 'Suite',
     propertyPenthouse: 'Penthouse',
+    appartement: 'Apartment',
     
     // Pricing units
     currencyDA: 'DZD',
@@ -1304,6 +1312,9 @@ const allTranslations = {
     perWeek: '/أسبوع',
     perMonth: '/شهر',
     perNight: '/ليلة',
+    day: 'يوم',
+    week: 'أسبوع',
+    month: 'شهر',
     
     // Common
     search: 'بحث',
@@ -1625,7 +1636,7 @@ const allTranslations = {
     subscribe: 'اشتراك',
     backToBlog: "العودة للمدونة",
     
-    // Property types
+    // Property types (specific property type translations)
     propertyVilla: 'فيلا',
     propertyAppartement: 'شقة', 
     propertyDuplex: 'دوبلكس',
@@ -1635,6 +1646,7 @@ const allTranslations = {
     propertyChambre: 'غرفة',
     propertySuite: 'جناح',
     propertyPenthouse: 'بنتهاوس',
+    appartement: 'شقة',
     
     // Pricing units
     currencyDA: 'دج',
