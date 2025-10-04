@@ -51,9 +51,9 @@ export const CurrencyProvider = ({ children }: CurrencyProviderProps) => {
   const [currentCurrency, setCurrentCurrency] = useState<Currency>(() => {
     try {
       const saved = localStorage.getItem('selectedCurrency');
-      return (saved as Currency) || 'USD';
+      return (saved as Currency) || 'DZD';
     } catch {
-      return 'USD';
+      return 'DZD';
     }
   });
 
@@ -71,17 +71,33 @@ export const CurrencyProvider = ({ children }: CurrencyProviderProps) => {
     
     if (isNaN(numAmount)) return '0';
 
-    // CRITICAL FIX: Don't convert prices - they're already in their native currency
-    // Properties store prices in EUR/USD/DZD directly, no conversion needed
-    // Only format the display based on the currency preference
+    // Convert from EUR (base currency) to selected display currency
+    // Properties are stored in EUR by default
+    const sourceCurrency = currency || 'EUR';
     
-    const displayCurrency = currency || currentCurrency;
+    // Convert to EUR first if source is not EUR
+    let amountInEUR = numAmount;
+    if (sourceCurrency === 'USD') {
+      amountInEUR = numAmount / 1.08; // 1 EUR = 1.08 USD
+    } else if (sourceCurrency === 'DZD') {
+      amountInEUR = numAmount / 145; // 1 EUR = 145 DZD
+    }
+    
+    // Now convert from EUR to display currency
+    let convertedAmount = amountInEUR;
+    if (currentCurrency === 'USD') {
+      convertedAmount = amountInEUR * 1.08;
+    } else if (currentCurrency === 'DZD') {
+      convertedAmount = amountInEUR * 145;
+    }
+    
+    const displayCurrency = currentCurrency;
     const config = currencyConfig[displayCurrency];
     
     const formattedAmount = new Intl.NumberFormat('en-US', {
       minimumFractionDigits: 0,
       maximumFractionDigits: displayCurrency === 'DZD' ? 0 : 2,
-    }).format(numAmount);
+    }).format(convertedAmount);
 
     let result = '';
     if (config.position === 'before') {

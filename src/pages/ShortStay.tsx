@@ -145,7 +145,7 @@ const ShortStay = () => {
         />
         <div className="absolute top-3 left-3">
           <Badge className="bg-primary text-primary-foreground">
-            {t(property.property_type) || property.property_type}
+            {t(`property${property.property_type.charAt(0).toUpperCase() + property.property_type.slice(1)}`) || property.property_type}
           </Badge>
         </div>
         <div className="absolute top-3 right-3">

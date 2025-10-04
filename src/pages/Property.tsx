@@ -181,7 +181,7 @@ const Property = () => {
                          <span className="text-lg font-inter">{property.city}, {property.location}</span>
                        </div>
                      </div>
-                     <Badge variant="secondary" className="text-lg px-3 py-1 font-inter">{t(property.property_type) || property.property_type}</Badge>
+                     <Badge variant="secondary" className="text-lg px-3 py-1 font-inter">{t(`property${property.property_type.charAt(0).toUpperCase() + property.property_type.slice(1)}`) || property.property_type}</Badge>
                    </div>
                    <div className="text-4xl font-bold text-primary font-playfair">{formatPrice(property.price, property.price_type)}</div>
                 </CardHeader>
