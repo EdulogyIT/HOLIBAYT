@@ -226,8 +226,25 @@ const ContactAdvisor = () => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
             {contactMethods.map((method, index) => {
               const IconComponent = method.icon;
+              const isLiveChat = index === 2;
+              
+              const handleClick = async () => {
+                if (isLiveChat) {
+                  const { data: { user } } = await supabase.auth.getUser();
+                  if (!user) {
+                    window.location.href = '/login?redirect=/messages';
+                  } else {
+                    window.location.href = '/messages';
+                  }
+                }
+              };
+              
               return (
-                <Card key={index} className="group hover:shadow-elegant transition-all duration-500 hover:-translate-y-2 border-2 hover:border-primary/20 bg-gradient-to-br from-card to-card/50">
+                <Card 
+                  key={index} 
+                  className={`group hover:shadow-elegant transition-all duration-500 hover:-translate-y-2 border-2 hover:border-primary/20 bg-gradient-to-br from-card to-card/50 ${isLiveChat ? 'cursor-pointer' : ''}`}
+                  onClick={isLiveChat ? handleClick : undefined}
+                >
                   <CardContent className="p-8 text-center">
                     <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-primary text-primary-foreground rounded-2xl mb-6 shadow-glow group-hover:scale-110 group-hover:rotate-3 transition-all duration-300">
                       <IconComponent className="h-10 w-10" />
