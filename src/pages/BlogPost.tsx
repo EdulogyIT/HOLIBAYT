@@ -13,6 +13,14 @@ import { BlogComments } from "@/components/BlogComments";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
+// Import blog images
+import blogFutureRealEstate from "@/assets/blog-future-real-estate.jpg";
+import blogInvestmentTips from "@/assets/blog-investment-tips.jpg";
+import blogRenovationTips from "@/assets/blog-renovation-tips-new.jpg";
+import blogCoastalRentals from "@/assets/blog-coastal-rentals.jpg";
+import blogPropertyValuation from "@/assets/blog-property-valuation-new.jpg";
+import blogLegalConsiderations from "@/assets/blog-legal-considerations-new.jpg";
+
 interface BlogPost {
   id: string;
   title: string;
@@ -64,6 +72,22 @@ const BlogPost = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  // Map image URLs to imported assets
+  const imageMap: Record<string, string> = {
+    '/src/assets/blog-future-real-estate.jpg': blogFutureRealEstate,
+    '/src/assets/blog-investment-tips.jpg': blogInvestmentTips,
+    '/src/assets/blog-renovation-tips-new.jpg': blogRenovationTips,
+    '/src/assets/blog-coastal-rentals.jpg': blogCoastalRentals,
+    '/src/assets/blog-property-valuation-new.jpg': blogPropertyValuation,
+    '/src/assets/blog-legal-considerations-new.jpg': blogLegalConsiderations,
+  };
+
+  // Helper to get the image source
+  const getImageSrc = (imageUrl?: string) => {
+    if (!imageUrl) return null;
+    return imageMap[imageUrl] || imageUrl;
   };
 
   if (loading) {
@@ -125,7 +149,7 @@ const BlogPost = () => {
           {blog.image_url && (
             <div className="mb-8 rounded-lg overflow-hidden">
               <img 
-                src={blog.image_url} 
+                src={getImageSrc(blog.image_url) || blog.image_url} 
                 alt={blog.title}
                 className="w-full h-auto object-cover"
               />

@@ -10,6 +10,14 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
+// Import blog images
+import blogFutureRealEstate from "@/assets/blog-future-real-estate.jpg";
+import blogInvestmentTips from "@/assets/blog-investment-tips.jpg";
+import blogRenovationTips from "@/assets/blog-renovation-tips-new.jpg";
+import blogCoastalRentals from "@/assets/blog-coastal-rentals.jpg";
+import blogPropertyValuation from "@/assets/blog-property-valuation-new.jpg";
+import blogLegalConsiderations from "@/assets/blog-legal-considerations-new.jpg";
+
 interface BlogPost {
   id: string;
   title: string;
@@ -50,6 +58,29 @@ const Blog = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  // Map image URLs to imported assets
+  const imageMap: Record<string, string> = {
+    '/src/assets/blog-future-real-estate.jpg': blogFutureRealEstate,
+    '/src/assets/blog-investment-tips.jpg': blogInvestmentTips,
+    '/src/assets/blog-renovation-tips-new.jpg': blogRenovationTips,
+    '/src/assets/blog-coastal-rentals.jpg': blogCoastalRentals,
+    '/src/assets/blog-property-valuation-new.jpg': blogPropertyValuation,
+    '/src/assets/blog-legal-considerations-new.jpg': blogLegalConsiderations,
+  };
+
+  // Helper to get the image source
+  const getImageSrc = (imageUrl?: string) => {
+    if (!imageUrl) return null;
+    return imageMap[imageUrl] || imageUrl;
+  };
+
+  // Helper to strip HTML tags from content
+  const stripHtml = (html: string) => {
+    const tmp = document.createElement('div');
+    tmp.innerHTML = html;
+    return tmp.textContent || tmp.innerText || '';
   };
 
   const categories = ['all', 'general', 'tips', 'news', 'guides', 'Market Trends'];
@@ -114,7 +145,7 @@ const Blog = () => {
                     {post.image_url && (
                       <div className="aspect-video bg-muted rounded-t-lg overflow-hidden">
                         <img 
-                          src={post.image_url} 
+                          src={getImageSrc(post.image_url) || post.image_url} 
                           alt={post.title}
                           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                         />
@@ -128,7 +159,7 @@ const Blog = () => {
                         {post.title}
                       </CardTitle>
                       <CardDescription className="font-inter line-clamp-3">
-                        {post.content.substring(0, 150)}...
+                        {stripHtml(post.content).substring(0, 150)}...
                       </CardDescription>
                     </CardHeader>
                     <CardContent>
