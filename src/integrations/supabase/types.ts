@@ -571,6 +571,9 @@ export type Database = {
           full_address: string | null
           id: string
           images: string[] | null
+          is_hot_deal: boolean | null
+          is_new: boolean | null
+          is_verified: boolean | null
           location: string
           owner_account_id: string | null
           price: string
@@ -599,6 +602,9 @@ export type Database = {
           full_address?: string | null
           id?: string
           images?: string[] | null
+          is_hot_deal?: boolean | null
+          is_new?: boolean | null
+          is_verified?: boolean | null
           location: string
           owner_account_id?: string | null
           price: string
@@ -627,6 +633,9 @@ export type Database = {
           full_address?: string | null
           id?: string
           images?: string[] | null
+          is_hot_deal?: boolean | null
+          is_new?: boolean | null
+          is_verified?: boolean | null
           location?: string
           owner_account_id?: string | null
           price?: string
@@ -656,6 +665,27 @@ export type Database = {
           created_at?: string | null
           id?: string
           role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
+      wishlists: {
+        Row: {
+          created_at: string
+          id: string
+          property_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          property_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          property_id?: string
           user_id?: string
         }
         Relationships: []

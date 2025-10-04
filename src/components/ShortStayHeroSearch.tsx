@@ -9,6 +9,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { useNavigate, useLocation as useRouterLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { DateRangePicker } from "@/components/DateRangePicker";
+import { GuestsSelector } from "@/components/GuestsSelector";
 import shortStayHeroBg from "@/assets/short-stay-hero-bg.jpg";
 
 type DateRange = { from?: Date; to?: Date };
@@ -38,11 +39,11 @@ const ShortStayHeroSearch: React.FC<ShortStayHeroSearchProps> = ({ onSearch }) =
   const [formData, setFormData] = useState<{
     location: string;
     dateRange: DateRange | undefined;
-    travelers: string;
+    guests: { adults: number; children: number; infants: number; pets: number };
   }>({
     location: "",
     dateRange: undefined,
-    travelers: "",
+    guests: { adults: 1, children: 0, infants: 0, pets: 0 },
   });
 
   // Populate from URL whenever it changes
@@ -51,12 +52,11 @@ const ShortStayHeroSearch: React.FC<ShortStayHeroSearchProps> = ({ onSearch }) =
     const location = urlParams.get("location") || "";
     const checkIn = parseISODate(urlParams.get("checkIn"));
     const checkOut = parseISODate(urlParams.get("checkOut"));
-    const travelers = urlParams.get("travelers") || "";
 
     setFormData({
       location,
       dateRange: checkIn || checkOut ? { from: checkIn, to: checkOut } : undefined,
-      travelers,
+      guests: { adults: 1, children: 0, infants: 0, pets: 0 },
     });
   }, [routerLocation.search]);
 
@@ -81,11 +81,12 @@ const ShortStayHeroSearch: React.FC<ShortStayHeroSearchProps> = ({ onSearch }) =
 
   const handleSearch = () => {
     if (!isFormValid()) return;
+    const totalGuests = formData.guests.adults + formData.guests.children + formData.guests.infants;
     performSearch({
       location: formData.location,
       checkIn: formData.dateRange?.from ? formData.dateRange.from.toISOString() : undefined,
       checkOut: formData.dateRange?.to ? formData.dateRange.to.toISOString() : undefined,
-      travelers: formData.travelers,
+      travelers: totalGuests,
     });
   };
 
@@ -132,15 +133,11 @@ const ShortStayHeroSearch: React.FC<ShortStayHeroSearchProps> = ({ onSearch }) =
                 />
               </div>
 
-              {/* Travelers */}
-              <div className="flex-1 relative">
-                <Users className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground h-5 w-5" />
-                <Input
-                  type="text"
-                  placeholder={t("travelers")}
-                  className="h-14 pl-12 text-base font-inter"
-                  value={formData.travelers}
-                  onChange={(e) => updateFormField("travelers", e.target.value)}
+              {/* Guests Selector */}
+              <div className="flex-1">
+                <GuestsSelector
+                  value={formData.guests}
+                  onChange={(guests) => updateFormField("guests", guests)}
                 />
               </div>
             </div>

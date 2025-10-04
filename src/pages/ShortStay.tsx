@@ -8,12 +8,16 @@ import { MapPin, Bed, Bath, Square, Loader2, Wifi, Car, Waves, Coffee } from "lu
 import { useNavigate, useLocation } from "react-router-dom";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useCurrency } from "@/contexts/CurrencyContext";
+import { useAuth } from "@/contexts/AuthContext";
 import PropertyFilters from "@/components/PropertyFilters";
 import { useState, useEffect } from "react";
 import AIChatBox from "@/components/AIChatBox";
 import { useScrollToTop } from "@/hooks/useScrollToTop";
 import { supabase } from "@/integrations/supabase/client";
 import PropertyMapWithZone from "@/components/PropertyMapWithZone";
+import { useWishlist } from "@/hooks/useWishlist";
+import { WishlistButton } from "@/components/WishlistButton";
+import { PropertyBadges } from "@/components/PropertyBadges";
 
 interface Property {
   id: string;
@@ -32,6 +36,9 @@ interface Property {
   commission_rate?: number;
   contact_name: string;
   contact_phone: string;
+  is_hot_deal?: boolean;
+  is_verified?: boolean;
+  is_new?: boolean;
 }
 
 const num = (v: unknown) => {
@@ -45,6 +52,8 @@ const ShortStay = () => {
   const routerLocation = useLocation();
   const { t } = useLanguage();
   const { formatPrice } = useCurrency();
+  const { user } = useAuth();
+  const { wishlistIds, toggleWishlist } = useWishlist(user?.id);
   const [properties, setProperties] = useState<Property[]>([]);
   const [filteredProperties, setFilteredProperties] = useState<Property[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -143,12 +152,16 @@ const ShortStay = () => {
           alt={property.title}
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
         />
-        <div className="absolute top-3 left-3">
-          <Badge className="bg-primary text-primary-foreground">
-            {t(`property${property.property_type.charAt(0).toUpperCase() + property.property_type.slice(1)}`) || property.property_type}
-          </Badge>
-        </div>
-        <div className="absolute top-3 right-3">
+        <PropertyBadges
+          isHotDeal={property.is_hot_deal}
+          isVerified={property.is_verified}
+          isNew={property.is_new}
+        />
+        <WishlistButton
+          isInWishlist={wishlistIds.has(property.id)}
+          onToggle={() => toggleWishlist(property.id)}
+        />
+        <div className="absolute bottom-3 right-3">
           <Badge variant="secondary" className="bg-background/80 text-foreground">
             {property.price_type === "daily"
               ? t("perNight")
