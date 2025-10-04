@@ -1,0 +1,41 @@
+-- Add sample blog posts for the platform
+INSERT INTO blog_posts (user_id, title, content, author_name, category, status, created_at) VALUES
+  ((SELECT id FROM profiles WHERE role = 'admin' LIMIT 1), 
+   'Top 5 Investment Tips for Algerian Real Estate', 
+   '<h2>Investing Wisely in Algeria''s Property Market</h2><p>The Algerian real estate market presents unique opportunities for savvy investors. Whether you''re a first-time buyer or an experienced investor, understanding the local market dynamics is crucial.</p><h3>1. Location is Everything</h3><p>Focus on areas with growing infrastructure and amenities. Cities like Algiers, Oran, and Constantine continue to see strong demand.</p><h3>2. Understand the Legal Framework</h3><p>Familiarize yourself with Algerian property laws and regulations. Working with a local attorney can help navigate the legal landscape.</p><h3>3. Consider Rental Yields</h3><p>Calculate potential rental income and ensure it covers your costs. Short-term rentals in tourist areas often provide higher returns.</p><h3>4. Property Condition Matters</h3><p>Older properties may need significant renovation. Factor in these costs when calculating your investment.</p><h3>5. Market Timing</h3><p>Keep an eye on market trends and economic indicators. Buying during market corrections can lead to better long-term returns.</p>',
+   'Ahmed Benali',
+   'investment',
+   'published',
+   NOW() - INTERVAL '45 days'),
+  
+  ((SELECT id FROM profiles WHERE role = 'admin' LIMIT 1),
+   'Essential Renovation Tips for Old Algerian Properties',
+   '<h2>Bringing New Life to Historic Properties</h2><p>Renovating older properties in Algeria can be both rewarding and challenging. Here are our top tips for a successful renovation project.</p><h3>Respect the Architecture</h3><p>Many Algerian properties feature beautiful traditional architecture. Try to preserve original features like arches, tilework, and courtyards.</p><h3>Modern Amenities</h3><p>While preserving character, ensure you update plumbing, electrical systems, and insulation to modern standards for comfort and safety.</p><h3>Budgeting</h3><p>Always add 20-30% to your initial budget for unexpected costs. Older properties often have hidden issues.</p><h3>Local Contractors</h3><p>Work with experienced local contractors who understand traditional building methods and materials.</p><h3>Permits and Regulations</h3><p>Ensure you have all necessary permits before starting work, especially in historic districts.</p>',
+   'Fatima Meziane',
+   'tips',
+   'published',
+   NOW() - INTERVAL '30 days'),
+  
+  ((SELECT id FROM profiles WHERE role = 'admin' LIMIT 1),
+   'Guide to Short-Term Rentals in Algerian Coastal Cities',
+   '<h2>Maximizing Returns from Coastal Properties</h2><p>Algeria''s Mediterranean coastline offers excellent opportunities for short-term rental investments, particularly in popular tourist destinations.</p><h3>Best Locations</h3><p>Cities like Oran, Annaba, and Tipaza attract both domestic and international tourists. Properties near beaches command premium rates during summer months.</p><h3>Seasonal Demand</h3><p>Understand the seasonal nature of coastal rentals. Summer months (June-September) see peak demand, while winter months are quieter.</p><h3>Property Standards</h3><p>Maintain high standards with quality furnishings, reliable WiFi, and well-equipped kitchens. Good reviews lead to higher occupancy rates.</p><h3>Marketing</h3><p>Use multiple platforms including Holibayt, Airbnb, and local booking sites to maximize visibility.</p><h3>Legal Requirements</h3><p>Ensure you comply with local tourism regulations and tax requirements for short-term rentals.</p>',
+   'Karim Ouardi',
+   'tips',
+   'published',
+   NOW() - INTERVAL '20 days'),
+  
+  ((SELECT id FROM profiles WHERE role = 'admin' LIMIT 1),
+   'Understanding Property Valuation in Algeria',
+   '<h2>How Properties Are Valued in the Algerian Market</h2><p>Accurate property valuation is essential whether you''re buying, selling, or investing. Here''s what you need to know about how properties are valued in Algeria.</p><h3>Location Factors</h3><p>Proximity to amenities, schools, hospitals, and transportation significantly impacts value. Properties in well-established neighborhoods command higher prices.</p><h3>Property Condition</h3><p>Age, maintenance level, and renovation status all affect valuation. Modern, well-maintained properties naturally fetch higher prices.</p><h3>Size and Layout</h3><p>Square meterage, number of rooms, and functional layout are key factors. Open-plan designs are increasingly popular.</p><h3>Market Conditions</h3><p>Current supply and demand, economic factors, and interest rates all influence property values.</p><h3>Professional Appraisals</h3><p>Consider hiring a certified appraiser for accurate valuations, especially for high-value properties or investment decisions.</p>',
+   'Sofia Benmokhtar',
+   'guides',
+   'published',
+   NOW() - INTERVAL '15 days'),
+  
+  ((SELECT id FROM profiles WHERE role = 'admin' LIMIT 1),
+   'Legal Considerations When Buying Property in Algeria',
+   '<h2>Navigating the Legal Landscape</h2><p>Understanding the legal aspects of property transactions in Algeria is crucial for a smooth and secure purchase.</p><h3>Property Ownership Rights</h3><p>Algeria distinguishes between different types of property ownership. Ensure you understand what type of ownership you''re acquiring.</p><h3>Title Verification</h3><p>Always verify the property title through the official land registry. This protects you from fraudulent sales.</p><h3>Notary Requirements</h3><p>All property transactions must be notarized. The notary ensures the legality of the transaction and registers the transfer.</p><h3>Tax Obligations</h3><p>Buyers and sellers have different tax obligations. Registration fees, transfer taxes, and annual property taxes apply.</p><h3>Foreign Ownership</h3><p>Special rules may apply to foreign nationals. Consult with a legal expert familiar with foreign property ownership regulations.</p><h3>Due Diligence</h3><p>Always conduct thorough due diligence, including checking for liens, debts, or legal disputes attached to the property.</p>',
+   'Yasmine Larbi',
+   'guides',
+   'published',
+   NOW() - INTERVAL '10 days');
