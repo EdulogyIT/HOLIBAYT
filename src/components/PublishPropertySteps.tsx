@@ -41,6 +41,7 @@ interface FormData {
     furnished: boolean;
     airConditioning: boolean;
     gym: boolean;
+    petsAllowed: boolean;
   };
   description: string;
   
@@ -85,6 +86,7 @@ const PublishPropertySteps = ({ onSubmit, isSubmitting = false }: PublishPropert
       furnished: false,
       airConditioning: false,
       gym: false,
+      petsAllowed: false,
     },
     description: "",
     fullName: "",
@@ -405,7 +407,8 @@ const PublishPropertySteps = ({ onSubmit, isSubmitting = false }: PublishPropert
                     security: t('securityFeature'),
                     furnished: t('furnishedFeature'),
                     airConditioning: t('airConditioningFeature'),
-                    gym: t('gymFeature')
+                    gym: t('gymFeature'),
+                    petsAllowed: t('petsAllowed')
                   }).map(([key, label]) => (
                     <div key={key} className="flex items-center space-x-2">
                       <Checkbox

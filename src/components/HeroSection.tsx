@@ -4,7 +4,7 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { format } from "date-fns";
-import { Search, MapPin, Home, Key, Bed, Calendar as CalendarIcon, Users, DollarSign } from "lucide-react";
+import { Search, MapPin, Home, Key, Bed, Calendar as CalendarIcon, DollarSign } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useCurrency } from "@/contexts/CurrencyContext";
 import { useNavigate } from "react-router-dom";
@@ -12,6 +12,7 @@ import { cn } from "@/lib/utils";
 import algeriaHero from "@/assets/algeria-architecture-hero.jpg";
 import { DateRangePicker } from "@/components/DateRangePicker";
 import LocationAutocomplete from "@/components/LocationAutocomplete";
+import { GuestsSelector } from "@/components/GuestsSelector";
 
 const HeroSection = () => {
   const { t } = useLanguage();
@@ -27,7 +28,12 @@ const HeroSection = () => {
     housingType: '',
     maxRent: '',
     dateRange: undefined as { from?: Date; to?: Date } | undefined,
-    travelers: ''
+    travelers: {
+      adults: 1,
+      children: 0,
+      infants: 0,
+      pets: 0
+    }
   });
 
   const updateFormField = (field: string, value: any) => {
@@ -44,7 +50,8 @@ const HeroSection = () => {
       case 'rent':
         return formData.housingType !== '' && formData.maxRent.trim() !== '';
       case 'stay':
-        return formData.dateRange?.from && formData.dateRange?.to && formData.travelers.trim() !== '';
+        const totalGuests = formData.travelers.adults + formData.travelers.children + formData.travelers.infants;
+        return formData.dateRange?.from && formData.dateRange?.to && totalGuests > 0;
       default:
         return false;
     }
@@ -249,16 +256,10 @@ const HeroSection = () => {
               </Popover>
             </div>
             <div className="flex-1">
-              <div className="relative">
-                <Users className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
-                <Input
-                  type="text"
-                  placeholder={t('travelers')}
-                  className="h-10 sm:h-12 pl-10 font-inter text-sm"
-                  value={formData.travelers}
-                  onChange={(e) => updateFormField('travelers', e.target.value)}
-                />
-              </div>
+              <GuestsSelector
+                value={formData.travelers}
+                onChange={(value) => updateFormField('travelers', value)}
+              />
             </div>
           </div>
         );
@@ -291,7 +292,9 @@ const HeroSection = () => {
       case 'stay':
         if (formData.dateRange?.from) searchParams.append('checkIn', formData.dateRange.from.toISOString());
         if (formData.dateRange?.to) searchParams.append('checkOut', formData.dateRange.to.toISOString());
-        if (formData.travelers) searchParams.append('travelers', formData.travelers);
+        const totalGuests = formData.travelers.adults + formData.travelers.children + formData.travelers.infants;
+        if (totalGuests > 0) searchParams.append('travelers', totalGuests.toString());
+        if (formData.travelers.pets > 0) searchParams.append('pets', formData.travelers.pets.toString());
         navigate(`/short-stay?${searchParams.toString()}`);
         break;
       default:

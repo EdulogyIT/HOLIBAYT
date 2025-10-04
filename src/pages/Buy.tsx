@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { MapPin, Bed, Bath, Square, Loader2 } from "lucide-react";
-import { useNavigate, useLocation } from "react-router-dom"; // ⬅️ add useLocation
+import { useNavigate, useLocation } from "react-router-dom";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useCurrency } from "@/contexts/CurrencyContext";
 import PropertyFilters from "@/components/PropertyFilters";
@@ -13,23 +13,30 @@ import { useState, useEffect } from "react";
 import AIChatBox from "@/components/AIChatBox";
 import { useScrollToTop } from "@/hooks/useScrollToTop";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
+import { useWishlist } from "@/hooks/useWishlist";
+import { WishlistButton } from "@/components/WishlistButton";
+import { PropertyBadges } from "@/components/PropertyBadges";
 
 interface Property {
   id: string;
   title: string;
   location: string;
   city: string;
-  price: string | number; // ⬅️ allow number too
+  price: string | number;
   price_type: string;
   bedrooms?: string;
   bathrooms?: string;
-  area: string | number;   // ⬅️ allow number too
+  area: string | number;
   images: string[];
   property_type: string;
   features?: any;
   description?: string;
   contact_name: string;
   contact_phone: string;
+  is_hot_deal?: boolean;
+  is_verified?: boolean;
+  is_new?: boolean;
 }
 
 const num = (v: unknown) => {
@@ -40,9 +47,11 @@ const num = (v: unknown) => {
 
 const Buy = () => {
   const navigate = useNavigate();
-  const locationHook = useLocation(); // ⬅️
+  const locationHook = useLocation();
   const { t } = useLanguage();
   const { formatPrice } = useCurrency();
+  const { user } = useAuth();
+  const { wishlistIds, toggleWishlist } = useWishlist(user?.id);
   const [properties, setProperties] = useState<Property[]>([]);
   const [filteredProperties, setFilteredProperties] = useState<Property[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -131,11 +140,15 @@ const Buy = () => {
           alt={property.title}
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
         />
-        <div className="absolute top-3 left-3">
-          <Badge className="bg-primary text-primary-foreground">
-            {t(`property${property.property_type.charAt(0).toUpperCase() + property.property_type.slice(1)}`) || property.property_type}
-          </Badge>
-        </div>
+        <PropertyBadges 
+          isHotDeal={property.is_hot_deal}
+          isVerified={property.is_verified}
+          isNew={property.is_new}
+        />
+        <WishlistButton 
+          isInWishlist={wishlistIds.has(property.id)}
+          onToggle={() => toggleWishlist(property.id)}
+        />
       </div>
       <CardHeader className="pb-2">
         <CardTitle className="text-lg font-semibold text-foreground line-clamp-2">

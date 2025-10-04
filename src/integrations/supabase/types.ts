@@ -576,6 +576,7 @@ export type Database = {
           is_verified: boolean | null
           location: string
           owner_account_id: string | null
+          pets_allowed: boolean | null
           price: string
           price_type: string
           property_type: string
@@ -607,6 +608,7 @@ export type Database = {
           is_verified?: boolean | null
           location: string
           owner_account_id?: string | null
+          pets_allowed?: boolean | null
           price: string
           price_type: string
           property_type: string
@@ -638,6 +640,7 @@ export type Database = {
           is_verified?: boolean | null
           location?: string
           owner_account_id?: string | null
+          pets_allowed?: boolean | null
           price?: string
           price_type?: string
           property_type?: string
