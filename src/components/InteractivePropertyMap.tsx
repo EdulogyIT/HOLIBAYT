@@ -80,7 +80,6 @@ const InteractivePropertyMap = ({ currentProperty }: InteractivePropertyMapProps
 
       if (error) throw error;
       
-      // Map data to include price_currency fallback
       const mappedData = (data || []).map(prop => ({
         ...prop,
         price_currency: 'DZD'
@@ -94,7 +93,7 @@ const InteractivePropertyMap = ({ currentProperty }: InteractivePropertyMapProps
     }
   };
 
-  // Create custom icon for current property (larger, highlighted)
+  // Create custom icon for current property
   const currentPropertyIcon = L.divIcon({
     html: `<div style="background: hsl(var(--primary)); color: white; width: 48px; height: 48px; border-radius: 50% 50% 50% 0; transform: rotate(-45deg); display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 8px rgba(0,0,0,0.3); border: 3px solid white;">
       <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="transform: rotate(45deg)">
@@ -141,20 +140,19 @@ const InteractivePropertyMap = ({ currentProperty }: InteractivePropertyMapProps
       <CardContent className="space-y-4">
         <div className="w-full h-96 rounded-lg overflow-hidden border-2 border-border">
           <MapContainer
-            {...({ center: currentCoords, zoom: 13 } as any)}
+            center={currentCoords}
+            zoom={13}
             style={{ height: '100%', width: '100%' }}
             scrollWheelZoom={true}
           >
             <TileLayer
-              {...({ 
-                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-                url: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-              } as any)}
+              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             />
             <MapController center={currentCoords} />
 
             {/* Current Property Marker */}
-            <Marker {...({ position: currentCoords, icon: currentPropertyIcon } as any)}>
+            <Marker position={currentCoords} icon={currentPropertyIcon}>
               <Popup>
                 <div className="p-2">
                   <h3 className="font-semibold text-sm mb-1">{currentProperty.title}</h3>
@@ -171,13 +169,11 @@ const InteractivePropertyMap = ({ currentProperty }: InteractivePropertyMapProps
             {nearbyProperties.map((property, index) => (
               <Marker
                 key={property.id}
-                {...({ 
-                  position: getMarkerPosition(index),
-                  icon: createNearbyIcon(property.price),
-                  eventHandlers: {
-                    click: () => navigate(`/property/${property.id}`),
-                  }
-                } as any)}
+                position={getMarkerPosition(index)}
+                icon={createNearbyIcon(property.price)}
+                eventHandlers={{
+                  click: () => navigate(`/property/${property.id}`),
+                }}
               >
                 <Popup>
                   <div className="p-2 cursor-pointer" onClick={() => navigate(`/property/${property.id}`)}>
