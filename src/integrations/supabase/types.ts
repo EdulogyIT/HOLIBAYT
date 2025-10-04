@@ -587,6 +587,7 @@ export type Database = {
           owner_account_id: string | null
           pets_allowed: boolean | null
           price: string
+          price_currency: string | null
           price_type: string
           property_type: string
           status: string | null
@@ -619,6 +620,7 @@ export type Database = {
           owner_account_id?: string | null
           pets_allowed?: boolean | null
           price: string
+          price_currency?: string | null
           price_type: string
           property_type: string
           status?: string | null
@@ -651,6 +653,7 @@ export type Database = {
           owner_account_id?: string | null
           pets_allowed?: boolean | null
           price?: string
+          price_currency?: string | null
           price_type?: string
           property_type?: string
           status?: string | null

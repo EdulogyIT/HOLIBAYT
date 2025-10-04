@@ -11,6 +11,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { toast } from "sonner";
 
 interface Notification {
   id: string;
@@ -37,11 +38,20 @@ export const NotificationBell = () => {
     const channel = supabase
       .channel('notifications')
       .on('postgres_changes', {
-        event: '*',
+        event: 'INSERT',
         schema: 'public',
         table: 'notifications',
         filter: `user_id=eq.${user.id}`
-      }, () => {
+      }, (payload) => {
+        const newNotification = payload.new as Notification;
+        
+        // Show immediate toast popup
+        toast.success(newNotification.title, {
+          description: newNotification.message,
+          duration: 5000,
+        });
+        
+        // Refresh notifications list
         fetchNotifications();
       })
       .subscribe();
