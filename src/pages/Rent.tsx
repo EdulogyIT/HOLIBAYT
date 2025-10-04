@@ -172,7 +172,7 @@ const Rent = () => {
           )}
           <div className="flex items-center">
             <Square className="h-4 w-4 mr-1" />
-            <span>{num(property.area)} m²</span>
+            <span>{num(property.area)} {t("areaUnit")}</span>
           </div>
         </div>
 

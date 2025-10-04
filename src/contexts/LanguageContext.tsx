@@ -45,6 +45,11 @@ const allTranslations = {
     bedrooms: 'Chambres',
     bathrooms: 'Salles de bain',
     area: 'Surface',
+    areaUnit: 'm²',
+    perDay: '/jour',
+    perWeek: '/semaine',
+    perMonth: '/mois',
+    perNight: '/nuit',
     
     // Common
     search: 'Rechercher',
@@ -666,6 +671,11 @@ const allTranslations = {
     bedrooms: 'Bedrooms',
     bathrooms: 'Bathrooms',
     area: 'Area',
+    areaUnit: 'm²',
+    perDay: '/day',
+    perWeek: '/week',
+    perMonth: '/month',
+    perNight: '/night',
     
     // Common
     search: 'Search',
@@ -1289,6 +1299,11 @@ const allTranslations = {
     bedrooms: 'غرف النوم',
     bathrooms: 'دورات المياه',
     area: 'المساحة',
+    areaUnit: 'م²',
+    perDay: '/يوم',
+    perWeek: '/أسبوع',
+    perMonth: '/شهر',
+    perNight: '/ليلة',
     
     // Common
     search: 'بحث',
