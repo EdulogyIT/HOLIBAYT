@@ -2,23 +2,59 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { MapPin, Navigation } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import StaticPropertyMap from "@/components/StaticPropertyMap";
+import { useMemo } from "react";
 
 interface PropertyMapWithZoneProps {
-  location: string;
-  address?: string;
-  onZoneSearch?: (zone: string) => void;
+  location: string;            // e.g., "Algiers, Hydra"
+  address?: string;            // full address if available
+  lat?: number;                // coordinates for interactive map
+  lng?: number;
+  zoom?: number;               // optional map zoom (default 15 via StaticPropertyMap)
+  zones?: string[];            // override the default nearby zones
+  onZoneSearch?: (zone: string) => void; // handler invoked on zone click
 }
 
-const PropertyMapWithZone = ({ location, address, onZoneSearch }: PropertyMapWithZoneProps) => {
+const DEFAULT_ZONES = [
+  "Alger Centre",
+  "Hydra",
+  "Bab Ezzouar",
+  "Cheraga",
+  "Dar El Beida",
+  "Kouba",
+];
+
+const PropertyMapWithZone = ({
+  location,
+  address,
+  lat,
+  lng,
+  zoom,
+  zones = DEFAULT_ZONES,
+  onZoneSearch,
+}: PropertyMapWithZoneProps) => {
+  // Try to extract a city to bias Google Maps when we fallback
+  const cityHint = useMemo(() => location.split(",")[0].trim(), [location]);
+
   const handleZoneClick = (zone: string) => {
     if (onZoneSearch) {
       onZoneSearch(zone);
+      return;
     }
+    // Fallback: open Google Maps search for that zone (scoped by city if available)
+    const q = encodeURIComponent(`${zone}${cityHint ? `, ${cityHint}` : ""}`);
+    window.open(`https://www.google.com/maps/search/?api=1&query=${q}`, "_blank");
   };
 
   return (
     <div className="space-y-4">
-      <StaticPropertyMap location={location} address={address} />
+      {/* Interactive map (or pretty static fallback if no coords) */}
+      <StaticPropertyMap
+        location={location}
+        address={address}
+        lat={lat}
+        lng={lng}
+        zoom={zoom}
+      />
 
       {/* Zone Navigation */}
       <Card>
@@ -30,14 +66,7 @@ const PropertyMapWithZone = ({ location, address, onZoneSearch }: PropertyMapWit
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-2 gap-2">
-            {[
-              "Alger Centre",
-              "Hydra",
-              "Bab Ezzouar",
-              "Cheraga",
-              "Dar El Beida",
-              "Kouba"
-            ].map((zone) => (
+            {zones.map((zone) => (
               <Button
                 key={zone}
                 variant="outline"
