@@ -1,16 +1,15 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { MapPin, Navigation } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import InteractivePropertyMap from "@/components/InteractivePropertyMap";
+import StaticPropertyMap from "@/components/StaticPropertyMap";
 
 interface PropertyMapWithZoneProps {
   location: string;
   address?: string;
   onZoneSearch?: (zone: string) => void;
-  currentProperty?: any;
 }
 
-const PropertyMapWithZone = ({ location, address, onZoneSearch, currentProperty }: PropertyMapWithZoneProps) => {
+const PropertyMapWithZone = ({ location, address, onZoneSearch }: PropertyMapWithZoneProps) => {
   const handleZoneClick = (zone: string) => {
     if (onZoneSearch) {
       onZoneSearch(zone);
@@ -19,22 +18,7 @@ const PropertyMapWithZone = ({ location, address, onZoneSearch, currentProperty 
 
   return (
     <div className="space-y-4">
-      {currentProperty ? (
-        <InteractivePropertyMap currentProperty={currentProperty} />
-      ) : (
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center font-playfair">
-              <MapPin className="w-5 h-5 mr-2" />
-              Location
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-sm text-muted-foreground">{location}</p>
-            {address && <p className="text-xs text-muted-foreground mt-1">{address}</p>}
-          </CardContent>
-        </Card>
-      )}
+      <StaticPropertyMap location={location} address={address} />
 
       {/* Zone Navigation */}
       <Card>

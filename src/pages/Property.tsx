@@ -10,7 +10,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { useCurrency } from "@/contexts/CurrencyContext";
 import { useScrollToTop } from "@/hooks/useScrollToTop";
 import { useEffect, useState } from "react";
-import InteractivePropertyMap from "@/components/InteractivePropertyMap";
+import StaticPropertyMap from "@/components/StaticPropertyMap";
 import AIChatBox from "@/components/AIChatBox";
 import PropertyDatePicker from "@/components/PropertyDatePicker";
 import { PaymentButton } from "@/components/PaymentButton";
@@ -30,7 +30,6 @@ interface Property {
   full_address?: string;
   price: string;
   price_type: string;
-  price_currency?: string;
   category: string;
   bedrooms?: string;
   bathrooms?: string;
@@ -247,8 +246,11 @@ const Property = () => {
                    </div>
                  </CardContent>
                </Card>
-                  {/* Map */}
-                  <InteractivePropertyMap currentProperty={property} />
+                 {/* Map */}
+                 <StaticPropertyMap 
+                   location={`${property.city}, ${property.location}`}
+                   address={property.full_address || `${property.city}, ${property.location}`}
+                 />
                 
                 {/* Reviews Section - Only for Short Stay */}
                 {property.category === 'short-stay' && property.user_id && (
