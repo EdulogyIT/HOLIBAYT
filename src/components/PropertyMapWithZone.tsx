@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { MapPin, Navigation } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import MapboxMap from "@/components/MapboxMap";
+import StaticPropertyMap from "@/components/StaticPropertyMap";
 
 interface PropertyMapWithZoneProps {
   location: string;
@@ -18,17 +18,7 @@ const PropertyMapWithZone = ({ location, address, onZoneSearch }: PropertyMapWit
 
   return (
     <div className="space-y-4">
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center font-playfair">
-            <MapPin className="w-5 h-5 mr-2" />
-            Property Location
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <MapboxMap location={location} address={address} />
-        </CardContent>
-      </Card>
+      <StaticPropertyMap location={location} address={address} />
 
       {/* Zone Navigation */}
       <Card>

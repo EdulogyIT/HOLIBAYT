@@ -10,7 +10,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { useCurrency } from "@/contexts/CurrencyContext";
 import { useScrollToTop } from "@/hooks/useScrollToTop";
 import { useEffect, useState } from "react";
-import MapboxMap from "@/components/MapboxMap";
+import StaticPropertyMap from "@/components/StaticPropertyMap";
 import AIChatBox from "@/components/AIChatBox";
 import PropertyDatePicker from "@/components/PropertyDatePicker";
 import { PaymentButton } from "@/components/PaymentButton";
@@ -246,11 +246,11 @@ const Property = () => {
                    </div>
                  </CardContent>
                </Card>
-                {/* Map */}
-                <MapboxMap 
-                  location={`${property.city}, ${property.location}`}
-                  address={property.full_address || `${property.city}, ${property.location}`}
-                />
+                 {/* Map */}
+                 <StaticPropertyMap 
+                   location={`${property.city}, ${property.location}`}
+                   address={property.full_address || `${property.city}, ${property.location}`}
+                 />
                 
                 {/* Reviews Section - Only for Short Stay */}
                 {property.category === 'short-stay' && property.user_id && (
