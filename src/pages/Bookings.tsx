@@ -37,6 +37,7 @@ interface BookingWithProperty {
     contact_email: string;
     contact_phone: string;
     user_id: string;
+    category: string;
   };
 }
 

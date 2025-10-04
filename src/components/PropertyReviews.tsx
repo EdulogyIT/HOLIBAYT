@@ -76,18 +76,37 @@ export const PropertyReviews = ({ propertyId, hostUserId }: PropertyReviewsProps
   const fetchReviews = async () => {
     const { data, error } = await supabase
       .from('reviews')
-      .select(`
-        *,
-        profiles:user_id (name, created_at),
-        bookings:booking_id (check_in_date, check_out_date)
-      `)
+      .select('*')
       .eq('property_id', propertyId)
       .order('created_at', { ascending: false });
 
     if (!error && data) {
-      setReviews(data as Review[]);
-      if (data.length > 0) {
-        const avg = data.reduce((sum, r) => sum + r.rating, 0) / data.length;
+      // Fetch profile data for each review
+      const reviewsWithProfiles = await Promise.all(
+        data.map(async (review) => {
+          const { data: profile } = await supabase
+            .from('profiles')
+            .select('name, created_at')
+            .eq('id', review.user_id)
+            .single();
+          
+          const { data: booking } = await supabase
+            .from('bookings')
+            .select('check_in_date, check_out_date')
+            .eq('id', review.booking_id)
+            .maybeSingle();
+          
+          return {
+            ...review,
+            profiles: profile,
+            bookings: booking
+          };
+        })
+      );
+      
+      setReviews(reviewsWithProfiles as Review[]);
+      if (reviewsWithProfiles.length > 0) {
+        const avg = reviewsWithProfiles.reduce((sum, r) => sum + r.rating, 0) / reviewsWithProfiles.length;
         setAverageRating(Math.round(avg * 100) / 100);
       }
     }
