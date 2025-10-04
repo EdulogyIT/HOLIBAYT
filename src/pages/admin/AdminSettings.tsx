@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -10,24 +10,164 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Settings, Shield, Bell, Globe, DollarSign, Mail } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { toast } from 'sonner';
+import { supabase } from '@/integrations/supabase/client';
 
 export default function AdminSettings() {
   const { t } = useLanguage();
-  const [emailNotifications, setEmailNotifications] = useState(true);
+  const [loading, setLoading] = useState(true);
+  
+  // General settings
+  const [platformName, setPlatformName] = useState('Holibayt');
+  const [supportEmail, setSupportEmail] = useState('contact@holibayt.com');
   const [maintenanceMode, setMaintenanceMode] = useState(false);
-  const [autoApproveListings, setAutoApproveListings] = useState(false);
+  
+  // Commission settings
+  const [defaultCommission, setDefaultCommission] = useState(15);
+  const [shortStayCommission, setShortStayCommission] = useState(12);
+  const [rentalCommission, setRentalCommission] = useState(10);
+  const [saleCommission, setSaleCommission] = useState(5);
+  const [minimumCommission, setMinimumCommission] = useState(1000);
+  
+  // Security settings
+  const [maxLoginAttempts, setMaxLoginAttempts] = useState(5);
+  const [sessionTimeout, setSessionTimeout] = useState(3600);
+  const [requireEmailVerification, setRequireEmailVerification] = useState(true);
+  
+  // Notification settings
+  const [emailNotifications, setEmailNotifications] = useState(true);
+  const [pushNotifications, setPushNotifications] = useState(true);
+  const [smsNotifications, setSmsNotifications] = useState(false);
+  
+  // Email settings
+  const [smtpHost, setSmtpHost] = useState('');
+  const [smtpPort, setSmtpPort] = useState(587);
+  const [fromEmail, setFromEmail] = useState('noreply@holibayt.com');
+  const [fromName, setFromName] = useState('Holibayt');
 
-  const handleSaveGeneral = () => {
-    toast.success('General settings saved successfully');
+  useEffect(() => {
+    fetchSettings();
+  }, []);
+
+  const fetchSettings = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('platform_settings')
+        .select('*');
+
+      if (error) throw error;
+
+      data?.forEach(setting => {
+        const value = setting.setting_value as any;
+        switch (setting.setting_key) {
+          case 'general_settings':
+            setPlatformName(value?.platform_name || 'Holibayt');
+            setSupportEmail(value?.support_email || 'contact@holibayt.com');
+            setMaintenanceMode(value?.maintenance_mode || false);
+            break;
+          case 'commission_rates':
+            setDefaultCommission(value?.default || 15);
+            setShortStayCommission(value?.short_stay || 12);
+            setRentalCommission(value?.rental || 10);
+            setSaleCommission(value?.sale || 5);
+            setMinimumCommission(value?.minimum_amount || 1000);
+            break;
+          case 'security_settings':
+            setMaxLoginAttempts(value?.max_login_attempts || 5);
+            setSessionTimeout(value?.session_timeout || 3600);
+            setRequireEmailVerification(value?.require_email_verification !== false);
+            break;
+          case 'notification_settings':
+            setEmailNotifications(value?.email_notifications !== false);
+            setPushNotifications(value?.push_notifications !== false);
+            setSmsNotifications(value?.sms_notifications || false);
+            break;
+          case 'email_settings':
+            setSmtpHost(value?.smtp_host || '');
+            setSmtpPort(value?.smtp_port || 587);
+            setFromEmail(value?.from_email || 'noreply@holibayt.com');
+            setFromName(value?.from_name || 'Holibayt');
+            break;
+        }
+      });
+    } catch (error) {
+      console.error('Error fetching settings:', error);
+      toast.error('Failed to load settings');
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleSaveCommission = () => {
-    toast.success('Commission settings saved successfully');
+  const updateSetting = async (key: string, value: any) => {
+    try {
+      const { error } = await supabase
+        .from('platform_settings')
+        .update({ setting_value: value })
+        .eq('setting_key', key);
+
+      if (error) throw error;
+      return true;
+    } catch (error) {
+      console.error('Error updating setting:', error);
+      return false;
+    }
   };
 
-  const handleSaveNotifications = () => {
-    toast.success('Notification settings saved successfully');
+  const handleSaveGeneral = async () => {
+    const success = await updateSetting('general_settings', {
+      platform_name: platformName,
+      support_email: supportEmail,
+      maintenance_mode: maintenanceMode
+    });
+    if (success) toast.success('General settings saved successfully');
+    else toast.error('Failed to save general settings');
   };
+
+  const handleSaveCommission = async () => {
+    const success = await updateSetting('commission_rates', {
+      default: defaultCommission,
+      short_stay: shortStayCommission,
+      rental: rentalCommission,
+      sale: saleCommission,
+      minimum_amount: minimumCommission
+    });
+    if (success) toast.success('Commission settings saved successfully');
+    else toast.error('Failed to save commission settings');
+  };
+
+  const handleSaveSecurity = async () => {
+    const success = await updateSetting('security_settings', {
+      max_login_attempts: maxLoginAttempts,
+      session_timeout: sessionTimeout,
+      require_email_verification: requireEmailVerification
+    });
+    if (success) toast.success('Security settings saved successfully');
+    else toast.error('Failed to save security settings');
+  };
+
+  const handleSaveNotifications = async () => {
+    const success = await updateSetting('notification_settings', {
+      email_notifications: emailNotifications,
+      push_notifications: pushNotifications,
+      sms_notifications: smsNotifications
+    });
+    if (success) toast.success('Notification settings saved successfully');
+    else toast.error('Failed to save notification settings');
+  };
+
+  const handleSaveEmail = async () => {
+    const success = await updateSetting('email_settings', {
+      smtp_host: smtpHost,
+      smtp_port: smtpPort,
+      from_email: fromEmail,
+      from_name: fromName
+    });
+    if (success) toast.success('Email settings saved successfully');
+    else toast.error('Failed to save email settings');
+  };
+
+  if (loading) {
+    return <div className="p-6">Loading settings...</div>;
+  }
 
   return (
     <div className="space-y-6">
@@ -72,41 +212,22 @@ export default function AdminSettings() {
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="space-y-2">
-                <Label htmlFor="siteName">Site Name</Label>
-                <Input id="siteName" defaultValue="Holibayt" />
+                <Label htmlFor="siteName">Platform Name</Label>
+                <Input 
+                  id="siteName" 
+                  value={platformName}
+                  onChange={(e) => setPlatformName(e.target.value)}
+                />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="siteUrl">Site URL</Label>
-                <Input id="siteUrl" defaultValue="https://holibayt.com" />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="currency">Default Currency</Label>
-                <Select defaultValue="DZD">
-                  <SelectTrigger id="currency">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="DZD">DZD - Algerian Dinar</SelectItem>
-                    <SelectItem value="USD">USD - US Dollar</SelectItem>
-                    <SelectItem value="EUR">EUR - Euro</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="language">Default Language</Label>
-                <Select defaultValue="en">
-                  <SelectTrigger id="language">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="en">English</SelectItem>
-                    <SelectItem value="fr">Français</SelectItem>
-                    <SelectItem value="ar">العربية</SelectItem>
-                  </SelectContent>
-                </Select>
+                <Label htmlFor="supportEmail">Support Email</Label>
+                <Input 
+                  id="supportEmail" 
+                  type="email"
+                  value={supportEmail}
+                  onChange={(e) => setSupportEmail(e.target.value)}
+                />
               </div>
 
               <Separator />
@@ -124,20 +245,7 @@ export default function AdminSettings() {
                 />
               </div>
 
-              <div className="flex items-center justify-between">
-                <div className="space-y-0.5">
-                  <Label>Auto-approve Listings</Label>
-                  <p className="text-sm text-muted-foreground">
-                    Automatically approve new property listings
-                  </p>
-                </div>
-                <Switch
-                  checked={autoApproveListings}
-                  onCheckedChange={setAutoApproveListings}
-                />
-              </div>
-
-              <Button onClick={handleSaveGeneral}>Save Changes</Button>
+              <Button onClick={handleSaveGeneral}>Save General Settings</Button>
             </CardContent>
           </Card>
         </TabsContent>
@@ -152,13 +260,23 @@ export default function AdminSettings() {
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="space-y-2">
-                <Label htmlFor="sessionTimeout">Session Timeout (minutes)</Label>
-                <Input id="sessionTimeout" type="number" defaultValue="60" />
+                <Label htmlFor="sessionTimeout">Session Timeout (seconds)</Label>
+                <Input 
+                  id="sessionTimeout" 
+                  type="number" 
+                  value={sessionTimeout}
+                  onChange={(e) => setSessionTimeout(Number(e.target.value))}
+                />
               </div>
 
               <div className="space-y-2">
                 <Label htmlFor="maxLoginAttempts">Max Login Attempts</Label>
-                <Input id="maxLoginAttempts" type="number" defaultValue="5" />
+                <Input 
+                  id="maxLoginAttempts" 
+                  type="number" 
+                  value={maxLoginAttempts}
+                  onChange={(e) => setMaxLoginAttempts(Number(e.target.value))}
+                />
               </div>
 
               <div className="flex items-center justify-between">
@@ -168,20 +286,13 @@ export default function AdminSettings() {
                     Users must verify their email before using the platform
                   </p>
                 </div>
-                <Switch defaultChecked />
+                <Switch 
+                  checked={requireEmailVerification}
+                  onCheckedChange={setRequireEmailVerification}
+                />
               </div>
 
-              <div className="flex items-center justify-between">
-                <div className="space-y-0.5">
-                  <Label>Two-Factor Authentication</Label>
-                  <p className="text-sm text-muted-foreground">
-                    Enable 2FA for admin accounts
-                  </p>
-                </div>
-                <Switch />
-              </div>
-
-              <Button>Save Security Settings</Button>
+              <Button onClick={handleSaveSecurity}>Save Security Settings</Button>
             </CardContent>
           </Card>
         </TabsContent>
@@ -197,7 +308,13 @@ export default function AdminSettings() {
             <CardContent className="space-y-6">
               <div className="space-y-2">
                 <Label htmlFor="defaultCommission">Default Commission Rate (%)</Label>
-                <Input id="defaultCommission" type="number" defaultValue="15" step="0.1" />
+                <Input 
+                  id="defaultCommission" 
+                  type="number" 
+                  step="0.1"
+                  value={defaultCommission}
+                  onChange={(e) => setDefaultCommission(Number(e.target.value))}
+                />
                 <p className="text-sm text-muted-foreground">
                   Applied to all new properties unless specified otherwise
                 </p>
@@ -205,24 +322,47 @@ export default function AdminSettings() {
 
               <div className="space-y-2">
                 <Label htmlFor="shortStayCommission">Short-Stay Commission (%)</Label>
-                <Input id="shortStayCommission" type="number" defaultValue="12" step="0.1" />
+                <Input 
+                  id="shortStayCommission" 
+                  type="number" 
+                  step="0.1"
+                  value={shortStayCommission}
+                  onChange={(e) => setShortStayCommission(Number(e.target.value))}
+                />
               </div>
 
               <div className="space-y-2">
                 <Label htmlFor="rentCommission">Rental Commission (%)</Label>
-                <Input id="rentCommission" type="number" defaultValue="10" step="0.1" />
+                <Input 
+                  id="rentCommission" 
+                  type="number" 
+                  step="0.1"
+                  value={rentalCommission}
+                  onChange={(e) => setRentalCommission(Number(e.target.value))}
+                />
               </div>
 
               <div className="space-y-2">
                 <Label htmlFor="saleCommission">Sale Commission (%)</Label>
-                <Input id="saleCommission" type="number" defaultValue="5" step="0.1" />
+                <Input 
+                  id="saleCommission" 
+                  type="number" 
+                  step="0.1"
+                  value={saleCommission}
+                  onChange={(e) => setSaleCommission(Number(e.target.value))}
+                />
               </div>
 
               <Separator />
 
               <div className="space-y-2">
                 <Label htmlFor="minCommission">Minimum Commission Amount (DZD)</Label>
-                <Input id="minCommission" type="number" defaultValue="1000" />
+                <Input 
+                  id="minCommission" 
+                  type="number" 
+                  value={minimumCommission}
+                  onChange={(e) => setMinimumCommission(Number(e.target.value))}
+                />
               </div>
 
               <Button onClick={handleSaveCommission}>Save Commission Settings</Button>
@@ -254,42 +394,28 @@ export default function AdminSettings() {
 
               <div className="flex items-center justify-between">
                 <div className="space-y-0.5">
-                  <Label>New User Notifications</Label>
+                  <Label>Push Notifications</Label>
                   <p className="text-sm text-muted-foreground">
-                    Notify when new users register
+                    Send browser push notifications
                   </p>
                 </div>
-                <Switch defaultChecked />
+                <Switch
+                  checked={pushNotifications}
+                  onCheckedChange={setPushNotifications}
+                />
               </div>
 
               <div className="flex items-center justify-between">
                 <div className="space-y-0.5">
-                  <Label>New Property Notifications</Label>
+                  <Label>SMS Notifications</Label>
                   <p className="text-sm text-muted-foreground">
-                    Notify when new properties are listed
+                    Send notifications via SMS
                   </p>
                 </div>
-                <Switch defaultChecked />
-              </div>
-
-              <div className="flex items-center justify-between">
-                <div className="space-y-0.5">
-                  <Label>Booking Notifications</Label>
-                  <p className="text-sm text-muted-foreground">
-                    Notify when new bookings are made
-                  </p>
-                </div>
-                <Switch defaultChecked />
-              </div>
-
-              <div className="flex items-center justify-between">
-                <div className="space-y-0.5">
-                  <Label>Payment Notifications</Label>
-                  <p className="text-sm text-muted-foreground">
-                    Notify about payment transactions
-                  </p>
-                </div>
-                <Switch defaultChecked />
+                <Switch 
+                  checked={smsNotifications}
+                  onCheckedChange={setSmsNotifications}
+                />
               </div>
 
               <Button onClick={handleSaveNotifications}>Save Notification Settings</Button>
@@ -308,35 +434,44 @@ export default function AdminSettings() {
             <CardContent className="space-y-6">
               <div className="space-y-2">
                 <Label htmlFor="smtpHost">SMTP Host</Label>
-                <Input id="smtpHost" placeholder="smtp.example.com" />
+                <Input 
+                  id="smtpHost" 
+                  placeholder="smtp.example.com" 
+                  value={smtpHost}
+                  onChange={(e) => setSmtpHost(e.target.value)}
+                />
               </div>
 
               <div className="space-y-2">
                 <Label htmlFor="smtpPort">SMTP Port</Label>
-                <Input id="smtpPort" type="number" defaultValue="587" />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="smtpUser">SMTP Username</Label>
-                <Input id="smtpUser" type="email" placeholder="noreply@holibayt.com" />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="smtpPassword">SMTP Password</Label>
-                <Input id="smtpPassword" type="password" />
+                <Input 
+                  id="smtpPort" 
+                  type="number" 
+                  value={smtpPort}
+                  onChange={(e) => setSmtpPort(Number(e.target.value))}
+                />
               </div>
 
               <div className="space-y-2">
                 <Label htmlFor="fromEmail">From Email</Label>
-                <Input id="fromEmail" type="email" defaultValue="noreply@holibayt.com" />
+                <Input 
+                  id="fromEmail" 
+                  type="email" 
+                  value={fromEmail}
+                  onChange={(e) => setFromEmail(e.target.value)}
+                />
               </div>
 
               <div className="space-y-2">
                 <Label htmlFor="fromName">From Name</Label>
-                <Input id="fromName" defaultValue="Holibayt" />
+                <Input 
+                  id="fromName" 
+                  value={fromName}
+                  onChange={(e) => setFromName(e.target.value)}
+                />
               </div>
 
-              <Button>Save Email Settings</Button>
+              <Button onClick={handleSaveEmail}>Save Email Settings</Button>
             </CardContent>
           </Card>
         </TabsContent>

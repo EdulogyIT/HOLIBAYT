@@ -9,7 +9,7 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Plus, CreditCard, Building2, CheckCircle, AlertCircle, Trash2 } from 'lucide-react';
+import { Plus, CreditCard, Building2, CheckCircle, AlertCircle, Trash2, DollarSign, Clock } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 interface PaymentAccount {
@@ -53,6 +53,9 @@ export default function HostPayouts() {
   const [commissionTransactions, setCommissionTransactions] = useState<CommissionTransaction[]>([]);
   const [loading, setLoading] = useState(true);
   const [showAddAccount, setShowAddAccount] = useState(false);
+  const [totalEarnings, setTotalEarnings] = useState(0);
+  const [withdrawnAmount, setWithdrawnAmount] = useState(0);
+  const [pendingAmount, setPendingAmount] = useState(0);
   const [formData, setFormData] = useState({
     bank_name: '',
     account_holder_name: '',
@@ -108,6 +111,17 @@ export default function HostPayouts() {
 
       if (error) throw error;
       setCommissionTransactions(data || []);
+
+      // Calculate earnings breakdown
+      const total = data?.reduce((sum, t) => sum + Number(t.host_amount), 0) || 0;
+      const withdrawn = data?.filter(t => t.status === 'completed')
+        .reduce((sum, t) => sum + Number(t.host_amount), 0) || 0;
+      const pending = data?.filter(t => t.status === 'pending')
+        .reduce((sum, t) => sum + Number(t.host_amount), 0) || 0;
+
+      setTotalEarnings(total);
+      setWithdrawnAmount(withdrawn);
+      setPendingAmount(pending);
     } catch (error) {
       console.error('Error fetching commission transactions:', error);
     } finally {
@@ -182,13 +196,6 @@ export default function HostPayouts() {
     }
   };
 
-  const totalEarnings = commissionTransactions
-    .filter(t => t.status === 'completed')
-    .reduce((sum, t) => sum + t.host_amount, 0);
-
-  const pendingEarnings = commissionTransactions
-    .filter(t => t.status === 'pending')
-    .reduce((sum, t) => sum + t.host_amount, 0);
 
   if (loading) {
     return (
@@ -211,24 +218,37 @@ export default function HostPayouts() {
       </div>
 
       {/* Earnings Overview */}
-      <div className="grid gap-4 md:grid-cols-3">
+      <div className="grid gap-4 md:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Earnings</CardTitle>
-            <CreditCard className="h-4 w-4 text-muted-foreground" />
+            <DollarSign className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{formatPrice(totalEarnings)}</div>
+            <p className="text-xs text-muted-foreground mt-1">All-time earnings</p>
           </CardContent>
         </Card>
-        
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Withdrawn</CardTitle>
+            <CheckCircle className="h-4 w-4 text-green-600" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-green-600">{formatPrice(withdrawnAmount)}</div>
+            <p className="text-xs text-muted-foreground mt-1">Successfully paid out</p>
+          </CardContent>
+        </Card>
+
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Pending Payouts</CardTitle>
-            <AlertCircle className="h-4 w-4 text-muted-foreground" />
+            <Clock className="h-4 w-4 text-yellow-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{formatPrice(pendingEarnings)}</div>
+            <div className="text-2xl font-bold text-yellow-600">{formatPrice(pendingAmount)}</div>
+            <p className="text-xs text-muted-foreground mt-1">Awaiting transfer</p>
           </CardContent>
         </Card>
         
@@ -239,6 +259,7 @@ export default function HostPayouts() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{paymentAccounts.length}</div>
+            <p className="text-xs text-muted-foreground mt-1">Active accounts</p>
           </CardContent>
         </Card>
       </div>
