@@ -146,10 +146,10 @@ const BlogPost = () => {
           </header>
 
           {/* Featured Image */}
-          {blog.image_url && (
+          {blog.image_url && getImageSrc(blog.image_url) && (
             <div className="mb-8 rounded-lg overflow-hidden">
               <img 
-                src={getImageSrc(blog.image_url) || blog.image_url} 
+                src={getImageSrc(blog.image_url) || ''} 
                 alt={blog.title}
                 className="w-full h-auto object-cover"
               />
