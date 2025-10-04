@@ -13,6 +13,7 @@ import { format } from "date-fns";
 import { useCurrency } from "@/contexts/CurrencyContext";
 import { useToast } from "@/hooks/use-toast";
 import { CancelBookingButton } from "@/components/CancelBookingButton";
+import { ReviewDialog } from "@/components/ReviewDialog";
 
 interface BookingWithProperty {
   id: string;
@@ -49,6 +50,9 @@ const Bookings = () => {
   const [bookings, setBookings] = useState<BookingWithProperty[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [reviewDialogOpen, setReviewDialogOpen] = useState(false);
+  const [selectedBooking, setSelectedBooking] = useState<BookingWithProperty | null>(null);
+  const [reviewedBookings, setReviewedBookings] = useState<Set<string>>(new Set());
 
   // Fetch user's bookings with property details
   const fetchBookings = async () => {
@@ -81,7 +85,8 @@ const Bookings = () => {
             contact_name,
             contact_email,
             contact_phone,
-            user_id
+            user_id,
+            category
           )
         `)
         .eq('user_id', user.id)
@@ -93,6 +98,18 @@ const Bookings = () => {
       }
 
       setBookings(data as BookingWithProperty[] || []);
+      
+      // Check which bookings have reviews
+      if (data && data.length > 0) {
+        const { data: reviews } = await supabase
+          .from('reviews')
+          .select('booking_id')
+          .in('booking_id', data.map(b => b.id));
+        
+        if (reviews) {
+          setReviewedBookings(new Set(reviews.map(r => r.booking_id)));
+        }
+      }
     } catch (err) {
       console.error('Error fetching bookings:', err);
       setError(err instanceof Error ? err.message : 'Failed to fetch bookings');
@@ -143,9 +160,21 @@ const Bookings = () => {
     fetchBookings();
   };
 
+  const handleRateStay = (booking: BookingWithProperty) => {
+    setSelectedBooking(booking);
+    setReviewDialogOpen(true);
+  };
+
+  const handleReviewSubmitted = () => {
+    fetchBookings();
+  };
+
   const BookingCard = ({ booking, isPast = false }: { booking: BookingWithProperty; isPast?: boolean }) => {
     const property = booking.properties;
     const primaryImage = property?.images?.[0];
+    const isShortStay = property?.category === 'short-stay';
+    const hasReview = reviewedBookings.has(booking.id);
+    const canReview = isPast && isShortStay && !hasReview;
     
     return (
       <Card className="overflow-hidden hover:shadow-md transition-shadow">
@@ -231,10 +260,24 @@ const Bookings = () => {
                     onCancelSuccess={handleBookingCancelled}
                   />
                 )}
-                {isPast && (
-                  <Button variant="outline" size="sm">
+                {canReview && (
+                  <Button 
+                    variant="default" 
+                    size="sm"
+                    onClick={() => handleRateStay(booking)}
+                  >
                     <Star className="h-4 w-4 mr-1" />
                     Rate Stay
+                  </Button>
+                )}
+                {hasReview && isPast && isShortStay && (
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={() => window.open(`/property/${property.id}`, '_blank')}
+                  >
+                    <Star className="h-4 w-4 mr-1 fill-yellow-400 text-yellow-400" />
+                    View Your Review
                   </Button>
                 )}
               </div>
@@ -345,6 +388,18 @@ const Bookings = () => {
         </div>
       </main>
       <Footer />
+      
+      {/* Review Dialog */}
+      {selectedBooking && (
+        <ReviewDialog
+          open={reviewDialogOpen}
+          onOpenChange={setReviewDialogOpen}
+          bookingId={selectedBooking.id}
+          propertyId={selectedBooking.properties.id}
+          propertyTitle={selectedBooking.properties.title}
+          onReviewSubmitted={handleReviewSubmitted}
+        />
+      )}
     </div>
   );
 };

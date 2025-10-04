@@ -4,11 +4,13 @@ import { Button } from './ui/button';
 import { Textarea } from './ui/textarea';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { Progress } from './ui/progress';
-import { Star, Trophy } from 'lucide-react';
+import { Badge } from './ui/badge';
+import { Star, Trophy, Sparkles, CheckCircle, Key, MessageCircle, MapPin, DollarSign, Award, ChevronDown, ChevronUp } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { format, differenceInYears } from 'date-fns';
 
 interface PropertyReviewsProps {
   propertyId: string;
@@ -27,6 +29,14 @@ interface Review {
   comment: string;
   created_at: string;
   user_id: string;
+  profiles?: {
+    name: string;
+    created_at: string;
+  };
+  bookings?: {
+    check_in_date: string;
+    check_out_date: string;
+  };
 }
 
 interface Profile {
@@ -34,6 +44,8 @@ interface Profile {
   is_superhost: boolean;
   average_rating: number;
   total_reviews: number;
+  created_at: string;
+  email: string;
 }
 
 export const PropertyReviews = ({ propertyId, hostUserId }: PropertyReviewsProps) => {
@@ -64,12 +76,16 @@ export const PropertyReviews = ({ propertyId, hostUserId }: PropertyReviewsProps
   const fetchReviews = async () => {
     const { data, error } = await supabase
       .from('reviews')
-      .select('*')
+      .select(`
+        *,
+        profiles:user_id (name, created_at),
+        bookings:booking_id (check_in_date, check_out_date)
+      `)
       .eq('property_id', propertyId)
       .order('created_at', { ascending: false });
 
     if (!error && data) {
-      setReviews(data);
+      setReviews(data as Review[]);
       if (data.length > 0) {
         const avg = data.reduce((sum, r) => sum + r.rating, 0) / data.length;
         setAverageRating(Math.round(avg * 100) / 100);
@@ -80,7 +96,7 @@ export const PropertyReviews = ({ propertyId, hostUserId }: PropertyReviewsProps
   const fetchHostProfile = async () => {
     const { data, error } = await supabase
       .from('profiles')
-      .select('name, is_superhost, average_rating, total_reviews')
+      .select('name, is_superhost, average_rating, total_reviews, created_at, email')
       .eq('id', hostUserId)
       .single();
 
@@ -169,43 +185,110 @@ export const PropertyReviews = ({ propertyId, hostUserId }: PropertyReviewsProps
   };
 
   const breakdown = getRatingBreakdown();
+  const isGuestFavorite = averageRating >= 4.8 && reviews.length >= 5;
+  const yearsHosting = hostProfile ? differenceInYears(new Date(), new Date(hostProfile.created_at)) : 0;
+
+  const [expandedReviews, setExpandedReviews] = useState<Record<string, boolean>>({});
+
+  const toggleReviewExpansion = (reviewId: string) => {
+    setExpandedReviews(prev => ({ ...prev, [reviewId]: !prev[reviewId] }));
+  };
+
+  const getCategoryIcon = (category: string) => {
+    switch (category) {
+      case 'cleanliness': return Sparkles;
+      case 'accuracy': return CheckCircle;
+      case 'checkin': return Key;
+      case 'communication': return MessageCircle;
+      case 'location': return MapPin;
+      case 'value': return DollarSign;
+      default: return Star;
+    }
+  };
 
   return (
-    <div className="space-y-6">
-      {/* Host Info Section */}
+    <div className="space-y-8">
+      {/* Guest Favorite Badge */}
+      {isGuestFavorite && (
+        <Card className="border-2 border-primary/20 bg-gradient-to-br from-primary/5 to-background">
+          <CardContent className="pt-6">
+            <div className="flex items-center gap-4">
+              <div className="relative">
+                <Award className="h-16 w-16 text-primary" />
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <span className="text-2xl font-bold">{averageRating}</span>
+                </div>
+              </div>
+              <div className="flex-1">
+                <div className="flex items-center gap-2 mb-2">
+                  <Badge className="bg-primary text-primary-foreground">Guest favorite</Badge>
+                  <span className="text-sm text-muted-foreground">Top 5% of stays</span>
+                </div>
+                <p className="text-sm text-muted-foreground">
+                  This home is in the top 5% of eligible listings based on ratings, reviews, and reliability
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Enhanced Host Info Section */}
       {hostProfile && (
         <Card>
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <span>Meet your host</span>
-              {hostProfile.is_superhost && (
-                <Trophy className="h-5 w-5 text-yellow-500" />
-              )}
-            </CardTitle>
+            <CardTitle className="text-2xl">Meet your host</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="flex items-start gap-4">
-              <Avatar className="h-16 w-16">
-                <AvatarFallback>{hostProfile.name?.[0]}</AvatarFallback>
-              </Avatar>
-              <div className="flex-1">
-                <h3 className="font-semibold text-lg">{hostProfile.name}</h3>
+            <div className="flex items-start gap-6">
+              <div className="relative">
+                <Avatar className="h-24 w-24 border-4 border-primary/10">
+                  <AvatarFallback className="text-2xl bg-primary/10">{hostProfile.name?.[0]}</AvatarFallback>
+                </Avatar>
                 {hostProfile.is_superhost && (
-                  <p className="text-sm text-muted-foreground flex items-center gap-1">
+                  <div className="absolute -bottom-2 -right-2 bg-primary text-primary-foreground rounded-full p-2">
                     <Trophy className="h-4 w-4" />
-                    Superhost
-                  </p>
+                  </div>
                 )}
-                <div className="mt-2 flex gap-4 text-sm">
+              </div>
+              <div className="flex-1 space-y-4">
+                <div>
+                  <h3 className="text-2xl font-bold">{hostProfile.name}</h3>
+                  {hostProfile.is_superhost && (
+                    <Badge className="mt-1 bg-primary/10 text-primary border-primary/20">
+                      <Trophy className="h-3 w-3 mr-1" />
+                      Superhost
+                    </Badge>
+                  )}
+                </div>
+                
+                <div className="grid grid-cols-3 gap-4">
                   <div>
-                    <span className="font-semibold">{hostProfile.total_reviews}</span>
-                    <span className="text-muted-foreground"> Reviews</span>
+                    <div className="text-2xl font-bold">{hostProfile.total_reviews}</div>
+                    <div className="text-sm text-muted-foreground">Reviews</div>
                   </div>
-                  <div className="flex items-center gap-1">
-                    <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                    <span className="font-semibold">{hostProfile.average_rating}</span>
-                    <span className="text-muted-foreground"> Rating</span>
+                  <div>
+                    <div className="text-2xl font-bold flex items-center gap-1">
+                      <Star className="h-5 w-5 fill-yellow-400 text-yellow-400" />
+                      {hostProfile.average_rating?.toFixed(2) || '0.00'}
+                    </div>
+                    <div className="text-sm text-muted-foreground">Rating</div>
                   </div>
+                  <div>
+                    <div className="text-2xl font-bold">{yearsHosting}+</div>
+                    <div className="text-sm text-muted-foreground">Years hosting</div>
+                  </div>
+                </div>
+
+                <div className="pt-2">
+                  <Button 
+                    variant="outline" 
+                    className="w-full sm:w-auto"
+                    onClick={() => window.open(`mailto:${hostProfile.email}`, '_blank')}
+                  >
+                    <MessageCircle className="h-4 w-4 mr-2" />
+                    Message host
+                  </Button>
                 </div>
               </div>
             </div>
@@ -213,61 +296,46 @@ export const PropertyReviews = ({ propertyId, hostUserId }: PropertyReviewsProps
         </Card>
       )}
 
-      {/* Overall Rating */}
+      {/* Overall Rating with Category Breakdown */}
       {reviews.length > 0 && (
         <Card>
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Star className="h-6 w-6 fill-yellow-400 text-yellow-400" />
-              <span className="text-3xl font-bold">{averageRating}</span>
-              <span className="text-muted-foreground">· {reviews.length} reviews</span>
-            </CardTitle>
+            <div className="flex items-center gap-3">
+              <Star className="h-8 w-8 fill-yellow-400 text-yellow-400" />
+              <div>
+                <div className="flex items-baseline gap-2">
+                  <span className="text-4xl font-bold">{averageRating}</span>
+                  <span className="text-xl text-muted-foreground">/ 5.0</span>
+                </div>
+                <p className="text-sm text-muted-foreground">{reviews.length} {reviews.length === 1 ? 'review' : 'reviews'}</p>
+              </div>
+            </div>
           </CardHeader>
           <CardContent>
             {breakdown && (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm">Cleanliness</span>
-                    <span className="font-semibold">{breakdown.cleanliness.toFixed(1)}</span>
-                  </div>
-                  <Progress value={(breakdown.cleanliness / 5) * 100} />
-                </div>
-                <div className="space-y-2">
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm">Accuracy</span>
-                    <span className="font-semibold">{breakdown.accuracy.toFixed(1)}</span>
-                  </div>
-                  <Progress value={(breakdown.accuracy / 5) * 100} />
-                </div>
-                <div className="space-y-2">
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm">Check-in</span>
-                    <span className="font-semibold">{breakdown.checkin.toFixed(1)}</span>
-                  </div>
-                  <Progress value={(breakdown.checkin / 5) * 100} />
-                </div>
-                <div className="space-y-2">
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm">Communication</span>
-                    <span className="font-semibold">{breakdown.communication.toFixed(1)}</span>
-                  </div>
-                  <Progress value={(breakdown.communication / 5) * 100} />
-                </div>
-                <div className="space-y-2">
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm">Location</span>
-                    <span className="font-semibold">{breakdown.location.toFixed(1)}</span>
-                  </div>
-                  <Progress value={(breakdown.location / 5) * 100} />
-                </div>
-                <div className="space-y-2">
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm">Value</span>
-                    <span className="font-semibold">{breakdown.value.toFixed(1)}</span>
-                  </div>
-                  <Progress value={(breakdown.value / 5) * 100} />
-                </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {Object.entries({
+                  cleanliness: breakdown.cleanliness,
+                  accuracy: breakdown.accuracy,
+                  checkin: breakdown.checkin,
+                  communication: breakdown.communication,
+                  location: breakdown.location,
+                  value: breakdown.value
+                }).map(([key, value]) => {
+                  const Icon = getCategoryIcon(key);
+                  return (
+                    <div key={key} className="space-y-2">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <Icon className="h-4 w-4 text-muted-foreground" />
+                          <span className="text-sm font-medium capitalize">{key}</span>
+                        </div>
+                        <span className="font-semibold">{value.toFixed(1)}</span>
+                      </div>
+                      <Progress value={(value / 5) * 100} className="h-2" />
+                    </div>
+                  );
+                })}
               </div>
             )}
           </CardContent>
@@ -319,33 +387,86 @@ export const PropertyReviews = ({ propertyId, hostUserId }: PropertyReviewsProps
         </Card>
       )}
 
-      {/* Reviews List */}
-      <div className="space-y-4">
-        {reviews.map((review) => (
-          <Card key={review.id}>
-            <CardContent className="pt-6">
-              <div className="flex items-start gap-4">
-                <Avatar>
-                  <AvatarFallback>U</AvatarFallback>
-                </Avatar>
-                <div className="flex-1">
-                  <div className="flex items-center gap-2">
-                    <span className="font-semibold">Guest</span>
-                    <div className="flex items-center">
-                      <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                      <span className="ml-1 text-sm">{review.rating}</span>
+      {/* Enhanced Reviews List */}
+      {reviews.length > 0 && (
+        <div className="space-y-4">
+          <h3 className="text-xl font-semibold">Reviews from guests</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {reviews.map((review) => {
+              const guestName = review.profiles?.name || 'Guest';
+              const guestInitial = guestName[0].toUpperCase();
+              const reviewDate = format(new Date(review.created_at), 'MMMM yyyy');
+              const yearsOnPlatform = review.profiles?.created_at 
+                ? differenceInYears(new Date(), new Date(review.profiles.created_at))
+                : 0;
+              
+              const isLongComment = review.comment && review.comment.length > 200;
+              const isExpanded = expandedReviews[review.id];
+              const displayComment = isLongComment && !isExpanded 
+                ? review.comment.substring(0, 200) + '...'
+                : review.comment;
+
+              return (
+                <Card key={review.id} className="hover:shadow-md transition-shadow">
+                  <CardContent className="pt-6">
+                    <div className="flex items-start gap-4">
+                      <Avatar className="h-12 w-12">
+                        <AvatarFallback className="bg-primary/10 text-primary font-semibold">
+                          {guestInitial}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div className="flex-1 min-w-0">
+                        <div className="mb-2">
+                          <h4 className="font-semibold">{guestName}</h4>
+                          <p className="text-xs text-muted-foreground">
+                            {yearsOnPlatform > 0 ? `${yearsOnPlatform} ${yearsOnPlatform === 1 ? 'year' : 'years'} on Holibayt` : 'New to Holibayt'}
+                          </p>
+                        </div>
+                        
+                        <div className="flex items-center gap-2 mb-3">
+                          <div className="flex items-center">
+                            {[...Array(5)].map((_, i) => (
+                              <Star 
+                                key={i} 
+                                className={`h-3 w-3 ${
+                                  i < Math.round(review.rating) 
+                                    ? 'fill-yellow-400 text-yellow-400' 
+                                    : 'text-gray-300'
+                                }`} 
+                              />
+                            ))}
+                          </div>
+                          <span className="text-xs text-muted-foreground">· {reviewDate}</span>
+                        </div>
+                        
+                        {review.comment && (
+                          <div className="space-y-2">
+                            <p className="text-sm leading-relaxed">{displayComment}</p>
+                            {isLongComment && (
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                className="h-auto p-0 text-sm font-semibold hover:bg-transparent"
+                                onClick={() => toggleReviewExpansion(review.id)}
+                              >
+                                {isExpanded ? (
+                                  <>Show less <ChevronUp className="h-4 w-4 ml-1" /></>
+                                ) : (
+                                  <>Show more <ChevronDown className="h-4 w-4 ml-1" /></>
+                                )}
+                              </Button>
+                            )}
+                          </div>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                  <p className="text-sm text-muted-foreground mt-1">
-                    {new Date(review.created_at).toLocaleDateString()}
-                  </p>
-                  <p className="mt-2 text-sm">{review.comment}</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
+                  </CardContent>
+                </Card>
+              );
+            })}
+          </div>
+        </div>
+      )}
     </div>
   );
 };
