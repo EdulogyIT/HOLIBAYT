@@ -508,6 +508,26 @@ export const PropertyReviews = ({ propertyId, hostUserId }: PropertyReviewsProps
                             )}
                           </div>
                         )}
+                        
+                        {review.bookings && (
+                          <p className="text-xs text-muted-foreground mt-3">
+                            Stayed {format(new Date(review.bookings.check_in_date), 'MMM d')} - {format(new Date(review.bookings.check_out_date), 'MMM d, yyyy')}
+                          </p>
+                        )}
+
+                        {/* Admin and host actions */}
+                        {user && (user.role === 'admin' || user.id === hostUserId) && (
+                          <div className="flex gap-2 mt-3 pt-3 border-t">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              className="text-destructive hover:text-destructive"
+                              onClick={() => handleDeleteReview(review.id)}
+                            >
+                              Delete Review
+                            </Button>
+                          </div>
+                        )}
                       </div>
                     </div>
                   </CardContent>

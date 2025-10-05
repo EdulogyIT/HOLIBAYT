@@ -63,6 +63,13 @@ const Bookings = () => {
       setLoading(true);
       setError(null);
 
+      // First, auto-complete any past bookings
+      try {
+        await supabase.rpc('auto_complete_bookings');
+      } catch (autoCompleteError) {
+        console.log('Auto-complete bookings error (non-critical):', autoCompleteError);
+      }
+
       const { data, error: fetchError } = await supabase
         .from('bookings')
         .select(`
@@ -175,12 +182,33 @@ const Bookings = () => {
     fetchBookings();
   };
 
+  const handleMarkAsCompleted = async (bookingId: string) => {
+    const { error } = await supabase
+      .from('bookings')
+      .update({ status: 'completed' })
+      .eq('id', bookingId);
+
+    if (error) {
+      toast({
+        title: "Error",
+        description: "Failed to mark booking as completed",
+        variant: "destructive"
+      });
+    } else {
+      toast({
+        title: "Success",
+        description: "Booking marked as completed. Notification and message sent to guest!"
+      });
+      fetchBookings();
+    }
+  };
+
   const BookingCard = ({ booking, isPast = false }: { booking: BookingWithProperty; isPast?: boolean }) => {
     const property = booking.properties;
     const primaryImage = property?.images?.[0];
     const isShortStay = property?.category === 'short-stay';
     const hasReview = reviewedBookings.has(booking.id);
-    const canReview = isPast && isShortStay && !hasReview;
+    const canReview = isPast && isShortStay && !hasReview && booking.status === 'completed';
     
     return (
       <Card className="overflow-hidden hover:shadow-md transition-shadow">
@@ -260,11 +288,22 @@ const Bookings = () => {
                   </Button>
                 )}
                 {!isPast && (booking.status === 'confirmed' || booking.status === 'pending') && (
-                  <CancelBookingButton
-                    bookingId={booking.id}
-                    totalAmount={booking.total_amount}
-                    onCancelSuccess={handleBookingCancelled}
-                  />
+                  <>
+                    <CancelBookingButton
+                      bookingId={booking.id}
+                      totalAmount={booking.total_amount}
+                      onCancelSuccess={handleBookingCancelled}
+                    />
+                    {user?.role === 'admin' && booking.status === 'confirmed' && (
+                      <Button 
+                        variant="secondary" 
+                        size="sm"
+                        onClick={() => handleMarkAsCompleted(booking.id)}
+                      >
+                        Mark as Completed (Admin)
+                      </Button>
+                    )}
+                  </>
                 )}
                 {canReview && (
                   <Button 
