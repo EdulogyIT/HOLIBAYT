@@ -269,6 +269,61 @@ const Property = () => {
                   <PropertyDatePicker 
                     onDateChange={(dates) => console.log("Selected dates:", dates)}
                   />
+                  
+                  {/* Price Breakdown Card */}
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="text-lg font-playfair">Price details</CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-3">
+                      {(() => {
+                        // Calculate pricing
+                        const basePrice = Number(property.price) || 0;
+                        let dailyPrice = basePrice;
+                        
+                        // Convert monthly/weekly price to nightly when short-stay
+                        if (property.price_type === 'monthly') {
+                          dailyPrice = basePrice / 30.44;
+                        } else if (property.price_type === 'weekly') {
+                          dailyPrice = basePrice / 7;
+                        }
+                        
+                        // Default to 2 nights for display
+                        const nights = 2;
+                        const subtotal = dailyPrice * nights;
+                        const taxes = Math.round(subtotal * 0.05 * 100) / 100; // 5% taxes
+                        const total = subtotal + taxes;
+                        
+                        return (
+                          <>
+                            <div className="flex justify-between text-sm font-inter">
+                              <span className="text-muted-foreground">
+                                {nights} nights × {formatPrice(dailyPrice)}
+                              </span>
+                              <span className="font-medium">{formatPrice(subtotal)}</span>
+                            </div>
+                            <div className="flex justify-between text-sm font-inter">
+                              <span className="text-muted-foreground">Taxes</span>
+                              <span className="font-medium">{formatPrice(taxes)}</span>
+                            </div>
+                            <Separator />
+                            <div className="flex justify-between font-semibold font-inter">
+                              <span>Total</span>
+                              <span>{formatPrice(total)}</span>
+                            </div>
+                            <Button 
+                              variant="link" 
+                              className="p-0 h-auto text-sm font-inter text-primary"
+                              onClick={() => {/* Could open detailed breakdown modal */}}
+                            >
+                              Price breakdown
+                            </Button>
+                          </>
+                        );
+                      })()}
+                    </CardContent>
+                  </Card>
+                  
                   <Card>
                     <CardContent className="pt-6">
                       <BookingModal 
