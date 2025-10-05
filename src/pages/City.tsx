@@ -206,7 +206,7 @@ const City = () => {
               navigate(`/property/${formattedProperty.id}`);
             }}
           >
-            {listingType === 'shortStay' ? t('reserve') : listingType === 'buy' ? t('viewDetails') : t('viewDetails')}
+            {t('viewDetails')}
           </Button>
         </CardContent>
       </Card>
