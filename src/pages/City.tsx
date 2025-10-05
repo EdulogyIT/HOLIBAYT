@@ -91,11 +91,11 @@ const City = () => {
       setIsLoading(true);
       const cityName = currentCity.name;
       
-      // Fetch buy properties
+      // Fetch buy properties (stored as 'sale' in database)
       const { data: buyData } = await supabase
         .from('properties')
         .select('*')
-        .eq('category', 'buy')
+        .eq('category', 'sale')
         .eq('status', 'active')
         .or(`city.ilike.%${cityName}%,location.ilike.%${cityName}%`)
         .limit(2);
@@ -206,7 +206,7 @@ const City = () => {
               navigate(`/property/${formattedProperty.id}`);
             }}
           >
-            {listingType === 'shortStay' ? t('reserve') : t('viewDetails')}
+            {listingType === 'shortStay' ? t('reserve') : listingType === 'buy' ? t('viewDetails') : t('viewDetails')}
           </Button>
         </CardContent>
       </Card>
@@ -316,7 +316,7 @@ const City = () => {
                         className="font-inter"
                         onClick={() => navigate(`/buy?location=${encodeURIComponent(currentCity.name)}`)}
                       >
-                        {t('seeAllForSale')}
+                        {t('viewDetails')}
                       </Button>
                     </div>
                   </>

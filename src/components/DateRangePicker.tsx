@@ -61,7 +61,7 @@ export function DateRangePicker({
           months: "flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0",
           month: "space-y-4",
           caption: "flex justify-center pt-1 relative items-center font-medium text-foreground",
-          caption_label: "text-sm font-medium",
+          caption_label: "hidden",
           caption_dropdowns: "flex justify-center gap-1",
           vhidden: "hidden",
           nav: "space-x-1 flex items-center",
