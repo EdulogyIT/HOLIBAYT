@@ -77,17 +77,12 @@ const City = () => {
 
   const currentCity = cityData[cityId as keyof typeof cityData];
 
-  // Re-render when language changes
-  useEffect(() => {
-    // Component will re-render when currentLang changes
-  }, [currentLang]);
-
-  // Fetch real properties for this city
+  // Re-render when language changes and fetch properties
   useEffect(() => {
     if (currentCity) {
       fetchPropertiesForCity();
     }
-  }, [cityId, currentCity]);
+  }, [currentLang, cityId]);
 
   const fetchPropertiesForCity = async () => {
     if (!currentCity) return;
