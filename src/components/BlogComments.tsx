@@ -4,7 +4,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useToast } from "@/hooks/use-toast";
 import { MessageCircle, Reply, Trash2, Edit2 } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
@@ -17,6 +17,7 @@ interface Comment {
   user_id: string;
   parent_comment_id: string | null;
   user_name: string;
+  avatar_url: string | null;
   replies?: Comment[];
 }
 
@@ -78,15 +79,16 @@ export const BlogComments = ({ blogPostId }: BlogCommentsProps) => {
     const userIds = [...new Set(commentsData.map(c => c.user_id))];
     const { data: profiles } = await supabase
       .from('profiles')
-      .select('id, name')
+      .select('id, name, avatar_url')
       .in('id', userIds);
 
-    const profileMap = new Map(profiles?.map(p => [p.id, p.name]) || []);
+    const profileMap = new Map(profiles?.map(p => [p.id, { name: p.name, avatar_url: p.avatar_url }]) || []);
 
     // Transform data and organize into threaded structure
     const commentsWithNames = commentsData.map((comment: any) => ({
       ...comment,
-      user_name: profileMap.get(comment.user_id) || 'Anonymous',
+      user_name: profileMap.get(comment.user_id)?.name || 'Anonymous',
+      avatar_url: profileMap.get(comment.user_id)?.avatar_url || null,
     }));
 
     // Organize into parent-child structure
@@ -225,6 +227,7 @@ export const BlogComments = ({ blogPostId }: BlogCommentsProps) => {
     <div className={`${isReply ? 'ml-8 mt-4' : 'mt-4'} border-l-2 border-border pl-4`}>
       <div className="flex items-start gap-3">
         <Avatar className="w-8 h-8">
+          {comment.avatar_url && <AvatarImage src={comment.avatar_url} alt={comment.user_name} />}
           <AvatarFallback>{comment.user_name[0]?.toUpperCase()}</AvatarFallback>
         </Avatar>
         <div className="flex-1">

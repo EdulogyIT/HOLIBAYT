@@ -16,6 +16,7 @@ import { Separator } from '@/components/ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { ProfilePhotoUpload } from '@/components/ProfilePhotoUpload';
 import { toast } from 'sonner';
 import { 
   User, 
@@ -282,7 +283,7 @@ const Profile = () => {
         <div className="mb-8 animate-scale-in">
           <div className="flex items-center gap-6 mb-6 p-6 rounded-2xl bg-gradient-primary shadow-elegant">
             <Avatar className="h-20 w-20 ring-4 ring-white/20 shadow-lg">
-              <AvatarImage src="" alt={displayUser?.name || displayUser?.email} />
+              {displayUser?.avatar_url && <AvatarImage src={displayUser.avatar_url} alt={displayUser?.name || displayUser?.email} />}
               <AvatarFallback className="text-2xl bg-white/20 text-white backdrop-blur-sm">
                 {(displayUser?.name || displayUser?.email || 'U').split(' ').map((n: string) => n[0]).join('').toUpperCase()}
               </AvatarFallback>
@@ -376,6 +377,20 @@ const Profile = () => {
                 <CardDescription>{currentTranslations.personalInfoDesc}</CardDescription>
               </CardHeader>
               <CardContent className="space-y-6 p-6">
+                {/* Profile Photo Upload */}
+                {!isViewingOtherUser && (
+                  <div className="flex justify-center pb-6 border-b border-accent/20">
+                    <ProfilePhotoUpload 
+                      currentPhotoUrl={displayUser?.avatar_url}
+                      userName={displayUser?.name || displayUser?.email || 'User'}
+                      onPhotoUpdate={(url) => {
+                        // Refresh user data after photo update
+                        window.location.reload();
+                      }}
+                    />
+                  </div>
+                )}
+                
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2">
                     <Label htmlFor="displayName" className="text-primary font-medium">{currentTranslations.displayName}</Label>

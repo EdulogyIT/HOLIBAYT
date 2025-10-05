@@ -32,6 +32,7 @@ interface Review {
   profiles?: {
     name: string;
     created_at: string;
+    avatar_url: string | null;
   };
   bookings?: {
     check_in_date: string;
@@ -46,6 +47,7 @@ interface Profile {
   total_reviews: number;
   created_at: string;
   email: string;
+  avatar_url: string | null;
 }
 
 export const PropertyReviews = ({ propertyId, hostUserId }: PropertyReviewsProps) => {
@@ -86,7 +88,7 @@ export const PropertyReviews = ({ propertyId, hostUserId }: PropertyReviewsProps
         data.map(async (review) => {
           const { data: profile } = await supabase
             .from('profiles')
-            .select('name, created_at')
+            .select('name, created_at, avatar_url')
             .eq('id', review.user_id)
             .single();
           
@@ -115,7 +117,7 @@ export const PropertyReviews = ({ propertyId, hostUserId }: PropertyReviewsProps
   const fetchHostProfile = async () => {
     const { data, error } = await supabase
       .from('profiles')
-      .select('name, is_superhost, average_rating, total_reviews, created_at, email')
+      .select('name, is_superhost, average_rating, total_reviews, created_at, email, avatar_url')
       .eq('id', hostUserId)
       .single();
 
@@ -262,6 +264,7 @@ export const PropertyReviews = ({ propertyId, hostUserId }: PropertyReviewsProps
             <div className="flex items-start gap-6">
               <div className="relative">
                 <Avatar className="h-24 w-24 border-4 border-primary/10">
+                  {hostProfile.avatar_url && <AvatarImage src={hostProfile.avatar_url} alt={hostProfile.name} />}
                   <AvatarFallback className="text-2xl bg-primary/10">{hostProfile.name?.[0]}</AvatarFallback>
                 </Avatar>
                 {hostProfile.is_superhost && (
@@ -430,6 +433,9 @@ export const PropertyReviews = ({ propertyId, hostUserId }: PropertyReviewsProps
                   <CardContent className="pt-6">
                     <div className="flex items-start gap-4">
                       <Avatar className="h-12 w-12">
+                        {review.profiles?.avatar_url && (
+                          <AvatarImage src={review.profiles.avatar_url} alt={guestName} />
+                        )}
                         <AvatarFallback className="bg-primary/10 text-primary font-semibold">
                           {guestInitial}
                         </AvatarFallback>
