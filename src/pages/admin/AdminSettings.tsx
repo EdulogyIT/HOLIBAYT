@@ -97,12 +97,20 @@ export default function AdminSettings() {
     }
   };
 
-  const updateSetting = async (key: string, value: any) => {
+  const upsertSetting = async (key: string, value: any) => {
     try {
       const { error } = await supabase
         .from('platform_settings')
-        .update({ setting_value: value })
-        .eq('setting_key', key);
+        .upsert(
+          { 
+            setting_key: key, 
+            setting_value: value 
+          },
+          { 
+            onConflict: 'setting_key',
+            ignoreDuplicates: false 
+          }
+        );
 
       if (error) throw error;
       return true;
@@ -113,56 +121,76 @@ export default function AdminSettings() {
   };
 
   const handleSaveGeneral = async () => {
-    const success = await updateSetting('general_settings', {
+    const success = await upsertSetting('general_settings', {
       platform_name: platformName,
       support_email: supportEmail,
       maintenance_mode: maintenanceMode
     });
-    if (success) toast.success('General settings saved successfully');
-    else toast.error('Failed to save general settings');
+    if (success) {
+      toast.success('General settings saved successfully');
+      await fetchSettings(); // Refresh settings
+    } else {
+      toast.error('Failed to save general settings');
+    }
   };
 
   const handleSaveCommission = async () => {
-    const success = await updateSetting('commission_rates', {
+    const success = await upsertSetting('commission_rates', {
       default: defaultCommission,
       short_stay: shortStayCommission,
       rental: rentalCommission,
       sale: saleCommission,
       minimum_amount: minimumCommission
     });
-    if (success) toast.success('Commission settings saved successfully');
-    else toast.error('Failed to save commission settings');
+    if (success) {
+      toast.success('Commission settings saved successfully');
+      await fetchSettings(); // Refresh settings
+    } else {
+      toast.error('Failed to save commission settings');
+    }
   };
 
   const handleSaveSecurity = async () => {
-    const success = await updateSetting('security_settings', {
+    const success = await upsertSetting('security_settings', {
       max_login_attempts: maxLoginAttempts,
       session_timeout: sessionTimeout,
       require_email_verification: requireEmailVerification
     });
-    if (success) toast.success('Security settings saved successfully');
-    else toast.error('Failed to save security settings');
+    if (success) {
+      toast.success('Security settings saved successfully');
+      await fetchSettings(); // Refresh settings
+    } else {
+      toast.error('Failed to save security settings');
+    }
   };
 
   const handleSaveNotifications = async () => {
-    const success = await updateSetting('notification_settings', {
+    const success = await upsertSetting('notification_settings', {
       email_notifications: emailNotifications,
       push_notifications: pushNotifications,
       sms_notifications: smsNotifications
     });
-    if (success) toast.success('Notification settings saved successfully');
-    else toast.error('Failed to save notification settings');
+    if (success) {
+      toast.success('Notification settings saved successfully');
+      await fetchSettings(); // Refresh settings
+    } else {
+      toast.error('Failed to save notification settings');
+    }
   };
 
   const handleSaveEmail = async () => {
-    const success = await updateSetting('email_settings', {
+    const success = await upsertSetting('email_settings', {
       smtp_host: smtpHost,
       smtp_port: smtpPort,
       from_email: fromEmail,
       from_name: fromName
     });
-    if (success) toast.success('Email settings saved successfully');
-    else toast.error('Failed to save email settings');
+    if (success) {
+      toast.success('Email settings saved successfully');
+      await fetchSettings(); // Refresh settings
+    } else {
+      toast.error('Failed to save email settings');
+    }
   };
 
   if (loading) {

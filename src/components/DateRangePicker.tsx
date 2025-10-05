@@ -87,9 +87,9 @@ export function DateRangePicker({
           day_disabled: "text-muted-foreground opacity-50",
           day_range_middle: "aria-selected:bg-accent aria-selected:text-accent-foreground rounded-none",
           day_hidden: "invisible",
-          dropdown: "h-9 px-3 py-2 text-base bg-background border border-input rounded-lg hover:bg-accent hover:text-accent-foreground focus:outline-none focus:ring-2 focus:ring-ring font-medium min-w-[120px] text-center cursor-pointer",
-          dropdown_month: "h-9 px-3 py-2 text-base bg-background border border-input rounded-lg min-w-[130px]",
-          dropdown_year: "h-9 px-3 py-2 text-base bg-background border border-input rounded-lg min-w-[100px]"
+          dropdown: "h-10 px-4 py-2 text-lg font-semibold bg-white dark:bg-gray-800 border-2 border-input rounded-xl hover:bg-accent hover:text-accent-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-primary min-w-[140px] text-center cursor-pointer transition-all shadow-sm z-50",
+          dropdown_month: "h-10 px-4 py-2 text-lg font-semibold bg-white dark:bg-gray-800 border-2 border-input rounded-xl hover:bg-accent hover:text-accent-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-primary min-w-[160px] text-center cursor-pointer transition-all shadow-sm z-50",
+          dropdown_year: "h-10 px-4 py-2 text-lg font-semibold bg-white dark:bg-gray-800 border-2 border-input rounded-xl hover:bg-accent hover:text-accent-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-primary min-w-[120px] text-center cursor-pointer transition-all shadow-sm z-50"
         }}
         components={{
           IconLeft: ({ ...props }) => (
