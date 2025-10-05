@@ -43,6 +43,7 @@ interface Property {
   contact_email?: string;
   created_at: string;
   user_id?: string;
+  commission_rate?: number;
 }
 
 const Property = () => {
@@ -54,6 +55,10 @@ const Property = () => {
   const [error, setError] = useState<string | null>(null);
   const [isScheduleModalOpen, setIsScheduleModalOpen] = useState(false);
   const [isMessageModalOpen, setIsMessageModalOpen] = useState(false);
+  const [selectedDates, setSelectedDates] = useState<{ checkIn: Date | undefined; checkOut: Date | undefined }>({
+    checkIn: undefined,
+    checkOut: undefined
+  });
   
   useScrollToTop();
 
@@ -267,7 +272,7 @@ const Property = () => {
               {property.category === 'short-stay' ? (
                 <div className="space-y-4">
                   <PropertyDatePicker 
-                    onDateChange={(dates) => console.log("Selected dates:", dates)}
+                    onDateChange={(dates) => setSelectedDates(dates)}
                   />
                   
                   {/* Price Breakdown Card */}
@@ -288,10 +293,17 @@ const Property = () => {
                           dailyPrice = basePrice / 7;
                         }
                         
-                        // Default to 2 nights for display
-                        const nights = 2;
+                        // Calculate nights from selected dates, default to 2 for display
+                        let nights = 2;
+                        if (selectedDates.checkIn && selectedDates.checkOut) {
+                          const timeDiff = selectedDates.checkOut.getTime() - selectedDates.checkIn.getTime();
+                          nights = Math.ceil(timeDiff / (1000 * 3600 * 24));
+                        }
+                        
                         const subtotal = dailyPrice * nights;
-                        const taxes = Math.round(subtotal * 0.05 * 100) / 100; // 5% taxes
+                        // Commission rate from property (stored as decimal, e.g., 0.12 for 12%)
+                        const commissionRate = Number(property.commission_rate) || 0.15;
+                        const taxes = Math.round(subtotal * commissionRate * 100) / 100;
                         const total = subtotal + taxes;
                         
                         return (
