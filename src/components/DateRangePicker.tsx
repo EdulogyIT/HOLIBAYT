@@ -87,12 +87,9 @@ export function DateRangePicker({
           day_disabled: "text-muted-foreground opacity-50",
           day_range_middle: "aria-selected:bg-accent aria-selected:text-accent-foreground rounded-none",
           day_hidden: "invisible",
-          dropdown: cn(
-            "absolute z-50 min-w-[8rem] overflow-hidden rounded-md border bg-popover px-3 py-2 text-sm text-popover-foreground shadow-md animate-in fade-in-0 zoom-in-95",
-            "h-8 px-2 text-xs bg-background border border-input hover:bg-accent hover:text-accent-foreground focus:outline-none focus:ring-2 focus:ring-ring"
-          ),
-          dropdown_month: "dropdown",
-          dropdown_year: "dropdown"
+          dropdown: "h-8 px-2 py-1 text-sm bg-background border border-input rounded-md hover:bg-accent hover:text-accent-foreground focus:outline-none focus:ring-2 focus:ring-ring",
+          dropdown_month: "h-8 px-2 py-1 text-sm bg-background border border-input rounded-md",
+          dropdown_year: "h-8 px-2 py-1 text-sm bg-background border border-input rounded-md"
         }}
         components={{
           IconLeft: ({ ...props }) => (

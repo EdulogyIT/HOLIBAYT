@@ -135,14 +135,14 @@ const CitiesSection = () => {
 
               <CardContent className="p-4">
                 <Button 
-                  variant="ghost" 
-                  className="w-full group/btn font-inter font-medium text-foreground hover:text-primary-foreground hover:bg-primary transition-all duration-300"
+                  variant="outline" 
+                  className="w-full group/btn font-inter font-medium hover:bg-primary hover:text-primary-foreground hover:border-primary transition-all duration-300"
                   onClick={(e) => {
                     e.stopPropagation();
                     navigate(`/city/${city.id}`);
                   }}
                 >
-                  <span>{t('discoverCity')} {city.name}</span>
+                  <span>{t('viewDetails')}</span>
                   <ArrowRight className="ml-2 h-4 w-4 group-hover/btn:translate-x-1 transition-transform duration-300" />
                 </Button>
               </CardContent>
