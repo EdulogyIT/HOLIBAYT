@@ -59,24 +59,24 @@ export function DateRangePicker({
         className="pointer-events-auto"
         classNames={{
           months: "flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0",
-          month: "space-y-4",
-          caption: "flex justify-center pt-1 relative items-center font-medium text-foreground",
+          month: "space-y-4 w-full",
+          caption: "flex justify-center pt-1 pb-4 relative items-center",
           caption_label: "hidden",
-          caption_dropdowns: "flex justify-center gap-1",
+          caption_dropdowns: "flex justify-center gap-2",
           vhidden: "hidden",
           nav: "space-x-1 flex items-center",
           nav_button: cn(
-            "h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100 rounded-md border border-input hover:bg-accent hover:text-accent-foreground"
+            "h-8 w-8 bg-transparent p-0 opacity-50 hover:opacity-100 rounded-md border border-input hover:bg-accent hover:text-accent-foreground transition-colors"
           ),
           nav_button_previous: "absolute left-1",
           nav_button_next: "absolute right-1",
-          table: "w-full border-collapse space-y-1",
-          head_row: "flex",
-          head_cell: "text-muted-foreground rounded-md w-9 font-normal text-[0.8rem]",
-          row: "flex w-full mt-2",
+          table: "w-full border-collapse",
+          head_row: "flex justify-around mb-2",
+          head_cell: "text-muted-foreground w-10 font-medium text-sm text-center",
+          row: "flex justify-around w-full mt-1",
           cell: "relative p-0 text-center text-sm focus-within:relative focus-within:z-20 [&:has([aria-selected])]:bg-accent [&:has([aria-selected].day-outside)]:bg-accent/50 [&:has([aria-selected].day-range-middle)]:rounded-none first:[&:has([aria-selected])]:rounded-l-md last:[&:has([aria-selected])]:rounded-r-md",
           day: cn(
-            "h-9 w-9 p-0 font-normal aria-selected:opacity-100 rounded-md hover:bg-accent hover:text-accent-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 transition-colors",
+            "h-10 w-10 p-0 font-normal aria-selected:opacity-100 rounded-md hover:bg-accent hover:text-accent-foreground focus:outline-none focus:ring-2 focus:ring-ring transition-colors",
             "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
           ),
           day_range_start: "day-range-start rounded-l-md",
@@ -87,9 +87,9 @@ export function DateRangePicker({
           day_disabled: "text-muted-foreground opacity-50",
           day_range_middle: "aria-selected:bg-accent aria-selected:text-accent-foreground rounded-none",
           day_hidden: "invisible",
-          dropdown: "h-8 px-2 py-1 text-sm bg-background border border-input rounded-md hover:bg-accent hover:text-accent-foreground focus:outline-none focus:ring-2 focus:ring-ring",
-          dropdown_month: "h-8 px-2 py-1 text-sm bg-background border border-input rounded-md",
-          dropdown_year: "h-8 px-2 py-1 text-sm bg-background border border-input rounded-md"
+          dropdown: "h-9 px-3 py-2 text-base bg-background border border-input rounded-lg hover:bg-accent hover:text-accent-foreground focus:outline-none focus:ring-2 focus:ring-ring font-medium min-w-[120px] text-center cursor-pointer",
+          dropdown_month: "h-9 px-3 py-2 text-base bg-background border border-input rounded-lg min-w-[130px]",
+          dropdown_year: "h-9 px-3 py-2 text-base bg-background border border-input rounded-lg min-w-[100px]"
         }}
         components={{
           IconLeft: ({ ...props }) => (
