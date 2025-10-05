@@ -89,7 +89,8 @@ const City = () => {
     
     try {
       setIsLoading(true);
-      const cityName = currentCity.name;
+      // Use cityId from URL params instead of translated city name
+      const searchCity = cityId || '';
       
       // Fetch buy properties (stored as 'sale' in database)
       const { data: buyData } = await supabase
@@ -97,7 +98,7 @@ const City = () => {
         .select('*')
         .eq('category', 'sale')
         .eq('status', 'active')
-        .or(`city.ilike.%${cityName}%,location.ilike.%${cityName}%`)
+        .or(`city.ilike.%${searchCity}%,location.ilike.%${searchCity}%`)
         .limit(2);
       
       // Fetch rent properties
@@ -106,7 +107,7 @@ const City = () => {
         .select('*')
         .eq('category', 'rent')
         .eq('status', 'active')
-        .or(`city.ilike.%${cityName}%,location.ilike.%${cityName}%`)
+        .or(`city.ilike.%${searchCity}%,location.ilike.%${searchCity}%`)
         .limit(2);
       
       // Fetch short-stay properties
@@ -115,7 +116,7 @@ const City = () => {
         .select('*')
         .eq('category', 'short-stay')
         .eq('status', 'active')
-        .or(`city.ilike.%${cityName}%,location.ilike.%${cityName}%`)
+        .or(`city.ilike.%${searchCity}%,location.ilike.%${searchCity}%`)
         .limit(2);
 
       setBuyProperties(buyData || []);
