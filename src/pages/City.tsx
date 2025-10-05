@@ -175,7 +175,10 @@ const City = () => {
   const PropertyCard = ({ property, listingType }: { property: any, listingType: string }) => (
     <Card 
       className="cursor-pointer hover:shadow-lg transition-shadow"
-      onClick={() => navigate(`/property/${property.id}`)}
+      onClick={() => {
+        const targetPage = listingType === 'shortStay' ? '/short-stay' : listingType === 'rent' ? '/rent' : '/buy';
+        navigate(`${targetPage}?location=${encodeURIComponent(currentCity.name)}`);
+      }}
     >
       <div className="aspect-video bg-muted rounded-t-lg overflow-hidden">
         <img 
@@ -216,10 +219,11 @@ const City = () => {
           className="w-full bg-gradient-primary hover:shadow-elegant font-inter flex items-center justify-center min-h-[44px]" 
           onClick={(e) => {
             e.stopPropagation();
-            navigate(`/property/${property.id}`);
+            const targetPage = listingType === 'shortStay' ? '/short-stay' : listingType === 'rent' ? '/rent' : '/buy';
+            navigate(`${targetPage}?location=${encodeURIComponent(currentCity.name)}`);
           }}
         >
-          {listingType === 'shortStay' ? t('reserve') : t('seeDetails')}
+          {listingType === 'shortStay' ? t('reserve') : t('viewDetails')}
         </Button>
       </CardContent>
     </Card>

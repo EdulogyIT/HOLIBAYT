@@ -52,11 +52,12 @@ const ShortStayHeroSearch: React.FC<ShortStayHeroSearchProps> = ({ onSearch }) =
     const location = urlParams.get("location") || "";
     const checkIn = parseISODate(urlParams.get("checkIn"));
     const checkOut = parseISODate(urlParams.get("checkOut"));
+    const travelers = parseInt(urlParams.get("travelers") || "1", 10);
 
     setFormData({
       location,
       dateRange: checkIn || checkOut ? { from: checkIn, to: checkOut } : undefined,
-      guests: { adults: 1, children: 0, infants: 0, pets: 0 },
+      guests: { adults: travelers > 0 ? travelers : 1, children: 0, infants: 0, pets: 0 },
     });
   }, [routerLocation.search]);
 
