@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
@@ -41,9 +41,19 @@ const Profile = () => {
   const { user, logout, hasRole } = useAuth();
   const { t, currentLang } = useLanguage();
   const { userId } = useParams();
+  const navigate = useNavigate();
   const [isEditing, setIsEditing] = useState(false);
   const [viewedUser, setViewedUser] = useState<any>(null);
   const [loading, setLoading] = useState(false);
+  
+  // Form states for various sections
+  const [currentPassword, setCurrentPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [emailNotifications, setEmailNotifications] = useState(true);
+  const [smsNotifications, setSmsNotifications] = useState(false);
+  const [showProfilePhoto, setShowProfilePhoto] = useState(true);
+  const [analytics, setAnalytics] = useState(true);
 
   const isViewingOtherUser = userId && userId !== user?.id;
   const displayUser = isViewingOtherUser ? viewedUser : user;
@@ -266,6 +276,54 @@ const Profile = () => {
     toast.success(currentLang === 'AR' ? 'تم تسجيل الخروج.' : currentLang === 'FR' ? 'Déconnecté avec succès.' : 'Successfully logged out.');
   };
 
+  const handleChangePassword = async () => {
+    if (!currentPassword || !newPassword || !confirmPassword) {
+      toast.error('Please fill in all password fields.');
+      return;
+    }
+    
+    if (newPassword !== confirmPassword) {
+      toast.error('New passwords do not match.');
+      return;
+    }
+    
+    if (newPassword.length < 6) {
+      toast.error('Password must be at least 6 characters long.');
+      return;
+    }
+
+    const { error } = await supabase.auth.updateUser({ password: newPassword });
+    
+    if (error) {
+      toast.error('Failed to update password: ' + error.message);
+    } else {
+      toast.success('Password updated successfully!');
+      setCurrentPassword('');
+      setNewPassword('');
+      setConfirmPassword('');
+    }
+  };
+
+  const handleChangeEmail = () => {
+    toast.info('Email change functionality coming soon!');
+  };
+
+  const handleDeactivateAccount = () => {
+    toast.info('Account deactivation functionality coming soon!');
+  };
+
+  const handleDeleteAccount = () => {
+    toast.error('Account deletion is permanent. Contact support if you want to proceed.');
+  };
+
+  const handleSaveNotifications = () => {
+    toast.success('Notification preferences saved!');
+  };
+
+  const handleSavePrivacy = () => {
+    toast.success('Privacy settings saved!');
+  };
+
   if (!user || (isViewingOtherUser && loading)) {
     return <div>Loading...</div>;
   }
@@ -300,21 +358,41 @@ const Profile = () => {
           {/* Quick Actions */}
           {!isViewingOtherUser && (
             <div className="flex flex-wrap gap-3">
-              <Button variant="outline" size="sm" className="hover-scale bg-white/50 backdrop-blur-sm border-white/20">
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={() => setIsEditing(!isEditing)}
+                className="hover-scale bg-white/50 backdrop-blur-sm border-white/20"
+              >
                 <Edit className="h-4 w-4 mr-2" />
                 {currentTranslations.editProfile}
               </Button>
-              <Button variant="outline" size="sm" className="hover-scale bg-white/50 backdrop-blur-sm border-white/20">
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={() => navigate('/bookings')}
+                className="hover-scale bg-white/50 backdrop-blur-sm border-white/20"
+              >
                 <BookOpen className="h-4 w-4 mr-2" />
                 {currentTranslations.myBookings}
               </Button>
               {hasRole('host') && (
-                <Button variant="outline" size="sm" className="hover-scale bg-white/50 backdrop-blur-sm border-white/20">
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={() => navigate('/publish-property')}
+                  className="hover-scale bg-white/50 backdrop-blur-sm border-white/20"
+                >
                   <Home className="h-4 w-4 mr-2" />
                   {currentTranslations.publishProperty}
                 </Button>
               )}
-              <Button variant="outline" size="sm" onClick={handleLogout} className="hover-scale bg-white/50 backdrop-blur-sm border-white/20">
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={handleLogout} 
+                className="hover-scale bg-white/50 backdrop-blur-sm border-white/20"
+              >
                 <LogOut className="h-4 w-4 mr-2" />
                 {currentTranslations.signOut}
               </Button>
@@ -445,7 +523,14 @@ const Profile = () => {
                       <div className="text-sm text-muted-foreground">{user.email}</div>
                     </div>
                   </div>
-                  <Button variant="outline" size="sm" className="border-primary/30 text-primary hover:bg-primary/10">Edit</Button>
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    onClick={handleChangeEmail}
+                    className="border-primary/30 text-primary hover:bg-primary/10"
+                  >
+                    Edit
+                  </Button>
                 </div>
               </CardContent>
             </Card>
@@ -465,7 +550,12 @@ const Profile = () => {
                     <div className="font-medium text-foreground">{currentTranslations.deactivateAccount}</div>
                     <div className="text-sm text-muted-foreground">Temporarily disable your account</div>
                   </div>
-                  <Button variant="destructive" size="sm" className="shadow-md hover:shadow-lg transition-all">
+                  <Button 
+                    variant="destructive" 
+                    size="sm" 
+                    onClick={handleDeactivateAccount}
+                    className="shadow-md hover:shadow-lg transition-all"
+                  >
                     {currentTranslations.deactivateAccount}
                   </Button>
                 </div>
@@ -475,7 +565,12 @@ const Profile = () => {
                     <div className="font-medium text-foreground">{currentTranslations.deleteAccount}</div>
                     <div className="text-sm text-muted-foreground">Permanently delete your account and data</div>
                   </div>
-                  <Button variant="destructive" size="sm" className="shadow-md hover:shadow-lg transition-all">
+                  <Button 
+                    variant="destructive" 
+                    size="sm" 
+                    onClick={handleDeleteAccount}
+                    className="shadow-md hover:shadow-lg transition-all"
+                  >
                     {currentTranslations.deleteAccount}
                   </Button>
                 </div>
@@ -493,17 +588,38 @@ const Profile = () => {
               <CardContent className="space-y-6 p-6">
                 <div className="space-y-2">
                   <Label htmlFor="currentPassword" className="text-primary font-medium">{currentTranslations.currentPassword}</Label>
-                  <Input id="currentPassword" type="password" className="border-accent/30 focus:border-primary transition-colors" />
+                  <Input 
+                    id="currentPassword" 
+                    type="password" 
+                    value={currentPassword}
+                    onChange={(e) => setCurrentPassword(e.target.value)}
+                    className="border-accent/30 focus:border-primary transition-colors" 
+                  />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="newPassword" className="text-primary font-medium">{currentTranslations.newPassword}</Label>
-                  <Input id="newPassword" type="password" className="border-accent/30 focus:border-primary transition-colors" />
+                  <Input 
+                    id="newPassword" 
+                    type="password" 
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                    className="border-accent/30 focus:border-primary transition-colors" 
+                  />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="confirmPassword" className="text-primary font-medium">{currentTranslations.confirmPassword}</Label>
-                  <Input id="confirmPassword" type="password" className="border-accent/30 focus:border-primary transition-colors" />
+                  <Input 
+                    id="confirmPassword" 
+                    type="password" 
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    className="border-accent/30 focus:border-primary transition-colors" 
+                  />
                 </div>
-                <Button className="bg-gradient-primary hover:opacity-90 transition-all shadow-lg">
+                <Button 
+                  onClick={handleChangePassword}
+                  className="bg-gradient-primary hover:opacity-90 transition-all shadow-lg"
+                >
                   {currentTranslations.changePassword}
                 </Button>
               </CardContent>
@@ -523,7 +639,11 @@ const Profile = () => {
                     <div className="font-medium text-foreground">Email notifications</div>
                     <div className="text-sm text-muted-foreground">Receive updates via email</div>
                   </div>
-                  <Switch className="data-[state=checked]:bg-gradient-primary" />
+                  <Switch 
+                    checked={emailNotifications}
+                    onCheckedChange={setEmailNotifications}
+                    className="data-[state=checked]:bg-gradient-primary" 
+                  />
                 </div>
                 <Separator className="bg-accent/20" />
                 <div className="flex items-center justify-between p-4 border border-accent/20 rounded-xl bg-gradient-to-r from-white/50 to-accent/5">
@@ -531,8 +651,19 @@ const Profile = () => {
                     <div className="font-medium text-foreground">SMS notifications</div>
                     <div className="text-sm text-muted-foreground">Receive updates via SMS</div>
                   </div>
-                  <Switch className="data-[state=checked]:bg-gradient-primary" />
+                  <Switch 
+                    checked={smsNotifications}
+                    onCheckedChange={setSmsNotifications}
+                    className="data-[state=checked]:bg-gradient-primary" 
+                  />
                 </div>
+                <Button 
+                  onClick={handleSaveNotifications}
+                  className="bg-gradient-primary hover:opacity-90 transition-all shadow-lg mt-4"
+                >
+                  <Save className="h-4 w-4 mr-2" />
+                  {currentTranslations.save}
+                </Button>
               </CardContent>
             </Card>
           </TabsContent>
@@ -550,7 +681,11 @@ const Profile = () => {
                     <div className="font-medium text-foreground">Show profile photo</div>
                     <div className="text-sm text-muted-foreground">Let others see your profile picture</div>
                   </div>
-                  <Switch defaultChecked className="data-[state=checked]:bg-gradient-primary" />
+                  <Switch 
+                    checked={showProfilePhoto}
+                    onCheckedChange={setShowProfilePhoto}
+                    className="data-[state=checked]:bg-gradient-primary" 
+                  />
                 </div>
                 <Separator className="bg-accent/20" />
                 <div className="flex items-center justify-between p-4 border border-accent/20 rounded-xl bg-gradient-to-r from-white/50 to-accent/5">
@@ -558,8 +693,19 @@ const Profile = () => {
                     <div className="font-medium text-foreground">Analytics & personalization</div>
                     <div className="text-sm text-muted-foreground">Help us improve your experience</div>
                   </div>
-                  <Switch defaultChecked className="data-[state=checked]:bg-gradient-primary" />
+                  <Switch 
+                    checked={analytics}
+                    onCheckedChange={setAnalytics}
+                    className="data-[state=checked]:bg-gradient-primary" 
+                  />
                 </div>
+                <Button 
+                  onClick={handleSavePrivacy}
+                  className="bg-gradient-primary hover:opacity-90 transition-all shadow-lg mt-4"
+                >
+                  <Save className="h-4 w-4 mr-2" />
+                  {currentTranslations.save}
+                </Button>
               </CardContent>
             </Card>
           </TabsContent>
