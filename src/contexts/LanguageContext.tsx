@@ -82,6 +82,8 @@ const allTranslations = {
     to: 'Au',
     selectDate: 'Sélectionner une date',
     selectDates: 'Sélectionner des dates',
+    noPropertiesFound: 'Aucune propriété trouvée',
+    browseAllProperties: 'Parcourir toutes les propriétés',
     
     // Login
     loginSuccess: 'Connexion réussie!',
@@ -732,6 +734,8 @@ const allTranslations = {
     to: 'To',
     selectDate: 'Select date',
     selectDates: 'Select dates',
+    noPropertiesFound: 'No properties found',
+    browseAllProperties: 'Browse all properties',
     
     // Login
     loginSuccess: 'Login successful!',
@@ -1383,6 +1387,8 @@ const allTranslations = {
     to: 'إلى',
     selectDate: 'اختر التاريخ',
     selectDates: 'اختر التواريخ',
+    noPropertiesFound: 'لم يتم العثور على عقارات',
+    browseAllProperties: 'تصفح جميع العقارات',
     
     // Login
     loginSuccess: 'تم تسجيل الدخول بنجاح!',

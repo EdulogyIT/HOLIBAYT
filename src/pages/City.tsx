@@ -4,31 +4,29 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { MapPin, Bed, Bath, Square, Clock, Users, Building } from "lucide-react";
+import { MapPin, Bed, Bath, Square, Clock, Users, Building, Loader2 } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useLanguage } from "@/contexts/LanguageContext";
 import AIChatBox from "@/components/AIChatBox";
 import { useScrollToTop } from "@/hooks/useScrollToTop";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
 import algerImage from "@/assets/city-alger.jpg";
 import oranImage from "@/assets/city-oran.jpg";
 import constantineImage from "@/assets/city-constantine.jpg";
 import annabaImage from "@/assets/city-annaba.jpg";
 import villaMediterranean from "@/assets/property-villa-mediterranean.jpg";
-import luxuryApartment from "@/assets/property-luxury-apartment.jpg";
-import shortStay from "@/assets/property-short-stay.jpg";
 
 const City = () => {
   const navigate = useNavigate();
   const { t, currentLang } = useLanguage();
   const { cityId } = useParams();
+  const [buyProperties, setBuyProperties] = useState<any[]>([]);
+  const [rentProperties, setRentProperties] = useState<any[]>([]);
+  const [shortStayProperties, setShortStayProperties] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   
   useScrollToTop();
-
-  // Re-render when language changes
-  useEffect(() => {
-    // Component will re-render when currentLang changes
-  }, [currentLang]);
 
   const cityData = {
     alger: {
@@ -79,6 +77,62 @@ const City = () => {
 
   const currentCity = cityData[cityId as keyof typeof cityData];
 
+  // Re-render when language changes
+  useEffect(() => {
+    // Component will re-render when currentLang changes
+  }, [currentLang]);
+
+  // Fetch real properties for this city
+  useEffect(() => {
+    if (currentCity) {
+      fetchPropertiesForCity();
+    }
+  }, [cityId, currentCity]);
+
+  const fetchPropertiesForCity = async () => {
+    if (!currentCity) return;
+    
+    try {
+      setIsLoading(true);
+      const cityName = currentCity.name;
+      
+      // Fetch buy properties
+      const { data: buyData } = await supabase
+        .from('properties')
+        .select('*')
+        .eq('category', 'buy')
+        .eq('status', 'active')
+        .or(`city.ilike.%${cityName}%,location.ilike.%${cityName}%`)
+        .limit(2);
+      
+      // Fetch rent properties
+      const { data: rentData } = await supabase
+        .from('properties')
+        .select('*')
+        .eq('category', 'rent')
+        .eq('status', 'active')
+        .or(`city.ilike.%${cityName}%,location.ilike.%${cityName}%`)
+        .limit(2);
+      
+      // Fetch short-stay properties
+      const { data: shortStayData } = await supabase
+        .from('properties')
+        .select('*')
+        .eq('category', 'short-stay')
+        .eq('status', 'active')
+        .or(`city.ilike.%${cityName}%,location.ilike.%${cityName}%`)
+        .limit(2);
+
+      setBuyProperties(buyData || []);
+      setRentProperties(rentData || []);
+      setShortStayProperties(shortStayData || []);
+    } catch (error) {
+      console.error('Error fetching properties:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   if (!currentCity) {
     return (
       <div className="min-h-screen bg-background">
@@ -94,140 +148,75 @@ const City = () => {
     );
   }
 
-  // Sample properties for each city
-  const buyProperties = [
-    {
-      id: 1,
-      title: `${t('propertyVilla')} ${currentCity.name}`,
-      location: `${currentCity.name}, ${t('algeria')}`,
-      price: `2,500,000 ${t('currencyDA')}`,
-      beds: 4,
-      baths: 3,
-      area: "280 m²",
-      image: villaMediterranean,
-      type: t('propertyVilla')
-    },
-    {
-      id: 2,
-      title: `${t('propertyAppartement')} ${currentCity.name}`,
-      location: `${currentCity.name}, ${t('algeria')}`,
-      price: `1,800,000 ${t('currencyDA')}`,
-      beds: 3,
-      baths: 2,
-      area: "120 m²",
-      image: luxuryApartment,
-      type: t('propertyAppartement')
-    }
-  ];
+  // Helper to format property data
+  const formatPropertyForCard = (property: any) => ({
+    id: property.id,
+    title: property.title,
+    location: `${property.city}, ${t('algeria')}`,
+    price: `${property.price} ${property.price_currency || 'DZD'}`,
+    beds: property.bedrooms || '0',
+    baths: property.bathrooms || '0',
+    area: property.area || '0',
+    image: property.images?.[0] || villaMediterranean,
+    type: property.property_type || t('propertyAppartement')
+  });
 
-  const rentProperties = [
-    {
-      id: 3,
-      title: `${t('propertyStudio')} ${currentCity.name}`,
-      location: `${currentCity.name}, ${t('algeria')}`,
-      price: `35,000 ${t('currencyPerMonth')}`,
-      beds: 1,
-      baths: 1,
-      area: "45 m²",
-      image: shortStay,
-      type: t('propertyStudio')
-    },
-    {
-      id: 4,
-      title: `${t('propertyAppartement')} ${currentCity.name}`,
-      location: `${currentCity.name}, ${t('algeria')}`,
-      price: `55,000 ${t('currencyPerMonth')}`,
-      beds: 3,
-      baths: 2,
-      area: "110 m²",
-      image: luxuryApartment,
-      type: t('propertyAppartement')
-    }
-  ];
-
-  const shortStayProperties = [
-    {
-      id: 5,
-      title: `${t('propertySuite')} ${currentCity.name}`,
-      location: `${currentCity.name}, ${t('algeria')}`,
-      price: `12,000 ${t('currencyPerNight')}`,
-      beds: 2,
-      baths: 1,
-      area: "75 m²",
-      image: shortStay,
-      type: t('propertySuite'),
-      rating: 4.8
-    },
-    {
-      id: 6,
-      title: `${t('propertyAppartement')} Vue ${currentCity.name}`,
-      location: `${currentCity.name}, ${t('algeria')}`,
-      price: `15,000 ${t('currencyPerNight')}`,
-      beds: 3,
-      baths: 2,
-      area: "95 m²",
-      image: luxuryApartment,
-      type: t('propertyAppartement'),
-      rating: 4.9
-    }
-  ];
-
-  const PropertyCard = ({ property, listingType }: { property: any, listingType: string }) => (
-    <Card 
-      className="cursor-pointer hover:shadow-lg transition-shadow"
-      onClick={() => {
-        const targetPage = listingType === 'shortStay' ? '/short-stay' : listingType === 'rent' ? '/rent' : '/buy';
-        navigate(`${targetPage}?location=${encodeURIComponent(currentCity.name)}`);
-      }}
-    >
-      <div className="aspect-video bg-muted rounded-t-lg overflow-hidden">
-        <img 
-          src={property.image} 
-          alt={property.title}
-          className="w-full h-full object-cover"
-        />
-      </div>
-      <CardHeader>
-        <div className="flex justify-between items-start">
-          <CardTitle className="text-xl font-playfair">{property.title}</CardTitle>
-          <Badge variant="secondary" className="font-inter">{property.type}</Badge>
+  const PropertyCard = ({ property, listingType }: { property: any, listingType: string }) => {
+    const formattedProperty = formatPropertyForCard(property);
+    
+    return (
+      <Card 
+        className="cursor-pointer hover:shadow-lg transition-shadow"
+        onClick={() => navigate(`/property/${formattedProperty.id}`)}
+      >
+        <div className="aspect-video bg-muted rounded-t-lg overflow-hidden">
+          <img 
+            src={formattedProperty.image} 
+            alt={formattedProperty.title}
+            className="w-full h-full object-cover"
+          />
         </div>
-        <div className="flex items-center text-muted-foreground">
-          <MapPin className="w-4 h-4 mr-1" />
-          <span className="text-sm font-inter">{property.location}</span>
-        </div>
-      </CardHeader>
-      <CardContent>
-        <div className="flex justify-between items-center mb-4">
-          <span className="text-2xl font-bold text-primary font-playfair">{property.price}</span>
-        </div>
-        <div className="flex justify-between text-sm text-muted-foreground mb-4 font-inter">
-          <div className="flex items-center">
-            <Bed className="w-4 h-4 mr-1" />
-            {property.beds}
+        <CardHeader>
+          <div className="flex justify-between items-start">
+            <CardTitle className="text-xl font-playfair">{formattedProperty.title}</CardTitle>
+            <Badge variant="secondary" className="font-inter">{formattedProperty.type}</Badge>
           </div>
-          <div className="flex items-center">
-            <Bath className="w-4 h-4 mr-1" />
-            {property.baths}
+          <div className="flex items-center text-muted-foreground">
+            <MapPin className="w-4 h-4 mr-1" />
+            <span className="text-sm font-inter">{formattedProperty.location}</span>
           </div>
-          <div className="flex items-center">
-            <Square className="w-4 h-4 mr-1" />
-            {property.area}
+        </CardHeader>
+        <CardContent>
+          <div className="flex justify-between items-center mb-4">
+            <span className="text-2xl font-bold text-primary font-playfair">{formattedProperty.price}</span>
           </div>
-        </div>
-        <Button 
-          className="w-full bg-gradient-primary hover:shadow-elegant font-inter flex items-center justify-center min-h-[44px]" 
-          onClick={(e) => {
-            e.stopPropagation();
-            const targetPage = listingType === 'shortStay' ? '/short-stay' : listingType === 'rent' ? '/rent' : '/buy';
-            navigate(`${targetPage}?location=${encodeURIComponent(currentCity.name)}`);
-          }}
-        >
-          {listingType === 'shortStay' ? t('reserve') : t('viewDetails')}
-        </Button>
-      </CardContent>
-    </Card>
-  );
+          <div className="flex justify-between text-sm text-muted-foreground mb-4 font-inter">
+            <div className="flex items-center">
+              <Bed className="w-4 h-4 mr-1" />
+              {formattedProperty.beds}
+            </div>
+            <div className="flex items-center">
+              <Bath className="w-4 h-4 mr-1" />
+              {formattedProperty.baths}
+            </div>
+            <div className="flex items-center">
+              <Square className="w-4 h-4 mr-1" />
+              {formattedProperty.area}
+            </div>
+          </div>
+          <Button 
+            className="w-full bg-gradient-primary hover:shadow-elegant font-inter flex items-center justify-center min-h-[44px]" 
+            onClick={(e) => {
+              e.stopPropagation();
+              navigate(`/property/${formattedProperty.id}`);
+            }}
+          >
+            {listingType === 'shortStay' ? t('reserve') : t('viewDetails')}
+          </Button>
+        </CardContent>
+      </Card>
+    );
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -314,57 +303,114 @@ const City = () => {
               </TabsList>
               
               <TabsContent value="buy" className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {buyProperties.map((property) => (
-                    <PropertyCard key={property.id} property={property} listingType="buy" />
-                  ))}
-                </div>
-                <div className="text-center">
-                  <Button 
-                    variant="outline" 
-                    size="lg" 
-                    className="font-inter"
-                    onClick={() => navigate('/buy')}
-                  >
-                    {t('seeAllForSale')}
-                  </Button>
-                </div>
+                {isLoading ? (
+                  <div className="flex justify-center py-12">
+                    <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                  </div>
+                ) : buyProperties.length > 0 ? (
+                  <>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                      {buyProperties.map((property) => (
+                        <PropertyCard key={property.id} property={property} listingType="buy" />
+                      ))}
+                    </div>
+                    <div className="text-center">
+                      <Button 
+                        variant="outline" 
+                        size="lg" 
+                        className="font-inter"
+                        onClick={() => navigate(`/buy?location=${encodeURIComponent(currentCity.name)}`)}
+                      >
+                        {t('seeAllForSale')}
+                      </Button>
+                    </div>
+                  </>
+                ) : (
+                  <div className="text-center py-12">
+                    <p className="text-muted-foreground">{t('noPropertiesFound')}</p>
+                    <Button 
+                      variant="outline" 
+                      className="mt-4"
+                      onClick={() => navigate('/buy')}
+                    >
+                      {t('browseAllProperties')}
+                    </Button>
+                  </div>
+                )}
               </TabsContent>
               
               <TabsContent value="rent" className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {rentProperties.map((property) => (
-                    <PropertyCard key={property.id} property={property} listingType="rent" />
-                  ))}
-                </div>
-                <div className="text-center">
-                  <Button 
-                    variant="outline" 
-                    size="lg" 
-                    className="font-inter"
-                    onClick={() => navigate('/rent')}
-                  >
-                    {t('seeAllForRent')}
-                  </Button>
-                </div>
+                {isLoading ? (
+                  <div className="flex justify-center py-12">
+                    <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                  </div>
+                ) : rentProperties.length > 0 ? (
+                  <>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                      {rentProperties.map((property) => (
+                        <PropertyCard key={property.id} property={property} listingType="rent" />
+                      ))}
+                    </div>
+                    <div className="text-center">
+                      <Button 
+                        variant="outline" 
+                        size="lg" 
+                        className="font-inter"
+                        onClick={() => navigate(`/rent?location=${encodeURIComponent(currentCity.name)}`)}
+                      >
+                        {t('seeAllForRent')}
+                      </Button>
+                    </div>
+                  </>
+                ) : (
+                  <div className="text-center py-12">
+                    <p className="text-muted-foreground">{t('noPropertiesFound')}</p>
+                    <Button 
+                      variant="outline" 
+                      className="mt-4"
+                      onClick={() => navigate('/rent')}
+                    >
+                      {t('browseAllProperties')}
+                    </Button>
+                  </div>
+                )}
               </TabsContent>
               
               <TabsContent value="shortStay" className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {shortStayProperties.map((property) => (
-                    <PropertyCard key={property.id} property={property} listingType="shortStay" />
-                  ))}
-                </div>
-                <div className="text-center">
-                  <Button 
-                    variant="outline" 
-                    size="lg" 
-                    className="font-inter"
-                    onClick={() => navigate('/short-stay')}
-                  >
-                    {t('seeAllShortStay')}
-                  </Button>
-                </div>
+                {isLoading ? (
+                  <div className="flex justify-center py-12">
+                    <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                  </div>
+                ) : shortStayProperties.length > 0 ? (
+                  <>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                      {shortStayProperties.map((property) => (
+                        <PropertyCard key={property.id} property={property} listingType="shortStay" />
+                      ))}
+                    </div>
+                    <div className="text-center">
+                      <Button 
+                        variant="outline" 
+                        size="lg" 
+                        className="font-inter"
+                        onClick={() => navigate(`/short-stay?location=${encodeURIComponent(currentCity.name)}`)}
+                      >
+                        {t('seeAllShortStay')}
+                      </Button>
+                    </div>
+                  </>
+                ) : (
+                  <div className="text-center py-12">
+                    <p className="text-muted-foreground">{t('noPropertiesFound')}</p>
+                    <Button 
+                      variant="outline" 
+                      className="mt-4"
+                      onClick={() => navigate('/short-stay')}
+                    >
+                      {t('browseAllProperties')}
+                    </Button>
+                  </div>
+                )}
               </TabsContent>
             </Tabs>
           </div>
