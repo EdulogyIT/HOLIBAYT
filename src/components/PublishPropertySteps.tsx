@@ -31,6 +31,8 @@ interface FormData {
   floor: string;
   price: string;
   priceType: string;
+  checkInTime: string;
+  checkOutTime: string;
   features: {
     parking: boolean;
     swimmingPool: boolean;
@@ -76,6 +78,8 @@ const PublishPropertySteps = ({ onSubmit, isSubmitting = false }: PublishPropert
     floor: "",
     price: "",
     priceType: "",
+    checkInTime: "15:00",
+    checkOutTime: "11:00",
     features: {
       parking: false,
       swimmingPool: false,
@@ -393,6 +397,30 @@ const PublishPropertySteps = ({ onSubmit, isSubmitting = false }: PublishPropert
                   </Select>
                 </div>
               </div>
+
+              {/* Check-in and Check-out times for short-stay properties */}
+              {formData.category === 'short-stay' && (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <Label htmlFor="checkInTime">Check-in Time *</Label>
+                    <Input
+                      id="checkInTime"
+                      type="time"
+                      value={formData.checkInTime}
+                      onChange={(e) => handleInputChange("checkInTime", e.target.value)}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="checkOutTime">Check-out Time *</Label>
+                    <Input
+                      id="checkOutTime"
+                      type="time"
+                      value={formData.checkOutTime}
+                      onChange={(e) => handleInputChange("checkOutTime", e.target.value)}
+                    />
+                  </div>
+                </div>
+              )}
 
               {/* Features & Amenities */}
               <div className="space-y-4">

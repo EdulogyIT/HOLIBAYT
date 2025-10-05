@@ -192,6 +192,31 @@ export const PropertyReviews = ({ propertyId, hostUserId }: PropertyReviewsProps
     }
   };
 
+  const handleDeleteReview = async (reviewId: string) => {
+    if (!user) {
+      toast.error('Please login to delete reviews');
+      return;
+    }
+
+    // Confirm deletion
+    if (!confirm('Are you sure you want to delete this review? This action cannot be undone.')) {
+      return;
+    }
+
+    const { error } = await supabase
+      .from('reviews')
+      .delete()
+      .eq('id', reviewId);
+
+    if (error) {
+      toast.error('Failed to delete review');
+      console.error('Delete review error:', error);
+    } else {
+      toast.success('Review deleted successfully');
+      fetchReviews();
+    }
+  };
+
   const getRatingBreakdown = () => {
     if (reviews.length === 0) return null;
 

@@ -44,6 +44,8 @@ interface Property {
   created_at: string;
   user_id?: string;
   commission_rate?: number;
+  check_in_time?: string;
+  check_out_time?: string;
 }
 
 const Property = () => {
@@ -226,10 +228,35 @@ const Property = () => {
                      </div>
                    </div>
 
-                  <div className="space-y-4">
-                    <h3 className="text-xl font-semibold font-playfair">{t('descriptionField')}</h3>
-                    <p className="text-muted-foreground leading-relaxed font-inter">{property.description}</p>
-                  </div>
+                   <div className="space-y-4">
+                     <h3 className="text-xl font-semibold font-playfair">{t('descriptionField')}</h3>
+                     <p className="text-muted-foreground leading-relaxed font-inter">{property.description}</p>
+                     
+                     {/* Check-in/Check-out times for short-stay */}
+                     {property.category === 'short-stay' && (property.check_in_time || property.check_out_time) && (
+                       <div className="mt-4 p-4 bg-muted/50 rounded-lg">
+                         <h4 className="text-lg font-semibold font-playfair mb-3">Check-in & Check-out</h4>
+                         <div className="grid grid-cols-2 gap-4">
+                           {property.check_in_time && (
+                             <div>
+                               <p className="text-sm text-muted-foreground font-inter">Check-in</p>
+                               <p className="text-base font-semibold font-inter">
+                                 {property.check_in_time.substring(0, 5)}
+                               </p>
+                             </div>
+                           )}
+                           {property.check_out_time && (
+                             <div>
+                               <p className="text-sm text-muted-foreground font-inter">Check-out</p>
+                               <p className="text-base font-semibold font-inter">
+                                 {property.check_out_time.substring(0, 5)}
+                               </p>
+                             </div>
+                           )}
+                         </div>
+                       </div>
+                     )}
+                   </div>
                 </CardContent>
               </Card>
 

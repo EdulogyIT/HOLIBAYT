@@ -131,14 +131,19 @@ const Bookings = () => {
   }, [user, isAuthenticated]);
 
   // Separate bookings into upcoming and past
+  // Use current date and time for accurate comparison
   const now = new Date();
-  now.setHours(0, 0, 0, 0); // Set to start of today for accurate comparison
-  const upcomingBookings = bookings.filter(booking => 
-    new Date(booking.check_out_date) > now
-  );
-  const pastBookings = bookings.filter(booking => 
-    new Date(booking.check_out_date) <= now
-  );
+  const upcomingBookings = bookings.filter(booking => {
+    const checkoutDate = new Date(booking.check_out_date);
+    // Add checkout time if available (default 11:00 AM)
+    checkoutDate.setHours(11, 0, 0, 0);
+    return checkoutDate > now;
+  });
+  const pastBookings = bookings.filter(booking => {
+    const checkoutDate = new Date(booking.check_out_date);
+    checkoutDate.setHours(11, 0, 0, 0);
+    return checkoutDate <= now;
+  });
 
   const getStatusColor = (status: string) => {
     switch (status) {

@@ -57,32 +57,40 @@ const PublishProperty = () => {
       }
 
       // Create property record
+      const propertyData: any = {
+        user_id: user.id,
+        category: formData.category,
+        property_type: formData.propertyCategory,
+        title: formData.title,
+        location: formData.location,
+        city: formData.city,
+        district: formData.district || null,
+        full_address: formData.fullAddress || null,
+        bedrooms: formData.bedrooms || null,
+        bathrooms: formData.bathrooms || null,
+        area: formData.area,
+        floor_number: formData.floor || null,
+        price: formData.price,
+        price_type: formData.priceType,
+        features: formData.features,
+        pets_allowed: formData.features.petsAllowed || false,
+        description: formData.description || null,
+        contact_name: formData.fullName,
+        contact_phone: formData.phoneNumber,
+        contact_email: formData.email,
+        images: imageUrls,
+        status: 'pending' // Requires admin approval
+      };
+
+      // Add check-in/check-out times for short-stay properties
+      if (formData.category === 'short-stay') {
+        propertyData.check_in_time = formData.checkInTime || '15:00:00';
+        propertyData.check_out_time = formData.checkOutTime || '11:00:00';
+      }
+
       const { error: insertError } = await supabase
         .from('properties')
-        .insert({
-          user_id: user.id,
-          category: formData.category,
-          property_type: formData.propertyCategory,
-          title: formData.title,
-          location: formData.location,
-          city: formData.city,
-          district: formData.district || null,
-          full_address: formData.fullAddress || null,
-          bedrooms: formData.bedrooms || null,
-          bathrooms: formData.bathrooms || null,
-          area: formData.area,
-          floor_number: formData.floor || null,
-          price: formData.price,
-          price_type: formData.priceType,
-          features: formData.features,
-          pets_allowed: formData.features.petsAllowed || false,
-          description: formData.description || null,
-          contact_name: formData.fullName,
-          contact_phone: formData.phoneNumber,
-          contact_email: formData.email,
-          images: imageUrls,
-          status: 'pending' // Requires admin approval
-        });
+        .insert(propertyData);
 
       if (insertError) {
         console.error('Property insertion error:', insertError);

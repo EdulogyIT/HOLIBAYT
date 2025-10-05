@@ -597,6 +597,8 @@ export type Database = {
           bathrooms: string | null
           bedrooms: string | null
           category: string
+          check_in_time: string | null
+          check_out_time: string | null
           city: string
           commission_rate: number | null
           contact_email: string
@@ -630,6 +632,8 @@ export type Database = {
           bathrooms?: string | null
           bedrooms?: string | null
           category: string
+          check_in_time?: string | null
+          check_out_time?: string | null
           city: string
           commission_rate?: number | null
           contact_email: string
@@ -663,6 +667,8 @@ export type Database = {
           bathrooms?: string | null
           bedrooms?: string | null
           category?: string
+          check_in_time?: string | null
+          check_out_time?: string | null
           city?: string
           commission_rate?: number | null
           contact_email?: string
