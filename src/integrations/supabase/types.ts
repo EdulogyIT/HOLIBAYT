@@ -812,6 +812,14 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      auto_complete_bookings: {
+        Args: Record<PropertyKey, never>
+        Returns: number
+      }
+      get_booking_property_category: {
+        Args: { booking_id_param: string }
+        Returns: string
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
