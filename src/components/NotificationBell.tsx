@@ -13,6 +13,7 @@ import { useNavigate } from "react-router-dom";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { toast } from "sonner";
 import { SuperhostCelebration } from "@/components/SuperhostCelebration";
+import { ReviewNotificationDialog } from "@/components/ReviewNotificationDialog";
 
 interface Notification {
   id: string;
@@ -28,6 +29,13 @@ export const NotificationBell = () => {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [showSuperhostCelebration, setShowSuperhostCelebration] = useState(false);
+  const [showReviewDialog, setShowReviewDialog] = useState(false);
+  const [reviewData, setReviewData] = useState<{
+    reviewerName: string;
+    propertyTitle: string;
+    rating: number;
+    comment?: string;
+  } | null>(null);
   const { user } = useAuth();
   const navigate = useNavigate();
 
@@ -106,6 +114,38 @@ export const NotificationBell = () => {
       return;
     }
     
+    // Handle review_created notification
+    if (notification.type === 'review_created' && notification.related_id) {
+      // Fetch review details
+      const { data: review } = await supabase
+        .from('reviews')
+        .select(`
+          rating,
+          comment,
+          user_id,
+          property_id
+        `)
+        .eq('id', notification.related_id)
+        .single();
+
+      if (review) {
+        // Fetch reviewer name and property title
+        const [reviewerResult, propertyResult] = await Promise.all([
+          supabase.from('profiles').select('name').eq('id', review.user_id).single(),
+          supabase.from('properties').select('title').eq('id', review.property_id).single()
+        ]);
+
+        setReviewData({
+          reviewerName: reviewerResult.data?.name || 'A guest',
+          propertyTitle: propertyResult.data?.title || 'Your property',
+          rating: Number(review.rating),
+          comment: review.comment || undefined
+        });
+        setShowReviewDialog(true);
+      }
+      return;
+    }
+    
     // Navigate based on notification type
     if (notification.type === 'message') {
       navigate('/messages');
@@ -152,6 +192,17 @@ export const NotificationBell = () => {
     <>
       {showSuperhostCelebration && (
         <SuperhostCelebration onClose={() => setShowSuperhostCelebration(false)} />
+      )}
+      
+      {reviewData && (
+        <ReviewNotificationDialog
+          open={showReviewDialog}
+          onOpenChange={setShowReviewDialog}
+          reviewerName={reviewData.reviewerName}
+          propertyTitle={reviewData.propertyTitle}
+          rating={reviewData.rating}
+          comment={reviewData.comment}
+        />
       )}
       
       <Popover>
