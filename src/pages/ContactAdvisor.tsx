@@ -159,12 +159,12 @@ const ContactAdvisor = () => {
                 size="lg" 
                 variant="secondary" 
                 className="font-inter font-semibold text-lg px-8 py-4"
-                onClick={() => {
-                  window.location.href = 'mailto:contact@holibayt.com';
-                }}
+                asChild
               >
-                <Mail className="h-5 w-5 mr-2" />
-                Email Us
+                <a href="mailto:contact@holibayt.com">
+                  <Mail className="h-5 w-5 mr-2" />
+                  Email Us
+                </a>
               </Button>
               <Button 
                 size="lg" 
