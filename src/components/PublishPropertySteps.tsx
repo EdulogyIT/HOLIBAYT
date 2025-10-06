@@ -31,6 +31,7 @@ interface FormData {
   floor: string;
   price: string;
   priceType: string;
+  priceCurrency: string;
   checkInTime: string;
   checkOutTime: string;
   features: {
@@ -78,6 +79,7 @@ const PublishPropertySteps = ({ onSubmit, isSubmitting = false }: PublishPropert
     floor: "",
     price: "",
     priceType: "",
+    priceCurrency: "EUR",
     checkInTime: "15:00",
     checkOutTime: "11:00",
     features: {
@@ -372,15 +374,28 @@ const PublishPropertySteps = ({ onSubmit, isSubmitting = false }: PublishPropert
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div className="space-y-2">
-                  <Label htmlFor="price">Price (EUR) *</Label>
+                  <Label htmlFor="price">{t('priceField')} *</Label>
                   <Input
                     id="price"
                     placeholder="e.g., 150000"
                     value={formData.price}
                     onChange={(e) => handleInputChange("price", e.target.value)}
                   />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="priceCurrency">Currency *</Label>
+                  <Select value={formData.priceCurrency} onValueChange={(value) => handleInputChange("priceCurrency", value)}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select currency" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="EUR">EUR (€)</SelectItem>
+                      <SelectItem value="USD">USD ($)</SelectItem>
+                      <SelectItem value="DZD">DZD (DA)</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="priceType">{t('priceTypeField')} *</Label>
