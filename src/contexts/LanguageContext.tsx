@@ -1,4 +1,5 @@
-import { createContext, useContext, useState, useEffect, useMemo, ReactNode } from 'react';
+// i18n/LanguageContext.tsx
+import React, { createContext, useContext, useEffect, useMemo, useState, ReactNode } from 'react';
 
 type Language = 'FR' | 'EN' | 'AR';
 
@@ -8,6 +9,10 @@ interface LanguageContextType {
   t: (key: string) => string | any;
 }
 
+/**
+ * Keep your full translations object here (exactly as you shared).
+ * If you maintain it in a separate file, you can import it instead.
+ */
 const allTranslations = {
   FR: {
     // Navigation
@@ -1934,53 +1939,75 @@ const allTranslations = {
   }
 };
 
-const translations = allTranslations;
+const SUPPORTED: Language[] = ['EN', 'FR', 'AR'];
 
-const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
+/** Utility: browser guards for SSR */
+function isBrowser() {
+  return typeof window !== 'undefined' && typeof document !== 'undefined';
+}
+
+/** Normalize any input (param/navigator) to our Language union or null */
+function normalizeLang(input?: string | null): Language | null {
+  if (!input) return null;
+  const up = input.toUpperCase();
+  return (SUPPORTED as string[]).includes(up) ? (up as Language) : null;
+}
+
+/** Initial language detection with localStorage -> ?lang= -> navigator -> EN */
 function detectInitialLang(): Language {
-  // 1) Check localStorage first for saved preference
-  const savedLang = localStorage.getItem('lang');
-  if (savedLang && (savedLang === 'EN' || savedLang === 'FR' || savedLang === 'AR')) {
-    return savedLang as Language;
+  if (isBrowser()) {
+    const saved = normalizeLang(localStorage.getItem('lang'));
+    if (saved) return saved;
+
+    const urlParam = new URLSearchParams(window.location.search).get('lang');
+    const fromUrl = normalizeLang(urlParam);
+    if (fromUrl) return fromUrl;
+
+    const nav = (navigator?.language ?? (navigator as any)?.languages?.[0]) as string | undefined;
+    const guess = normalizeLang(nav?.slice(0, 2));
+    if (guess) return guess;
   }
-  
-  // 2) URL ?lang=en|fr|ar
-  const urlLang = new URLSearchParams(window.location.search).get('lang');
-  if (urlLang) {
-    const up = urlLang.toUpperCase();
-    if (up === 'EN' || up === 'FR' || up === 'AR') return up as Language;
-  }
-  
-  // 3) Default to English for all users
   return 'EN';
 }
+
+/** Safe deep getter for dotted keys */
+function getPath(obj: any, path: string) {
+  return path.split('.').reduce((acc, k) => (acc && typeof acc === 'object' ? acc[k] : undefined), obj);
+}
+
+const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
 export const LanguageProvider = ({ children }: { children: ReactNode }) => {
   const [currentLang, setCurrentLang] = useState<Language>(detectInitialLang);
 
-  // Persist choice and update <html> attributes
+  // Persist, sync URL ?lang=, and update <html lang/dir>
   useEffect(() => {
+    if (!isBrowser()) return;
+
+    // persist
     localStorage.setItem('lang', currentLang);
+
+    // keep ?lang= param in URL without reload
+    const url = new URL(window.location.href);
+    url.searchParams.set('lang', currentLang);
+    window.history.replaceState({}, '', url.toString());
+
+    // html attributes + RTL
     document.documentElement.lang = currentLang === 'AR' ? 'ar' : currentLang.toLowerCase();
     document.documentElement.dir = currentLang === 'AR' ? 'rtl' : 'ltr';
   }, [currentLang]);
 
-  // Memoized translator for the active language
+  // Translator with safe fallback: current -> EN -> key
   const t = useMemo(() => {
     return (key: string): string | any => {
-      const keys = key.split('.');
-      let result: any = translations[currentLang];
-      
-      for (const k of keys) {
-        if (result && typeof result === 'object' && k in result) {
-          result = result[k];
-        } else {
-          // Hide raw keys in production, show them in development
-          return import.meta.env.DEV ? key : '';
-        }
-      }
-      
-      return result;
+      const cur = getPath(allTranslations[currentLang], key);
+      if (cur !== undefined) return cur;
+
+      const en = getPath(allTranslations.EN, key);
+      if (en !== undefined) return en;
+
+      // Show the key so UI never goes blank (better DX and safer UX)
+      return key;
     };
   }, [currentLang]);
 
