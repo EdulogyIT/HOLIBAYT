@@ -159,17 +159,10 @@ const ContactAdvisor = () => {
                 size="lg" 
                 variant="secondary" 
                 className="font-inter font-semibold text-lg px-8 py-4"
-                onClick={async () => {
-                  const { data: { user } } = await supabase.auth.getUser();
-                  if (!user) {
-                    window.location.href = '/login?redirect=/contact-advisor';
-                  } else {
-                    window.location.href = '/messages';
-                  }
-                }}
+                onClick={() => window.location.href = 'mailto:contact@holibayt.com'}
               >
-                <MessageCircle className="h-5 w-5 mr-2" />
-                Start Chat
+                <Mail className="h-5 w-5 mr-2" />
+                Email Us
               </Button>
               <Button 
                 size="lg" 
@@ -234,7 +227,46 @@ const ContactAdvisor = () => {
                   if (!user) {
                     window.location.href = '/login?redirect=/messages';
                   } else {
-                    window.location.href = '/messages';
+                    // Create support conversation
+                    try {
+                      const { data: existingConv } = await supabase
+                        .from('conversations')
+                        .select('id')
+                        .eq('user_id', user.id)
+                        .eq('conversation_type', 'support')
+                        .eq('status', 'active')
+                        .single();
+
+                      if (existingConv) {
+                        window.location.href = '/messages';
+                      } else {
+                        const { data: newConv, error: convError } = await supabase
+                          .from('conversations')
+                          .insert({
+                            user_id: user.id,
+                            subject: 'Support Request',
+                            conversation_type: 'support',
+                            status: 'active'
+                          })
+                          .select()
+                          .single();
+
+                        if (!convError && newConv) {
+                          await supabase
+                            .from('messages')
+                            .insert({
+                              conversation_id: newConv.id,
+                              sender_id: user.id,
+                              content: 'Hi! How may I help you?',
+                              message_type: 'text'
+                            });
+                        }
+                        window.location.href = '/messages';
+                      }
+                    } catch (error) {
+                      console.error('Error creating support conversation:', error);
+                      window.location.href = '/messages';
+                    }
                   }
                 }
               };

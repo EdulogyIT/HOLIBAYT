@@ -65,9 +65,15 @@ const Blog = () => {
     '/src/assets/blog-future-real-estate.jpg': blogFutureRealEstate,
     '/src/assets/blog-investment-tips.jpg': blogInvestmentTips,
     '/src/assets/blog-renovation-tips-new.jpg': blogRenovationTips,
+    '/src/assets/blog-renovation-tips.jpg': blogRenovationTips,
     '/src/assets/blog-coastal-rentals.jpg': blogCoastalRentals,
     '/src/assets/blog-property-valuation-new.jpg': blogPropertyValuation,
+    '/src/assets/blog-property-valuation.jpg': blogPropertyValuation,
     '/src/assets/blog-legal-considerations-new.jpg': blogLegalConsiderations,
+    '/src/assets/blog-legal-considerations.jpg': blogLegalConsiderations,
+    '/src/assets/blog-real-estate-future.jpg': blogFutureRealEstate,
+    '/src/assets/blog-property-location.jpg': blogCoastalRentals,
+    '/src/assets/blog-short-stay-rental.jpg': blogCoastalRentals,
   };
 
   // Helper to get the image source
@@ -97,10 +103,10 @@ const Blog = () => {
         <section className="bg-gradient-subtle py-16">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-4 font-playfair">
-              {t('blogInsights')}
+              {t('blogInsights') || 'Latest Property Insights & News'}
             </h1>
             <p className="text-xl text-muted-foreground font-inter max-w-2xl mx-auto">
-              {t('blogDescription')}
+              {t('blogDescription') || 'Stay informed with expert insights, market trends, and property tips'}
             </p>
           </div>
         </section>

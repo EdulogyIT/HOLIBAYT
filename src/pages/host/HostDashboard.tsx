@@ -131,10 +131,6 @@ export default function HostDashboard() {
               <Plus className="h-4 w-4 mr-2" />
               {t('host.publishProperty')}
             </Button>
-            <Button variant="outline" onClick={() => navigate('/host/create-blog')}>
-              <Plus className="h-4 w-4 mr-2" />
-              {t('host.createBlog') || 'Create Blog'}
-            </Button>
             <Button variant="outline" onClick={() => navigate('/host/listings')}>
               <Building2 className="h-4 w-4 mr-2" />
               {t('host.viewListings')}

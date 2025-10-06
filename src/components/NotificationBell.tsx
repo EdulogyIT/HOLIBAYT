@@ -95,8 +95,22 @@ export const NotificationBell = () => {
     } else if (notification.type === 'property_approval' || notification.type === 'property_rejection' || notification.type === 'property_approved') {
       navigate('/host/listings');
     } else if (notification.type === 'review_request' && notification.related_id) {
-      // For review requests, related_id is the booking_id, so navigate to bookings
-      navigate('/bookings');
+      // related_id is booking_id for review_request
+      // Check if review already exists for this booking
+      const { data: existingReview } = await supabase
+        .from('reviews')
+        .select('id')
+        .eq('booking_id', notification.related_id)
+        .single();
+
+      if (existingReview) {
+        toast.success("Already Reviewed", {
+          description: "You have already submitted a review for this stay. Thank you!"
+        });
+      } else {
+        // Navigate to bookings page where they can review
+        navigate('/bookings');
+      }
     } else if (notification.related_id) {
       // For other types, assume related_id is property_id
       navigate(`/property/${notification.related_id}`);
