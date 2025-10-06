@@ -72,6 +72,50 @@ const City = () => {
         founded: t('twelfthCenturyBC')
       },
       image: annabaImage
+    },
+    setif: {
+      name: t('citySetif'),
+      description: t('setifDescription'),
+      history: t('setifHistory') || "Setif, located in the High Plains, is known for its rich history and agricultural significance.",
+      stats: {
+        population: "500k " + t('inhabitantsShort'),
+        area: "127 km²",
+        founded: "1st Century"
+      },
+      image: algerImage
+    },
+    tlemcen: {
+      name: t('cityTlemcen'),
+      description: t('tlemcenDescription'),
+      history: t('tlemcenHistory') || "Tlemcen, the Pearl of the Maghreb, is renowned for its Andalusian architecture and cultural heritage.",
+      stats: {
+        population: "170k " + t('inhabitantsShort'),
+        area: "9,017 km²",
+        founded: "8th Century"
+      },
+      image: oranImage
+    },
+    bejaia: {
+      name: t('cityBejaia'),
+      description: t('bejaiaDescription'),
+      history: t('bejaiaHistory') || "Bejaia is a coastal city with stunning Mediterranean views and a rich historical port heritage.",
+      stats: {
+        population: "180k " + t('inhabitantsShort'),
+        area: "3,268 km²",
+        founded: "Pre-Roman times"
+      },
+      image: annabaImage
+    },
+    blida: {
+      name: t('cityBlida'),
+      description: t('blidaDescription'),
+      history: t('blidaHistory') || "Blida, known as the City of Roses, is famous for its beautiful gardens and proximity to the Atlas Mountains.",
+      stats: {
+        population: "330k " + t('inhabitantsShort'),
+        area: "1,696 km²",
+        founded: "16th Century"
+      },
+      image: constantineImage
     }
   };
 

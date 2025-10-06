@@ -17,6 +17,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useWishlist } from "@/hooks/useWishlist";
 import { WishlistButton } from "@/components/WishlistButton";
 import { PropertyBadges } from "@/components/PropertyBadges";
+import PropertyMapWithZone from "@/components/PropertyMapWithZone";
 
 interface Property {
   id: string;
@@ -205,8 +206,19 @@ const Rent = () => {
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="flex flex-col lg:flex-row gap-8">
-            {/* Filters Sidebar */}
-            <div className="lg:w-1/4">
+            {/* Filters Sidebar with Map */}
+            <div className="lg:w-1/4 space-y-6">
+              <PropertyMapWithZone 
+                location="Algeria"
+                onZoneSearch={(zone) => {
+                  const filtered = properties.filter(p => 
+                    (p.city || "").toLowerCase().includes(zone.toLowerCase()) ||
+                    (p.location || "").toLowerCase().includes(zone.toLowerCase())
+                  );
+                  setFilteredProperties(filtered);
+                }}
+              />
+              
               <PropertyFilters
                 onFilterChange={(filters) => {
                   let filtered = properties;

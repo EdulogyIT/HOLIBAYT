@@ -156,7 +156,7 @@ const CitiesSection = () => {
         {/* Bottom CTA */}
         <div className="text-center mt-12">
           <p className="text-muted-foreground font-inter text-sm mb-4">
-            {showAllCities ? t('allCitiesAvailable') : t('moreThanCitiesAvailable')}
+            {showAllCities ? `${allCities.length} ${t('citiesAvailable')}` : `${allCities.length} ${t('citiesAvailable')}`}
           </p>
           <Button 
             variant="outline" 
