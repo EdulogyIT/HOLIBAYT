@@ -68,7 +68,7 @@ export default function PropertyCalendar() {
     try {
       const { data, error } = await supabase
         .from('bookings')
-        .select('check_in_date, check_out_date')
+        .select('check_in_date, check_out_date, status')
         .eq('property_id', selectedProperty)
         .in('status', ['confirmed', 'pending']);
 
@@ -76,6 +76,8 @@ export default function PropertyCalendar() {
         console.error('Error fetching booked dates:', error);
         return;
       }
+
+      console.log('PropertyCalendar - Fetched bookings:', data);
 
       const dates: Date[] = [];
       data?.forEach(booking => {
@@ -85,6 +87,7 @@ export default function PropertyCalendar() {
         dates.push(...interval);
       });
 
+      console.log('PropertyCalendar - Booked dates:', dates);
       setBookedDates(dates);
     } catch (error) {
       console.error('Error fetching booked dates:', error);

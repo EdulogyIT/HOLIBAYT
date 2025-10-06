@@ -31,8 +31,48 @@ export const BookingModal: React.FC<BookingModalProps> = ({ property, trigger })
   const [guestsCount, setGuestsCount] = useState(1);
   const [specialRequests, setSpecialRequests] = useState('');
   const [contactPhone, setContactPhone] = useState('');
+  const [isCheckingAvailability, setIsCheckingAvailability] = useState(false);
   const { formatPrice, currentCurrency } = useCurrency();
   const { isAuthenticated } = useAuth();
+
+  // Check if dates are available before payment
+  const checkDateAvailability = async () => {
+    if (!checkInDate || !checkOutDate) return false;
+    
+    setIsCheckingAvailability(true);
+    try {
+      const { data: bookings, error } = await supabase
+        .from('bookings')
+        .select('check_in_date, check_out_date')
+        .eq('property_id', property.id)
+        .in('status', ['confirmed', 'pending']);
+
+      if (error) throw error;
+
+      // Check for date overlap
+      const selectedCheckIn = new Date(checkInDate);
+      const selectedCheckOut = new Date(checkOutDate);
+
+      const hasConflict = bookings?.some(booking => {
+        const bookingCheckIn = new Date(booking.check_in_date);
+        const bookingCheckOut = new Date(booking.check_out_date);
+        
+        // Check if there's any overlap
+        return (
+          (selectedCheckIn >= bookingCheckIn && selectedCheckIn < bookingCheckOut) ||
+          (selectedCheckOut > bookingCheckIn && selectedCheckOut <= bookingCheckOut) ||
+          (selectedCheckIn <= bookingCheckIn && selectedCheckOut >= bookingCheckOut)
+        );
+      });
+
+      return !hasConflict;
+    } catch (error) {
+      console.error('Error checking availability:', error);
+      return false;
+    } finally {
+      setIsCheckingAvailability(false);
+    }
+  };
 
   // ---- Stripe constraints ----
   const MIN_EUR = 1; // Reduced minimum to allow small payments
@@ -81,6 +121,13 @@ export const BookingModal: React.FC<BookingModalProps> = ({ property, trigger })
   const handlePayBooking = async () => {
     if (!canPayBooking) {
       alert(`Minimum payment amount is €${MIN_EUR}. Please increase nights or price.`);
+      return;
+    }
+
+    // Check date availability before proceeding
+    const isAvailable = await checkDateAvailability();
+    if (!isAvailable) {
+      alert('Sorry, these dates are no longer available. Please select different dates.');
       return;
     }
 
@@ -133,6 +180,13 @@ export const BookingModal: React.FC<BookingModalProps> = ({ property, trigger })
   const handlePayDeposit = async () => {
     if (!canPayDeposit) {
       alert(`Minimum deposit amount is €${MIN_EUR}.`);
+      return;
+    }
+
+    // Check date availability before proceeding
+    const isAvailable = await checkDateAvailability();
+    if (!isAvailable) {
+      alert('Sorry, these dates are no longer available. Please select different dates.');
       return;
     }
 
@@ -309,10 +363,10 @@ export const BookingModal: React.FC<BookingModalProps> = ({ property, trigger })
                     onClick={handlePayBooking}
                     className="w-full"
                     size="lg"
-                    disabled={!canPayBooking}
+                    disabled={!canPayBooking || isCheckingAvailability}
                   >
                     <CreditCard className="w-4 h-4 mr-2" />
-                    Pay {formatPrice(finalTotalAmount)}
+                    {isCheckingAvailability ? 'Checking availability...' : `Pay ${formatPrice(finalTotalAmount)}`}
                   </Button>
                   {!canPayBooking && (
                     <div className="text-xs text-muted-foreground">

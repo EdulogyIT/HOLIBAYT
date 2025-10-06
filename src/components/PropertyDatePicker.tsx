@@ -37,17 +37,21 @@ const PropertyDatePicker = ({ propertyId, onDateChange }: PropertyDatePickerProp
 
       if (error) throw error;
 
+      console.log('Fetched bookings for property:', propertyId, bookings);
+
       // Generate all dates between check-in and check-out for each booking
       const allBookedDates: Date[] = [];
       bookings?.forEach((booking) => {
         const checkIn = new Date(booking.check_in_date);
         const checkOut = new Date(booking.check_out_date);
         
+        // Include all dates from check-in to check-out (inclusive)
         for (let d = new Date(checkIn); d <= checkOut; d.setDate(d.getDate() + 1)) {
           allBookedDates.push(new Date(d));
         }
       });
 
+      console.log('Booked dates:', allBookedDates);
       setBookedDates(allBookedDates);
     } catch (error) {
       console.error('Error fetching booked dates:', error);
