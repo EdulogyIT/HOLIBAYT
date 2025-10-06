@@ -10,7 +10,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-import { ArrowLeft, Upload, FileText } from 'lucide-react';
+import { ArrowLeft, FileText } from 'lucide-react';
 
 export default function CreateBlog() {
   const { user } = useAuth();
@@ -24,8 +24,7 @@ export default function CreateBlog() {
   const [authorName, setAuthorName] = useState('');
   const [category, setCategory] = useState('general');
   const [status, setStatus] = useState<'draft' | 'published'>('draft');
-  const [imageFile, setImageFile] = useState<File | null>(null);
-  const [imagePreview, setImagePreview] = useState<string>('');
+  const [imageUrl, setImageUrl] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -54,7 +53,7 @@ export default function CreateBlog() {
         setCategory(data.category || 'general');
         setStatus((data.status === 'published' ? 'published' : 'draft') as 'draft' | 'published');
         if (data.image_url) {
-          setImagePreview(data.image_url);
+          setImageUrl(data.image_url);
         }
       }
     } catch (error) {
@@ -65,50 +64,9 @@ export default function CreateBlog() {
     }
   };
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setImageFile(file);
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImagePreview(reader.result as string);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
-  const uploadImage = async (): Promise<string | null> => {
-    if (!imageFile || !user) return null;
-
-    try {
-      const fileExt = imageFile.name.split('.').pop();
-      const fileName = `${Date.now()}.${fileExt}`;
-      // Path must start with user.id to match RLS policy
-      const filePath = `${user.id}/blog-images/${fileName}`;
-
-      const { error: uploadError } = await supabase.storage
-        .from('property-images')
-        .upload(filePath, imageFile, {
-          upsert: true, // Allow overwriting if file exists
-          contentType: imageFile.type
-        });
-
-      if (uploadError) {
-        console.error('Error uploading image:', uploadError);
-        toast.error(`Upload failed: ${uploadError.message}`);
-        return null;
-      }
-
-      const { data } = supabase.storage
-        .from('property-images')
-        .getPublicUrl(filePath);
-
-      return data.publicUrl;
-    } catch (error) {
-      console.error('Error in uploadImage:', error);
-      toast.error('Failed to upload image');
-      return null;
-    }
+  const handleImageUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const url = e.target.value;
+    setImageUrl(url);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -127,18 +85,6 @@ export default function CreateBlog() {
     setIsSubmitting(true);
 
     try {
-      // Upload image if provided
-      let imageUrl = imagePreview; // Keep existing image URL if no new file
-      if (imageFile) {
-        const uploadedUrl = await uploadImage();
-        if (!uploadedUrl) {
-          toast.error('Failed to upload image');
-          setIsSubmitting(false);
-          return;
-        }
-        imageUrl = uploadedUrl;
-      }
-
       if (editId) {
         // Update existing blog post
         const { error } = await supabase
@@ -256,25 +202,28 @@ export default function CreateBlog() {
               </Select>
             </div>
 
-            {/* Image Upload */}
+            {/* Image URL */}
             <div className="space-y-2">
-              <Label htmlFor="image">Featured Image</Label>
-              <div className="flex items-center gap-4">
-                <Input
-                  id="image"
-                  type="file"
-                  accept="image/*"
-                  onChange={handleImageChange}
-                  className="cursor-pointer"
-                />
-                <Upload className="h-4 w-4 text-muted-foreground" />
-              </div>
-              {imagePreview && (
+              <Label htmlFor="imageUrl">Featured Image URL</Label>
+              <Input
+                id="imageUrl"
+                type="url"
+                value={imageUrl}
+                onChange={handleImageUrlChange}
+                placeholder="https://example.com/image.jpg"
+              />
+              <p className="text-xs text-muted-foreground">
+                Enter the URL of your featured image
+              </p>
+              {imageUrl && (
                 <div className="mt-4">
                   <img
-                    src={imagePreview}
+                    src={imageUrl}
                     alt="Preview"
                     className="max-w-md h-48 object-cover rounded-lg border"
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).style.display = 'none';
+                    }}
                   />
                 </div>
               )}
