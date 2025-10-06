@@ -12,6 +12,7 @@ interface User {
   isHost?: boolean;
   emailConfirmed?: boolean;
   avatar_url?: string;
+  is_superhost?: boolean;
 }
 
 interface AuthContextType {
@@ -203,7 +204,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
                   name: profile.name || session.user.email?.split('@')[0] || '',
                   role: profile.role as UserRole,
                   emailConfirmed: !!session.user.email_confirmed_at,
-                  avatar_url: profile.avatar_url
+                  avatar_url: profile.avatar_url,
+                  is_superhost: profile.is_superhost || false
                 };
                 console.log('Setting user data:', userData);
                 setUser(userData);
