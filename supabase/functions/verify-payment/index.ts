@@ -116,6 +116,66 @@ serve(async (req) => {
     if (newStatus === 'completed' && payment.metadata?.bookingData) {
       const bookingData = payment.metadata.bookingData;
       
+      // CHECK FOR EXISTING BOOKINGS - PREVENT DOUBLE BOOKING
+      const { data: existingBookings, error: checkError } = await dbClient
+        .from('bookings')
+        .select('check_in_date, check_out_date')
+        .eq('property_id', payment.property_id)
+        .in('status', ['confirmed', 'pending']);
+
+      if (checkError) {
+        logStep("Error checking existing bookings", { error: checkError.message });
+        throw new Error('Failed to verify availability');
+      }
+
+      // Check for date overlap
+      const requestedCheckIn = new Date(bookingData.checkInDate);
+      const requestedCheckOut = new Date(bookingData.checkOutDate);
+
+      const hasConflict = existingBookings?.some(booking => {
+        const bookingCheckIn = new Date(booking.check_in_date);
+        const bookingCheckOut = new Date(booking.check_out_date);
+        
+        // Check if there's any overlap
+        return (
+          (requestedCheckIn >= bookingCheckIn && requestedCheckIn < bookingCheckOut) ||
+          (requestedCheckOut > bookingCheckIn && requestedCheckOut <= bookingCheckOut) ||
+          (requestedCheckIn <= bookingCheckIn && requestedCheckOut >= bookingCheckOut)
+        );
+      });
+
+      if (hasConflict) {
+        logStep("Booking conflict detected - dates already booked", { 
+          requestedCheckIn: bookingData.checkInDate,
+          requestedCheckOut: bookingData.checkOutDate
+        });
+        
+        // Refund the payment since dates are not available
+        await dbClient
+          .from('payments')
+          .update({
+            status: 'refunded',
+            refunded_at: new Date().toISOString(),
+            updated_at: new Date().toISOString()
+          })
+          .eq('id', paymentId);
+        
+        // Create notification for user about the conflict
+        await dbClient
+          .from('notifications')
+          .insert({
+            user_id: user.id,
+            title: '❌ Booking Unavailable',
+            message: 'Sorry, these dates were just booked by someone else. Your payment has been refunded.',
+            type: 'booking_failed',
+            related_id: paymentId
+          });
+        
+        throw new Error('These dates are no longer available. Your payment has been refunded.');
+      }
+
+      logStep("No booking conflicts - proceeding with booking creation");
+      
       // Get property details for commission calculation
       const { data: property } = await dbClient
         .from('properties')
