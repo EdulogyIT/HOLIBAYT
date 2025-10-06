@@ -93,6 +93,13 @@ const BlogPost = () => {
   // Helper to get the image source
   const getImageSrc = (imageUrl?: string) => {
     if (!imageUrl) return null;
+    
+    // If it's a Supabase storage URL or external URL, return it directly
+    if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) {
+      return imageUrl;
+    }
+    
+    // Otherwise, check the imageMap for local assets
     return imageMap[imageUrl] || imageUrl;
   };
 

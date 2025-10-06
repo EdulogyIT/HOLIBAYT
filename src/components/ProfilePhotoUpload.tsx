@@ -97,6 +97,7 @@ export const ProfilePhotoUpload = ({ currentPhotoUrl, userName, onPhotoUpdate }:
 
       // Update profile with the new avatar URL
       // Direct update without triggering unnecessary auth state changes
+      // Don't update updated_at to avoid triggering auth state changes
       const { error: updateError } = await supabase
         .from('profiles')
         .update({ avatar_url: publicUrl })
