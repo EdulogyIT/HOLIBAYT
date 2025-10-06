@@ -166,10 +166,44 @@ const Bookings = () => {
     }
   };
 
-  const handleMessageHost = (hostEmail: string, propertyTitle: string) => {
-    const subject = encodeURIComponent(`Inquiry about ${propertyTitle}`);
-    const body = encodeURIComponent(`Hello,\n\nI have a question about my booking for ${propertyTitle}.\n\nBest regards`);
-    window.open(`mailto:${hostEmail}?subject=${subject}&body=${body}`);
+  const handleMessageHost = async (hostId: string, propertyId: string, propertyTitle: string) => {
+    try {
+      // Check if conversation exists
+      const { data: existingConversation } = await supabase
+        .from('conversations')
+        .select('id')
+        .or(`and(user_id.eq.${user?.id},recipient_id.eq.${hostId}),and(user_id.eq.${hostId},recipient_id.eq.${user?.id})`)
+        .eq('property_id', propertyId)
+        .single();
+
+      if (existingConversation) {
+        window.location.href = '/messages';
+      } else {
+        // Create new conversation
+        const { data: newConversation, error } = await supabase
+          .from('conversations')
+          .insert({
+            user_id: user?.id,
+            recipient_id: hostId,
+            property_id: propertyId,
+            conversation_type: 'property_inquiry',
+            subject: `Inquiry about ${propertyTitle}`
+          })
+          .select()
+          .single();
+
+        if (!error && newConversation) {
+          window.location.href = '/messages';
+        }
+      }
+    } catch (error) {
+      console.error('Error opening chat:', error);
+      toast({
+        title: "Error",
+        description: "Failed to open chat. Please try again.",
+        variant: "destructive"
+      });
+    }
   };
 
   const handleBookingCancelled = () => {
@@ -290,11 +324,11 @@ const Bookings = () => {
                     View Property
                   </Button>
                 )}
-                {property?.contact_email && !isPast && (
+                {property?.user_id && !isPast && (
                   <Button 
                     variant="outline" 
                     size="sm"
-                    onClick={() => handleMessageHost(property.contact_email, property.title)}
+                    onClick={() => handleMessageHost(property.user_id, property.id, property.title)}
                   >
                     <MessageCircle className="h-4 w-4 mr-1" />
                     Message Host

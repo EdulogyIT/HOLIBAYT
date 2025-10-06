@@ -134,7 +134,7 @@ serve(async (req) => {
         user_id: user.id,
         property_id: propertyId,
         amount: amount,
-        currency: "EUR",
+        currency: "USD",
         payment_type: paymentType,
         status: "pending",
         description: description || `Payment for ${property.title}`,
@@ -170,7 +170,7 @@ serve(async (req) => {
       line_items: [{
         quantity: 1,
         price_data: {
-          currency: "eur",
+          currency: "usd",
           unit_amount: Math.round(amount * 100),
           product_data: {
             name: productName,

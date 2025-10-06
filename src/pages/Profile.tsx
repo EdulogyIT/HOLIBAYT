@@ -347,7 +347,7 @@ const Profile = () => {
             <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/5 rounded-full blur-2xl -ml-24 -mb-24"></div>
             
             <div className="relative group z-10">
-              <div className="absolute -inset-1 bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-500 rounded-full blur-lg opacity-75 group-hover:opacity-100 transition duration-500 animate-pulse"></div>
+              <div className="absolute -inset-1 bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-500 rounded-full blur-lg opacity-75"></div>
               <Avatar className="relative h-20 w-20 sm:h-24 sm:w-24 ring-4 ring-white/20 shadow-lg flex-shrink-0 transition-transform duration-300 group-hover:scale-105">
                 {displayAvatarUrl && <AvatarImage src={displayAvatarUrl} alt={displayUser?.name || displayUser?.email} />}
                 <AvatarFallback className="text-2xl sm:text-3xl bg-white/20 text-white backdrop-blur-sm">
@@ -362,7 +362,7 @@ const Profile = () => {
                 {displayUser?.is_superhost ? (
                   <Badge 
                     variant="secondary" 
-                    className="bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-500 text-gray-900 font-bold hover:from-amber-500 hover:via-yellow-500 hover:to-amber-600 transition-all shadow-lg shadow-yellow-500/50 animate-pulse border-2 border-yellow-300"
+                    className="bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-500 text-gray-900 font-bold hover:from-amber-500 hover:via-yellow-500 hover:to-amber-600 transition-all shadow-lg shadow-yellow-500/50 border-2 border-yellow-300"
                   >
                     <span className="flex items-center gap-1">
                       ⭐ Superhost

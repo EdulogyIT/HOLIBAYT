@@ -70,7 +70,7 @@ export default function PropertyCalendar() {
         .from('bookings')
         .select('check_in_date, check_out_date')
         .eq('property_id', selectedProperty)
-        .eq('status', 'confirmed');
+        .in('status', ['confirmed', 'pending']);
 
       if (error) {
         console.error('Error fetching booked dates:', error);
