@@ -82,8 +82,9 @@ export default function CreateBlog() {
 
     try {
       const fileExt = imageFile.name.split('.').pop();
-      const fileName = `${user.id}-${Date.now()}.${fileExt}`;
-      const filePath = `blog-images/${fileName}`;
+      const fileName = `${Date.now()}.${fileExt}`;
+      // Path must start with user.id to match RLS policy
+      const filePath = `${user.id}/blog-images/${fileName}`;
 
       const { error: uploadError } = await supabase.storage
         .from('property-images')
