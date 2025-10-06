@@ -351,9 +351,16 @@ const Profile = () => {
             <div className="flex-1 min-w-0">
               <h1 className="text-3xl sm:text-4xl font-bold text-white mb-2 break-words">{currentTranslations.title}</h1>
               <p className="text-white/80 text-base sm:text-lg mb-3 break-words">{currentTranslations.subtitle}</p>
-              <Badge variant="secondary" className="bg-white/20 text-white hover:bg-white/30 transition-all">
-                {hasRole('host') ? currentTranslations.hostRole : currentTranslations.userRole}
-              </Badge>
+              <div className="flex gap-2">
+                <Badge variant="secondary" className="bg-white/20 text-white hover:bg-white/30 transition-all">
+                  {hasRole('host') ? currentTranslations.hostRole : currentTranslations.userRole}
+                </Badge>
+                {displayUser?.is_superhost && (
+                  <Badge variant="secondary" className="bg-yellow-500/90 text-white hover:bg-yellow-500 transition-all">
+                    ⭐ Superhost
+                  </Badge>
+                )}
+              </div>
             </div>
           </div>
 

@@ -133,6 +133,7 @@ const Navigation = () => {
                   <DropdownMenuTrigger asChild>
                     <Button variant="ghost" className="flex items-center space-x-2 font-inter font-medium">
                       <Avatar className="w-8 h-8">
+                        <AvatarImage src={user?.avatar_url} alt={user?.name || 'User'} />
                         <AvatarFallback>
                           {user?.name?.split(' ').map(n => n[0]).join('').toUpperCase() || 'U'}
                         </AvatarFallback>
