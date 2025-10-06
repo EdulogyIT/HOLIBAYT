@@ -10,6 +10,7 @@ interface DateRangePickerProps {
   onChange: (range?: { from?: Date; to?: Date }) => void;
   allowPast?: boolean;
   className?: string;
+  disabledDates?: Date[];
 }
 
 const localeMap = {
@@ -22,7 +23,8 @@ export function DateRangePicker({
   value, 
   onChange, 
   allowPast = true, 
-  className 
+  className,
+  disabledDates = []
 }: DateRangePickerProps) {
   const { currentLang, t } = useLanguage();
   const today = new Date();
@@ -43,6 +45,15 @@ export function DateRangePicker({
     onChange(range ? { from: range.from, to: range.to } : undefined);
   };
 
+  // Combine disabled dates
+  const disabledMatcher = [
+    ...(allowPast ? [] : [{ before: today }]),
+    ...disabledDates.map(date => ({
+      from: date,
+      to: date
+    }))
+  ];
+
   return (
     <div className={cn("rounded-xl shadow-sm p-4 bg-background border", className)}>
       <DayPicker
@@ -55,7 +66,7 @@ export function DateRangePicker({
         captionLayout="dropdown-buttons"
         fromYear={1900}
         toYear={2100}
-        disabled={allowPast ? undefined : { before: today }}
+        disabled={disabledMatcher}
         className="pointer-events-auto"
         classNames={{
           months: "flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0",

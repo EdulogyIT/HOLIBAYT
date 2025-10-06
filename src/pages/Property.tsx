@@ -51,7 +51,7 @@ interface Property {
 const Property = () => {
   const { id } = useParams();
   const { t } = useLanguage();
-  const { formatPrice } = useCurrency();
+  const { formatPrice, currentCurrency } = useCurrency();
   const [property, setProperty] = useState<Property | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -299,6 +299,7 @@ const Property = () => {
               {property.category === 'short-stay' ? (
                 <div className="space-y-4">
                   <PropertyDatePicker 
+                    propertyId={property.id}
                     onDateChange={(dates) => setSelectedDates(dates)}
                   />
                   
@@ -406,7 +407,7 @@ const Property = () => {
                             propertyId={property.id}
                             paymentType="earnest_money"
                             amount={earnestMoneyAmount}
-                            currency="EUR"
+                            currency={currentCurrency}
                             description={`Earnest money for ${property.title}`}
                             className="w-full"
                           >
@@ -446,7 +447,7 @@ const Property = () => {
                             propertyId={property.id}
                             paymentType="security_deposit"
                             amount={securityDepositAmount}
-                            currency="EUR"
+                            currency={currentCurrency}
                             description={`Security deposit for ${property.title}`}
                             className="w-full"
                           >

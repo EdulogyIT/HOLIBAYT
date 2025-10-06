@@ -31,7 +31,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({ property, trigger })
   const [guestsCount, setGuestsCount] = useState(1);
   const [specialRequests, setSpecialRequests] = useState('');
   const [contactPhone, setContactPhone] = useState('');
-  const { formatPrice } = useCurrency();
+  const { formatPrice, currentCurrency } = useCurrency();
   const { isAuthenticated } = useAuth();
 
   // ---- Stripe constraints ----
@@ -91,9 +91,9 @@ export const BookingModal: React.FC<BookingModalProps> = ({ property, trigger })
       subtotal,
       bookingFee,
       finalTotalAmount,
-      currency: 'EUR'
+      currency: currentCurrency
     });
-    console.log('Sending to Stripe:', { amount: finalTotalAmount, currency: 'EUR' });
+    console.log('Sending to Stripe:', { amount: finalTotalAmount, currency: currentCurrency });
 
     try {
       const { data, error } = await supabase.functions.invoke('create-payment', {
@@ -101,7 +101,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({ property, trigger })
           propertyId: property.id,
           paymentType: 'booking_fee',
           amount: finalTotalAmount,
-          currency: 'EUR',
+          currency: currentCurrency,
           description: `Booking fee for ${property.title}`,
           bookingData: {
             checkInDate,
@@ -142,7 +142,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({ property, trigger })
           propertyId: property.id,
           paymentType: 'security_deposit',
           amount: finalSecurityDeposit,
-          currency: 'EUR',
+          currency: currentCurrency,
           description: `Security deposit for ${property.title}`,
           bookingData: {
             checkInDate,
@@ -272,23 +272,23 @@ export const BookingModal: React.FC<BookingModalProps> = ({ property, trigger })
                 <>
                   <div className="flex justify-between text-sm">
                     <span>
-                      {formatPrice(dailyPrice, undefined, 'EUR')} × {nights} night{nights !== 1 ? 's' : ''}
+                      {formatPrice(dailyPrice)} × {nights} night{nights !== 1 ? 's' : ''}
                     </span>
-                    <span>{formatPrice(subtotal, undefined, 'EUR')}</span>
+                    <span>{formatPrice(subtotal)}</span>
                   </div>
                   <div className="flex justify-between text-sm">
                     <span>Booking fee</span>
-                    <span>{formatPrice(bookingFee, undefined, 'EUR')}</span>
+                    <span>{formatPrice(bookingFee)}</span>
                   </div>
                   <Separator />
                   <div className="flex justify-between font-semibold">
                     <span>Total</span>
-                    <span>{formatPrice(finalTotalAmount, undefined, 'EUR')}</span>
+                    <span>{formatPrice(finalTotalAmount)}</span>
                   </div>
                   <div className="text-xs text-gray-600">
                     <div className="flex items-center gap-1">
                       <Clock className="w-3 h-3" />
-                      Security deposit: {formatPrice(finalSecurityDeposit, undefined, 'EUR')} (refundable)
+                      Security deposit: {formatPrice(finalSecurityDeposit)} (refundable)
                     </div>
                   </div>
                 </>
@@ -312,7 +312,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({ property, trigger })
                     disabled={!canPayBooking}
                   >
                     <CreditCard className="w-4 h-4 mr-2" />
-                    Pay {formatPrice(finalTotalAmount, undefined, 'EUR')}
+                    Pay {formatPrice(finalTotalAmount)}
                   </Button>
                   {!canPayBooking && (
                     <div className="text-xs text-muted-foreground">
@@ -329,7 +329,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({ property, trigger })
                         size="lg"
                         disabled={!canPayDeposit}
                       >
-                        Pay Security Deposit: {formatPrice(finalSecurityDeposit, undefined, 'EUR')}
+                        Pay Security Deposit: {formatPrice(finalSecurityDeposit)}
                       </Button>
                       {!canPayDeposit && (
                         <div className="text-xs text-muted-foreground">

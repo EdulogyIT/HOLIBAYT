@@ -75,7 +75,7 @@ serve(async (req) => {
     const body: PaymentRequest = await req.json();
     console.log("[CREATE-PAYMENT] Request body:", body);
 
-    const { propertyId, paymentType, amount, description, bookingData } = body;
+    const { propertyId, paymentType, amount, currency, description, bookingData } = body;
 
     if (!propertyId || !paymentType || !amount) {
       throw new Error("Missing required fields: propertyId, paymentType, amount");
@@ -134,7 +134,7 @@ serve(async (req) => {
         user_id: user.id,
         property_id: propertyId,
         amount: amount,
-        currency: "USD",
+        currency: currency || "USD",
         payment_type: paymentType,
         status: "pending",
         description: description || `Payment for ${property.title}`,
@@ -170,7 +170,7 @@ serve(async (req) => {
       line_items: [{
         quantity: 1,
         price_data: {
-          currency: "usd",
+          currency: (currency || "USD").toLowerCase(),
           unit_amount: Math.round(amount * 100),
           product_data: {
             name: productName,

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -7,16 +7,84 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { DateRangePicker } from "./DateRangePicker";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { cn } from "@/lib/utils";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 
 interface PropertyDatePickerProps {
+  propertyId: string;
   onDateChange: (dates: { checkIn: Date | undefined; checkOut: Date | undefined }) => void;
 }
 
-const PropertyDatePicker = ({ onDateChange }: PropertyDatePickerProps) => {
+const PropertyDatePicker = ({ propertyId, onDateChange }: PropertyDatePickerProps) => {
   const { t } = useLanguage();
+  const { toast } = useToast();
   const [dateRange, setDateRange] = useState<{ from?: Date; to?: Date }>();
+  const [bookedDates, setBookedDates] = useState<Date[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    fetchBookedDates();
+  }, [propertyId]);
+
+  const fetchBookedDates = async () => {
+    try {
+      setIsLoading(true);
+      const { data: bookings, error } = await supabase
+        .from('bookings')
+        .select('check_in_date, check_out_date')
+        .eq('property_id', propertyId)
+        .in('status', ['confirmed', 'pending']);
+
+      if (error) throw error;
+
+      // Generate all dates between check-in and check-out for each booking
+      const allBookedDates: Date[] = [];
+      bookings?.forEach((booking) => {
+        const checkIn = new Date(booking.check_in_date);
+        const checkOut = new Date(booking.check_out_date);
+        
+        for (let d = new Date(checkIn); d <= checkOut; d.setDate(d.getDate() + 1)) {
+          allBookedDates.push(new Date(d));
+        }
+      });
+
+      setBookedDates(allBookedDates);
+    } catch (error) {
+      console.error('Error fetching booked dates:', error);
+      toast({
+        title: "Error",
+        description: "Failed to fetch booking availability",
+        variant: "destructive"
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const handleDateRangeChange = (range?: { from?: Date; to?: Date }) => {
+    // Check if any selected dates are booked
+    if (range?.from && range?.to) {
+      const selectedDates: Date[] = [];
+      for (let d = new Date(range.from); d <= range.to; d.setDate(d.getDate() + 1)) {
+        selectedDates.push(new Date(d));
+      }
+
+      const hasBookedDate = selectedDates.some(selectedDate => 
+        bookedDates.some(bookedDate => 
+          selectedDate.toDateString() === bookedDate.toDateString()
+        )
+      );
+
+      if (hasBookedDate) {
+        toast({
+          title: "Dates Unavailable",
+          description: "Some of the selected dates are already booked. Please choose different dates.",
+          variant: "destructive"
+        });
+        return;
+      }
+    }
+
     setDateRange(range);
     onDateChange({ 
       checkIn: range?.from, 
@@ -66,6 +134,7 @@ const PropertyDatePicker = ({ onDateChange }: PropertyDatePickerProps) => {
               value={dateRange}
               onChange={handleDateRangeChange}
               allowPast={false}
+              disabledDates={bookedDates}
             />
           </PopoverContent>
         </Popover>
