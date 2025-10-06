@@ -11,6 +11,7 @@ interface User {
   role: UserRole;
   isHost?: boolean;
   emailConfirmed?: boolean;
+  avatar_url?: string;
 }
 
 interface AuthContextType {
@@ -201,7 +202,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
                   email: profile.email,
                   name: profile.name || session.user.email?.split('@')[0] || '',
                   role: profile.role as UserRole,
-                  emailConfirmed: !!session.user.email_confirmed_at
+                  emailConfirmed: !!session.user.email_confirmed_at,
+                  avatar_url: profile.avatar_url
                 };
                 console.log('Setting user data:', userData);
                 setUser(userData);
@@ -240,7 +242,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
               email: profile.email,
               name: profile.name || session.user.email?.split('@')[0] || '',
               role: profile.role as UserRole,
-              emailConfirmed: !!session.user.email_confirmed_at
+              emailConfirmed: !!session.user.email_confirmed_at,
+              avatar_url: profile.avatar_url
             };
             setUser(userData);
           }

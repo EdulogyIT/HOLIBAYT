@@ -45,6 +45,7 @@ const Profile = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [viewedUser, setViewedUser] = useState<any>(null);
   const [loading, setLoading] = useState(false);
+  const [currentAvatarUrl, setCurrentAvatarUrl] = useState<string | null>(null);
   
   // Form states for various sections
   const [currentPassword, setCurrentPassword] = useState('');
@@ -57,6 +58,7 @@ const Profile = () => {
 
   const isViewingOtherUser = userId && userId !== user?.id;
   const displayUser = isViewingOtherUser ? viewedUser : user;
+  const displayAvatarUrl = isViewingOtherUser ? viewedUser?.avatar_url : (currentAvatarUrl || user?.avatar_url);
   const [userStats, setUserStats] = useState({
     propertiesCount: 0,
     bookingsCount: 0,
@@ -341,7 +343,7 @@ const Profile = () => {
         <div className="mb-8 animate-scale-in">
           <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6 mb-6 p-6 sm:p-8 rounded-2xl bg-gradient-primary shadow-elegant">
             <Avatar className="h-20 w-20 sm:h-24 sm:w-24 ring-4 ring-white/20 shadow-lg flex-shrink-0">
-              {displayUser?.avatar_url && <AvatarImage src={displayUser.avatar_url} alt={displayUser?.name || displayUser?.email} />}
+              {displayAvatarUrl && <AvatarImage src={displayAvatarUrl} alt={displayUser?.name || displayUser?.email} />}
               <AvatarFallback className="text-2xl sm:text-3xl bg-white/20 text-white backdrop-blur-sm">
                 {(displayUser?.name || displayUser?.email || 'U').split(' ').map((n: string) => n[0]).join('').toUpperCase()}
               </AvatarFallback>
@@ -459,11 +461,11 @@ const Profile = () => {
                 {!isViewingOtherUser && (
                   <div className="flex justify-center pb-6 border-b border-accent/20">
                     <ProfilePhotoUpload 
-                      currentPhotoUrl={displayUser?.avatar_url}
+                      currentPhotoUrl={displayAvatarUrl}
                       userName={displayUser?.name || displayUser?.email || 'User'}
                       onPhotoUpdate={(url) => {
-                        // Refresh user data after photo update
-                        window.location.reload();
+                        // Update local avatar state to show new photo immediately
+                        setCurrentAvatarUrl(url);
                       }}
                     />
                   </div>

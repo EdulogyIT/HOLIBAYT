@@ -116,6 +116,13 @@ serve(async (req) => {
     if (newStatus === 'completed' && payment.metadata?.bookingData) {
       const bookingData = payment.metadata.bookingData;
       
+      // Get property details for commission calculation
+      const { data: property } = await dbClient
+        .from('properties')
+        .select('commission_rate, user_id')
+        .eq('id', payment.property_id)
+        .single();
+      
       const { data: booking, error: bookingCreateError } = await dbClient
         .from('bookings')
         .insert({
@@ -139,6 +146,32 @@ serve(async (req) => {
         logStep("Booking creation failed", { error: bookingCreateError.message });
       } else {
         logStep("Booking created successfully", { bookingId: booking.id });
+        
+        // Create commission transaction for the host
+        if (property && payment.payment_type === 'booking_fee') {
+          const commissionRate = property.commission_rate || 0.15;
+          const commissionAmount = payment.amount * commissionRate;
+          const hostAmount = payment.amount - commissionAmount;
+          
+          const { error: commissionError } = await dbClient
+            .from('commission_transactions')
+            .insert({
+              payment_id: paymentId,
+              property_id: payment.property_id,
+              host_user_id: property.user_id,
+              total_amount: payment.amount,
+              commission_rate: commissionRate,
+              commission_amount: commissionAmount,
+              host_amount: hostAmount,
+              status: 'pending'
+            });
+          
+          if (commissionError) {
+            logStep("Commission transaction creation failed", { error: commissionError.message });
+          } else {
+            logStep("Commission transaction created successfully");
+          }
+        }
       }
     }
 

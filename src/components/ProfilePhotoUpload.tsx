@@ -24,6 +24,11 @@ export const ProfilePhotoUpload = ({ currentPhotoUrl, userName, onPhotoUpdate }:
         return;
       }
 
+      if (!user?.id) {
+        toast.error('You must be logged in to upload a profile photo');
+        return;
+      }
+
       const file = event.target.files[0];
       
       // Validate file type
@@ -40,17 +45,7 @@ export const ProfilePhotoUpload = ({ currentPhotoUrl, userName, onPhotoUpdate }:
 
       setUploading(true);
 
-      // Get current session without triggering auth state change
-      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-      
-      if (sessionError || !session?.user) {
-        console.error('Session error:', sessionError);
-        toast.error('Authentication required. Please refresh the page and try again.');
-        setUploading(false);
-        return;
-      }
-
-      const userId = session.user.id;
+      const userId = user.id;
       console.log('Uploading avatar for user:', userId);
 
       // Delete old avatar if exists
@@ -96,8 +91,6 @@ export const ProfilePhotoUpload = ({ currentPhotoUrl, userName, onPhotoUpdate }:
       console.log('Public URL:', publicUrl);
 
       // Update profile with the new avatar URL
-      // Direct update without triggering unnecessary auth state changes
-      // Don't update updated_at to avoid triggering auth state changes
       const { error: updateError } = await supabase
         .from('profiles')
         .update({ avatar_url: publicUrl })
