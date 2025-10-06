@@ -40,21 +40,28 @@ export const ProfilePhotoUpload = ({ currentPhotoUrl, userName, onPhotoUpdate }:
 
       setUploading(true);
 
-      // Get current session
-      const { data: { session } } = await supabase.auth.getSession();
+      // Get current session without triggering auth state change
+      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
       
-      if (!session?.user) {
-        toast.error('Please log in to upload a profile photo');
+      if (sessionError || !session?.user) {
+        console.error('Session error:', sessionError);
+        toast.error('Authentication required. Please refresh the page and try again.');
+        setUploading(false);
         return;
       }
 
       const userId = session.user.id;
+      console.log('Uploading avatar for user:', userId);
 
       // Delete old avatar if exists
-      if (photoUrl) {
+      if (photoUrl && photoUrl.includes('supabase')) {
         try {
-          const oldPath = photoUrl.split('/').slice(-2).join('/');
-          await supabase.storage.from('avatars').remove([oldPath]);
+          const urlParts = photoUrl.split('/');
+          const pathIndex = urlParts.findIndex(part => part === 'avatars');
+          if (pathIndex !== -1) {
+            const oldPath = urlParts.slice(pathIndex + 1).join('/');
+            await supabase.storage.from('avatars').remove([oldPath]);
+          }
         } catch (error) {
           console.log('Could not delete old avatar:', error);
         }
@@ -62,21 +69,31 @@ export const ProfilePhotoUpload = ({ currentPhotoUrl, userName, onPhotoUpdate }:
 
       // Upload new avatar
       const fileExt = file.name.split('.').pop();
-      const filePath = `${userId}/${Date.now()}.${fileExt}`;
+      const fileName = `${Date.now()}.${fileExt}`;
+      const filePath = `${userId}/${fileName}`;
       
-      const { error: uploadError } = await supabase.storage
+      console.log('Uploading to path:', filePath);
+      
+      const { error: uploadError, data: uploadData } = await supabase.storage
         .from('avatars')
-        .upload(filePath, file, { upsert: true });
+        .upload(filePath, file, { 
+          upsert: true,
+          contentType: file.type
+        });
 
       if (uploadError) {
         console.error('Upload error:', uploadError);
-        throw uploadError;
+        throw new Error(`Upload failed: ${uploadError.message}`);
       }
+
+      console.log('Upload successful:', uploadData);
 
       // Get public URL
       const { data: { publicUrl } } = supabase.storage
         .from('avatars')
         .getPublicUrl(filePath);
+
+      console.log('Public URL:', publicUrl);
 
       // Update profile with the new avatar URL
       const { error: updateError } = await supabase
@@ -86,15 +103,16 @@ export const ProfilePhotoUpload = ({ currentPhotoUrl, userName, onPhotoUpdate }:
 
       if (updateError) {
         console.error('Update error:', updateError);
-        throw updateError;
+        throw new Error(`Profile update failed: ${updateError.message}`);
       }
 
+      console.log('Profile updated successfully');
       setPhotoUrl(publicUrl);
       onPhotoUpdate?.(publicUrl);
       toast.success('Profile photo updated successfully');
     } catch (error: any) {
       console.error('Error uploading avatar:', error);
-      toast.error(error?.message || 'Failed to upload photo');
+      toast.error(error?.message || 'Failed to upload photo. Please try again.');
     } finally {
       setUploading(false);
     }
