@@ -277,15 +277,11 @@ const Messages = () => {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 h-[600px]">
             {/* Conversations List */}
             <Card className="lg:col-span-1">
-              <CardHeader className="flex flex-row items-center justify-between">
+              <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <MessageCircle className="h-5 w-5" />
                   Conversations
                 </CardTitle>
-                <Button onClick={startNewConversation} size="sm">
-                  <Plus className="h-4 w-4 mr-1" />
-                  New
-                </Button>
               </CardHeader>
               <CardContent className="p-0">
                 <ScrollArea className="h-[500px]">

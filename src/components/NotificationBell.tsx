@@ -86,15 +86,19 @@ export const NotificationBell = () => {
     fetchNotifications();
   };
 
-  const handleNotificationClick = (notification: Notification) => {
+  const handleNotificationClick = async (notification: Notification) => {
     markAsRead(notification.id);
     
     // Navigate based on notification type
     if (notification.type === 'message') {
       navigate('/messages');
-    } else if (notification.type === 'property_approval' || notification.type === 'property_rejection') {
+    } else if (notification.type === 'property_approval' || notification.type === 'property_rejection' || notification.type === 'property_approved') {
       navigate('/host/listings');
+    } else if (notification.type === 'review_request' && notification.related_id) {
+      // For review requests, related_id is the booking_id, so navigate to bookings
+      navigate('/bookings');
     } else if (notification.related_id) {
+      // For other types, assume related_id is property_id
       navigate(`/property/${notification.related_id}`);
     }
   };

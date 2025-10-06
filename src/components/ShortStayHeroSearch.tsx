@@ -18,6 +18,10 @@ type SearchVals = {
   checkIn?: string;
   checkOut?: string;
   travelers?: string | number;
+  adults?: number;
+  children?: number;
+  infants?: number;
+  pets?: number;
 };
 
 type ShortStayHeroSearchProps = {
@@ -52,12 +56,15 @@ const ShortStayHeroSearch: React.FC<ShortStayHeroSearchProps> = ({ onSearch }) =
     const location = urlParams.get("location") || "";
     const checkIn = parseISODate(urlParams.get("checkIn"));
     const checkOut = parseISODate(urlParams.get("checkOut"));
-    const travelers = parseInt(urlParams.get("travelers") || "1", 10);
+    const adults = parseInt(urlParams.get("adults") || "1", 10);
+    const children = parseInt(urlParams.get("children") || "0", 10);
+    const infants = parseInt(urlParams.get("infants") || "0", 10);
+    const pets = parseInt(urlParams.get("pets") || "0", 10);
 
     setFormData({
       location,
       dateRange: checkIn || checkOut ? { from: checkIn, to: checkOut } : undefined,
-      guests: { adults: travelers > 0 ? travelers : 1, children: 0, infants: 0, pets: 0 },
+      guests: { adults, children, infants, pets },
     });
   }, [routerLocation.search]);
 
@@ -76,18 +83,23 @@ const ShortStayHeroSearch: React.FC<ShortStayHeroSearchProps> = ({ onSearch }) =
     if (vals.location) qs.set("location", String(vals.location));
     if (vals.checkIn) qs.set("checkIn", String(vals.checkIn));
     if (vals.checkOut) qs.set("checkOut", String(vals.checkOut));
-    if (vals.travelers) qs.set("travelers", String(vals.travelers));
+    if (vals.adults) qs.set("adults", String(vals.adults));
+    if (vals.children) qs.set("children", String(vals.children));
+    if (vals.infants) qs.set("infants", String(vals.infants));
+    if (vals.pets) qs.set("pets", String(vals.pets));
     navigate(`/short-stay?${qs.toString()}`);
   };
 
   const handleSearch = () => {
     if (!isFormValid()) return;
-    const totalGuests = formData.guests.adults + formData.guests.children + formData.guests.infants;
     performSearch({
       location: formData.location,
       checkIn: formData.dateRange?.from ? formData.dateRange.from.toISOString() : undefined,
       checkOut: formData.dateRange?.to ? formData.dateRange.to.toISOString() : undefined,
-      travelers: totalGuests,
+      adults: formData.guests.adults,
+      children: formData.guests.children,
+      infants: formData.guests.infants,
+      pets: formData.guests.pets,
     });
   };
 

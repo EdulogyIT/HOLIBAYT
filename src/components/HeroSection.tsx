@@ -292,9 +292,10 @@ const HeroSection = () => {
       case 'stay':
         if (formData.dateRange?.from) searchParams.append('checkIn', formData.dateRange.from.toISOString());
         if (formData.dateRange?.to) searchParams.append('checkOut', formData.dateRange.to.toISOString());
-        const totalGuests = formData.travelers.adults + formData.travelers.children + formData.travelers.infants;
-        if (totalGuests > 0) searchParams.append('travelers', totalGuests.toString());
-        if (formData.travelers.pets > 0) searchParams.append('pets', formData.travelers.pets.toString());
+        searchParams.append('adults', formData.travelers.adults.toString());
+        searchParams.append('children', formData.travelers.children.toString());
+        searchParams.append('infants', formData.travelers.infants.toString());
+        searchParams.append('pets', formData.travelers.pets.toString());
         navigate(`/short-stay?${searchParams.toString()}`);
         break;
       default:

@@ -12,7 +12,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/components/ui/use-toast';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
-import { ArrowLeft, Save } from 'lucide-react';
+import { ArrowLeft, Save, Upload, X } from 'lucide-react';
 
 interface PropertyData {
   id: string;
@@ -46,6 +46,7 @@ export default function EditProperty() {
   const { toast } = useToast();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [uploading, setUploading] = useState(false);
   const [property, setProperty] = useState<PropertyData | null>(null);
 
   useEffect(() => {
@@ -149,6 +150,109 @@ export default function EditProperty() {
   const updateField = (field: keyof PropertyData, value: any) => {
     if (!property) return;
     setProperty({ ...property, [field]: value });
+  };
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0 || !property || !user) return;
+
+    setUploading(true);
+    try {
+      const uploadedUrls: string[] = [];
+      
+      for (const file of Array.from(files)) {
+        const fileExt = file.name.split('.').pop();
+        const fileName = `${property.id}-${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
+        
+        const { data, error: uploadError } = await supabase.storage
+          .from('property-images')
+          .upload(fileName, file);
+
+        if (uploadError) {
+          console.error('Error uploading file:', uploadError);
+          continue;
+        }
+
+        const { data: { publicUrl } } = supabase.storage
+          .from('property-images')
+          .getPublicUrl(fileName);
+        
+        uploadedUrls.push(publicUrl);
+      }
+
+      if (uploadedUrls.length > 0) {
+        const updatedImages = [...(property.images || []), ...uploadedUrls];
+        setProperty({ ...property, images: updatedImages });
+        
+        // Save to database immediately
+        const { error } = await supabase
+          .from('properties')
+          .update({ images: updatedImages })
+          .eq('id', property.id)
+          .eq('user_id', user.id);
+
+        if (error) {
+          console.error('Error updating images:', error);
+          toast({
+            title: "Error",
+            description: "Failed to save images",
+            variant: "destructive"
+          });
+          return;
+        }
+
+        toast({
+          title: "Success",
+          description: `${uploadedUrls.length} image(s) uploaded successfully`,
+        });
+      }
+    } catch (error) {
+      console.error('Error uploading images:', error);
+      toast({
+        title: "Error",
+        description: "Failed to upload images",
+        variant: "destructive"
+      });
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const handleRemoveImage = async (imageUrl: string) => {
+    if (!property || !user) return;
+
+    try {
+      const updatedImages = property.images.filter(img => img !== imageUrl);
+      setProperty({ ...property, images: updatedImages });
+
+      const { error } = await supabase
+        .from('properties')
+        .update({ images: updatedImages })
+        .eq('id', property.id)
+        .eq('user_id', user.id);
+
+      if (error) {
+        console.error('Error removing image:', error);
+        toast({
+          title: "Error",
+          description: "Failed to remove image",
+          variant: "destructive"
+        });
+        return;
+      }
+
+      toast({
+        title: "Success",
+        description: "Image removed successfully",
+      });
+    } catch (error) {
+      console.error('Error removing image:', error);
+      toast({
+        title: "Error",
+        description: "Failed to remove image",
+        variant: "destructive"
+      });
+    }
   };
 
   if (loading) {
@@ -406,6 +510,64 @@ export default function EditProperty() {
                     />
                   </div>
                 </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Property Images</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="images">Upload Images</Label>
+                  <div className="flex items-center gap-2">
+                    <Input
+                      id="images"
+                      type="file"
+                      accept="image/*"
+                      multiple
+                      onChange={handleImageUpload}
+                      disabled={uploading}
+                      className="flex-1"
+                    />
+                    <Button type="button" disabled={uploading}>
+                      {uploading ? (
+                        <>
+                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                          Uploading...
+                        </>
+                      ) : (
+                        <>
+                          <Upload className="h-4 w-4 mr-2" />
+                          Upload
+                        </>
+                      )}
+                    </Button>
+                  </div>
+                </div>
+
+                {property.images && property.images.length > 0 && (
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                    {property.images.map((imageUrl, index) => (
+                      <div key={index} className="relative group">
+                        <img
+                          src={imageUrl}
+                          alt={`Property ${index + 1}`}
+                          className="w-full h-32 object-cover rounded-lg"
+                        />
+                        <Button
+                          type="button"
+                          variant="destructive"
+                          size="icon"
+                          className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity"
+                          onClick={() => handleRemoveImage(imageUrl)}
+                        >
+                          <X className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </CardContent>
             </Card>
 

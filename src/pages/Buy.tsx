@@ -17,6 +17,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useWishlist } from "@/hooks/useWishlist";
 import { WishlistButton } from "@/components/WishlistButton";
 import { PropertyBadges } from "@/components/PropertyBadges";
+import CitiesSection from "@/components/CitiesSection";
 
 interface Property {
   id: string;
@@ -284,6 +285,10 @@ const Buy = () => {
               )}
             </div>
           </div>
+        </div>
+
+        <div className="py-16">
+          <CitiesSection />
         </div>
 
         <AIChatBox />

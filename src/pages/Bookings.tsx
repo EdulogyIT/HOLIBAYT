@@ -140,17 +140,21 @@ const Bookings = () => {
   // Separate bookings into upcoming and past
   // Use current date and time for accurate comparison
   const now = new Date();
-  const upcomingBookings = bookings.filter(booking => {
-    const checkoutDate = new Date(booking.check_out_date);
-    // Add checkout time if available (default 11:00 AM)
-    checkoutDate.setHours(11, 0, 0, 0);
-    return checkoutDate > now;
-  });
-  const pastBookings = bookings.filter(booking => {
-    const checkoutDate = new Date(booking.check_out_date);
-    checkoutDate.setHours(11, 0, 0, 0);
-    return checkoutDate <= now;
-  });
+  const upcomingBookings = bookings
+    .filter(booking => {
+      const checkoutDate = new Date(booking.check_out_date);
+      checkoutDate.setHours(11, 0, 0, 0);
+      return checkoutDate > now;
+    })
+    .sort((a, b) => new Date(a.check_in_date).getTime() - new Date(b.check_in_date).getTime());
+
+  const pastBookings = bookings
+    .filter(booking => {
+      const checkoutDate = new Date(booking.check_out_date);
+      checkoutDate.setHours(11, 0, 0, 0);
+      return checkoutDate <= now;
+    })
+    .sort((a, b) => new Date(b.check_in_date).getTime() - new Date(a.check_in_date).getTime());
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -277,7 +281,16 @@ const Bookings = () => {
                     View Details
                   </Button>
                 )}
-                {property?.contact_email && (
+                {isPast && (
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={() => window.open(`/property/${booking.properties.id}`, '_blank')}
+                  >
+                    View Property
+                  </Button>
+                )}
+                {property?.contact_email && !isPast && (
                   <Button 
                     variant="outline" 
                     size="sm"
