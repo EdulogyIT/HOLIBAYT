@@ -132,7 +132,7 @@ export default function AdminBlogs() {
   };
 
   const handleEdit = (blogId: string) => {
-    navigate(`/host/create-blog?edit=${blogId}`);
+    navigate(`/admin/create-blog?edit=${blogId}`);
   };
 
   const handleDeleteClick = (id: string, type: 'blog' | 'comment') => {
@@ -190,7 +190,7 @@ export default function AdminBlogs() {
             Manage blog posts and comments
           </p>
         </div>
-        <Button onClick={() => navigate('/host/create-blog')}>
+        <Button onClick={() => navigate('/admin/create-blog')}>
           <Plus className="h-4 w-4 mr-2" />
           Create Blog
         </Button>
