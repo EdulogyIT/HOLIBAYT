@@ -336,10 +336,10 @@ const Profile = () => {
     <div className="min-h-screen bg-gradient-to-br from-background via-background/50 to-accent/10 animate-fade-in">
       <Navigation />
       
-      <main className="container mx-auto px-4 py-8">
+      <main className="container mx-auto px-4 pt-24 pb-8">
         {/* Header */}
         <div className="mb-8 animate-scale-in">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6 mb-6 p-6 sm:p-8 rounded-2xl bg-gradient-primary shadow-elegant overflow-hidden">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6 mb-6 p-6 sm:p-8 rounded-2xl bg-gradient-primary shadow-elegant">
             <Avatar className="h-20 w-20 sm:h-24 sm:w-24 ring-4 ring-white/20 shadow-lg flex-shrink-0">
               {displayUser?.avatar_url && <AvatarImage src={displayUser.avatar_url} alt={displayUser?.name || displayUser?.email} />}
               <AvatarFallback className="text-2xl sm:text-3xl bg-white/20 text-white backdrop-blur-sm">

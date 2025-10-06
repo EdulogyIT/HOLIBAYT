@@ -182,36 +182,39 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         
       if (session?.user) {
         console.log('Session user found, fetching profile for:', session.user.id);
-        // Fetch user profile to get role
-        setTimeout(async () => {
-          try {
-            const { data: profile, error } = await supabase
-              .from('profiles')
-              .select('*')
-              .eq('id', session.user.id)
-              .maybeSingle();
+        // Only fetch profile on signin/initial load, not on updates
+        // This prevents unnecessary redirects when profile is updated
+        if (event === 'SIGNED_IN' || event === 'INITIAL_SESSION' || event === 'TOKEN_REFRESHED') {
+          setTimeout(async () => {
+            try {
+              const { data: profile, error } = await supabase
+                .from('profiles')
+                .select('*')
+                .eq('id', session.user.id)
+                .maybeSingle();
 
-            console.log('Profile fetch result:', { profile, error });
+              console.log('Profile fetch result:', { profile, error });
 
-            if (profile) {
-              const userData: User = {
-                id: session.user.id,
-                email: profile.email,
-                name: profile.name || session.user.email?.split('@')[0] || '',
-                role: profile.role as UserRole,
-                emailConfirmed: !!session.user.email_confirmed_at
-              };
-              console.log('Setting user data:', userData);
-              setUser(userData);
-            } else {
-              console.log('No profile found, setting user to null');
+              if (profile) {
+                const userData: User = {
+                  id: session.user.id,
+                  email: profile.email,
+                  name: profile.name || session.user.email?.split('@')[0] || '',
+                  role: profile.role as UserRole,
+                  emailConfirmed: !!session.user.email_confirmed_at
+                };
+                console.log('Setting user data:', userData);
+                setUser(userData);
+              } else {
+                console.log('No profile found, setting user to null');
+                setUser(null);
+              }
+            } catch (error) {
+              console.error('Error fetching profile:', error);
               setUser(null);
             }
-          } catch (error) {
-            console.error('Error fetching profile:', error);
-            setUser(null);
-          }
-        }, 0);
+          }, 0);
+        }
       } else {
         console.log('No session user, setting user to null');
         setUser(null);

@@ -96,11 +96,12 @@ export const ProfilePhotoUpload = ({ currentPhotoUrl, userName, onPhotoUpdate }:
       console.log('Public URL:', publicUrl);
 
       // Update profile with the new avatar URL
+      // Direct update without triggering unnecessary auth state changes
       const { error: updateError } = await supabase
         .from('profiles')
         .update({ avatar_url: publicUrl })
         .eq('id', userId);
-
+      
       if (updateError) {
         console.error('Update error:', updateError);
         throw new Error(`Profile update failed: ${updateError.message}`);
