@@ -37,12 +37,14 @@ export default function HostMessages() {
   const { user } = useAuth();
   const { t } = useLanguage();
   const [messages, setMessages] = useState<ContactRequest[]>([]);
+  const [conversations, setConversations] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedMessage, setSelectedMessage] = useState<ContactRequest | null>(null);
   const [replyText, setReplyText] = useState('');
 
   useEffect(() => {
     fetchMessages();
+    fetchConversations();
   }, [user]);
 
   const fetchMessages = async () => {
@@ -74,6 +76,52 @@ export default function HostMessages() {
       console.error('Error fetching messages:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchConversations = async () => {
+    if (!user) return;
+    
+    try {
+      // Fetch conversations where host is the recipient (messages from guests)
+      const { data, error } = await supabase
+        .from('conversations')
+        .select(`
+          *,
+          properties:property_id (
+            id,
+            title
+          )
+        `)
+        .eq('recipient_id', user.id)
+        .order('updated_at', { ascending: false });
+
+      if (error) {
+        console.error('Error fetching conversations:', error);
+      } else {
+        // Fetch sender profiles
+        if (data && data.length > 0) {
+          const senderIds = data.map(conv => conv.user_id).filter(Boolean);
+          
+          const { data: profilesData } = await supabase
+            .from('profiles')
+            .select('id, name, email')
+            .in('id', senderIds);
+          
+          const enrichedConvs = data.map(conv => {
+            const senderProfile = profilesData?.find(p => p.id === conv.user_id);
+            return {
+              ...conv,
+              sender_name: senderProfile?.name || 'Unknown User',
+              sender_email: senderProfile?.email
+            };
+          });
+          
+          setConversations(enrichedConvs);
+        }
+      }
+    } catch (error) {
+      console.error('Error fetching conversations:', error);
     }
   };
 
@@ -143,7 +191,7 @@ export default function HostMessages() {
   };
 
   const pendingCount = messages.filter(m => m.status === 'pending').length;
-  const totalCount = messages.length;
+  const totalCount = messages.length + conversations.length;
 
   if (loading) {
     return (
@@ -201,8 +249,71 @@ export default function HostMessages() {
       </div>
 
       {/* Messages List */}
-      {messages.length > 0 ? (
+      {(messages.length > 0 || conversations.length > 0) ? (
         <div className="space-y-4">
+          {/* Chat Conversations */}
+          {conversations.map((conversation) => (
+            <Card key={`conv-${conversation.id}`} className="border-l-4 border-l-blue-500">
+              <CardHeader>
+                <div className="flex items-start justify-between">
+                  <div className="space-y-1">
+                    <div className="flex items-center gap-2">
+                      <h3 className="font-semibold">{conversation.subject || 'Property Inquiry'}</h3>
+                      <Badge className="bg-blue-100 text-blue-800">
+                        Chat Message
+                      </Badge>
+                    </div>
+                    <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                      <div className="flex items-center gap-1">
+                        <User className="h-4 w-4" />
+                        {conversation.sender_name}
+                      </div>
+                      {conversation.properties && (
+                        <div className="flex items-center gap-1">
+                          <Building2 className="h-4 w-4" />
+                          {conversation.properties.title}
+                        </div>
+                      )}
+                      <div className="flex items-center gap-1">
+                        <Clock className="h-4 w-4" />
+                        {formatDate(conversation.updated_at)}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <div className="bg-muted p-4 rounded-lg">
+                    <p className="text-sm">New message from {conversation.sender_name}</p>
+                  </div>
+                  
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                      {conversation.sender_email && (
+                        <div className="flex items-center gap-1">
+                          <Mail className="h-4 w-4" />
+                          {conversation.sender_email}
+                        </div>
+                      )}
+                    </div>
+                    
+                    <div className="flex gap-2">
+                      <Button 
+                        size="sm"
+                        onClick={() => window.location.href = `/messages?conversation=${conversation.id}`}
+                      >
+                        <MessageSquare className="h-4 w-4 mr-1" />
+                        View Chat
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+
+          {/* Contact Requests */}
           {messages.map((message) => (
             <Card key={message.id} className={`${message.status === 'pending' ? 'border-l-4 border-l-yellow-500' : ''}`}>
               <CardHeader>

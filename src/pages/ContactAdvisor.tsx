@@ -159,7 +159,9 @@ const ContactAdvisor = () => {
                 size="lg" 
                 variant="secondary" 
                 className="font-inter font-semibold text-lg px-8 py-4"
-                onClick={() => window.location.href = 'mailto:contact@holibayt.com'}
+                onClick={() => {
+                  window.location.href = 'mailto:contact@holibayt.com';
+                }}
               >
                 <Mail className="h-5 w-5 mr-2" />
                 Email Us
@@ -227,7 +229,7 @@ const ContactAdvisor = () => {
                   if (!user) {
                     window.location.href = '/login?redirect=/messages';
                   } else {
-                    // Create support conversation
+                    // Find or create support conversation
                     try {
                       const { data: existingConv } = await supabase
                         .from('conversations')
@@ -238,8 +240,10 @@ const ContactAdvisor = () => {
                         .single();
 
                       if (existingConv) {
-                        window.location.href = '/messages';
+                        // Redirect to existing conversation
+                        window.location.href = `/messages?conversation=${existingConv.id}`;
                       } else {
+                        // Create new support conversation with automated message
                         const { data: newConv, error: convError } = await supabase
                           .from('conversations')
                           .insert({
@@ -252,19 +256,24 @@ const ContactAdvisor = () => {
                           .single();
 
                         if (!convError && newConv) {
+                          // Insert automated welcome message from system
                           await supabase
                             .from('messages')
                             .insert({
                               conversation_id: newConv.id,
-                              sender_id: user.id,
+                              sender_id: user.id, // Will appear as "Support Team" in UI
                               content: 'Hi! How may I help you?',
                               message_type: 'text'
                             });
+                          
+                          // Redirect to new conversation
+                          window.location.href = `/messages?conversation=${newConv.id}`;
+                        } else {
+                          window.location.href = '/messages';
                         }
-                        window.location.href = '/messages';
                       }
                     } catch (error) {
-                      console.error('Error creating support conversation:', error);
+                      console.error('Error with support conversation:', error);
                       window.location.href = '/messages';
                     }
                   }

@@ -195,10 +195,17 @@ const Messages = () => {
     if (isAuthenticated && user) {
       fetchConversations();
       
-      // Auto-create conversation if coming from "Start Chat" and no conversations exist
+      // Check for conversation ID in URL and auto-select it
       const urlParams = new URLSearchParams(window.location.search);
-      if (urlParams.get('start') === 'true') {
+      const conversationId = urlParams.get('conversation');
+      
+      if (conversationId) {
+        // Auto-select the conversation from URL
+        setSelectedConversation(conversationId);
         // Clear the URL parameter
+        window.history.replaceState({}, document.title, window.location.pathname);
+      } else if (urlParams.get('start') === 'true') {
+        // Auto-create conversation if coming from "Start Chat" and no conversations exist
         window.history.replaceState({}, document.title, window.location.pathname);
         
         // Check if user has any conversations, if not create one
