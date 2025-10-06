@@ -31,9 +31,11 @@ export default function HostDashboard() {
   const navigate = useNavigate();
   const [properties, setProperties] = useState<Property[]>([]);
   const [loading, setLoading] = useState(true);
+  const [monthlyRevenue, setMonthlyRevenue] = useState(0);
 
   useEffect(() => {
     fetchHostProperties();
+    fetchMonthlyRevenue();
   }, [user]);
 
   const fetchHostProperties = async () => {
@@ -55,6 +57,26 @@ export default function HostDashboard() {
       console.error('Error fetching properties:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchMonthlyRevenue = async () => {
+    if (!user) return;
+    
+    try {
+      const { data, error } = await supabase
+        .from('commission_transactions')
+        .select('host_amount')
+        .eq('host_user_id', user.id);
+
+      if (error) {
+        console.error('Error fetching revenue:', error);
+      } else {
+        const total = data?.reduce((sum, t) => sum + Number(t.host_amount), 0) || 0;
+        setMonthlyRevenue(total);
+      }
+    } catch (error) {
+      console.error('Error fetching revenue:', error);
     }
   };
 
@@ -115,7 +137,8 @@ export default function HostDashboard() {
             <CalendarDays className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{formatPrice(0)}</div>
+            <div className="text-2xl font-bold">{formatPrice(monthlyRevenue)}</div>
+            <p className="text-xs text-muted-foreground">Total earnings</p>
           </CardContent>
         </Card>
       </div>
