@@ -80,24 +80,34 @@ export default function CreateBlog() {
   const uploadImage = async (): Promise<string | null> => {
     if (!imageFile || !user) return null;
 
-    const fileExt = imageFile.name.split('.').pop();
-    const fileName = `${user.id}-${Date.now()}.${fileExt}`;
-    const filePath = `blog-images/${fileName}`;
+    try {
+      const fileExt = imageFile.name.split('.').pop();
+      const fileName = `${user.id}-${Date.now()}.${fileExt}`;
+      const filePath = `blog-images/${fileName}`;
 
-    const { error: uploadError } = await supabase.storage
-      .from('property-images')
-      .upload(filePath, imageFile);
+      const { error: uploadError } = await supabase.storage
+        .from('property-images')
+        .upload(filePath, imageFile, {
+          upsert: true, // Allow overwriting if file exists
+          contentType: imageFile.type
+        });
 
-    if (uploadError) {
-      console.error('Error uploading image:', uploadError);
+      if (uploadError) {
+        console.error('Error uploading image:', uploadError);
+        toast.error(`Upload failed: ${uploadError.message}`);
+        return null;
+      }
+
+      const { data } = supabase.storage
+        .from('property-images')
+        .getPublicUrl(filePath);
+
+      return data.publicUrl;
+    } catch (error) {
+      console.error('Error in uploadImage:', error);
+      toast.error('Failed to upload image');
       return null;
     }
-
-    const { data } = supabase.storage
-      .from('property-images')
-      .getPublicUrl(filePath);
-
-    return data.publicUrl;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
