@@ -33,12 +33,14 @@ export const BlogComments = ({ blogPostId }: BlogCommentsProps) => {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editContent, setEditContent] = useState("");
   const [loading, setLoading] = useState(false);
+  const [commentsEnabled, setCommentsEnabled] = useState(true);
   const { user } = useAuth();
   const { t } = useLanguage();
   const { toast } = useToast();
 
   useEffect(() => {
     fetchComments();
+    fetchCommentingSettings();
     
     // Subscribe to comment changes
     const channel = supabase
@@ -57,6 +59,19 @@ export const BlogComments = ({ blogPostId }: BlogCommentsProps) => {
       supabase.removeChannel(channel);
     };
   }, [blogPostId]);
+
+  const fetchCommentingSettings = async () => {
+    const { data } = await supabase
+      .from('platform_settings')
+      .select('setting_value')
+      .eq('setting_key', 'commenting_enabled')
+      .single();
+    
+    if (data) {
+      const settings = data.setting_value as any;
+      setCommentsEnabled(settings?.blogs !== false);
+    }
+  };
 
   const fetchComments = async () => {
     const { data: commentsData, error } = await supabase
@@ -223,54 +238,57 @@ export const BlogComments = ({ blogPostId }: BlogCommentsProps) => {
     });
   };
 
-  const CommentItem = ({ comment, isReply = false }: { comment: Comment; isReply?: boolean }) => (
-    <div className={`${isReply ? 'ml-8 mt-4' : 'mt-4'} border-l-2 border-border pl-4`}>
-      <div className="flex items-start gap-3">
-        <Avatar className="w-8 h-8">
-          {comment.avatar_url && <AvatarImage src={comment.avatar_url} alt={comment.user_name} />}
-          <AvatarFallback>{comment.user_name[0]?.toUpperCase()}</AvatarFallback>
-        </Avatar>
-        <div className="flex-1">
-          <div className="flex items-center gap-2 mb-1">
-            <span className="font-semibold text-sm text-foreground">{comment.user_name}</span>
-            <span className="text-xs text-muted-foreground">
-              {formatDistanceToNow(new Date(comment.created_at), { addSuffix: true })}
-            </span>
-          </div>
-          
-          {editingId === comment.id ? (
-            <div className="space-y-2">
-              <Textarea
-                value={editContent}
-                onChange={(e) => setEditContent(e.target.value)}
-                className="min-h-[80px]"
-              />
-              <div className="flex gap-2">
-                <Button size="sm" onClick={() => handleUpdateComment(comment.id)} disabled={loading}>
-                  {t("save") || "Save"}
-                </Button>
-                <Button size="sm" variant="outline" onClick={() => setEditingId(null)}>
-                  {t("cancel") || "Cancel"}
-                </Button>
-              </div>
+  const CommentItem = ({ comment, isReply = false }: { comment: Comment; isReply?: boolean }) => {
+    const isAdmin = user?.role === 'admin';
+    const canDelete = user && (user.id === comment.user_id || isAdmin);
+    
+    return (
+      <div className={`${isReply ? 'ml-8 mt-4' : 'mt-4'} border-l-2 border-border pl-4`}>
+        <div className="flex items-start gap-3">
+          <Avatar className="w-8 h-8">
+            {comment.avatar_url && <AvatarImage src={comment.avatar_url} alt={comment.user_name} />}
+            <AvatarFallback>{comment.user_name[0]?.toUpperCase()}</AvatarFallback>
+          </Avatar>
+          <div className="flex-1">
+            <div className="flex items-center gap-2 mb-1">
+              <span className="font-semibold text-sm text-foreground">{comment.user_name}</span>
+              <span className="text-xs text-muted-foreground">
+                {formatDistanceToNow(new Date(comment.created_at), { addSuffix: true })}
+              </span>
             </div>
-          ) : (
-            <>
-              <p className="text-sm text-foreground mb-2">{comment.content}</p>
-              <div className="flex gap-2">
-                {user && !isReply && (
-                  <Button
-                    size="sm"
-                    variant="ghost"
-                    onClick={() => setReplyTo(comment.id)}
-                    className="h-7 gap-1 text-xs"
-                  >
-                    <Reply className="w-3 h-3" />
-                    {t("reply") || "Reply"}
+            
+            {editingId === comment.id ? (
+              <div className="space-y-2">
+                <Textarea
+                  value={editContent}
+                  onChange={(e) => setEditContent(e.target.value)}
+                  className="min-h-[80px]"
+                />
+                <div className="flex gap-2">
+                  <Button size="sm" onClick={() => handleUpdateComment(comment.id)} disabled={loading}>
+                    {t("save") || "Save"}
                   </Button>
-                )}
-                {user?.id === comment.user_id && (
-                  <>
+                  <Button size="sm" variant="outline" onClick={() => setEditingId(null)}>
+                    {t("cancel") || "Cancel"}
+                  </Button>
+                </div>
+              </div>
+            ) : (
+              <>
+                <p className="text-sm text-foreground mb-2">{comment.content}</p>
+                <div className="flex gap-2">
+                  {user && !isReply && commentsEnabled && (
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      onClick={() => setReplyTo(comment.id)}
+                      className="h-7 gap-1 text-xs"
+                    >
+                      <Reply className="w-3 h-3" />
+                      {t("reply") || "Reply"}
+                    </Button>
+                  )}
+                  {user?.id === comment.user_id && (
                     <Button
                       size="sm"
                       variant="ghost"
@@ -283,6 +301,8 @@ export const BlogComments = ({ blogPostId }: BlogCommentsProps) => {
                       <Edit2 className="w-3 h-3" />
                       {t("edit") || "Edit"}
                     </Button>
+                  )}
+                  {canDelete && (
                     <Button
                       size="sm"
                       variant="ghost"
@@ -292,42 +312,42 @@ export const BlogComments = ({ blogPostId }: BlogCommentsProps) => {
                       <Trash2 className="w-3 h-3" />
                       {t("delete") || "Delete"}
                     </Button>
-                  </>
-                )}
-              </div>
-            </>
-          )}
+                  )}
+                </div>
+              </>
+            )}
 
-          {replyTo === comment.id && (
-            <div className="mt-3 space-y-2">
-              <Textarea
-                value={replyContent}
-                onChange={(e) => setReplyContent(e.target.value)}
-                placeholder={t("writeReply") || "Write your reply..."}
-                className="min-h-[80px]"
-              />
-              <div className="flex gap-2">
-                <Button size="sm" onClick={() => handleSubmitReply(comment.id)} disabled={loading}>
-                  Post Reply
-                </Button>
-                <Button size="sm" variant="outline" onClick={() => setReplyTo(null)}>
-                  {t("cancel") || "Cancel"}
-                </Button>
+            {replyTo === comment.id && (
+              <div className="mt-3 space-y-2">
+                <Textarea
+                  value={replyContent}
+                  onChange={(e) => setReplyContent(e.target.value)}
+                  placeholder={t("writeReply") || "Write your reply..."}
+                  className="min-h-[80px]"
+                />
+                <div className="flex gap-2">
+                  <Button size="sm" onClick={() => handleSubmitReply(comment.id)} disabled={loading}>
+                    Post Reply
+                  </Button>
+                  <Button size="sm" variant="outline" onClick={() => setReplyTo(null)}>
+                    {t("cancel") || "Cancel"}
+                  </Button>
+                </div>
               </div>
-            </div>
-          )}
+            )}
 
-          {comment.replies && comment.replies.length > 0 && (
-            <div className="mt-2">
-              {comment.replies.map((reply) => (
-                <CommentItem key={reply.id} comment={reply} isReply />
-              ))}
-            </div>
-          )}
+            {comment.replies && comment.replies.length > 0 && (
+              <div className="mt-2">
+                {comment.replies.map((reply) => (
+                  <CommentItem key={reply.id} comment={reply} isReply />
+                ))}
+              </div>
+            )}
+          </div>
         </div>
       </div>
-    </div>
-  );
+    );
+  };
 
   return (
     <div className="border-t border-border pt-8 mt-8">
@@ -339,17 +359,25 @@ export const BlogComments = ({ blogPostId }: BlogCommentsProps) => {
       </div>
 
       {user ? (
-        <div className="mb-6 space-y-3">
-          <Textarea
-            value={newComment}
-            onChange={(e) => setNewComment(e.target.value)}
-            placeholder={t("writeComment") || "Write a comment..."}
-            className="min-h-[100px]"
-          />
-          <Button onClick={handleSubmitComment} disabled={loading || !newComment.trim()}>
-            Post Comment
-          </Button>
-        </div>
+        commentsEnabled ? (
+          <div className="mb-6 space-y-3">
+            <Textarea
+              value={newComment}
+              onChange={(e) => setNewComment(e.target.value)}
+              placeholder={t("writeComment") || "Write a comment..."}
+              className="min-h-[100px]"
+            />
+            <Button onClick={handleSubmitComment} disabled={loading || !newComment.trim()}>
+              Post Comment
+            </Button>
+          </div>
+        ) : (
+          <div className="mb-6 p-4 bg-muted rounded-lg text-center">
+            <p className="text-muted-foreground">
+              {t("commentsDisabled") || "Comments are currently disabled by the administrator."}
+            </p>
+          </div>
+        )
       ) : (
         <div className="mb-6 p-4 bg-muted rounded-lg text-center">
           <p className="text-muted-foreground">

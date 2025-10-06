@@ -43,6 +43,10 @@ export default function AdminSettings() {
   const [smtpPort, setSmtpPort] = useState(587);
   const [fromEmail, setFromEmail] = useState('noreply@holibayt.com');
   const [fromName, setFromName] = useState('Holibayt');
+  
+  // Commenting settings
+  const [blogCommentsEnabled, setBlogCommentsEnabled] = useState(true);
+  const [propertyCommentsEnabled, setPropertyCommentsEnabled] = useState(true);
 
   useEffect(() => {
     fetchSettings();
@@ -86,6 +90,10 @@ export default function AdminSettings() {
             setSmtpPort(value?.smtp_port || 587);
             setFromEmail(value?.from_email || 'noreply@holibayt.com');
             setFromName(value?.from_name || 'Holibayt');
+            break;
+          case 'commenting_enabled':
+            setBlogCommentsEnabled(value?.blogs !== false);
+            setPropertyCommentsEnabled(value?.properties !== false);
             break;
         }
       });
@@ -193,6 +201,19 @@ export default function AdminSettings() {
     }
   };
 
+  const handleSaveCommenting = async () => {
+    const success = await upsertSetting('commenting_enabled', {
+      blogs: blogCommentsEnabled,
+      properties: propertyCommentsEnabled
+    });
+    if (success) {
+      toast.success('Commenting settings saved successfully');
+      await fetchSettings(); // Refresh settings
+    } else {
+      toast.error('Failed to save commenting settings');
+    }
+  };
+
   if (loading) {
     return <div className="p-6">Loading settings...</div>;
   }
@@ -207,7 +228,7 @@ export default function AdminSettings() {
       </div>
 
       <Tabs defaultValue="general" className="w-full">
-        <TabsList className="grid w-full grid-cols-5">
+        <TabsList className="grid w-full grid-cols-6">
           <TabsTrigger value="general">
             <Settings className="h-4 w-4 mr-2" />
             General
@@ -227,6 +248,10 @@ export default function AdminSettings() {
           <TabsTrigger value="email">
             <Mail className="h-4 w-4 mr-2" />
             Email
+          </TabsTrigger>
+          <TabsTrigger value="commenting">
+            <Globe className="h-4 w-4 mr-2" />
+            Commenting
           </TabsTrigger>
         </TabsList>
 
@@ -500,6 +525,46 @@ export default function AdminSettings() {
               </div>
 
               <Button onClick={handleSaveEmail}>Save Email Settings</Button>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="commenting" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Commenting Settings</CardTitle>
+              <CardDescription>
+                Control commenting functionality across the platform
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="flex items-center justify-between">
+                <div className="space-y-0.5">
+                  <Label>Blog Comments</Label>
+                  <p className="text-sm text-muted-foreground">
+                    Allow users to comment on blog posts
+                  </p>
+                </div>
+                <Switch
+                  checked={blogCommentsEnabled}
+                  onCheckedChange={setBlogCommentsEnabled}
+                />
+              </div>
+
+              <div className="flex items-center justify-between">
+                <div className="space-y-0.5">
+                  <Label>Property Comments</Label>
+                  <p className="text-sm text-muted-foreground">
+                    Allow users to comment on property listings
+                  </p>
+                </div>
+                <Switch
+                  checked={propertyCommentsEnabled}
+                  onCheckedChange={setPropertyCommentsEnabled}
+                />
+              </div>
+
+              <Button onClick={handleSaveCommenting}>Save Commenting Settings</Button>
             </CardContent>
           </Card>
         </TabsContent>

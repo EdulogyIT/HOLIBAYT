@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { DollarSign } from "lucide-react";
+import { DollarSign, Euro, Coins } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -13,18 +13,19 @@ const CurrencySelector = () => {
   const { t } = useLanguage();
   
   const currencies = [
-    { code: "USD" as Currency, name: "US Dollar", symbol: "$" },
-    { code: "EUR" as Currency, name: "Euro", symbol: "€" },
-    { code: "DZD" as Currency, name: "Algerian Dinar", symbol: "DA" }
+    { code: "USD" as Currency, name: "US Dollar", symbol: "$", Icon: DollarSign },
+    { code: "EUR" as Currency, name: "Euro", symbol: "€", Icon: Euro },
+    { code: "DZD" as Currency, name: "Algerian Dinar", symbol: "DA", Icon: Coins }
   ];
 
   const currentCurrencyInfo = currencies.find(c => c.code === currentCurrency);
+  const CurrencyIcon = currentCurrencyInfo?.Icon || DollarSign;
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" size="icon" className="font-inter">
-          <DollarSign className="h-5 w-5" />
+          <CurrencyIcon className="h-5 w-5" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="bg-background border border-border z-50">
