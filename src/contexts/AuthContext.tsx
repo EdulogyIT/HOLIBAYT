@@ -262,7 +262,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       loginWithFacebook,
       logout,
       assignHostRole,
-      isAuthenticated: !!user,
+      isAuthenticated: !!session,
       hasRole,
     }}>
       {children}
