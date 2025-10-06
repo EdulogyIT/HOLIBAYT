@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -16,6 +16,8 @@ export default function CreateBlog() {
   const { user } = useAuth();
   const { t } = useLanguage();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const editId = searchParams.get('edit');
   
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
@@ -25,6 +27,43 @@ export default function CreateBlog() {
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string>('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
+  // Load existing blog data if editing
+  useEffect(() => {
+    if (editId) {
+      loadBlogData();
+    }
+  }, [editId]);
+
+  const loadBlogData = async () => {
+    setIsLoading(true);
+    try {
+      const { data, error } = await supabase
+        .from('blog_posts')
+        .select('*')
+        .eq('id', editId)
+        .single();
+
+      if (error) throw error;
+
+      if (data) {
+        setTitle(data.title);
+        setContent(data.content);
+        setAuthorName(data.author_name);
+        setCategory(data.category || 'general');
+        setStatus((data.status === 'published' ? 'published' : 'draft') as 'draft' | 'published');
+        if (data.image_url) {
+          setImagePreview(data.image_url);
+        }
+      }
+    } catch (error) {
+      console.error('Error loading blog:', error);
+      toast.error('Failed to load blog post');
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -78,36 +117,55 @@ export default function CreateBlog() {
 
     try {
       // Upload image if provided
-      let imageUrl = null;
+      let imageUrl = imagePreview; // Keep existing image URL if no new file
       if (imageFile) {
-        imageUrl = await uploadImage();
-        if (!imageUrl) {
+        const uploadedUrl = await uploadImage();
+        if (!uploadedUrl) {
           toast.error('Failed to upload image');
           setIsSubmitting(false);
           return;
         }
+        imageUrl = uploadedUrl;
       }
 
-      // Create blog post
-      const { error } = await supabase
-        .from('blog_posts')
-        .insert({
-          user_id: user.id,
-          title,
-          content,
-          author_name: authorName,
-          image_url: imageUrl,
-          category,
-          status
-        });
+      if (editId) {
+        // Update existing blog post
+        const { error } = await supabase
+          .from('blog_posts')
+          .update({
+            title,
+            content,
+            author_name: authorName,
+            image_url: imageUrl,
+            category,
+            status
+          })
+          .eq('id', editId);
 
-      if (error) throw error;
+        if (error) throw error;
+        toast.success(`Blog post updated successfully`);
+      } else {
+        // Create new blog post
+        const { error } = await supabase
+          .from('blog_posts')
+          .insert({
+            user_id: user.id,
+            title,
+            content,
+            author_name: authorName,
+            image_url: imageUrl,
+            category,
+            status
+          });
 
-      toast.success(`Blog post ${status === 'published' ? 'published' : 'saved as draft'} successfully`);
+        if (error) throw error;
+        toast.success(`Blog post ${status === 'published' ? 'published' : 'saved as draft'} successfully`);
+      }
+
       navigate('/admin/dashboard');
     } catch (error) {
-      console.error('Error creating blog post:', error);
-      toast.error('Failed to create blog post');
+      console.error('Error saving blog post:', error);
+      toast.error('Failed to save blog post');
     } finally {
       setIsSubmitting(false);
     }
@@ -123,11 +181,19 @@ export default function CreateBlog() {
       </div>
 
       <div>
-        <h1 className="text-3xl font-bold">Create your blog</h1>
+        <h1 className="text-3xl font-bold">{editId ? 'Edit Blog Post' : 'Create your blog'}</h1>
         <p className="text-muted-foreground">
-          Share your insights and experiences with the community
+          {editId ? 'Update your blog post' : 'Share your insights and experiences with the community'}
         </p>
       </div>
+
+      {isLoading ? (
+        <Card>
+          <CardContent className="py-12 text-center">
+            <p>Loading blog post...</p>
+          </CardContent>
+        </Card>
+      ) : (
 
       <form onSubmit={handleSubmit}>
         <Card>
@@ -243,15 +309,18 @@ export default function CreateBlog() {
               <Button type="submit" disabled={isSubmitting}>
                 {isSubmitting 
                   ? 'Saving...' 
-                  : status === 'published' 
-                    ? 'Publish Now' 
-                    : 'Save as Draft'
+                  : editId
+                    ? 'Update Blog Post'
+                    : status === 'published' 
+                      ? 'Publish Now' 
+                      : 'Save as Draft'
                 }
               </Button>
             </div>
           </CardContent>
         </Card>
       </form>
+      )}
     </div>
   );
 }

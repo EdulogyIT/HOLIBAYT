@@ -19,31 +19,36 @@ export const ProfilePhotoUpload = ({ currentPhotoUrl, userName, onPhotoUpdate }:
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileSelect = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (!event.target.files || event.target.files.length === 0) {
-      return;
-    }
-
-    const file = event.target.files[0];
-    
-    // Validate file type
-    if (!file.type.startsWith('image/')) {
-      toast.error('Please select an image file');
-      return;
-    }
-
-    // Validate file size (5MB limit)
-    if (file.size > 5242880) {
-      toast.error('File size must be less than 5MB');
-      return;
-    }
-
     try {
-      setUploading(true);
-
-      if (!user?.id) {
-        toast.error('User not authenticated');
+      if (!event.target.files || event.target.files.length === 0) {
         return;
       }
+
+      const file = event.target.files[0];
+      
+      // Validate file type
+      if (!file.type.startsWith('image/')) {
+        toast.error('Please select an image file');
+        return;
+      }
+
+      // Validate file size (5MB limit)
+      if (file.size > 5242880) {
+        toast.error('File size must be less than 5MB');
+        return;
+      }
+
+      setUploading(true);
+
+      // Get current session
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      if (!session?.user) {
+        toast.error('Please log in to upload a profile photo');
+        return;
+      }
+
+      const userId = session.user.id;
 
       // Delete old avatar if exists
       if (photoUrl) {
@@ -57,13 +62,16 @@ export const ProfilePhotoUpload = ({ currentPhotoUrl, userName, onPhotoUpdate }:
 
       // Upload new avatar
       const fileExt = file.name.split('.').pop();
-      const filePath = `${user.id}/${Date.now()}.${fileExt}`;
+      const filePath = `${userId}/${Date.now()}.${fileExt}`;
       
       const { error: uploadError } = await supabase.storage
         .from('avatars')
         .upload(filePath, file, { upsert: true });
 
-      if (uploadError) throw uploadError;
+      if (uploadError) {
+        console.error('Upload error:', uploadError);
+        throw uploadError;
+      }
 
       // Get public URL
       const { data: { publicUrl } } = supabase.storage
@@ -74,9 +82,12 @@ export const ProfilePhotoUpload = ({ currentPhotoUrl, userName, onPhotoUpdate }:
       const { error: updateError } = await supabase
         .from('profiles')
         .update({ avatar_url: publicUrl })
-        .eq('id', user.id);
+        .eq('id', userId);
 
-      if (updateError) throw updateError;
+      if (updateError) {
+        console.error('Update error:', updateError);
+        throw updateError;
+      }
 
       setPhotoUrl(publicUrl);
       onPhotoUpdate?.(publicUrl);
