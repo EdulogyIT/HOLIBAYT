@@ -109,7 +109,7 @@ const ContactAdvisor = () => {
       icon: Mail,
       title: t('emailSupport'),
       description: t('getDetailedAssistance'),
-      details: "support@holibayt.com",
+      details: "contact@holibayt.com",
       available: t('responseWithin2h')
     },
     {
@@ -277,14 +277,17 @@ const ContactAdvisor = () => {
                       window.location.href = '/messages';
                     }
                   }
+                } else if (index === 1) {
+                  // Email support card - open email client
+                  window.location.href = 'mailto:contact@holibayt.com';
                 }
               };
               
               return (
                 <Card 
                   key={index} 
-                  className={`group hover:shadow-elegant transition-all duration-500 hover:-translate-y-2 border-2 hover:border-primary/20 bg-gradient-to-br from-card to-card/50 ${isLiveChat ? 'cursor-pointer' : ''}`}
-                  onClick={isLiveChat ? handleClick : undefined}
+                  className={`group hover:shadow-elegant transition-all duration-500 hover:-translate-y-2 border-2 hover:border-primary/20 bg-gradient-to-br from-card to-card/50 ${(isLiveChat || index === 1) ? 'cursor-pointer' : ''}`}
+                  onClick={(isLiveChat || index === 1) ? handleClick : undefined}
                 >
                   <CardContent className="p-8 text-center">
                     <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-primary text-primary-foreground rounded-2xl mb-6 shadow-glow group-hover:scale-110 group-hover:rotate-3 transition-all duration-300">
