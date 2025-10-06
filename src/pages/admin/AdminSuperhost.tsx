@@ -61,6 +61,23 @@ export default function AdminSuperhost() {
 
       if (error) throw error;
 
+      // Create celebratory notification for new superhost
+      if (!currentStatus) {
+        const { error: notifError } = await supabase
+          .from('notifications')
+          .insert({
+            user_id: hostId,
+            title: '🎉 Congratulations! You are now a Superhost!',
+            message: 'You have been recognized for your exceptional hosting. Welcome to the exclusive Superhost community!',
+            type: 'superhost_promotion',
+            related_id: hostId
+          });
+
+        if (notifError) {
+          console.error('Error creating superhost notification:', notifError);
+        }
+      }
+
       toast.success(
         !currentStatus
           ? 'Host promoted to Superhost'

@@ -356,7 +356,7 @@ export default function AdminProperties() {
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
-          <Button>
+          <Button onClick={() => navigate('/publish-property')}>
             <Plus className="h-4 w-4 mr-2" />
             New Property
           </Button>
