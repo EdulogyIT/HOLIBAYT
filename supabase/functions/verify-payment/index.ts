@@ -227,7 +227,7 @@ serve(async (req) => {
           .single();
 
         // Create celebratory notification for guest
-        await dbClient
+        const { error: guestNotifError } = await dbClient
           .from('notifications')
           .insert({
             user_id: user.id,
@@ -237,9 +237,15 @@ serve(async (req) => {
             related_id: booking.id
           });
 
+        if (guestNotifError) {
+          logStep("Failed to create guest notification", { error: guestNotifError.message });
+        } else {
+          logStep("Guest notification created successfully");
+        }
+
         // Create celebratory notification for host
         if (propertyDetails?.user_id) {
-          await dbClient
+          const { error: hostNotifError } = await dbClient
             .from('notifications')
             .insert({
               user_id: propertyDetails.user_id,
@@ -248,6 +254,12 @@ serve(async (req) => {
               type: 'booking_confirmed_host',
               related_id: booking.id
             });
+          
+          if (hostNotifError) {
+            logStep("Failed to create host notification", { error: hostNotifError.message });
+          } else {
+            logStep("Host notification created successfully");
+          }
         }
         
         // Create commission transaction for the host

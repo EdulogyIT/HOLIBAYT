@@ -55,6 +55,7 @@ const Profile = () => {
   const [smsNotifications, setSmsNotifications] = useState(false);
   const [showProfilePhoto, setShowProfilePhoto] = useState(true);
   const [analytics, setAnalytics] = useState(true);
+  const [sessions, setSessions] = useState<any[]>([]);
 
   const isViewingOtherUser = userId && userId !== user?.id;
   const displayUser = isViewingOtherUser ? viewedUser : user;
@@ -100,6 +101,21 @@ const Profile = () => {
       fetchUserData();
     }
   }, [userId, isViewingOtherUser, hasRole]);
+
+  useEffect(() => {
+    const fetchSessions = async () => {
+      const { data } = await supabase.auth.getSession();
+      if (data.session) {
+        setSessions([{
+          id: data.session.user.id,
+          created_at: data.session.user.created_at,
+          user_agent: navigator.userAgent,
+          last_sign_in_at: data.session.user.last_sign_in_at,
+        }]);
+      }
+    };
+    fetchSessions();
+  }, []);
 
   const translations = {
     en: {
@@ -755,16 +771,56 @@ const Profile = () => {
               </CardHeader>
               <CardContent className="p-6">
                 <div className="space-y-4">
-                  <div className="flex items-center justify-between p-4 border border-accent/20 rounded-xl bg-gradient-to-r from-white/50 to-accent/5 hover:shadow-md transition-all">
-                    <div className="flex items-center gap-3">
-                      <Monitor className="h-5 w-5 text-primary" />
-                      <div>
-                        <div className="font-medium text-foreground">Current session</div>
-                        <div className="text-sm text-muted-foreground">Chrome on Windows • Active now</div>
-                      </div>
-                    </div>
-                    <Badge variant="secondary" className="bg-primary/10 text-primary border-primary/20">Current</Badge>
-                  </div>
+                  {sessions.length > 0 ? (
+                    sessions.map((session) => {
+                      const getBrowserAndOS = (userAgent: string) => {
+                        let browser = 'Browser';
+                        let os = 'Unknown OS';
+                        
+                        if (userAgent.includes('Chrome')) browser = 'Chrome';
+                        else if (userAgent.includes('Firefox')) browser = 'Firefox';
+                        else if (userAgent.includes('Safari')) browser = 'Safari';
+                        else if (userAgent.includes('Edge')) browser = 'Edge';
+                        
+                        if (userAgent.includes('Windows')) os = 'Windows';
+                        else if (userAgent.includes('Mac')) os = 'macOS';
+                        else if (userAgent.includes('Linux')) os = 'Linux';
+                        else if (userAgent.includes('Android')) os = 'Android';
+                        else if (userAgent.includes('iOS')) os = 'iOS';
+                        
+                        return `${browser} on ${os}`;
+                      };
+
+                      const getLastActive = (lastSignIn: string) => {
+                        const now = new Date();
+                        const signInDate = new Date(lastSignIn);
+                        const diffMs = now.getTime() - signInDate.getTime();
+                        const diffMins = Math.floor(diffMs / 60000);
+                        
+                        if (diffMins < 1) return 'Active now';
+                        if (diffMins < 60) return `${diffMins} minutes ago`;
+                        if (diffMins < 1440) return `${Math.floor(diffMins / 60)} hours ago`;
+                        return `${Math.floor(diffMins / 1440)} days ago`;
+                      };
+
+                      return (
+                        <div key={session.id} className="flex items-center justify-between p-4 border border-accent/20 rounded-xl bg-gradient-to-r from-white/50 to-accent/5 hover:shadow-md transition-all">
+                          <div className="flex items-center gap-3">
+                            <Monitor className="h-5 w-5 text-primary" />
+                            <div>
+                              <div className="font-medium text-foreground">Current session</div>
+                              <div className="text-sm text-muted-foreground">
+                                {getBrowserAndOS(session.user_agent)} • {getLastActive(session.last_sign_in_at)}
+                              </div>
+                            </div>
+                          </div>
+                          <Badge variant="secondary" className="bg-primary/10 text-primary border-primary/20">Current</Badge>
+                        </div>
+                      );
+                    })
+                  ) : (
+                    <div className="text-center text-muted-foreground py-8">No active sessions</div>
+                  )}
                 </div>
               </CardContent>
             </Card>
