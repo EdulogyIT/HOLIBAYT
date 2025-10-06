@@ -14,6 +14,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { toast } from "sonner";
 import { SuperhostCelebration } from "@/components/SuperhostCelebration";
 import { ReviewNotificationDialog } from "@/components/ReviewNotificationDialog";
+import { BookingInvitationCard } from "@/components/BookingInvitationCard";
 
 interface Notification {
   id: string;
@@ -36,6 +37,9 @@ export const NotificationBell = () => {
     rating: number;
     comment?: string;
   } | null>(null);
+  const [showBookingInvitation, setShowBookingInvitation] = useState(false);
+  const [selectedBookingId, setSelectedBookingId] = useState<string | null>(null);
+  const [isHostView, setIsHostView] = useState(false);
   const { user } = useAuth();
   const navigate = useNavigate();
 
@@ -111,6 +115,21 @@ export const NotificationBell = () => {
     if (notification.type === 'superhost_promotion') {
       console.log('🎊 Opening superhost celebration!');
       setShowSuperhostCelebration(true);
+      return;
+    }
+    
+    // Handle booking confirmation notifications
+    if (notification.type === 'booking_confirmed_guest' && notification.related_id) {
+      setSelectedBookingId(notification.related_id);
+      setIsHostView(false);
+      setShowBookingInvitation(true);
+      return;
+    }
+    
+    if (notification.type === 'booking_confirmed_host' && notification.related_id) {
+      setSelectedBookingId(notification.related_id);
+      setIsHostView(true);
+      setShowBookingInvitation(true);
       return;
     }
     
@@ -202,6 +221,17 @@ export const NotificationBell = () => {
           propertyTitle={reviewData.propertyTitle}
           rating={reviewData.rating}
           comment={reviewData.comment}
+        />
+      )}
+      
+      {showBookingInvitation && selectedBookingId && (
+        <BookingInvitationCard
+          bookingId={selectedBookingId}
+          isHost={isHostView}
+          onClose={() => {
+            setShowBookingInvitation(false);
+            setSelectedBookingId(null);
+          }}
         />
       )}
       

@@ -341,21 +341,25 @@ const Profile = () => {
       <main className="container mx-auto px-4 pt-24 pb-8">
         {/* Header */}
         <div className="mb-8 animate-scale-in">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6 mb-6 p-6 sm:p-8 rounded-2xl bg-gradient-primary shadow-elegant">
-            <Avatar className="h-20 w-20 sm:h-24 sm:w-24 ring-4 ring-white/20 shadow-lg flex-shrink-0">
-              {displayAvatarUrl && <AvatarImage src={displayAvatarUrl} alt={displayUser?.name || displayUser?.email} />}
-              <AvatarFallback className="text-2xl sm:text-3xl bg-white/20 text-white backdrop-blur-sm">
-                {(displayUser?.name || displayUser?.email || 'U').split(' ').map((n: string) => n[0]).join('').toUpperCase()}
-              </AvatarFallback>
-            </Avatar>
-            <div className="flex-1 min-w-0">
+          <div className="relative flex flex-col sm:flex-row items-start sm:items-center gap-6 mb-6 p-6 sm:p-8 rounded-2xl bg-gradient-primary shadow-elegant overflow-hidden">
+            {/* Decorative elements */}
+            <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full blur-3xl -mr-32 -mt-32"></div>
+            <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/5 rounded-full blur-2xl -ml-24 -mb-24"></div>
+            
+            <div className="relative group z-10">
+              <div className="absolute -inset-1 bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-500 rounded-full blur-lg opacity-75 group-hover:opacity-100 transition duration-500 animate-pulse"></div>
+              <Avatar className="relative h-20 w-20 sm:h-24 sm:w-24 ring-4 ring-white/20 shadow-lg flex-shrink-0 transition-transform duration-300 group-hover:scale-105">
+                {displayAvatarUrl && <AvatarImage src={displayAvatarUrl} alt={displayUser?.name || displayUser?.email} />}
+                <AvatarFallback className="text-2xl sm:text-3xl bg-white/20 text-white backdrop-blur-sm">
+                  {(displayUser?.name || displayUser?.email || 'U').split(' ').map((n: string) => n[0]).join('').toUpperCase()}
+                </AvatarFallback>
+              </Avatar>
+            </div>
+            <div className="flex-1 min-w-0 relative z-10">
               <h1 className="text-3xl sm:text-4xl font-bold text-white mb-2 break-words">{currentTranslations.title}</h1>
               <p className="text-white/80 text-base sm:text-lg mb-3 break-words">{currentTranslations.subtitle}</p>
               <div className="flex gap-2 flex-wrap">
-                <Badge variant="secondary" className="bg-white/20 text-white hover:bg-white/30 transition-all">
-                  {hasRole('host') ? currentTranslations.hostRole : currentTranslations.userRole}
-                </Badge>
-                {displayUser?.is_superhost && (
+                {displayUser?.is_superhost ? (
                   <Badge 
                     variant="secondary" 
                     className="bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-500 text-gray-900 font-bold hover:from-amber-500 hover:via-yellow-500 hover:to-amber-600 transition-all shadow-lg shadow-yellow-500/50 animate-pulse border-2 border-yellow-300"
@@ -363,6 +367,10 @@ const Profile = () => {
                     <span className="flex items-center gap-1">
                       ⭐ Superhost
                     </span>
+                  </Badge>
+                ) : (
+                  <Badge variant="secondary" className="bg-white/20 text-white hover:bg-white/30 transition-all">
+                    {hasRole('host') ? currentTranslations.hostRole : currentTranslations.userRole}
                   </Badge>
                 )}
               </div>

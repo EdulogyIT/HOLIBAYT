@@ -147,6 +147,49 @@ serve(async (req) => {
       } else {
         logStep("Booking created successfully", { bookingId: booking.id });
         
+        // Get property and profile details for notifications
+        const { data: propertyDetails } = await dbClient
+          .from('properties')
+          .select('title, user_id')
+          .eq('id', payment.property_id)
+          .single();
+
+        const { data: guestProfile } = await dbClient
+          .from('profiles')
+          .select('name')
+          .eq('id', user.id)
+          .single();
+
+        const { data: hostProfile } = await dbClient
+          .from('profiles')
+          .select('name')
+          .eq('id', propertyDetails?.user_id)
+          .single();
+
+        // Create celebratory notification for guest
+        await dbClient
+          .from('notifications')
+          .insert({
+            user_id: user.id,
+            title: '🎉 Booking Confirmed!',
+            message: `Welcome home! ${hostProfile?.name || 'Your host'} is excited to host you at "${propertyDetails?.title}". Get ready for an amazing stay! ✨`,
+            type: 'booking_confirmed_guest',
+            related_id: booking.id
+          });
+
+        // Create celebratory notification for host
+        if (propertyDetails?.user_id) {
+          await dbClient
+            .from('notifications')
+            .insert({
+              user_id: propertyDetails.user_id,
+              title: '🌟 New Booking - Yay!',
+              message: `Exciting news! ${guestProfile?.name || 'A guest'} just booked "${propertyDetails?.title}". Time to prepare for your special guest! 🏡`,
+              type: 'booking_confirmed_host',
+              related_id: booking.id
+            });
+        }
+        
         // Create commission transaction for the host
         if (property && payment.payment_type === 'booking_fee') {
           const commissionRate = property.commission_rate || 0.15;
