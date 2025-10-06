@@ -54,38 +54,59 @@ export default function AdminSuperhost() {
 
   const toggleSuperhost = async (hostId: string, currentStatus: boolean) => {
     try {
+      console.log('🏆 Toggling superhost status:', { hostId, currentStatus, newStatus: !currentStatus });
+      
       const { error } = await supabase
         .from('profiles')
         .update({ is_superhost: !currentStatus })
         .eq('id', hostId);
 
-      if (error) throw error;
+      if (error) {
+        console.error('❌ Error updating superhost status:', error);
+        throw error;
+      }
+
+      console.log('✅ Profile updated successfully');
 
       // Create celebratory notification for new superhost
       if (!currentStatus) {
-        const { error: notifError } = await supabase
+        console.log('🎉 Creating superhost promotion notification for user:', hostId);
+        
+        const notificationPayload = {
+          user_id: hostId,
+          title: '🎉 Congratulations! You are now a Superhost!',
+          message: 'You have been recognized for your exceptional hosting. Welcome to the exclusive Superhost community!',
+          type: 'superhost_promotion',
+          related_id: hostId
+        };
+        
+        console.log('📤 Notification payload:', notificationPayload);
+        
+        const { data: notifData, error: notifError } = await supabase
           .from('notifications')
-          .insert({
-            user_id: hostId,
-            title: '🎉 Congratulations! You are now a Superhost!',
-            message: 'You have been recognized for your exceptional hosting. Welcome to the exclusive Superhost community!',
-            type: 'superhost_promotion',
-            related_id: hostId
-          });
+          .insert(notificationPayload)
+          .select();
 
         if (notifError) {
-          console.error('Error creating superhost notification:', notifError);
+          console.error('❌ Error creating superhost notification:', {
+            error: notifError,
+            code: notifError.code,
+            message: notifError.message,
+            details: notifError.details,
+            payload: notificationPayload
+          });
+          toast.error('Superhost status updated but failed to send notification');
+        } else {
+          console.log('✅ Superhost notification created successfully:', notifData);
+          toast.success('Host promoted to Superhost and notification sent!');
         }
+      } else {
+        toast.success('Superhost status removed');
       }
-
-      toast.success(
-        !currentStatus
-          ? 'Host promoted to Superhost'
-          : 'Superhost status removed'
-      );
+      
       fetchHosts();
     } catch (error) {
-      console.error('Error updating superhost status:', error);
+      console.error('❌ Error in toggleSuperhost:', error);
       toast.error('Failed to update superhost status');
     }
   };

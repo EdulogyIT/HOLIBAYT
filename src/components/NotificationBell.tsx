@@ -47,11 +47,17 @@ export const NotificationBell = () => {
       }, (payload) => {
         const newNotification = payload.new as Notification;
         
-        // Show immediate toast popup
-        toast.success(newNotification.title, {
-          description: newNotification.message,
-          duration: 5000,
-        });
+        console.log('🔔 New notification received:', newNotification);
+        
+        // Show immediate toast popup for non-superhost notifications
+        if (newNotification.type !== 'superhost_promotion') {
+          toast.success(newNotification.title, {
+            description: newNotification.message,
+            duration: 5000,
+          });
+        } else {
+          console.log('🎉 Superhost notification received! Will show celebration when clicked.');
+        }
         
         // Refresh notifications list
         fetchNotifications();
@@ -89,10 +95,13 @@ export const NotificationBell = () => {
   };
 
   const handleNotificationClick = async (notification: Notification) => {
+    console.log('📌 Notification clicked:', notification);
+    
     markAsRead(notification.id);
     
     // Check if it's a superhost notification
     if (notification.type === 'superhost_promotion') {
+      console.log('🎊 Opening superhost celebration!');
       setShowSuperhostCelebration(true);
       return;
     }
