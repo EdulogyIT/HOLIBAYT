@@ -57,12 +57,18 @@ export default function EditProperty() {
     if (!id || !user) return;
 
     try {
-      const { data, error } = await supabase
+      // Build query - admins can edit any property, others can only edit their own
+      let query = supabase
         .from('properties')
         .select('*')
-        .eq('id', id)
-        .eq('user_id', user.id)
-        .single();
+        .eq('id', id);
+      
+      // Non-admin users can only edit their own properties
+      if (user.role !== 'admin') {
+        query = query.eq('user_id', user.id);
+      }
+      
+      const { data, error } = await query.single();
 
       if (error) {
         console.error('Error fetching property:', error);

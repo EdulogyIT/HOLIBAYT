@@ -339,17 +339,17 @@ const Profile = () => {
       <main className="container mx-auto px-4 py-8">
         {/* Header */}
         <div className="mb-8 animate-scale-in">
-          <div className="flex items-center gap-6 mb-6 p-6 rounded-2xl bg-gradient-primary shadow-elegant">
-            <Avatar className="h-20 w-20 ring-4 ring-white/20 shadow-lg">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6 mb-6 p-6 sm:p-8 rounded-2xl bg-gradient-primary shadow-elegant overflow-hidden">
+            <Avatar className="h-20 w-20 sm:h-24 sm:w-24 ring-4 ring-white/20 shadow-lg flex-shrink-0">
               {displayUser?.avatar_url && <AvatarImage src={displayUser.avatar_url} alt={displayUser?.name || displayUser?.email} />}
-              <AvatarFallback className="text-2xl bg-white/20 text-white backdrop-blur-sm">
+              <AvatarFallback className="text-2xl sm:text-3xl bg-white/20 text-white backdrop-blur-sm">
                 {(displayUser?.name || displayUser?.email || 'U').split(' ').map((n: string) => n[0]).join('').toUpperCase()}
               </AvatarFallback>
             </Avatar>
-            <div>
-              <h1 className="text-4xl font-bold text-white mb-2">{currentTranslations.title}</h1>
-              <p className="text-white/80 text-lg">{currentTranslations.subtitle}</p>
-              <Badge variant="secondary" className="mt-3 bg-white/20 text-white hover:bg-white/30 transition-all">
+            <div className="flex-1 min-w-0">
+              <h1 className="text-3xl sm:text-4xl font-bold text-white mb-2 break-words">{currentTranslations.title}</h1>
+              <p className="text-white/80 text-base sm:text-lg mb-3 break-words">{currentTranslations.subtitle}</p>
+              <Badge variant="secondary" className="bg-white/20 text-white hover:bg-white/30 transition-all">
                 {hasRole('host') ? currentTranslations.hostRole : currentTranslations.userRole}
               </Badge>
             </div>
@@ -472,7 +472,13 @@ const Profile = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2">
                     <Label htmlFor="displayName" className="text-primary font-medium">{currentTranslations.displayName}</Label>
-                    <Input id="displayName" defaultValue={displayUser?.name || ''} disabled={isViewingOtherUser} className="border-accent/30 focus:border-primary transition-colors" />
+                    <Input 
+                      id="displayName" 
+                      defaultValue={displayUser?.name || ''} 
+                      disabled={!isEditing || isViewingOtherUser} 
+                      readOnly={!isEditing || isViewingOtherUser}
+                      className="border-accent/30 focus:border-primary transition-colors" 
+                    />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="email" className="text-primary font-medium">{currentTranslations.email}</Label>
@@ -480,11 +486,17 @@ const Profile = () => {
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="phone" className="text-primary font-medium">{currentTranslations.phone}</Label>
-                    <Input id="phone" placeholder="+213 555 123 456" className="border-accent/30 focus:border-primary transition-colors" />
+                    <Input 
+                      id="phone" 
+                      placeholder="+213 555 123 456" 
+                      disabled={!isEditing || isViewingOtherUser}
+                      readOnly={!isEditing || isViewingOtherUser}
+                      className="border-accent/30 focus:border-primary transition-colors" 
+                    />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="country" className="text-primary font-medium">{currentTranslations.country}</Label>
-                    <Select>
+                    <Select disabled={!isEditing || isViewingOtherUser}>
                       <SelectTrigger className="border-accent/30 focus:border-primary transition-colors">
                         <SelectValue placeholder="Algeria" />
                       </SelectTrigger>
@@ -494,15 +506,17 @@ const Profile = () => {
                     </Select>
                   </div>
                 </div>
-                <div className="flex gap-4">
-                  <Button onClick={handleSave} className="bg-gradient-primary hover:opacity-90 transition-all shadow-lg">
-                    <Save className="h-4 w-4 mr-2" />
-                    {currentTranslations.save}
-                  </Button>
-                  <Button variant="outline" onClick={() => setIsEditing(false)} className="border-accent/30 hover:bg-accent/10">
-                    {currentTranslations.cancel}
-                  </Button>
-                </div>
+                {isEditing && !isViewingOtherUser && (
+                  <div className="flex gap-4">
+                    <Button onClick={handleSave} className="bg-gradient-primary hover:opacity-90 transition-all shadow-lg">
+                      <Save className="h-4 w-4 mr-2" />
+                      {currentTranslations.save}
+                    </Button>
+                    <Button variant="outline" onClick={() => setIsEditing(false)} className="border-accent/30 hover:bg-accent/10">
+                      {currentTranslations.cancel}
+                    </Button>
+                  </div>
+                )}
               </CardContent>
             </Card>
           </TabsContent>

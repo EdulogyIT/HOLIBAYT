@@ -40,15 +40,24 @@ export const ProfilePhotoUpload = ({ currentPhotoUrl, userName, onPhotoUpdate }:
     try {
       setUploading(true);
 
+      if (!user?.id) {
+        toast.error('User not authenticated');
+        return;
+      }
+
       // Delete old avatar if exists
       if (photoUrl) {
-        const oldPath = photoUrl.split('/').slice(-2).join('/');
-        await supabase.storage.from('avatars').remove([oldPath]);
+        try {
+          const oldPath = photoUrl.split('/').slice(-2).join('/');
+          await supabase.storage.from('avatars').remove([oldPath]);
+        } catch (error) {
+          console.log('Could not delete old avatar:', error);
+        }
       }
 
       // Upload new avatar
       const fileExt = file.name.split('.').pop();
-      const filePath = `${user?.id}/${Date.now()}.${fileExt}`;
+      const filePath = `${user.id}/${Date.now()}.${fileExt}`;
       
       const { error: uploadError } = await supabase.storage
         .from('avatars')
@@ -61,20 +70,20 @@ export const ProfilePhotoUpload = ({ currentPhotoUrl, userName, onPhotoUpdate }:
         .from('avatars')
         .getPublicUrl(filePath);
 
-      // Update profile
+      // Update profile with the new avatar URL
       const { error: updateError } = await supabase
         .from('profiles')
         .update({ avatar_url: publicUrl })
-        .eq('id', user?.id);
+        .eq('id', user.id);
 
       if (updateError) throw updateError;
 
       setPhotoUrl(publicUrl);
       onPhotoUpdate?.(publicUrl);
       toast.success('Profile photo updated successfully');
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error uploading avatar:', error);
-      toast.error('Failed to upload photo');
+      toast.error(error?.message || 'Failed to upload photo');
     } finally {
       setUploading(false);
     }
