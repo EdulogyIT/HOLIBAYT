@@ -40,6 +40,7 @@ export const NotificationBell = () => {
   const [showBookingInvitation, setShowBookingInvitation] = useState(false);
   const [selectedBookingId, setSelectedBookingId] = useState<string | null>(null);
   const [isHostView, setIsHostView] = useState(false);
+  const [isPopoverOpen, setIsPopoverOpen] = useState(false);
   const { user } = useAuth();
   const navigate = useNavigate();
 
@@ -114,6 +115,7 @@ export const NotificationBell = () => {
     // Check if it's a superhost notification
     if (notification.type === 'superhost_promotion') {
       console.log('🎊 Opening superhost celebration!');
+      setIsPopoverOpen(false); // Close popover
       setShowSuperhostCelebration(true);
       return;
     }
@@ -122,6 +124,7 @@ export const NotificationBell = () => {
     if (notification.type === 'booking_confirmed_guest' && notification.related_id) {
       setSelectedBookingId(notification.related_id);
       setIsHostView(false);
+      setIsPopoverOpen(false); // Close popover
       setShowBookingInvitation(true);
       return;
     }
@@ -129,6 +132,7 @@ export const NotificationBell = () => {
     if (notification.type === 'booking_confirmed_host' && notification.related_id) {
       setSelectedBookingId(notification.related_id);
       setIsHostView(true);
+      setIsPopoverOpen(false); // Close popover
       setShowBookingInvitation(true);
       return;
     }
@@ -235,7 +239,7 @@ export const NotificationBell = () => {
         />
       )}
       
-      <Popover>
+      <Popover open={isPopoverOpen} onOpenChange={setIsPopoverOpen}>
         <PopoverTrigger asChild>
           <Button variant="ghost" size="icon" className="relative">
             <Bell className="h-5 w-5" />

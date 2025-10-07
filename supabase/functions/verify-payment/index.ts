@@ -227,7 +227,13 @@ serve(async (req) => {
           .single();
 
         // Create celebratory notification for guest
-        const { error: guestNotifError } = await dbClient
+        logStep("Attempting to create guest notification", { 
+          userId: user.id, 
+          bookingId: booking.id,
+          propertyTitle: propertyDetails?.title 
+        });
+        
+        const { data: guestNotifData, error: guestNotifError } = await dbClient
           .from('notifications')
           .insert({
             user_id: user.id,
@@ -235,17 +241,29 @@ serve(async (req) => {
             message: `Welcome home! ${hostProfile?.name || 'Your host'} is excited to host you at "${propertyDetails?.title}". Get ready for an amazing stay! ✨`,
             type: 'booking_confirmed_guest',
             related_id: booking.id
-          });
+          })
+          .select();
 
         if (guestNotifError) {
-          logStep("Failed to create guest notification", { error: guestNotifError.message });
+          logStep("Failed to create guest notification", { 
+            error: guestNotifError.message,
+            code: guestNotifError.code,
+            details: guestNotifError.details,
+            hint: guestNotifError.hint
+          });
         } else {
-          logStep("Guest notification created successfully");
+          logStep("Guest notification created successfully", { notificationId: guestNotifData?.[0]?.id });
         }
 
         // Create celebratory notification for host
         if (propertyDetails?.user_id) {
-          const { error: hostNotifError } = await dbClient
+          logStep("Attempting to create host notification", { 
+            hostUserId: propertyDetails.user_id, 
+            bookingId: booking.id,
+            propertyTitle: propertyDetails?.title 
+          });
+          
+          const { data: hostNotifData, error: hostNotifError } = await dbClient
             .from('notifications')
             .insert({
               user_id: propertyDetails.user_id,
@@ -253,13 +271,21 @@ serve(async (req) => {
               message: `Exciting news! ${guestProfile?.name || 'A guest'} just booked "${propertyDetails?.title}". Time to prepare for your special guest! 🏡`,
               type: 'booking_confirmed_host',
               related_id: booking.id
-            });
+            })
+            .select();
           
           if (hostNotifError) {
-            logStep("Failed to create host notification", { error: hostNotifError.message });
+            logStep("Failed to create host notification", { 
+              error: hostNotifError.message,
+              code: hostNotifError.code,
+              details: hostNotifError.details,
+              hint: hostNotifError.hint
+            });
           } else {
-            logStep("Host notification created successfully");
+            logStep("Host notification created successfully", { notificationId: hostNotifData?.[0]?.id });
           }
+        } else {
+          logStep("No host user_id found for notifications", { propertyDetails });
         }
         
         // Create commission transaction for the host
