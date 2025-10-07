@@ -43,7 +43,7 @@ export const ReviewNotificationDialog = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md z-[99999]">
+      <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="text-center">New Review Received! 🎉</DialogTitle>
         </DialogHeader>
