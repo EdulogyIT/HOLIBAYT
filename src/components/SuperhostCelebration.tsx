@@ -70,8 +70,9 @@ export const SuperhostCelebration = ({ onClose }: SuperhostCelebrationProps) => 
   }, [onClose]);
 
   return (
-    <div className="fixed inset-0 z-[9998] flex items-center justify-center bg-black/60 backdrop-blur-sm animate-fade-in">
-      <Card className="relative max-w-lg mx-4 p-8 text-center space-y-6 animate-scale-in bg-gradient-to-br from-yellow-50 via-orange-50 to-pink-50 border-4 border-yellow-400 shadow-2xl">
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/60 backdrop-blur-sm animate-fade-in p-4 overflow-y-auto">
+      <div className="flex items-center justify-center min-h-full py-8">
+        <Card className="relative max-w-lg w-full mx-auto p-8 text-center space-y-6 animate-scale-in bg-gradient-to-br from-yellow-50 via-orange-50 to-pink-50 border-4 border-yellow-400 shadow-2xl my-auto">
         {/* Decorative elements */}
         <div className="absolute -top-4 -left-4 animate-bounce">
           <Trophy className="w-12 h-12 text-yellow-500 fill-yellow-400" />
@@ -135,7 +136,8 @@ export const SuperhostCelebration = ({ onClose }: SuperhostCelebrationProps) => 
         >
           Awesome! Let's Celebrate 🎊
         </button>
-      </Card>
+        </Card>
+      </div>
     </div>
   );
 };
