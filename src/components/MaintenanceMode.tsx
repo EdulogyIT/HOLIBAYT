@@ -13,6 +13,7 @@ export const MaintenanceMode = ({ children }: { children: React.ReactNode }) => 
   const { user, login, logout } = useAuth();
   const { toast } = useToast();
   const [shouldBlock, setShouldBlock] = useState(false);
+  const [isCheckingAuth, setIsCheckingAuth] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoggingIn, setIsLoggingIn] = useState(false);
@@ -21,20 +22,34 @@ export const MaintenanceMode = ({ children }: { children: React.ReactNode }) => 
     if (settingsLoading) return;
 
     const isMaintenanceMode = generalSettings.maintenance_mode;
-    const isAdmin = user?.role === 'admin';
-
+    
     console.log('[MaintenanceMode] Status check:', { 
       isMaintenanceMode, 
-      isAdmin, 
       userRole: user?.role,
       userEmail: user?.email 
     });
 
-    // CRITICAL: Block access if maintenance is ON and user is NOT admin
-    if (isMaintenanceMode && !isAdmin) {
-      setShouldBlock(true);
-    } else {
+    // If maintenance is OFF, always allow access
+    if (!isMaintenanceMode) {
       setShouldBlock(false);
+      setIsCheckingAuth(false);
+      return;
+    }
+
+    // Maintenance is ON - check if we have user data
+    if (user === null) {
+      // No user logged in - block and show login form
+      setShouldBlock(true);
+      setIsCheckingAuth(false);
+    } else if (user.role === undefined || user.role === null) {
+      // User is logged in but role hasn't loaded yet - show checking state
+      setIsCheckingAuth(true);
+      setShouldBlock(false);
+    } else {
+      // User data is complete - make final decision
+      setIsCheckingAuth(false);
+      const isAdmin = user.role === 'admin';
+      setShouldBlock(!isAdmin);
     }
   }, [generalSettings.maintenance_mode, user, settingsLoading]);
 
@@ -116,6 +131,17 @@ export const MaintenanceMode = ({ children }: { children: React.ReactNode }) => 
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
           <p className="mt-4 text-muted-foreground">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (isCheckingAuth) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
+          <p className="mt-4 text-muted-foreground">Verifying access...</p>
         </div>
       </div>
     );

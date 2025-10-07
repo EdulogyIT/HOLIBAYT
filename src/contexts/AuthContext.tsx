@@ -187,7 +187,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         // Only fetch profile on signin/initial load, not on updates
         // This prevents unnecessary redirects when profile is updated
         if (event === 'SIGNED_IN' || event === 'INITIAL_SESSION' || event === 'TOKEN_REFRESHED') {
-          setTimeout(async () => {
+          (async () => {
             try {
               const { data: profile, error } = await supabase
                 .from('profiles')
@@ -231,7 +231,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
               console.error('Error fetching profile:', error);
               setUser(null);
             }
-          }, 0);
+          })();
         }
       } else {
         console.log('No session user, setting user to null');
