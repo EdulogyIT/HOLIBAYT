@@ -1,17 +1,20 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Calendar, Users, CreditCard, Clock } from 'lucide-react';
-
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { useCurrency } from '@/contexts/CurrencyContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
-import { format, differenceInDays, parseISO } from 'date-fns';
+import { format, differenceInDays } from 'date-fns';
 import { supabase } from '@/integrations/supabase/client';
+import { DateRangePicker } from './DateRangePicker';
+import { useToast } from '@/hooks/use-toast';
+import { cn } from '@/lib/utils';
 
 interface BookingModalProps {
   property: {
@@ -26,18 +29,58 @@ interface BookingModalProps {
 
 export const BookingModal: React.FC<BookingModalProps> = ({ property, trigger }) => {
   const [open, setOpen] = useState(false);
-  const [checkInDate, setCheckInDate] = useState('');
-  const [checkOutDate, setCheckOutDate] = useState('');
+  const [dateRange, setDateRange] = useState<{ from?: Date; to?: Date }>();
+  const [bookedDates, setBookedDates] = useState<Date[]>([]);
   const [guestsCount, setGuestsCount] = useState(1);
   const [specialRequests, setSpecialRequests] = useState('');
   const [contactPhone, setContactPhone] = useState('');
   const [isCheckingAvailability, setIsCheckingAvailability] = useState(false);
   const { formatPrice, currentCurrency } = useCurrency();
   const { isAuthenticated } = useAuth();
+  const { toast } = useToast();
 
-  // Check if dates are available before payment
+  // Fetch booked dates when modal opens
+  useEffect(() => {
+    if (open) {
+      fetchBookedDates();
+    }
+  }, [open, property.id]);
+
+  const fetchBookedDates = async () => {
+    try {
+      const { data: bookings, error } = await supabase
+        .from('bookings')
+        .select('check_in_date, check_out_date')
+        .eq('property_id', property.id)
+        .in('status', ['confirmed', 'pending']);
+
+      if (error) throw error;
+
+      // Generate all dates between check-in and check-out for each booking
+      const allBookedDates: Date[] = [];
+      bookings?.forEach((booking) => {
+        const checkIn = new Date(booking.check_in_date);
+        const checkOut = new Date(booking.check_out_date);
+        
+        for (let d = new Date(checkIn); d <= checkOut; d.setDate(d.getDate() + 1)) {
+          allBookedDates.push(new Date(d));
+        }
+      });
+
+      setBookedDates(allBookedDates);
+    } catch (error) {
+      console.error('Error fetching booked dates:', error);
+      toast({
+        title: "Error",
+        description: "Failed to fetch booking availability",
+        variant: "destructive"
+      });
+    }
+  };
+
+  // Check if dates are available before payment (secondary check)
   const checkDateAvailability = async () => {
-    if (!checkInDate || !checkOutDate) return false;
+    if (!dateRange?.from || !dateRange?.to) return false;
     
     setIsCheckingAvailability(true);
     try {
@@ -49,15 +92,13 @@ export const BookingModal: React.FC<BookingModalProps> = ({ property, trigger })
 
       if (error) throw error;
 
-      // Check for date overlap
-      const selectedCheckIn = new Date(checkInDate);
-      const selectedCheckOut = new Date(checkOutDate);
+      const selectedCheckIn = dateRange.from;
+      const selectedCheckOut = dateRange.to;
 
       const hasConflict = bookings?.some(booking => {
         const bookingCheckIn = new Date(booking.check_in_date);
         const bookingCheckOut = new Date(booking.check_out_date);
         
-        // Check if there's any overlap
         return (
           (selectedCheckIn >= bookingCheckIn && selectedCheckIn < bookingCheckOut) ||
           (selectedCheckOut > bookingCheckIn && selectedCheckOut <= bookingCheckOut) ||
@@ -89,19 +130,9 @@ export const BookingModal: React.FC<BookingModalProps> = ({ property, trigger })
   }
 
   const nights =
-    checkInDate && checkOutDate
-      ? Math.max(1, differenceInDays(parseISO(checkOutDate), parseISO(checkInDate)))
+    dateRange?.from && dateRange?.to
+      ? Math.max(1, differenceInDays(dateRange.to, dateRange.from))
       : 0;
-
-  console.log('BookingModal Debug:', {
-    propertyPrice: property.price,
-    priceType: property.price_type,
-    category: property.category,
-    basePrice,
-    dailyPrice,
-    nights,
-    subtotal: dailyPrice * nights
-  });
 
   const subtotal = dailyPrice * nights;
   const bookingFee = Math.round(subtotal * 0.05 * 100) / 100; // 5% booking fee
@@ -112,7 +143,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({ property, trigger })
   const finalTotalAmount = Math.max(MIN_EUR, Math.round(totalAmount * 100) / 100);
   const finalSecurityDeposit = Math.max(MIN_EUR, Math.round(securityDeposit * 100) / 100);
 
-  const isFormValid = Boolean(checkInDate && checkOutDate && nights > 0 && guestsCount > 0);
+  const isFormValid = Boolean(dateRange?.from && dateRange?.to && nights > 0 && guestsCount > 0);
   const canPayBooking = isFormValid && finalTotalAmount >= MIN_EUR;
   const canPayDeposit = isFormValid && finalSecurityDeposit >= MIN_EUR;
 
@@ -131,17 +162,6 @@ export const BookingModal: React.FC<BookingModalProps> = ({ property, trigger })
       return;
     }
 
-    console.log('=== PAYMENT DEBUG ===');
-    console.log('Display amounts:', {
-      dailyPrice,
-      nights,
-      subtotal,
-      bookingFee,
-      finalTotalAmount,
-      currency: currentCurrency
-    });
-    console.log('Sending to Stripe:', { amount: finalTotalAmount, currency: currentCurrency });
-
     try {
       const { data, error } = await supabase.functions.invoke('create-payment', {
         body: {
@@ -151,8 +171,8 @@ export const BookingModal: React.FC<BookingModalProps> = ({ property, trigger })
           currency: currentCurrency,
           description: `Booking fee for ${property.title}`,
           bookingData: {
-            checkInDate,
-            checkOutDate,
+            checkInDate: dateRange.from?.toISOString().split('T')[0],
+            checkOutDate: dateRange.to?.toISOString().split('T')[0],
             guestsCount,
             specialRequests,
             contactPhone,
@@ -199,8 +219,8 @@ export const BookingModal: React.FC<BookingModalProps> = ({ property, trigger })
           currency: currentCurrency,
           description: `Security deposit for ${property.title}`,
           bookingData: {
-            checkInDate,
-            checkOutDate,
+            checkInDate: dateRange.from?.toISOString().split('T')[0],
+            checkOutDate: dateRange.to?.toISOString().split('T')[0],
             guestsCount,
             specialRequests,
             contactPhone,
@@ -255,27 +275,43 @@ export const BookingModal: React.FC<BookingModalProps> = ({ property, trigger })
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Booking Form */}
           <div className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="checkIn">Check-in Date</Label>
-                <Input
-                  id="checkIn"
-                  type="date"
-                  value={checkInDate}
-                  onChange={(e) => setCheckInDate(e.target.value)}
-                  min={new Date().toISOString().split('T')[0]}
-                />
-              </div>
-              <div>
-                <Label htmlFor="checkOut">Check-out Date</Label>
-                <Input
-                  id="checkOut"
-                  type="date"
-                  value={checkOutDate}
-                  onChange={(e) => setCheckOutDate(e.target.value)}
-                  min={checkInDate || new Date().toISOString().split('T')[0]}
-                />
-              </div>
+            <div>
+              <Label>Select Dates</Label>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className={cn(
+                      "w-full justify-start text-left font-normal",
+                      !dateRange?.from && "text-muted-foreground"
+                    )}
+                  >
+                    <Calendar className="mr-2 h-4 w-4" />
+                    {dateRange?.from ? (
+                      dateRange.to ? (
+                        `${format(dateRange.from, "MMM dd, yyyy")} - ${format(dateRange.to, "MMM dd, yyyy")}`
+                      ) : (
+                        format(dateRange.from, "MMM dd, yyyy")
+                      )
+                    ) : (
+                      "Select check-in and check-out dates"
+                    )}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="start">
+                  <DateRangePicker
+                    value={dateRange}
+                    onChange={setDateRange}
+                    allowPast={false}
+                    disabledDates={bookedDates}
+                  />
+                </PopoverContent>
+              </Popover>
+              {bookedDates.length > 0 && (
+                <p className="text-xs text-muted-foreground mt-1">
+                  Unavailable dates are disabled in the calendar
+                </p>
+              )}
             </div>
 
             <div>
@@ -348,12 +384,12 @@ export const BookingModal: React.FC<BookingModalProps> = ({ property, trigger })
                 </>
               )}
 
-              {checkInDate && checkOutDate && (
+              {dateRange?.from && dateRange?.to && (
                 <div className="bg-blue-50 p-3 rounded-lg text-sm">
                   <strong>Stay dates:</strong>
                   <br />
-                  {format(parseISO(checkInDate), 'MMM dd, yyyy')} -{' '}
-                  {format(parseISO(checkOutDate), 'MMM dd, yyyy')}
+                  {format(dateRange.from, 'MMM dd, yyyy')} -{' '}
+                  {format(dateRange.to, 'MMM dd, yyyy')}
                 </div>
               )}
 
@@ -395,7 +431,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({ property, trigger })
                 </div>
               )}
 
-              {!isFormValid && checkInDate && checkOutDate && nights <= 0 && (
+              {!isFormValid && dateRange?.from && dateRange?.to && nights <= 0 && (
                 <div className="text-red-600 text-sm">
                   Please select valid dates (check-out must be after check-in).
                 </div>
