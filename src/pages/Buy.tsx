@@ -19,6 +19,7 @@ import { WishlistButton } from "@/components/WishlistButton";
 import { PropertyBadges } from "@/components/PropertyBadges";
 import CitiesSection from "@/components/CitiesSection";
 import PropertyMapWithZone from "@/components/PropertyMapWithZone";
+import { usePropertyTranslation } from "@/hooks/usePropertyTranslation";
 
 interface Property {
   id: string;
@@ -50,7 +51,7 @@ const num = (v: unknown) => {
 const Buy = () => {
   const navigate = useNavigate();
   const locationHook = useLocation();
-  const { t } = useLanguage();
+  const { t, currentLang } = useLanguage();
   const { formatPrice } = useCurrency();
   const { user } = useAuth();
   const { wishlistIds, toggleWishlist } = useWishlist(user?.id);
@@ -134,28 +135,35 @@ const Buy = () => {
     navigate({ pathname: "/buy", search: qs.toString() });
   };
 
-  const PropertyCard = ({ property }: { property: Property }) => (
-    <Card className="overflow-hidden hover:shadow-lg transition-shadow duration-300 cursor-pointer group">
-      <div className="relative h-48 overflow-hidden">
-        <PropertyBadges 
-          isHotDeal={property.is_hot_deal}
-          isVerified={property.is_verified}
-          isNew={property.is_new}
-        />
-        <WishlistButton 
-          isInWishlist={wishlistIds.has(property.id)}
-          onToggle={() => toggleWishlist(property.id)}
-        />
-        <img
-          src={property.images?.[0] || "/lovable-uploads/b974fb79-9873-41fb-b3ad-9b4bf38b8a77.png"}
-          alt={property.title}
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-        />
-      </div>
-      <CardHeader className="pb-2">
-        <CardTitle className="text-lg font-semibold text-foreground line-clamp-2">
-          {property.title}
-        </CardTitle>
+  const PropertyCard = ({ property }: { property: Property }) => {
+    const { translatedText: translatedTitle } = usePropertyTranslation(
+      property.title,
+      currentLang,
+      'property_title'
+    );
+
+    return (
+      <Card className="overflow-hidden hover:shadow-lg transition-shadow duration-300 cursor-pointer group">
+        <div className="relative h-48 overflow-hidden">
+          <PropertyBadges 
+            isHotDeal={property.is_hot_deal}
+            isVerified={property.is_verified}
+            isNew={property.is_new}
+          />
+          <WishlistButton 
+            isInWishlist={wishlistIds.has(property.id)}
+            onToggle={() => toggleWishlist(property.id)}
+          />
+          <img
+            src={property.images?.[0] || "/lovable-uploads/b974fb79-9873-41fb-b3ad-9b4bf38b8a77.png"}
+            alt={property.title}
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+          />
+        </div>
+        <CardHeader className="pb-2">
+          <CardTitle className="text-lg font-semibold text-foreground line-clamp-2">
+            {translatedTitle || property.title}
+          </CardTitle>
         <div className="flex items-center text-muted-foreground">
           <MapPin className="h-4 w-4 mr-1" />
           <span className="text-sm">
@@ -196,7 +204,8 @@ const Buy = () => {
         </Button>
       </CardContent>
     </Card>
-  );
+    );
+  };
 
   return (
     <div className="min-h-screen bg-background">

@@ -9,6 +9,7 @@ import { Calendar, User } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { BlogPostCard } from "@/components/BlogPostCard";
 
 // Import blog images
 import blogFutureRealEstate from "@/assets/blog-future-real-estate.jpg";
@@ -30,7 +31,7 @@ interface BlogPost {
 }
 
 const Blog = () => {
-  const { t } = useLanguage();
+  const { t, currentLang } = useLanguage();
   const navigate = useNavigate();
   useScrollToTop();
 
@@ -143,46 +144,13 @@ const Blog = () => {
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 {filteredBlogs.map((post) => (
-                  <Card 
-                    key={post.id} 
-                    className="group cursor-pointer hover:shadow-elegant transition-all duration-300 hover:-translate-y-2"
+                  <BlogPostCard
+                    key={post.id}
+                    post={post}
+                    getImageSrc={getImageSrc}
+                    stripHtml={stripHtml}
                     onClick={() => navigate(`/blog/${post.id}`)}
-                  >
-                    {post.image_url && (
-                      <div className="aspect-video bg-muted rounded-t-lg overflow-hidden">
-                        <img 
-                          src={getImageSrc(post.image_url) || post.image_url} 
-                          alt={post.title}
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                        />
-                      </div>
-                    )}
-                    <CardHeader>
-                      <div className="flex items-center justify-between mb-2">
-                        <Badge variant="secondary" className="capitalize">
-                          {t(post.category) || post.category}
-                        </Badge>
-                      </div>
-                      <CardTitle className="text-xl font-playfair group-hover:text-primary transition-colors">
-                        {post.title}
-                      </CardTitle>
-                      <CardDescription className="font-inter line-clamp-3">
-                        {stripHtml(post.content).substring(0, 150)}...
-                      </CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="flex items-center justify-between text-sm text-muted-foreground">
-                        <div className="flex items-center">
-                          <User className="w-4 h-4 mr-1" />
-                          {post.author_name}
-                        </div>
-                        <div className="flex items-center">
-                          <Calendar className="w-4 h-4 mr-1" />
-                          {new Date(post.created_at).toLocaleDateString()}
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
+                  />
                 ))}
               </div>
             )}
