@@ -10,6 +10,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useEffect, useState } from "react";
 import { format } from "date-fns";
+import { toZonedTime } from "date-fns-tz";
 import { useCurrency } from "@/contexts/CurrencyContext";
 import { useToast } from "@/hooks/use-toast";
 import { CancelBookingButton } from "@/components/CancelBookingButton";
@@ -138,21 +139,29 @@ const Bookings = () => {
   }, [user, isAuthenticated]);
 
   // Separate bookings into upcoming and past
-  // Use current date and time for accurate comparison
-  const now = new Date();
+  // Use Algerian timezone (Africa/Algiers) for accurate comparison
+  const ALGERIAN_TIMEZONE = 'Africa/Algiers';
+  const nowInAlgeria = toZonedTime(new Date(), ALGERIAN_TIMEZONE);
+  
   const upcomingBookings = bookings
     .filter(booking => {
-      const checkoutDate = new Date(booking.check_out_date);
-      checkoutDate.setHours(11, 0, 0, 0);
-      return checkoutDate > now;
+      // Create checkout date with 11:00 AM checkout time in Algerian timezone
+      const checkoutDateTime = toZonedTime(
+        new Date(booking.check_out_date + 'T11:00:00'),
+        ALGERIAN_TIMEZONE
+      );
+      return checkoutDateTime > nowInAlgeria;
     })
     .sort((a, b) => new Date(a.check_in_date).getTime() - new Date(b.check_in_date).getTime());
 
   const pastBookings = bookings
     .filter(booking => {
-      const checkoutDate = new Date(booking.check_out_date);
-      checkoutDate.setHours(11, 0, 0, 0);
-      return checkoutDate <= now;
+      // Create checkout date with 11:00 AM checkout time in Algerian timezone
+      const checkoutDateTime = toZonedTime(
+        new Date(booking.check_out_date + 'T11:00:00'),
+        ALGERIAN_TIMEZONE
+      );
+      return checkoutDateTime <= nowInAlgeria;
     })
     .sort((a, b) => new Date(b.check_in_date).getTime() - new Date(a.check_in_date).getTime());
 
@@ -303,6 +312,11 @@ const Bookings = () => {
               <div className="text-sm">
                 <span className="text-muted-foreground">Total Amount: </span>
                 <span className="font-semibold">{formatPrice(booking.total_amount)}</span>
+              </div>
+
+              <div className="text-sm text-muted-foreground">
+                <span>Booked on: </span>
+                <span>{format(new Date(booking.created_at), 'MMM dd, yyyy • h:mm a')}</span>
               </div>
 
               <div className="flex gap-2 pt-2">
