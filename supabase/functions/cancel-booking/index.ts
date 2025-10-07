@@ -144,6 +144,25 @@ serve(async (req) => {
 
     logStep("Booking cancelled successfully");
 
+    // Reverse commission transactions if payment was refunded
+    if (refundAmount > 0 && booking.payment_id) {
+      logStep("Reversing commission transaction...");
+      const { error: commissionError } = await dbClient
+        .from("commission_transactions")
+        .update({
+          status: 'refunded',
+          updated_at: new Date().toISOString()
+        })
+        .eq("payment_id", booking.payment_id);
+
+      if (commissionError) {
+        logStep("Commission reversal failed:", commissionError);
+        // Don't throw error - booking is still cancelled, just log it
+      } else {
+        logStep("Commission transaction reversed");
+      }
+    }
+
     return new Response(
       JSON.stringify({ 
         success: true,
