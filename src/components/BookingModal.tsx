@@ -22,6 +22,7 @@ interface BookingModalProps {
     title: string;
     price: string;
     price_type: string;
+    price_currency?: string;
     category: string;
   };
   trigger?: React.ReactNode;
@@ -116,9 +117,15 @@ export const BookingModal: React.FC<BookingModalProps> = ({ property, trigger })
   };
 
   // ---- Stripe constraints ----
-  const MIN_EUR = 1; // Reduced minimum to allow small payments
+  const propertyCurrency = property.price_currency || 'EUR';
+  const MIN_AMOUNTS = {
+    EUR: 1,
+    USD: 1,
+    DZD: 100
+  };
+  const MIN_AMOUNT = MIN_AMOUNTS[propertyCurrency as keyof typeof MIN_AMOUNTS] || MIN_AMOUNTS.EUR;
 
-  // Calculate booking details - treat property price as EUR only
+  // Calculate booking details using property's actual currency
   const basePrice = Number(property.price) || 0;
 
   // Convert monthly/weekly price to nightly when short-stay
@@ -140,19 +147,20 @@ export const BookingModal: React.FC<BookingModalProps> = ({ property, trigger })
   const securityDeposit = Math.round(subtotal * 0.2 * 100) / 100; // 20% security deposit
   let totalAmount = subtotal + bookingFee;
 
-  // Apply minimum EUR constraint and round to 2 decimals
-  const finalTotalAmount = Math.max(MIN_EUR, Math.round(totalAmount * 100) / 100);
-  const finalSecurityDeposit = Math.max(MIN_EUR, Math.round(securityDeposit * 100) / 100);
+  // Apply minimum amount constraint for the property's currency and round to 2 decimals
+  const finalTotalAmount = Math.max(MIN_AMOUNT, Math.round(totalAmount * 100) / 100);
+  const finalSecurityDeposit = Math.max(MIN_AMOUNT, Math.round(securityDeposit * 100) / 100);
 
   const isFormValid = Boolean(dateRange?.from && dateRange?.to && nights > 0 && guestsCount > 0);
-  const canPayBooking = isFormValid && finalTotalAmount >= MIN_EUR;
-  const canPayDeposit = isFormValid && finalSecurityDeposit >= MIN_EUR;
+  const canPayBooking = isFormValid && finalTotalAmount >= MIN_AMOUNT;
+  const canPayDeposit = isFormValid && finalSecurityDeposit >= MIN_AMOUNT;
 
   const generateBookingId = () => `bk_${Date.now()}_${Math.random().toString(36).slice(2, 11)}`;
 
   const handlePayBooking = async () => {
     if (!canPayBooking) {
-      alert(`Minimum payment amount is €${MIN_EUR}. Please increase nights or price.`);
+      const currencySymbol = propertyCurrency === 'DZD' ? 'DA' : propertyCurrency === 'USD' ? '$' : '€';
+      alert(`Minimum payment amount is ${currencySymbol}${MIN_AMOUNT}. Please increase nights or price.`);
       return;
     }
 
@@ -169,7 +177,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({ property, trigger })
           propertyId: property.id,
           paymentType: 'booking_fee',
           amount: finalTotalAmount,
-          currency: currentCurrency,
+          currency: propertyCurrency,
           description: `Booking fee for ${property.title}`,
           bookingData: {
             checkInDate: format(dateRange.from!, 'yyyy-MM-dd'),
@@ -200,7 +208,8 @@ export const BookingModal: React.FC<BookingModalProps> = ({ property, trigger })
 
   const handlePayDeposit = async () => {
     if (!canPayDeposit) {
-      alert(`Minimum deposit amount is €${MIN_EUR}.`);
+      const currencySymbol = propertyCurrency === 'DZD' ? 'DA' : propertyCurrency === 'USD' ? '$' : '€';
+      alert(`Minimum deposit amount is ${currencySymbol}${MIN_AMOUNT}.`);
       return;
     }
 
@@ -217,7 +226,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({ property, trigger })
           propertyId: property.id,
           paymentType: 'security_deposit',
           amount: finalSecurityDeposit,
-          currency: currentCurrency,
+          currency: propertyCurrency,
           description: `Security deposit for ${property.title}`,
           bookingData: {
             checkInDate: format(dateRange.from!, 'yyyy-MM-dd'),
@@ -407,7 +416,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({ property, trigger })
                   </Button>
                   {!canPayBooking && (
                     <div className="text-xs text-muted-foreground">
-                      Minimum charge is €{MIN_EUR}. Increase price/nights to proceed.
+                      Minimum charge is {propertyCurrency === 'DZD' ? 'DA' : propertyCurrency === 'USD' ? '$' : '€'}{MIN_AMOUNT}. Increase price/nights to proceed.
                     </div>
                   )}
 
@@ -424,7 +433,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({ property, trigger })
                       </Button>
                       {!canPayDeposit && (
                         <div className="text-xs text-muted-foreground">
-                          Minimum charge is €{MIN_EUR} for deposits as well.
+                          Minimum charge is {propertyCurrency === 'DZD' ? 'DA' : propertyCurrency === 'USD' ? '$' : '€'}{MIN_AMOUNT} for deposits as well.
                         </div>
                       )}
                     </>
