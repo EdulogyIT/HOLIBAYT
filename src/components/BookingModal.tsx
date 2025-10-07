@@ -129,6 +129,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({ property, trigger })
     dailyPrice = basePrice / 7;
   }
 
+  // Calculate nights between dates (difference in days)
   const nights =
     dateRange?.from && dateRange?.to
       ? Math.max(1, differenceInDays(dateRange.to, dateRange.from))
@@ -171,8 +172,8 @@ export const BookingModal: React.FC<BookingModalProps> = ({ property, trigger })
           currency: currentCurrency,
           description: `Booking fee for ${property.title}`,
           bookingData: {
-            checkInDate: dateRange.from?.toISOString().split('T')[0],
-            checkOutDate: dateRange.to?.toISOString().split('T')[0],
+            checkInDate: format(dateRange.from!, 'yyyy-MM-dd'),
+            checkOutDate: format(dateRange.to!, 'yyyy-MM-dd'),
             guestsCount,
             specialRequests,
             contactPhone,
@@ -219,8 +220,8 @@ export const BookingModal: React.FC<BookingModalProps> = ({ property, trigger })
           currency: currentCurrency,
           description: `Security deposit for ${property.title}`,
           bookingData: {
-            checkInDate: dateRange.from?.toISOString().split('T')[0],
-            checkOutDate: dateRange.to?.toISOString().split('T')[0],
+            checkInDate: format(dateRange.from!, 'yyyy-MM-dd'),
+            checkOutDate: format(dateRange.to!, 'yyyy-MM-dd'),
             guestsCount,
             specialRequests,
             contactPhone,

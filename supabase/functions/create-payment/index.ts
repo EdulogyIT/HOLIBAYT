@@ -164,14 +164,27 @@ serve(async (req) => {
     console.log("[CREATE-PAYMENT] Creating Stripe session...");
     const productName = `${paymentType.replace(/_/g, " ")} - ${property.title}`;
     
+    // Convert DZD to EUR for Stripe (since Stripe doesn't support DZD)
+    // Exchange rate: 1 EUR ≈ 145 DZD
+    const DZD_TO_EUR_RATE = 145;
+    let stripeAmount = amount;
+    let stripeCurrency = (currency || "EUR").toUpperCase();
+    
+    if (stripeCurrency === "DZD") {
+      // Convert to EUR for Stripe
+      stripeAmount = Math.round((amount / DZD_TO_EUR_RATE) * 100) / 100;
+      stripeCurrency = "EUR";
+      console.log(`[CREATE-PAYMENT] Converting DZD ${amount} to EUR ${stripeAmount}`);
+    }
+    
     const sessionData = {
       mode: "payment" as const,
       customer: customerId,
       line_items: [{
         quantity: 1,
         price_data: {
-          currency: (currency || "USD").toLowerCase(),
-          unit_amount: Math.round(amount * 100),
+          currency: stripeCurrency.toLowerCase(),
+          unit_amount: Math.round(stripeAmount * 100),
           product_data: {
             name: productName,
             description: description || `${paymentType.replace(/_/g, " ")} for ${property.title}`,
@@ -184,6 +197,8 @@ serve(async (req) => {
         payment_id: payment.id,
         property_id: propertyId,
         payment_type: paymentType,
+        original_currency: currency || "EUR",
+        original_amount: amount.toString(),
       },
     };
 
