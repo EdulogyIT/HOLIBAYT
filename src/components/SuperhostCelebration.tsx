@@ -70,7 +70,7 @@ export const SuperhostCelebration = ({ onClose }: SuperhostCelebrationProps) => 
   }, [onClose]);
 
   return (
-    <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/60 backdrop-blur-sm animate-fade-in p-4 pt-24">
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/60 backdrop-blur-sm animate-fade-in p-4 pt-32 overflow-y-auto">
       <Card className="relative max-w-lg w-full p-8 text-center space-y-6 animate-scale-in bg-gradient-to-br from-yellow-50 via-orange-50 to-pink-50 border-4 border-yellow-400 shadow-2xl">
         {/* Decorative elements */}
         <div className="absolute -top-4 -left-4 animate-bounce">

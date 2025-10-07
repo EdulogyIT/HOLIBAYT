@@ -85,7 +85,7 @@ export const BookingInvitationCard = ({ bookingId, isHost, onClose }: BookingInv
   };
 
   return (
-    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[9999] flex items-center justify-center p-4 pt-24 animate-fade-in">
+    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[9999] flex items-center justify-center p-4 pt-32 animate-fade-in overflow-y-auto">
       <Card className="max-w-2xl w-full bg-gradient-to-br from-white via-amber-50 to-yellow-50 border-4 border-amber-300 shadow-2xl animate-scale-in relative overflow-hidden">
         {/* Decorative sparkles */}
         <div className="absolute top-4 right-4 text-yellow-400 animate-pulse">
