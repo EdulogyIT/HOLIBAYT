@@ -13,6 +13,8 @@ import {
   Maximize2 
 } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 
 interface Message {
   id: number;
@@ -23,6 +25,7 @@ interface Message {
 
 const AIChatBox = () => {
   const { t, currentLang } = useLanguage();
+  const { toast } = useToast();
   const [isOpen, setIsOpen] = useState(false);
   const [isMinimized, setIsMinimized] = useState(false);
   const [isInitialized, setIsInitialized] = useState(false);
@@ -92,116 +95,53 @@ const AIChatBox = () => {
     setMessages(prev => [...prev, userMessage]);
     setInputValue("");
     setIsTyping(true);
-    lastUserMessageRef.current = currentInput;
 
-    // Simulate AI response
-    setTimeout(() => {
-      const botResponse = generateBotResponse(currentInput);
+    try {
+      // Call the AI chat edge function
+      const { data, error } = await supabase.functions.invoke('ai-chat', {
+        body: { 
+          messages: [...messages, userMessage].map(m => ({
+            role: m.isBot ? 'assistant' : 'user',
+            content: m.text
+          })),
+          language: currentLang
+        }
+      });
+
+      if (error) throw error;
+
       const botMessage: Message = {
         id: Date.now() + 1,
-        text: botResponse,
+        text: data.message,
         isBot: true,
         timestamp: new Date()
       };
       setMessages(prev => [...prev, botMessage]);
+    } catch (error) {
+      console.error('Error calling AI chat:', error);
+      toast({
+        title: "Error",
+        description: "Failed to get response. Please try again.",
+        variant: "destructive"
+      });
+      
+      // Fallback response
+      const fallbackMessage: Message = {
+        id: Date.now() + 1,
+        text: currentLang === 'AR' 
+          ? "عذرا، حدث خطأ. يرجى المحاولة مرة أخرى أو الاتصال بمستشارينا للحصول على المساعدة."
+          : currentLang === 'EN'
+          ? "Sorry, an error occurred. Please try again or contact our advisors for assistance."
+          : "Désolé, une erreur s'est produite. Veuillez réessayer ou contacter nos conseillers pour obtenir de l'aide.",
+        isBot: true,
+        timestamp: new Date()
+      };
+      setMessages(prev => [...prev, fallbackMessage]);
+    } finally {
       setIsTyping(false);
-    }, 1000 + Math.random() * 2000);
+    }
   };
 
-  const generateBotResponse = (userInput: string): string => {
-    const input = userInput.toLowerCase();
-    
-    const responses = {
-      FR: {
-        buy: "Je peux vous aider à trouver des propriétés à vendre ! Notre section achat propose des appartements, villas et propriétés commerciales à travers l'Algérie. Quel type de propriété recherchez-vous et dans quelle ville ?",
-        rent: "Parfait ! Nous avons de nombreuses propriétés de location disponibles. Recherchez-vous une location à long terme ou à court terme ? Quelle ville vous intéresse - Alger, Oran, Constantine ou Annaba ?",
-        stay: "Excellent choix ! Pour les séjours courts, pouvez-vous me dire dans quelle ville vous souhaitez séjourner (Alger, Oran, Constantine ou Annaba) ?",
-        stayFollowup: "Merci ! Combien de nuits prévoyez-vous de rester ?",
-        price: "Les prix des propriétés varient selon l'emplacement et le type. À Alger, les appartements commencent à partir de 8M DZD, tandis qu'à Oran vous pouvez trouver d'excellentes options à partir de 5M DZD. Souhaitez-vous des prix spécifiques pour une zone particulière ?",
-        location: "Nous couvrons les principales villes algériennes : Alger (capitale), Oran (côte ouest), Constantine (est) et Annaba (nord-est). Chaque ville a ses caractéristiques uniques. Quelle ville vous intéresse le plus ?",
-        contact: "Vous pouvez parler à nos conseillers experts via notre page Contacter un Conseiller ! Nous offrons un support téléphonique (+213 21 123 456), email (support@holibayt.com), ou chat en direct. Ils sont disponibles 24/7.",
-        hello: "Bonjour ! Bienvenue sur Holibayt. Je suis là pour vous aider à trouver la propriété parfaite en Algérie. Cherchez-vous à acheter, louer, ou avez-vous besoin d'un séjour court ?",
-        default: "Je comprends que vous recherchez une assistance immobilière. Je peux vous aider avec l'achat, la location ou les séjours courts en Algérie. Pourriez-vous me dire plus sur ce que vous recherchez ? Vous pouvez aussi contacter nos conseillers humains pour une assistance détaillée !"
-      },
-      EN: {
-        buy: "I can help you find properties for sale! Our buy section features apartments, villas, and commercial properties across Algeria. What type of property are you looking for and in which city?",
-        rent: "Great! We have many rental properties available. Are you looking for a long-term rental or short-term? Which city interests you - Alger, Oran, Constantine, or Annaba?",
-        stay: "Perfect choice! For short stays, can you tell me which city you'd like to stay in (Alger, Oran, Constantine, or Annaba)?",
-        stayFollowup: "Thank you! How many nights are you planning to stay?",
-        price: "Property prices vary by location and type. In Alger, apartments start from 8M DZD, while in Oran you can find great options from 5M DZD. Would you like specific pricing for a particular area?",
-        location: "We cover major Algerian cities: Alger (capital), Oran (west coast), Constantine (east), and Annaba (northeast). Each city has unique characteristics. Which location interests you most?",
-        contact: "You can speak to our expert advisors through our Contact Advisor page! We offer phone support (+213 21 123 456), email (support@holibayt.com), or live chat. They're available 24/7.",
-        hello: "Hello! Welcome to Holibayt. I'm here to help you find the perfect property in Algeria. Are you looking to buy, rent, or need a short stay?",
-        default: "I understand you're looking for property assistance. I can help you with buying, renting, or short stays in Algeria. Could you tell me more about what you're looking for? You can also contact our human advisors for detailed assistance!"
-      },
-      AR: {
-        buy: "يمكنني مساعدتك في العثور على عقارات للبيع! قسم الشراء لدينا يضم شقق وفيلات وعقارات تجارية في جميع أنحاء الجزائر. ما نوع العقار الذي تبحث عنه وفي أي مدينة؟",
-        rent: "رائع! لدينا العديد من العقارات المتاحة للإيجار. هل تبحث عن إيجار طويل الأمد أم قصير الأمد؟ أي مدينة تهمك - الجزائر، وهران، قسنطينة أم عنابة؟",
-        stay: "اختيار ممتاز! للإقامات القصيرة، هل يمكنك إخباري في أي مدينة ترغب في الإقامة (الجزائر، وهران، قسنطينة أم عنابة)؟",
-        stayFollowup: "شكرا! كم ليلة تخطط للإقامة؟",
-        price: "أسعار العقارات تختلف حسب الموقع والنوع. في الجزائر العاصمة، تبدأ الشقق من 8 مليون دج، بينما في وهران يمكنك العثور على خيارات رائعة من 5 مليون دج. هل تريد أسعار محددة لمنطقة معينة؟",
-        location: "نحن نغطي المدن الجزائرية الرئيسية: الجزائر (العاصمة)، وهران (الساحل الغربي)، قسنطينة (الشرق) وعنابة (الشمال الشرقي). كل مدينة لها خصائصها الفريدة. أي موقع يهمك أكثر؟",
-        contact: "يمكنك التحدث مع مستشارينا الخبراء من خلال صفحة اتصل بمستشار! نحن نقدم دعم هاتفي (+213 21 123 456)، بريد إلكتروني (support@holibayt.com)، أو محادثة مباشرة. متاحون 24/7.",
-        hello: "مرحبا! مرحبا بك في هولي بايت. أنا هنا لمساعدتك في العثور على العقار المثالي في الجزائر. هل تبحث عن شراء أو استئجار أو تحتاج إقامة قصيرة؟",
-        default: "أفهم أنك تبحث عن مساعدة عقارية. يمكنني مساعدتك في الشراء أو الإيجار أو الإقامات القصيرة في الجزائر. هل يمكنك إخباري المزيد عما تبحث عنه؟ يمكنك أيضا الاتصال بمستشارينا البشريين للحصول على مساعدة مفصلة!"
-      }
-    };
-
-    const langResponses = responses[currentLang] || responses.FR;
-    
-    // Check if previous message was about stay/nights to provide follow-up
-    const prevMsg = lastUserMessageRef.current.toLowerCase();
-    const hasNightsInfo = /\d+\s*(night|nuit|ليلة)/i.test(input);
-    const hasCityInfo = /(alger|oran|constantine|annaba|الجزائر|وهران|قسنطينة|عنابة)/i.test(input);
-    
-    if (input.includes("buy") || input.includes("purchase") || input.includes("acheter") || input.includes("شراء")) {
-      return langResponses.buy;
-    }
-    
-    if (input.includes("rent") || input.includes("rental") || input.includes("louer") || input.includes("إيجار")) {
-      return langResponses.rent;
-    }
-    
-    if (input.includes("short") || input.includes("stay") || input.includes("hotel") || input.includes("séjour") || input.includes("إقامة")) {
-      // If they mentioned city but not nights, ask for nights
-      if (hasCityInfo && !hasNightsInfo) {
-        return langResponses.stayFollowup;
-      }
-      return langResponses.stay;
-    }
-    
-    // If they give nights info and previous was about stay
-    if (hasNightsInfo && (prevMsg.includes("stay") || prevMsg.includes("séjour") || prevMsg.includes("إقامة") || prevMsg.includes("night"))) {
-      return currentLang === 'FR' 
-        ? "Parfait ! Vous pouvez maintenant visiter notre page 'Séjours Courts' pour trouver les meilleures options correspondant à votre séjour. Ou contactez nos conseillers pour une assistance personnalisée !"
-        : currentLang === 'EN'
-        ? "Perfect! You can now visit our 'Short Stay' page to find the best options for your stay. Or contact our advisors for personalized assistance!"
-        : "ممتاز! يمكنك الآن زيارة صفحة 'الإقامة القصيرة' للعثور على أفضل الخيارات لإقامتك. أو اتصل بمستشارينا للحصول على مساعدة شخصية!";
-    }
-    
-    // If they give city info
-    if (hasCityInfo && !hasNightsInfo && (prevMsg.includes("stay") || prevMsg.includes("séjour") || prevMsg.includes("إقامة"))) {
-      return langResponses.stayFollowup;
-    }
-    
-    if (input.includes("price") || input.includes("cost") || input.includes("prix") || input.includes("سعر")) {
-      return langResponses.price;
-    }
-    
-    if (input.includes("location") || input.includes("city") || input.includes("area") || input.includes("ville") || input.includes("مدينة")) {
-      return langResponses.location;
-    }
-    
-    if (input.includes("contact") || input.includes("advisor") || input.includes("help") || input.includes("conseiller") || input.includes("مساعدة")) {
-      return langResponses.contact;
-    }
-    
-    if (input.includes("hello") || input.includes("hi") || input.includes("hey") || input.includes("bonjour") || input.includes("salut") || input.includes("مرحبا")) {
-      return langResponses.hello;
-    }
-    
-    return langResponses.default;
-  };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" && !e.shiftKey) {
@@ -214,12 +154,12 @@ const AIChatBox = () => {
     return (
       <div className="fixed bottom-6 right-6 z-50 flex flex-col gap-3">
         <Button
-          onClick={() => window.location.href = '/messages'}
+          onClick={() => setIsOpen(true)}
           className="bg-gradient-primary text-primary-foreground rounded-full w-14 h-14 shadow-elegant hover:shadow-lg transition-all duration-300 hover:scale-110"
           size="icon"
-          title="Live Chat with Support"
+          title="Chat with AI Assistant"
         >
-          <MessageCircle className="h-6 w-6" />
+          <Bot className="h-6 w-6" />
         </Button>
         <div className="absolute -top-2 -left-2 w-4 h-4 bg-accent rounded-full animate-pulse"></div>
       </div>
