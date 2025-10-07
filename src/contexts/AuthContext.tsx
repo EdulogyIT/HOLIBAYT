@@ -198,11 +198,25 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
               console.log('Profile fetch result:', { profile, error });
 
               if (profile) {
+                // Fetch role from user_roles table (SECURITY: Never trust profiles.role)
+                const { data: userRoles } = await supabase
+                  .from('user_roles')
+                  .select('role')
+                  .eq('user_id', session.user.id);
+
+                // Determine the highest privilege role
+                let userRole: UserRole = 'user';
+                if (userRoles && userRoles.length > 0) {
+                  const roles = userRoles.map(r => r.role);
+                  if (roles.includes('admin')) userRole = 'admin';
+                  else if (roles.includes('host')) userRole = 'host';
+                }
+
                 const userData: User = {
                   id: session.user.id,
                   email: profile.email,
                   name: profile.name || session.user.email?.split('@')[0] || '',
-                  role: profile.role as UserRole,
+                  role: userRole,
                   emailConfirmed: !!session.user.email_confirmed_at,
                   avatar_url: profile.avatar_url,
                   is_superhost: profile.is_superhost || false
@@ -239,11 +253,25 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
             .maybeSingle();
 
           if (profile) {
+            // Fetch role from user_roles table (SECURITY: Never trust profiles.role)
+            const { data: userRoles } = await supabase
+              .from('user_roles')
+              .select('role')
+              .eq('user_id', session.user.id);
+
+            // Determine the highest privilege role
+            let userRole: UserRole = 'user';
+            if (userRoles && userRoles.length > 0) {
+              const roles = userRoles.map(r => r.role);
+              if (roles.includes('admin')) userRole = 'admin';
+              else if (roles.includes('host')) userRole = 'host';
+            }
+
             const userData: User = {
               id: session.user.id,
               email: profile.email,
               name: profile.name || session.user.email?.split('@')[0] || '',
-              role: profile.role as UserRole,
+              role: userRole,
               emailConfirmed: !!session.user.email_confirmed_at,
               avatar_url: profile.avatar_url
             };

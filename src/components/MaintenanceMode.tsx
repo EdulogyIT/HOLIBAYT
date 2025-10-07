@@ -23,7 +23,14 @@ export const MaintenanceMode = ({ children }: { children: React.ReactNode }) => 
     const isMaintenanceMode = generalSettings.maintenance_mode;
     const isAdmin = user?.role === 'admin';
 
-    // If maintenance mode is on and user is not admin, block access
+    console.log('[MaintenanceMode] Status check:', { 
+      isMaintenanceMode, 
+      isAdmin, 
+      userRole: user?.role,
+      userEmail: user?.email 
+    });
+
+    // CRITICAL: Block access if maintenance is ON and user is NOT admin
     if (isMaintenanceMode && !isAdmin) {
       setShouldBlock(true);
     } else {
@@ -63,18 +70,27 @@ export const MaintenanceMode = ({ children }: { children: React.ReactNode }) => 
     }
   };
 
-  // After successful login, check if user is admin
+  // CRITICAL: After successful login, verify user is admin during maintenance
   useEffect(() => {
-    if (user && generalSettings.maintenance_mode && user.role !== 'admin') {
-      // Non-admin tried to login during maintenance - logout immediately
-      logout();
-      toast({
-        title: "Access Denied",
-        description: "Platform is under maintenance. Only administrators can login at this time.",
-        variant: "destructive",
+    if (user && generalSettings.maintenance_mode) {
+      console.log('[MaintenanceMode] Login verification:', { 
+        userRole: user.role, 
+        isAdmin: user.role === 'admin',
+        email: user.email 
       });
-      setEmail('');
-      setPassword('');
+      
+      if (user.role !== 'admin') {
+        // Non-admin tried to login during maintenance - logout immediately
+        console.log('[MaintenanceMode] Non-admin detected, forcing logout');
+        logout();
+        toast({
+          title: "Access Denied",
+          description: "Platform is under maintenance. Only administrators can login at this time.",
+          variant: "destructive",
+        });
+        setEmail('');
+        setPassword('');
+      }
     }
   }, [user, generalSettings.maintenance_mode, logout, toast]);
 
