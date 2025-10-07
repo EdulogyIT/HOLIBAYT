@@ -286,6 +286,7 @@ export type Database = {
           conversation_type: string | null
           created_at: string
           id: string
+          last_read_at: string | null
           property_id: string | null
           recipient_id: string | null
           status: string
@@ -298,6 +299,7 @@ export type Database = {
           conversation_type?: string | null
           created_at?: string
           id?: string
+          last_read_at?: string | null
           property_id?: string | null
           recipient_id?: string | null
           status?: string
@@ -310,6 +312,7 @@ export type Database = {
           conversation_type?: string | null
           created_at?: string
           id?: string
+          last_read_at?: string | null
           property_id?: string | null
           recipient_id?: string | null
           status?: string
@@ -612,6 +615,7 @@ export type Database = {
           full_address: string | null
           id: string
           images: string[] | null
+          is_featured: boolean | null
           is_hot_deal: boolean | null
           is_new: boolean | null
           is_verified: boolean | null
@@ -647,6 +651,7 @@ export type Database = {
           full_address?: string | null
           id?: string
           images?: string[] | null
+          is_featured?: boolean | null
           is_hot_deal?: boolean | null
           is_new?: boolean | null
           is_verified?: boolean | null
@@ -682,6 +687,7 @@ export type Database = {
           full_address?: string | null
           id?: string
           images?: string[] | null
+          is_featured?: boolean | null
           is_hot_deal?: boolean | null
           is_new?: boolean | null
           is_verified?: boolean | null
