@@ -29,11 +29,14 @@ const Login = () => {
       const success = await login(formData.email, formData.password);
       
       if (success) {
-        toast({
-          title: t('loginSuccess') || "Login successful!",
-          description: t('loginSuccessDesc') || "You are now logged in to your Holibayt account.",
-        });
-        navigate('/');
+        // Wait briefly for auth context to update with user data
+        setTimeout(() => {
+          toast({
+            title: t('loginSuccess') || "Login successful!",
+            description: t('loginSuccessDesc') || "You are now logged in to your Holibayt account.",
+          });
+          navigate('/');
+        }, 500);
       } else {
         toast({
           title: "Login failed",

@@ -837,6 +837,10 @@ export type Database = {
         Args: { user_uuid: string }
         Returns: boolean
       }
+      is_platform_in_maintenance: {
+        Args: Record<PropertyKey, never>
+        Returns: boolean
+      }
     }
     Enums: {
       app_role: "user" | "host" | "admin"

@@ -27,11 +27,14 @@ export default function LoginPage() {
     const success = await login(formData.email, formData.password);
 
     if (success) {
-      toast({
-        title: t('loginSuccess'),
-        description: t('loginSuccessDesc'),
-      });
-      navigate(from, { replace: true });
+      // Wait briefly for auth context to update with user data
+      setTimeout(() => {
+        toast({
+          title: t('loginSuccess'),
+          description: t('loginSuccessDesc'),
+        });
+        navigate(from, { replace: true });
+      }, 500);
     } else {
       toast({
         title: 'Login Failed',
