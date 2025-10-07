@@ -12,6 +12,7 @@ import { BlogSocialShare } from "@/components/BlogSocialShare";
 import { BlogComments } from "@/components/BlogComments";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { usePropertyTranslation } from "@/hooks/usePropertyTranslation";
 
 // Import blog images
 import blogFutureRealEstate from "@/assets/blog-future-real-estate.jpg";
@@ -33,7 +34,7 @@ interface BlogPost {
 }
 
 const BlogPost = () => {
-  const { t } = useLanguage();
+  const { t, currentLang } = useLanguage();
   const { id } = useParams();
   const navigate = useNavigate();
   useScrollToTop();
@@ -103,6 +104,18 @@ const BlogPost = () => {
     return imageMap[imageUrl] || imageUrl;
   };
 
+  const { translatedText: translatedTitle } = usePropertyTranslation(
+    blog?.title,
+    currentLang,
+    'blog_title'
+  );
+
+  const { translatedText: translatedContent } = usePropertyTranslation(
+    blog?.content,
+    currentLang,
+    'blog_content'
+  );
+
   if (loading) {
     return (
       <div className="min-h-screen bg-background">
@@ -142,7 +155,7 @@ const BlogPost = () => {
               {blog.category}
             </Badge>
             <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-4 font-playfair">
-              {blog.title}
+              {translatedTitle || blog.title}
             </h1>
             <div className="flex flex-wrap items-center gap-4 text-muted-foreground">
               <div className="flex items-center">
@@ -177,7 +190,7 @@ const BlogPost = () => {
                        prose-a:text-primary prose-a:no-underline hover:prose-a:underline
                        prose-strong:text-foreground prose-strong:font-semibold
                        prose-ul:text-muted-foreground prose-ol:text-muted-foreground"
-            dangerouslySetInnerHTML={{ __html: blog.content }}
+            dangerouslySetInnerHTML={{ __html: translatedContent || blog.content }}
           />
 
           {/* Social Share */}

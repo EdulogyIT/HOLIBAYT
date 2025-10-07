@@ -42,10 +42,12 @@ const ShortStayHeroSearch: React.FC<ShortStayHeroSearchProps> = ({ onSearch }) =
 
   const [formData, setFormData] = useState<{
     location: string;
+    propertyType: string;
     dateRange: DateRange | undefined;
     guests: { adults: number; children: number; infants: number; pets: number };
   }>({
     location: "",
+    propertyType: "",
     dateRange: undefined,
     guests: { adults: 1, children: 0, infants: 0, pets: 0 },
   });
@@ -63,6 +65,7 @@ const ShortStayHeroSearch: React.FC<ShortStayHeroSearchProps> = ({ onSearch }) =
 
     setFormData({
       location,
+      propertyType: urlParams.get("type") || "",
       dateRange: checkIn || checkOut ? { from: checkIn, to: checkOut } : undefined,
       guests: { adults, children, infants, pets },
     });
@@ -81,6 +84,7 @@ const ShortStayHeroSearch: React.FC<ShortStayHeroSearchProps> = ({ onSearch }) =
     }
     const qs = new URLSearchParams();
     if (vals.location) qs.set("location", String(vals.location));
+    if (formData.propertyType) qs.set("type", formData.propertyType);
     if (vals.checkIn) qs.set("checkIn", String(vals.checkIn));
     if (vals.checkOut) qs.set("checkOut", String(vals.checkOut));
     if (vals.adults) qs.set("adults", String(vals.adults));
@@ -152,6 +156,21 @@ const ShortStayHeroSearch: React.FC<ShortStayHeroSearchProps> = ({ onSearch }) =
                   value={formData.guests}
                   onChange={(guests) => updateFormField("guests", guests)}
                 />
+              </div>
+
+              {/* Property Type */}
+              <div className="flex-1">
+                <select
+                  className="w-full h-14 px-4 py-3 bg-background border border-input rounded-md text-base font-inter text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent ring-offset-background"
+                  value={formData.propertyType}
+                  onChange={(e) => updateFormField("propertyType", e.target.value)}
+                >
+                  <option value="">{t("propertyType")}</option>
+                  <option value="apartment">{t("apartment")}</option>
+                  <option value="house">{t("house")}</option>
+                  <option value="villa">{t("villa")}</option>
+                  <option value="studio">{t("studio")}</option>
+                </select>
               </div>
             </div>
 
