@@ -67,18 +67,29 @@ Keep responses concise and conversational. Ask one question at a time.`;
     // If user has provided category and either budget or city, fetch some properties
     if (hasCategory && (hasBudget || hasCity)) {
       let category = 'sale';
-      if (lastMessage.includes('rent') || lastMessage.includes('louer') || lastMessage.includes('إيجار')) {
-        category = 'rent';
-      } else if (lastMessage.includes('short') || lastMessage.includes('stay') || lastMessage.includes('séjour') || lastMessage.includes('إقامة')) {
+      const allMessages = messages.map(m => m.content).join(' ').toLowerCase();
+      
+      // Check for short-stay first (most specific)
+      if (allMessages.includes('short') || allMessages.includes('stay') || allMessages.includes('séjour') || allMessages.includes('إقامة')) {
         category = 'short-stay';
+      } 
+      // Then check for rent
+      else if (allMessages.includes('rent') || allMessages.includes('rental') || allMessages.includes('louer') || allMessages.includes('إيجار')) {
+        category = 'rent';
       }
+      // Finally check for buy/sale
+      else if (allMessages.includes('buy') || allMessages.includes('purchase') || allMessages.includes('acheter') || allMessages.includes('شراء')) {
+        category = 'sale';
+      }
+
+      console.log('[AI-CHAT] Detected category:', category);
 
       // Extract city if mentioned
       let city = '';
-      if (lastMessage.includes('alger') || lastMessage.includes('الجزائر')) city = 'Alger';
-      else if (lastMessage.includes('oran') || lastMessage.includes('وهران')) city = 'Oran';
-      else if (lastMessage.includes('constantine') || lastMessage.includes('قسنطينة')) city = 'Constantine';
-      else if (lastMessage.includes('annaba') || lastMessage.includes('عنابة')) city = 'Annaba';
+      if (allMessages.includes('alger') || allMessages.includes('الجزائر')) city = 'Alger';
+      else if (allMessages.includes('oran') || allMessages.includes('وهران')) city = 'Oran';
+      else if (allMessages.includes('constantine') || allMessages.includes('قسنطينة')) city = 'Constantine';
+      else if (allMessages.includes('annaba') || allMessages.includes('عنابة')) city = 'Annaba';
 
       // Query properties
       let query = supabase
@@ -95,8 +106,9 @@ Keep responses concise and conversational. Ask one question at a time.`;
       const { data: properties, error } = await query;
 
       if (properties && properties.length > 0) {
-        propertyContext = `\n\nAvailable properties in our database (share 2-3 most relevant):\n${properties.map(p => 
-          `- ${p.title} in ${p.city}: ${p.price} ${p.price_currency}, ${p.bedrooms || 'N/A'} bedrooms, ${p.property_type}`
+        const appUrl = Deno.env.get('APP_URL') || 'https://holibayt.vercel.app';
+        propertyContext = `\n\nAvailable properties in our database (share 2-3 most relevant with their links):\n${properties.map(p => 
+          `- ${p.title} in ${p.city}: ${p.price} ${p.price_currency}, ${p.bedrooms || 'N/A'} bedrooms, ${p.property_type}\n  Link: ${appUrl}/property/${p.id}`
         ).join('\n')}`;
       }
     }

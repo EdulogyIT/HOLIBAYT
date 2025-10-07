@@ -47,6 +47,9 @@ export default function AdminSettings() {
   // Commenting settings
   const [blogCommentsEnabled, setBlogCommentsEnabled] = useState(true);
   const [propertyCommentsEnabled, setPropertyCommentsEnabled] = useState(true);
+  
+  // Currency exchange rate (DZD to EUR)
+  const [dzdToEurRate, setDzdToEurRate] = useState(0.0069);
 
   useEffect(() => {
     fetchSettings();
@@ -94,6 +97,9 @@ export default function AdminSettings() {
           case 'commenting_enabled':
             setBlogCommentsEnabled(value?.blogs !== false);
             setPropertyCommentsEnabled(value?.properties !== false);
+            break;
+          case 'currency_exchange_rates':
+            setDzdToEurRate(value?.dzd_to_eur || 0.0069);
             break;
         }
       });
@@ -214,6 +220,18 @@ export default function AdminSettings() {
     }
   };
 
+  const handleSaveCurrency = async () => {
+    const success = await upsertSetting('currency_exchange_rates', {
+      dzd_to_eur: dzdToEurRate
+    });
+    if (success) {
+      toast.success('Currency exchange rates saved successfully');
+      await fetchSettings(); // Refresh settings
+    } else {
+      toast.error('Failed to save currency exchange rates');
+    }
+  };
+
   if (loading) {
     return <div className="p-6">Loading settings...</div>;
   }
@@ -228,7 +246,7 @@ export default function AdminSettings() {
       </div>
 
       <Tabs defaultValue="general" className="w-full">
-        <TabsList className="grid w-full grid-cols-6">
+        <TabsList className="grid w-full grid-cols-7">
           <TabsTrigger value="general">
             <Settings className="h-4 w-4 mr-2" />
             General
@@ -240,6 +258,10 @@ export default function AdminSettings() {
           <TabsTrigger value="commission">
             <DollarSign className="h-4 w-4 mr-2" />
             Commission
+          </TabsTrigger>
+          <TabsTrigger value="currency">
+            <DollarSign className="h-4 w-4 mr-2" />
+            Currency
           </TabsTrigger>
           <TabsTrigger value="notifications">
             <Bell className="h-4 w-4 mr-2" />
@@ -419,6 +441,48 @@ export default function AdminSettings() {
               </div>
 
               <Button onClick={handleSaveCommission}>Save Commission Settings</Button>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="currency" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Currency Exchange Rates</CardTitle>
+              <CardDescription>
+                Manage currency conversion rates for Stripe payments (DZD to EUR)
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="bg-amber-50 dark:bg-amber-950 border border-amber-200 dark:border-amber-800 rounded-lg p-4 mb-4">
+                <p className="text-sm text-amber-800 dark:text-amber-200">
+                  <strong>Important:</strong> Since Stripe doesn't support DZD directly, all DZD prices are converted to EUR for payment processing. 
+                  Update this rate daily to reflect current exchange rates.
+                </p>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="dzdToEur">DZD to EUR Exchange Rate</Label>
+                <Input 
+                  id="dzdToEur" 
+                  type="number" 
+                  step="0.0001"
+                  value={dzdToEurRate}
+                  onChange={(e) => setDzdToEurRate(Number(e.target.value))}
+                />
+                <p className="text-sm text-muted-foreground">
+                  Current rate: 1 DZD = {dzdToEurRate.toFixed(4)} EUR (1 EUR = {(1/dzdToEurRate).toFixed(2)} DZD)
+                </p>
+              </div>
+
+              <div className="bg-blue-50 dark:bg-blue-950 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+                <p className="text-sm text-blue-800 dark:text-blue-200">
+                  <strong>Tip:</strong> Check current exchange rates at your bank or online currency converter (xe.com, google.com) 
+                  and update this value every morning for accurate pricing.
+                </p>
+              </div>
+
+              <Button onClick={handleSaveCurrency}>Save Currency Settings</Button>
             </CardContent>
           </Card>
         </TabsContent>
