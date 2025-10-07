@@ -13,19 +13,22 @@ const CurrencySelector = () => {
   const { t } = useLanguage();
   
   const currencies = [
-    { code: "USD" as Currency, name: "US Dollar", symbol: "$", Icon: DollarSign },
-    { code: "EUR" as Currency, name: "Euro", symbol: "€", Icon: Euro },
-    { code: "DZD" as Currency, name: "Algerian Dinar", symbol: "DA", Icon: Coins }
+    { code: "USD" as Currency, name: "US Dollar", symbol: "$", Icon: DollarSign, showIcon: true },
+    { code: "EUR" as Currency, name: "Euro", symbol: "€", Icon: Euro, showIcon: true },
+    { code: "DZD" as Currency, name: "Algerian Dinar", symbol: "DA", Icon: null, showIcon: false }
   ];
 
   const currentCurrencyInfo = currencies.find(c => c.code === currentCurrency);
-  const CurrencyIcon = currentCurrencyInfo?.Icon || DollarSign;
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="icon" className="font-inter">
-          <CurrencyIcon className="h-5 w-5" />
+        <Button variant="ghost" size="icon" className="font-inter font-semibold">
+          {currentCurrencyInfo?.showIcon && currentCurrencyInfo.Icon ? (
+            <currentCurrencyInfo.Icon className="h-5 w-5" />
+          ) : (
+            <span className="text-sm">{currentCurrencyInfo?.symbol}</span>
+          )}
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="bg-background border border-border z-50">

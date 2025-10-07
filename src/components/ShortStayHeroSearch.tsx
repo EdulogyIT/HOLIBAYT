@@ -1,16 +1,16 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { format } from "date-fns";
-import { Search, MapPin, Calendar as CalendarIcon, Users, Bed } from "lucide-react";
+import { Search, Calendar as CalendarIcon, Bed } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useNavigate, useLocation as useRouterLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { DateRangePicker } from "@/components/DateRangePicker";
 import { GuestsSelector } from "@/components/GuestsSelector";
 import shortStayHeroBg from "@/assets/short-stay-hero-bg.jpg";
+import LocationAutocomplete from "@/components/LocationAutocomplete";
 
 type DateRange = { from?: Date; to?: Date };
 type SearchVals = {
@@ -138,17 +138,13 @@ const ShortStayHeroSearch: React.FC<ShortStayHeroSearchProps> = ({ onSearch }) =
         <Card className="max-w-6xl mx-auto p-6 md:p-8 bg-card/95 backdrop-blur-md border-border/30 shadow-elegant rounded-2xl">
           <form onSubmit={onSubmit} className="flex flex-col gap-4">
             <div className="flex flex-col lg:flex-row gap-4">
-              {/* Location Input */}
-              <div className="flex-[2] relative">
-                <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground h-5 w-5" />
-                <Input
-                  type="text"
-                  placeholder={t("stayDestination")}
-                  value={formData.location}
-                  onChange={(e) => updateFormField("location", e.target.value)}
-                  className="h-14 pl-12 text-base font-inter bg-background border border-input"
-                />
-              </div>
+              {/* Location Input with Autocomplete */}
+              <LocationAutocomplete
+                value={formData.location}
+                onChange={(value) => updateFormField("location", value)}
+                placeholder={t("stayDestination")}
+                className="h-14 text-base font-inter"
+              />
 
               {/* Guests Selector */}
               <div className="flex-1">

@@ -38,6 +38,22 @@ export const MaintenanceMode = ({ children }: { children: React.ReactNode }) => 
     }
   }, [generalSettings.maintenance_mode, user, settingsLoading]);
 
+  // CRITICAL: Real-time enforcement - Force logout non-admin users when maintenance is enabled
+  useEffect(() => {
+    if (generalSettings.maintenance_mode && user && user.role !== 'admin') {
+      console.log('[MaintenanceMode] FORCING LOGOUT - Maintenance enabled for non-admin user:', user.email);
+      
+      // Force immediate logout
+      logout();
+      
+      toast({
+        title: "Maintenance Mode Active",
+        description: "The platform is under maintenance. You have been logged out.",
+        variant: "destructive",
+      });
+    }
+  }, [generalSettings.maintenance_mode, user, logout, toast]);
+
   const handleAdminLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoggingIn(true);
