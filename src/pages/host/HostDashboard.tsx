@@ -32,11 +32,18 @@ export default function HostDashboard() {
   const [properties, setProperties] = useState<Property[]>([]);
   const [loading, setLoading] = useState(true);
   const [monthlyRevenue, setMonthlyRevenue] = useState(0);
+  const [messagesCount, setMessagesCount] = useState(0);
 
   useEffect(() => {
     fetchHostProperties();
     fetchMonthlyRevenue();
   }, [user]);
+
+  useEffect(() => {
+    if (properties.length > 0) {
+      fetchMessagesCount();
+    }
+  }, [properties]);
 
   const fetchHostProperties = async () => {
     if (!user) return;
@@ -86,6 +93,33 @@ export default function HostDashboard() {
     }
   };
 
+  const fetchMessagesCount = async () => {
+    if (!user) return;
+    
+    try {
+      // Count conversations where user is involved
+      const { data: conversations, error: convError } = await supabase
+        .from('conversations')
+        .select('id', { count: 'exact', head: false })
+        .or(`recipient_id.eq.${user.id},user_id.eq.${user.id}`)
+        .eq('status', 'active');
+
+      // Count contact requests for user's properties
+      const { data: contactRequests, error: contactError } = await supabase
+        .from('contact_requests')
+        .select('id, property_id')
+        .in('property_id', properties.map(p => p.id))
+        .in('status', ['pending', 'replied']);
+
+      if (!convError && !contactError) {
+        const totalMessages = (conversations?.length || 0) + (contactRequests?.length || 0);
+        setMessagesCount(totalMessages);
+      }
+    } catch (error) {
+      console.error('Error fetching messages count:', error);
+    }
+  };
+
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('fr-FR', {
       day: 'numeric',
@@ -132,7 +166,7 @@ export default function HostDashboard() {
             <MessageSquare className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">-</div>
+            <div className="text-2xl font-bold">{messagesCount}</div>
             <p className="text-xs text-muted-foreground">{t('host.checkMessages')}</p>
           </CardContent>
         </Card>

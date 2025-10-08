@@ -167,7 +167,6 @@ export default function PropertyCalendar() {
           selected={selectedDate}
           onSelect={setSelectedDate}
           className="rounded-md border"
-          fromDate={new Date()}
           disabled={(date) => {
             return bookedDates.some(bookedDate => 
               format(bookedDate, 'yyyy-MM-dd') === format(date, 'yyyy-MM-dd')
