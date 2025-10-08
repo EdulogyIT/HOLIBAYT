@@ -27,6 +27,7 @@ interface Property {
   district: string;
   price: string;
   price_type: string;
+  price_currency?: string;
   status: string;
   created_at: string;
   category: string;
@@ -182,7 +183,7 @@ export default function HostListings() {
                   <div className="flex items-center justify-between">
                     <Badge variant="outline">{property.property_type}</Badge>
                     <div className="text-lg font-bold text-primary">
-                      {formatPrice(property.price, property.price_type)}
+                      {formatPrice(property.price, property.price_type, property.price_currency)}
                     </div>
                   </div>
 

@@ -39,9 +39,11 @@ interface CommissionTransaction {
   created_at: string;
   properties: {
     title: string;
+    price_currency?: string;
   };
   payments: {
     description: string;
+    currency?: string;
   };
 }
 
@@ -127,8 +129,8 @@ export default function HostPayouts() {
         .from('commission_transactions')
         .select(`
           *,
-          properties(title),
-          payments(description)
+          properties(title, price_currency),
+          payments(description, currency)
         `)
         .eq('host_user_id', user?.id)
         .order('created_at', { ascending: false })
@@ -137,11 +139,22 @@ export default function HostPayouts() {
       if (error) throw error;
       setCommissionTransactions(data || []);
 
-      // Calculate earnings breakdown
+      // Calculate earnings breakdown - amounts in DB are in original currency
+      // We need to sum them properly considering their currencies
       const completedEarnings = data?.filter(t => t.status === 'completed')
-        .reduce((sum, t) => sum + Number(t.host_amount), 0) || 0;
+        .reduce((sum, t) => {
+          // Get currency from payments table, fallback to property currency or DZD
+          const currency = t.payments?.currency || t.properties?.price_currency || 'DZD';
+          // Convert amount from its original currency to DZD first, then will be displayed in user's selected currency
+          const amountInDZD = convertToDZD(Number(t.host_amount), currency);
+          return sum + amountInDZD;
+        }, 0) || 0;
       const pending = data?.filter(t => t.status === 'pending')
-        .reduce((sum, t) => sum + Number(t.host_amount), 0) || 0;
+        .reduce((sum, t) => {
+          const currency = t.payments?.currency || t.properties?.price_currency || 'DZD';
+          const amountInDZD = convertToDZD(Number(t.host_amount), currency);
+          return sum + amountInDZD;
+        }, 0) || 0;
 
       setTotalEarnings(completedEarnings);
       setPendingAmount(pending);
@@ -150,6 +163,15 @@ export default function HostPayouts() {
     } finally {
       setLoading(false);
     }
+  };
+
+  // Helper function to convert amounts to DZD base currency
+  const convertToDZD = (amount: number, currency: string): number => {
+    if (currency === 'DZD') return amount;
+    // Use approximate rates - ideally these would come from the exchange rates API
+    if (currency === 'EUR') return amount / 0.0069; // 1 EUR ≈ 145 DZD
+    if (currency === 'USD') return amount / 0.0074; // 1 USD ≈ 135 DZD
+    return amount; // fallback to treating as DZD
   };
 
   const fetchWithdrawalRequests = async () => {

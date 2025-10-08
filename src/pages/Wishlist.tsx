@@ -21,6 +21,7 @@ interface WishlistProperty {
   city: string;
   price: string;
   price_type: string;
+  price_currency?: string;
   property_type: string;
   bedrooms: string;
   bathrooms: string;
@@ -156,7 +157,7 @@ const Wishlist = () => {
                         {property.title}
                       </h3>
                       <div className="text-primary font-bold whitespace-nowrap ml-2">
-                        {formatPrice(property.price, property.price_type)}
+                        {formatPrice(property.price, property.price_type, property.price_currency)}
                       </div>
                     </div>
                     <div className="flex items-center text-muted-foreground text-sm mb-3">

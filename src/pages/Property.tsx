@@ -31,6 +31,7 @@ interface Property {
   full_address?: string;
   price: string;
   price_type: string;
+  price_currency?: string;
   category: string;
   bedrooms?: string;
   bathrooms?: string;
@@ -204,7 +205,7 @@ const Property = () => {
                      </div>
                      <Badge variant="secondary" className="text-lg px-3 py-1 font-inter">{t(`property${property.property_type.charAt(0).toUpperCase() + property.property_type.slice(1)}`) || property.property_type}</Badge>
                    </div>
-                   <div className="text-4xl font-bold text-primary font-playfair">{formatPrice(property.price, property.price_type)}</div>
+                   <div className="text-4xl font-bold text-primary font-playfair">{formatPrice(property.price, property.price_type, property.price_currency)}</div>
                 </CardHeader>
                 <CardContent>
                    <div className="flex justify-between items-center p-4 bg-muted/50 rounded-lg mb-6">

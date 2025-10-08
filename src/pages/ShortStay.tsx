@@ -27,6 +27,7 @@ interface Property {
   city: string;
   price: string | number;
   price_type: string; // "daily" | "weekly" | "monthly"
+  price_currency?: string;
   bedrooms?: string;
   bathrooms?: string;
   area: string | number;
@@ -195,7 +196,7 @@ const ShortStay = () => {
       <CardContent className="pt-0">
         <div className="flex items-center justify-between mb-3">
           <div className="text-2xl font-bold text-primary">
-            {formatPrice(num(property.price), property.price_type)}
+            {formatPrice(num(property.price), property.price_type, property.price_currency)}
           </div>
         </div>
 
