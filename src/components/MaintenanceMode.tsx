@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { usePlatformSettings } from '@/contexts/PlatformSettingsContext';
+import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { AlertCircle } from 'lucide-react';
 import { Input } from '@/components/ui/input';
@@ -9,7 +10,7 @@ import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 
 export const MaintenanceMode = ({ children }: { children: React.ReactNode }) => {
-  const { generalSettings, loading: settingsLoading } = usePlatformSettings();
+  const { generalSettings, loading: settingsLoading, settingsInitialized } = usePlatformSettings();
   const { user, login, logout } = useAuth();
   const { toast } = useToast();
   const [shouldBlock, setShouldBlock] = useState(false);
@@ -17,14 +18,43 @@ export const MaintenanceMode = ({ children }: { children: React.ReactNode }) => 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoggingIn, setIsLoggingIn] = useState(false);
+  const [dbMaintenanceMode, setDbMaintenanceMode] = useState<boolean | null>(null);
+
+  // CRITICAL: Direct database query on mount as safety measure
+  useEffect(() => {
+    const verifyMaintenanceStatus = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('platform_settings')
+          .select('setting_value')
+          .eq('setting_key', 'general_settings')
+          .single();
+
+        if (error) throw error;
+
+        const maintenanceMode = (data?.setting_value as any)?.maintenance_mode;
+        console.log('[MaintenanceMode] Direct DB query result:', { maintenanceMode, type: typeof maintenanceMode });
+        setDbMaintenanceMode(typeof maintenanceMode === 'boolean' ? maintenanceMode : false);
+      } catch (error) {
+        console.error('[MaintenanceMode] Error fetching maintenance status:', error);
+        setDbMaintenanceMode(false);
+      }
+    };
+
+    verifyMaintenanceStatus();
+  }, []);
 
   useEffect(() => {
-    if (settingsLoading) return;
+    // Wait until both settings are initialized AND db query is complete
+    if (settingsLoading || !settingsInitialized || dbMaintenanceMode === null) return;
 
-    const isMaintenanceMode = generalSettings.maintenance_mode;
+    // Use DB query result as source of truth
+    const isMaintenanceMode = dbMaintenanceMode;
     
     console.log('[MaintenanceMode] Status check:', { 
-      isMaintenanceMode, 
+      isMaintenanceMode,
+      contextValue: generalSettings.maintenance_mode,
+      dbValue: dbMaintenanceMode,
       userRole: user?.role,
       userEmail: user?.email 
     });
@@ -51,11 +81,11 @@ export const MaintenanceMode = ({ children }: { children: React.ReactNode }) => 
       const isAdmin = user.role === 'admin';
       setShouldBlock(!isAdmin);
     }
-  }, [generalSettings.maintenance_mode, user, settingsLoading]);
+  }, [dbMaintenanceMode, user, settingsLoading, settingsInitialized]);
 
   // CRITICAL: Real-time enforcement - Force logout non-admin users when maintenance is enabled
   useEffect(() => {
-    if (generalSettings.maintenance_mode && user && user.role !== 'admin') {
+    if (dbMaintenanceMode && user && user.role !== 'admin') {
       console.log('[MaintenanceMode] FORCING LOGOUT - Maintenance enabled for non-admin user:', user.email);
       
       // Force immediate logout
@@ -67,7 +97,7 @@ export const MaintenanceMode = ({ children }: { children: React.ReactNode }) => 
         variant: "destructive",
       });
     }
-  }, [generalSettings.maintenance_mode, user, logout, toast]);
+  }, [dbMaintenanceMode, user, logout, toast]);
 
   const handleAdminLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -103,7 +133,7 @@ export const MaintenanceMode = ({ children }: { children: React.ReactNode }) => 
 
   // CRITICAL: After successful login, verify user is admin during maintenance
   useEffect(() => {
-    if (user && generalSettings.maintenance_mode) {
+    if (user && dbMaintenanceMode) {
       console.log('[MaintenanceMode] Login verification:', { 
         userRole: user.role, 
         isAdmin: user.role === 'admin',
@@ -123,9 +153,10 @@ export const MaintenanceMode = ({ children }: { children: React.ReactNode }) => 
         setPassword('');
       }
     }
-  }, [user, generalSettings.maintenance_mode, logout, toast]);
+  }, [user, dbMaintenanceMode, logout, toast]);
 
-  if (settingsLoading) {
+  // Block access until settings are initialized and DB query completes
+  if (settingsLoading || !settingsInitialized || dbMaintenanceMode === null) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">

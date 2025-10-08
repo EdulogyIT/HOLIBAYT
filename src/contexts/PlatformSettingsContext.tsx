@@ -32,6 +32,7 @@ interface PlatformSettingsContextType {
   notificationSettings: NotificationSettings;
   commentingSettings: CommentingSettings;
   loading: boolean;
+  settingsInitialized: boolean;
   refreshSettings: () => Promise<void>;
 }
 
@@ -76,6 +77,7 @@ export const PlatformSettingsProvider = ({ children }: PlatformSettingsProviderP
   });
 
   const [loading, setLoading] = useState(true);
+  const [settingsInitialized, setSettingsInitialized] = useState(false);
 
   const fetchSettings = async () => {
     try {
@@ -120,6 +122,7 @@ export const PlatformSettingsProvider = ({ children }: PlatformSettingsProviderP
             break;
         }
       });
+      setSettingsInitialized(true);
     } catch (error) {
       console.error('Error fetching platform settings:', error);
     } finally {
@@ -159,6 +162,7 @@ export const PlatformSettingsProvider = ({ children }: PlatformSettingsProviderP
         notificationSettings,
         commentingSettings,
         loading,
+        settingsInitialized,
         refreshSettings: fetchSettings
       }}
     >
