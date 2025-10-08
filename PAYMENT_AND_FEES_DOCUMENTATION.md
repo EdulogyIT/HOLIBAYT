@@ -28,16 +28,17 @@ Location: `src/components/BookingModal.tsx`
 - DZD: 100 DA
 
 ### Property Description Page (Short-Stay)
-Location: `src/pages/Property.tsx` (lines 346-348)
+Location: `src/pages/Property.tsx` (lines 326-376)
 
-**Tax Calculation:**
-- Uses the property's `commission_rate` field (stored as decimal)
-- Default commission rate: 15% (0.15)
-- Tax Amount: `Math.round(subtotal × commission_rate × 100) / 100`
+**Fee Calculation:**
+- Uses 5% booking fee (matching BookingModal)
+- Booking Fee: `Math.round(subtotal × 0.05 × 100) / 100`
+- Total Amount: `subtotal + bookingFee`
 
 **Example:**
-- If subtotal is 10,000 DA and commission_rate is 0.15:
-  - Taxes = 10,000 × 0.15 = 1,500 DA
+- If subtotal is €432 (2 nights × €216):
+  - Booking Fee = €432 × 0.05 = €21.60
+  - Total = €432 + €21.60 = €453.60
 
 ### Commission Settings (Admin Dashboard)
 Location: `src/pages/admin/AdminSettings.tsx`

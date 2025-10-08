@@ -343,22 +343,21 @@ const Property = () => {
                         }
                         
                         const subtotal = dailyPrice * nights;
-                        // Commission rate from property (stored as decimal, e.g., 0.12 for 12%)
-                        const commissionRate = Number(property.commission_rate) || 0.15;
-                        const taxes = Math.round(subtotal * commissionRate * 100) / 100;
-                        const total = subtotal + taxes;
+                        // Use 5% booking fee (matching BookingModal)
+                        const bookingFee = Math.round(subtotal * 0.05 * 100) / 100;
+                        const total = subtotal + bookingFee;
                         
                         return (
                           <>
                             <div className="flex justify-between text-sm font-inter">
                               <span className="text-muted-foreground">
-                                {nights} nights × {formatPrice(dailyPrice, undefined, property.price_currency)}
+                                {formatPrice(dailyPrice, undefined, property.price_currency)} × {nights} nights
                               </span>
                               <span className="font-medium">{formatPrice(subtotal, undefined, property.price_currency)}</span>
                             </div>
                             <div className="flex justify-between text-sm font-inter">
-                              <span className="text-muted-foreground">Taxes</span>
-                              <span className="font-medium">{formatPrice(taxes, undefined, property.price_currency)}</span>
+                              <span className="text-muted-foreground">Booking fee</span>
+                              <span className="font-medium">{formatPrice(bookingFee, undefined, property.price_currency)}</span>
                             </div>
                             <Separator />
                             <div className="flex justify-between font-semibold font-inter">

@@ -88,6 +88,9 @@ const MessageOwnerModal = ({ isOpen, onClose, ownerName, ownerEmail, propertyTit
           title: "Message Sent Successfully",
           description: "Your message has been sent to the property owner. Check your Messages page for replies.",
         });
+        
+        // Navigate to the conversation
+        window.location.href = `/messages?conversation=${conversation.id}`;
       } else {
         // Fallback to contact_requests if user is not logged in
         const { error } = await supabase

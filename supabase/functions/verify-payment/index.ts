@@ -226,66 +226,68 @@ serve(async (req) => {
           .eq('id', propertyDetails?.user_id)
           .single();
 
-        // Create celebratory notification for guest
-        logStep("Attempting to create guest notification", { 
+        // Get property and profile details for notifications
+        const { data: propertyDetails } = await dbClient
+          .from('properties')
+          .select('title, user_id')
+          .eq('id', payment.property_id)
+          .single();
+
+        const { data: guestProfile } = await dbClient
+          .from('profiles')
+          .select('name')
+          .eq('id', user.id)
+          .single();
+
+        const { data: hostProfile } = await dbClient
+          .from('profiles')
+          .select('name')
+          .eq('id', propertyDetails?.user_id)
+          .single();
+
+        // Create celebratory notification for guest using service role (bypass RLS)
+        logStep("Creating guest notification", { 
           userId: user.id, 
           bookingId: booking.id,
           propertyTitle: propertyDetails?.title 
         });
         
-        const { data: guestNotifData, error: guestNotifError } = await dbClient
-          .from('notifications')
-          .insert({
-            user_id: user.id,
-            title: '🎉 Booking Confirmed!',
-            message: `Welcome home! ${hostProfile?.name || 'Your host'} is excited to host you at "${propertyDetails?.title}". Get ready for an amazing stay! ✨`,
-            type: 'booking_confirmed_guest',
-            related_id: booking.id
-          })
-          .select();
-
-        if (guestNotifError) {
-          logStep("Failed to create guest notification", { 
-            error: guestNotifError.message,
-            code: guestNotifError.code,
-            details: guestNotifError.details,
-            hint: guestNotifError.hint
-          });
-        } else {
-          logStep("Guest notification created successfully", { notificationId: guestNotifData?.[0]?.id });
-        }
-
-        // Create celebratory notification for host
-        if (propertyDetails?.user_id) {
-          logStep("Attempting to create host notification", { 
-            hostUserId: propertyDetails.user_id, 
-            bookingId: booking.id,
-            propertyTitle: propertyDetails?.title 
-          });
-          
-          const { data: hostNotifData, error: hostNotifError } = await dbClient
+        try {
+          await dbClient
             .from('notifications')
             .insert({
-              user_id: propertyDetails.user_id,
-              title: '🌟 New Booking - Yay!',
-              message: `Exciting news! ${guestProfile?.name || 'A guest'} just booked "${propertyDetails?.title}". Time to prepare for your special guest! 🏡`,
-              type: 'booking_confirmed_host',
+              user_id: user.id,
+              title: '🎉 Booking Confirmed!',
+              message: `Welcome home! ${hostProfile?.name || 'Your host'} is excited to host you at "${propertyDetails?.title}". Get ready for an amazing stay! Check-in: ${bookingData.checkInDate}`,
+              type: 'booking_confirmed_guest',
               related_id: booking.id
-            })
-            .select();
-          
-          if (hostNotifError) {
-            logStep("Failed to create host notification", { 
-              error: hostNotifError.message,
-              code: hostNotifError.code,
-              details: hostNotifError.details,
-              hint: hostNotifError.hint
             });
-          } else {
-            logStep("Host notification created successfully", { notificationId: hostNotifData?.[0]?.id });
+          logStep("Guest notification created successfully");
+        } catch (error) {
+          logStep("Failed to create guest notification", { error: error.message });
+        }
+
+        // Create celebratory notification for host using service role (bypass RLS)
+        if (propertyDetails?.user_id) {
+          logStep("Creating host notification", { 
+            hostUserId: propertyDetails.user_id, 
+            bookingId: booking.id 
+          });
+          
+          try {
+            await dbClient
+              .from('notifications')
+              .insert({
+                user_id: propertyDetails.user_id,
+                title: '🌟 New Booking!',
+                message: `Exciting news! ${guestProfile?.name || 'A guest'} (${user.email}) just booked "${propertyDetails?.title}" from ${bookingData.checkInDate} to ${bookingData.checkOutDate}. ${bookingData.guestsCount} guest(s). ${bookingData.contactPhone ? 'Contact: ' + bookingData.contactPhone : ''}`,
+                type: 'booking_confirmed_host',
+                related_id: booking.id
+              });
+            logStep("Host notification created successfully");
+          } catch (error) {
+            logStep("Failed to create host notification", { error: error.message });
           }
-        } else {
-          logStep("No host user_id found for notifications", { propertyDetails });
         }
         
         // NOTE: Commission transaction is automatically created by database trigger

@@ -102,8 +102,17 @@ export const ProfilePhotoUpload = ({ currentPhotoUrl, userName, onPhotoUpdate }:
       }
 
       console.log('Profile updated successfully');
-      setPhotoUrl(publicUrl);
-      onPhotoUpdate?.(publicUrl);
+      
+      // Add cache busting to force reload
+      const cacheBustedUrl = `${publicUrl}?t=${Date.now()}`;
+      setPhotoUrl(cacheBustedUrl);
+      onPhotoUpdate?.(cacheBustedUrl);
+      
+      // Reload page to refresh all avatar instances
+      setTimeout(() => {
+        window.location.reload();
+      }, 500);
+      
       toast.success('Profile photo updated successfully');
     } catch (error: any) {
       console.error('Error uploading avatar:', error);
