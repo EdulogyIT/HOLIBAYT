@@ -168,9 +168,9 @@ export default function HostPayouts() {
   // Helper function to convert amounts to DZD base currency
   const convertToDZD = (amount: number, currency: string): number => {
     if (currency === 'DZD') return amount;
-    // Use approximate rates - ideally these would come from the exchange rates API
-    if (currency === 'EUR') return amount / 0.0069; // 1 EUR ≈ 145 DZD
-    if (currency === 'USD') return amount / 0.0074; // 1 USD ≈ 135 DZD
+    // Exchange rates to DZD
+    if (currency === 'EUR') return amount * 145; // 1 EUR = 145 DZD
+    if (currency === 'USD') return amount * 135; // 1 USD = 135 DZD
     return amount; // fallback to treating as DZD
   };
 

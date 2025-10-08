@@ -95,35 +95,26 @@ serve(async (req) => {
       }
 
       const property = payment.properties;
-      const totalAmount = payment.amount;
-      const commissionRate = property.commission_rate || 0.15; // Default 15%
-      const commissionAmount = totalAmount * commissionRate;
-      const hostAmount = totalAmount - commissionAmount;
+      
+      logStep("Processing commission for payment", { paymentId });
 
-      logStep("Processing commission", {
-        totalAmount,
-        commissionRate,
-        commissionAmount,
-        hostAmount
-      });
-
-      // Create commission transaction record
-      const { error: commissionError } = await supabaseClient
+      // Commission is already created by the booking trigger
+      // We just need to check if it exists and is in the correct state
+      const { data: existingCommission } = await supabaseClient
         .from('commission_transactions')
-        .insert({
-          payment_id: paymentId,
-          property_id: property.id,
-          host_user_id: property.user_id,
-          total_amount: totalAmount,
-          commission_rate: commissionRate,
-          commission_amount: commissionAmount,
-          host_amount: hostAmount,
-          status: 'completed'
-        });
+        .select('*')
+        .eq('payment_id', paymentId)
+        .single();
 
-      if (commissionError) {
-        logStep("Failed to create commission transaction", { error: commissionError });
+      if (!existingCommission) {
+        logStep("No commission transaction found for payment", { paymentId });
+        return new Response("No commission found", { status: 404 });
       }
+
+      logStep("Found existing commission", { 
+        commissionId: existingCommission.id,
+        status: existingCommission.status 
+      });
 
       // Get host payment account for potential transfer
       const { data: paymentAccount } = await supabaseClient
