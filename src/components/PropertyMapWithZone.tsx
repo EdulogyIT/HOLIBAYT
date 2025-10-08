@@ -29,7 +29,7 @@ const PropertyMapWithZone = ({ location, address, onZoneSearch }: PropertyMapWit
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-1 gap-2">
             {[
               "Alger Centre",
               "Hydra",
@@ -43,10 +43,10 @@ const PropertyMapWithZone = ({ location, address, onZoneSearch }: PropertyMapWit
                 variant="outline"
                 size="sm"
                 onClick={() => handleZoneClick(zone)}
-                className="justify-start text-sm"
+                className="justify-start text-sm w-full"
               >
-                <MapPin className="w-3 h-3 mr-2" />
-                {zone}
+                <MapPin className="w-3 h-3 mr-2 flex-shrink-0" />
+                <span className="truncate">{zone}</span>
               </Button>
             ))}
           </div>
