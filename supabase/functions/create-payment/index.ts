@@ -181,17 +181,25 @@ serve(async (req) => {
     console.log("[CREATE-PAYMENT] Creating Stripe session...");
     const productName = `${paymentType.replace(/_/g, " ")} - ${property.title}`;
     
-    // Convert DZD to EUR for Stripe (since Stripe doesn't support DZD)
-    // Exchange rate: 1 EUR ≈ 145 DZD
+    // Handle currency conversion for Stripe
+    // Stripe doesn't support DZD, so we convert to EUR
+    // USD and EUR are supported directly by Stripe
     const DZD_TO_EUR_RATE = 145;
     let stripeAmount = amount;
-    let stripeCurrency = (currency || "EUR").toUpperCase();
+    let stripeCurrency = (currency || "USD").toUpperCase();
     
     if (stripeCurrency === "DZD") {
-      // Convert to EUR for Stripe
+      // Convert DZD to EUR for Stripe
       stripeAmount = Math.round((amount / DZD_TO_EUR_RATE) * 100) / 100;
       stripeCurrency = "EUR";
       console.log(`[CREATE-PAYMENT] Converting DZD ${amount} to EUR ${stripeAmount}`);
+    } else if (stripeCurrency === "USD" || stripeCurrency === "EUR") {
+      // USD and EUR are supported directly
+      console.log(`[CREATE-PAYMENT] Using ${stripeCurrency} ${amount} directly`);
+    } else {
+      // Fallback to EUR for unsupported currencies
+      console.log(`[CREATE-PAYMENT] Unsupported currency ${stripeCurrency}, using EUR`);
+      stripeCurrency = "EUR";
     }
     
     // Calculate commission if this is a booking fee with Stripe Connect

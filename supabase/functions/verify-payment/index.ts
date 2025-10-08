@@ -226,25 +226,6 @@ serve(async (req) => {
           .eq('id', propertyDetails?.user_id)
           .single();
 
-        // Get property and profile details for notifications
-        const { data: propertyDetails } = await dbClient
-          .from('properties')
-          .select('title, user_id')
-          .eq('id', payment.property_id)
-          .single();
-
-        const { data: guestProfile } = await dbClient
-          .from('profiles')
-          .select('name')
-          .eq('id', user.id)
-          .single();
-
-        const { data: hostProfile } = await dbClient
-          .from('profiles')
-          .select('name')
-          .eq('id', propertyDetails?.user_id)
-          .single();
-
         // Create celebratory notification for guest using service role (bypass RLS)
         logStep("Creating guest notification", { 
           userId: user.id, 
