@@ -372,23 +372,23 @@ export const BookingModal: React.FC<BookingModalProps> = ({ property, trigger })
                 <>
                   <div className="flex justify-between text-sm">
                     <span>
-                      {formatPrice(dailyPrice)} × {nights} night{nights !== 1 ? 's' : ''}
+                      {formatPrice(dailyPrice, undefined, property.price_currency)} × {nights} night{nights !== 1 ? 's' : ''}
                     </span>
-                    <span>{formatPrice(subtotal)}</span>
+                    <span>{formatPrice(subtotal, undefined, property.price_currency)}</span>
                   </div>
                   <div className="flex justify-between text-sm">
                     <span>Booking fee</span>
-                    <span>{formatPrice(bookingFee)}</span>
+                    <span>{formatPrice(bookingFee, undefined, property.price_currency)}</span>
                   </div>
                   <Separator />
                   <div className="flex justify-between font-semibold">
                     <span>Total</span>
-                    <span>{formatPrice(finalTotalAmount)}</span>
+                    <span>{formatPrice(finalTotalAmount, undefined, property.price_currency)}</span>
                   </div>
                   <div className="text-xs text-gray-600">
                     <div className="flex items-center gap-1">
                       <Clock className="w-3 h-3" />
-                      Security deposit: {formatPrice(finalSecurityDeposit)} (refundable)
+                      Security deposit: {formatPrice(finalSecurityDeposit, undefined, property.price_currency)} (refundable)
                     </div>
                   </div>
                 </>
@@ -412,7 +412,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({ property, trigger })
                     disabled={!canPayBooking || isCheckingAvailability}
                   >
                     <CreditCard className="w-4 h-4 mr-2" />
-                    {isCheckingAvailability ? 'Checking availability...' : `Pay ${formatPrice(finalTotalAmount)}`}
+                    {isCheckingAvailability ? 'Checking availability...' : `Pay ${formatPrice(finalTotalAmount, undefined, property.price_currency)}`}
                   </Button>
                   {!canPayBooking && (
                     <div className="text-xs text-muted-foreground">
@@ -429,7 +429,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({ property, trigger })
                         size="lg"
                         disabled={!canPayDeposit}
                       >
-                        Pay Security Deposit: {formatPrice(finalSecurityDeposit)}
+                        Pay Security Deposit: {formatPrice(finalSecurityDeposit, undefined, property.price_currency)}
                       </Button>
                       {!canPayDeposit && (
                         <div className="text-xs text-muted-foreground">
