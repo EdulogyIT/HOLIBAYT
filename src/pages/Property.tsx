@@ -386,6 +386,7 @@ const Property = () => {
                           title: property.title,
                           price: property.price,
                           price_type: property.price_type,
+                          price_currency: property.price_currency,
                           category: property.category
                         }}
                       />
