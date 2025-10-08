@@ -4,7 +4,7 @@ import { usePlatformSettings } from "@/contexts/PlatformSettingsContext";
 import { supabase } from "@/integrations/supabase/client";
 import { MaintenanceScreen } from "@/components/MaintenanceScreen";
 
-// Normalize value
+// Helper to normalize DB values
 const toBool = (v: any): boolean => {
   if (typeof v === "boolean") return v;
   if (typeof v === "string") return v.toLowerCase() === "true";
@@ -17,10 +17,9 @@ export const MaintenanceMode = ({ children }: { children: React.ReactNode }) => 
   const { user } = useAuth();
 
   const [dbMaintenanceMode, setDbMaintenanceMode] = useState<boolean | null>(null);
-  const [isChecking, setIsChecking] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
 
-  // 1. Fetch maintenance status
+  // Fetch maintenance mode from Supabase
   useEffect(() => {
     const fetchStatus = async () => {
       try {
@@ -34,8 +33,6 @@ export const MaintenanceMode = ({ children }: { children: React.ReactNode }) => 
       } catch (e) {
         console.error("Error fetching maintenance status:", e);
         setDbMaintenanceMode(false); // fail open
-      } finally {
-        setIsChecking(false);
       }
     };
 
@@ -59,10 +56,13 @@ export const MaintenanceMode = ({ children }: { children: React.ReactNode }) => 
     };
   }, []);
 
-  // 2. Check if user is admin
+  // Check if user is admin via your `has_role` RPC
   useEffect(() => {
     const checkAdmin = async () => {
-      if (!user?.id) return;
+      if (!user?.id) {
+        setIsAdmin(false);
+        return;
+      }
       try {
         const { data, error } = await supabase.rpc("has_role", {
           _user_id: user.id,
@@ -79,26 +79,23 @@ export const MaintenanceMode = ({ children }: { children: React.ReactNode }) => 
     checkAdmin();
   }, [user]);
 
-  const maintenanceOn = dbMaintenanceMode === true;
-
-  // 🔎 Debug log
-  console.log("MaintenanceMode status", {
+  // 🔎 Debug
+  console.log("MaintenanceMode decision:", {
     dbMaintenanceMode,
-    maintenanceOn,
-    user,
     isAdmin,
+    user,
   });
 
-  // 3. While checking → block (prevents flash of homepage)
-  if (isChecking || dbMaintenanceMode === null) {
+  // 🚨 Block by default until we know
+  if (dbMaintenanceMode === null) {
     return <MaintenanceScreen loading />;
   }
 
-  // 4. Maintenance ON → block unless admin
-  if (maintenanceOn && !isAdmin) {
+  // 🚨 Maintenance ON → block unless admin
+  if (dbMaintenanceMode === true && !isAdmin) {
     return <MaintenanceScreen supportEmail={generalSettings.support_email} />;
   }
 
-  // 5. Otherwise → allow app
+  // ✅ Otherwise → allow normal app
   return <>{children}</>;
 };
