@@ -1,94 +1,234 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Maintenance Mode - Holibayt</title>
-  <meta name="robots" content="noindex, nofollow"/>
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body {
-      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-      min-height: 100vh; display: flex; align-items: center; justify-content: center;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      padding: 24px;
-    }
-    .card {
-      background: #fff; border-radius: 18px; width: 100%; max-width: 680px;
-      box-shadow: 0 20px 60px rgba(0,0,0,.25); padding: 40px 32px;
-    }
-    .logo { text-align: center; margin-bottom: 8px; }
-    .logo img { height: 28px; opacity: .9 }
-    h1 { text-align: center; font-size: 2.2rem; margin: 18px 0; color: #111827; font-weight: 800; }
-    p { color: #4b5563; line-height: 1.6; text-align: center; margin: 10px 0; }
-    hr { border: 0; border-top: 1px solid #e5e7eb; margin: 26px 0; }
-    form { max-width: 420px; margin: 0 auto; display: grid; gap: 12px; }
-    input {
-      padding: 12px 14px; border: 2px solid #e5e7eb; border-radius: 10px; font-size: 0.95rem;
-      outline: none; transition: border-color .2s;
-    }
-    input:focus { border-color: #667eea; }
-    button {
-      padding: 12px 16px; background: linear-gradient(135deg,#667eea,#764ba2); color: #fff;
-      border: 0; border-radius: 10px; font-weight: 700; cursor: pointer;
-    }
-    .msg { text-align: center; font-size: .9rem; margin-top: 6px; }
-    .msg.err { color: #e11d48 }
-    .msg.ok { color: #059669 }
-    .foot { margin-top: 10px; text-align: center; font-size: 12px; color: #6b7280; }
-    .foot a { color: #4f46e5; text-decoration: none; }
-  </style>
-  <!-- Supabase SDK -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.57.4/dist/umd/supabase.min.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Maintenance Mode - Holibayt</title>
+    <meta name="robots" content="noindex, nofollow">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .maintenance-container {
+            background: white;
+            border-radius: 20px;
+            padding: 60px 40px;
+            max-width: 600px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .logo {
+            margin-bottom: 30px;
+        }
+
+        .logo img {
+            height: 60px;
+            width: auto;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            color: #1a202c;
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+
+        p {
+            font-size: 1.125rem;
+            color: #4a5568;
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+
+        .icon {
+            font-size: 4rem;
+            margin-bottom: 30px;
+        }
+
+        .admin-section {
+            margin-top: 40px;
+            padding-top: 40px;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .admin-section h2 {
+            font-size: 1.25rem;
+            color: #2d3748;
+            margin-bottom: 20px;
+        }
+
+        .admin-form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        .admin-form input {
+            padding: 12px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.2s;
+        }
+
+        .admin-form input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .admin-form button {
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .admin-form button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .admin-form button:active {
+            transform: translateY(0);
+        }
+
+        .error-message {
+            color: #e53e3e;
+            font-size: 0.875rem;
+            margin-top: 10px;
+        }
+
+        .success-message {
+            color: #38a169;
+            font-size: 0.875rem;
+            margin-top: 10px;
+        }
+
+        @media (max-width: 640px) {
+            .maintenance-container {
+                padding: 40px 30px;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            p {
+                font-size: 1rem;
+            }
+        }
+    </style>
 </head>
 <body>
-  <div class="card">
-    <div class="logo">
-      <img src="/holibayt-logo-transparent.png" alt="Holibayt" onerror="this.style.display='none'"/>
+    <div class="maintenance-container">
+        <div class="logo">
+            <img src="/holibayt-logo-transparent.png" alt="Holibayt Logo" onerror="this.style.display='none'">
+        </div>
+        
+        <div class="icon">🔧</div>
+        
+        <h1>We'll Be Back Soon!</h1>
+        
+        <p>
+            Holibayt is currently undergoing scheduled maintenance to improve your experience. 
+            We apologize for any inconvenience and appreciate your patience.
+        </p>
+        
+        <p style="font-size: 1rem; color: #718096;">
+            Expected downtime: A few hours<br>
+            We'll be back up and running as soon as possible.
+        </p>
+
+        <div class="admin-section">
+            <h2>Administrator Access</h2>
+            <form class="admin-form" id="adminForm">
+                <input 
+                    type="email" 
+                    id="adminEmail" 
+                    placeholder="Admin Email" 
+                    required
+                    autocomplete="email"
+                >
+                <input 
+                    type="password" 
+                    id="adminPassword" 
+                    placeholder="Admin Password" 
+                    required
+                    autocomplete="current-password"
+                >
+                <button type="submit">Access Admin Panel</button>
+                <div id="message"></div>
+            </form>
+        </div>
     </div>
-    <div style="text-align:center;font-size:44px;margin:10px 0">🛠️</div>
-    <h1>We'll Be Back Soon!</h1>
-    <p>Holibayt is currently undergoing scheduled maintenance to improve your experience.<br/>We appreciate your patience.</p>
-    <p style="font-size:.95rem;color:#6b7280;margin-top:6px">Expected downtime: A few hours</p>
 
-    <hr/>
-    <h3 style="text-align:center;margin:0 0 10px 0;color:#111827">Administrator Access</h3>
-
-    <form id="adminForm">
-      <input id="adminEmail" type="email" placeholder="Admin Email" required autocomplete="email"/>
-      <input id="adminPassword" type="password" placeholder="Admin Password" required autocomplete="current-password"/>
-      <button type="submit">Access Admin Panel</button>
-      <div id="message" class="msg"></div>
-    </form>
-
-    <div class="foot">
-      Urgent? Email <a href="mailto:contact@holibayt.com">contact@holibayt.com</a>
-    </div>
-  </div>
-
-  <script>
-    const PROJECT_URL = "https://vsruezynaanqprobpvrr.supabase.co";  // <-- your ref
-    const ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZzcnVlenluYWFucXByb2JwdnJyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTc3NDU4MzQsImV4cCI6MjA3MzMyMTgzNH0.plquvaj7X-W58GdHABRM-K6LbEe2O7LUITzXJjzLM5I";
-    const supabase = window.supabase.createClient(PROJECT_URL, ANON_KEY);
-    const form = document.getElementById("adminForm");
-    const msg = document.getElementById("message");
-
-    form.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      msg.textContent = "Authenticating…"; msg.className = "msg";
-      const email = (document.getElementById("adminEmail")).value;
-      const password = (document.getElementById("adminPassword")).value;
-
-      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-      if (error) {
-        msg.textContent = "Invalid credentials."; msg.className = "msg err";
-        return;
-      }
-
-      // Session persisted by supabase-js in localStorage (correct format)
-      msg.textContent = "Login successful. Redirecting…"; msg.className = "msg ok";
-      setTimeout(() => { window.location.href = "/"; }, 700);
-    });
-  </script>
+    <script>
+        document.getElementById('adminForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const email = document.getElementById('adminEmail').value;
+            const password = document.getElementById('adminPassword').value;
+            const messageDiv = document.getElementById('message');
+            
+            messageDiv.textContent = 'Authenticating...';
+            messageDiv.className = '';
+            
+            try {
+                // Authenticate with Supabase
+                const response = await fetch('https://vsruezynaanqprobpvrr.supabase.co/auth/v1/token?grant_type=password', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZzcnVlenluYWFucXByb2JwdnJyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTc3NDU4MzQsImV4cCI6MjA3MzMyMTgzNH0.plquvaj7X-W58GdHABRM-K6LbEe2O7LUITzXJjzLM5I'
+                    },
+                    body: JSON.stringify({ email, password })
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Invalid credentials');
+                }
+                
+                const data = await response.json();
+                
+                // Store session
+                localStorage.setItem('sb-vsruezynaanqprobpvrr-auth-token', JSON.stringify(data));
+                
+                messageDiv.textContent = 'Authentication successful! Redirecting...';
+                messageDiv.className = 'success-message';
+                
+                // Redirect to main app
+                setTimeout(() => {
+                    window.location.href = '/';
+                }, 1000);
+                
+            } catch (error) {
+                messageDiv.textContent = 'Invalid credentials. Please try again.';
+                messageDiv.className = 'error-message';
+            }
+        });
+    </script>
 </body>
 </html>

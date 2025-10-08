@@ -7,7 +7,7 @@
     <meta name="description" content="Plateforme immobilière digitale nouvelle génération pour le marché algérien - Achat, Location, Short Stay" />
     <meta name="author" content="Holibayt" />
     <link rel="icon" href="/lovable-uploads/b974fb79-9873-41fb-b3ad-9b4bf38b8a77.png" type="image/png">
-
+    
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -16,53 +16,14 @@
     <meta property="og:description" content="Plateforme immobilière digitale nouvelle génération pour le marché algérien" />
     <meta property="og:type" content="website" />
     <meta property="og:image" content="/lovable-uploads/b974fb79-9873-41fb-b3ad-9b4bf38b8a77.png" />
+
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:site" content="@holibayt" />
     <meta name="twitter:image" content="/lovable-uploads/b974fb79-9873-41fb-b3ad-9b4bf38b8a77.png" />
   </head>
+
   <body>
     <div id="root"></div>
-
-    <!-- ⛔️ PRE-CHECK: Hide app until maintenance status known -->
-    <script>
-      // Hide React root while checking
-      document.write("<style>#root{display:none}</style>");
-
-      (async () => {
-        const PROJECT_REF = "vsruezynaanqprobpvrr"; // <-- your Supabase project ref
-        const FN_URL = `https://${PROJECT_REF}.supabase.co/functions/v1/check-maintenance`;
-
-        // Try to include access token so admins bypass during maintenance
-        let accessToken;
-        try {
-          const raw = localStorage.getItem(`sb-${PROJECT_REF}-auth-token`);
-          if (raw) {
-            const obj = JSON.parse(raw);
-            accessToken = obj?.currentSession?.access_token || obj?.access_token;
-          }
-        } catch {}
-
-        const headers = {};
-        if (accessToken) headers["Authorization"] = `Bearer ${accessToken}`;
-
-        try {
-          const resp = await fetch(FN_URL, { headers });
-          const { allowed } = await resp.json();
-
-          if (!allowed) {
-            window.location.replace("/maintenance.html");
-          } else {
-            const root = document.getElementById("root");
-            if (root) root.style.display = "block";
-          }
-        } catch (err) {
-          console.error("Maintenance check failed", err);
-          const root = document.getElementById("root");
-          if (root) root.style.display = "block"; // fail open
-        }
-      })();
-    </script>
-
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
