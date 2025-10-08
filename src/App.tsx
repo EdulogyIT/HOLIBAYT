@@ -8,8 +8,9 @@ import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { AdminLayout } from "@/components/layouts/AdminLayout";
 import { HostLayout } from "@/components/layouts/HostLayout";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
+import { MaintenanceMode } from "@/components/MaintenanceMode"; // ✅ imported
 
-// import all pages...
+// Pages
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import Buy from "./pages/Buy";
@@ -60,28 +61,27 @@ const App = () => (
         <Toaster />
         <Sonner />
 
-        {/* ✅ Routes only — MaintenanceMode is now applied globally in index.tsx */}
         <Routes>
-          {/* Public routes */}
-          <Route path="/" element={<Index />} />
-          <Route path="/buy" element={<Buy />} />
-          <Route path="/rent" element={<Rent />} />
-          <Route path="/short-stay" element={<ShortStay />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/blog" element={<Blog />} />
-          <Route path="/blog/:id" element={<BlogPost />} />
-          <Route path="/messages" element={<Messages />} />
-          <Route path="/property/:id" element={<Property />} />
-          <Route path="/city/:cityId" element={<City />} />
-          <Route path="/contact-advisor" element={<ContactAdvisor />} />
+          {/* ✅ All public routes wrapped in MaintenanceMode */}
+          <Route path="/" element={<MaintenanceMode><Index /></MaintenanceMode>} />
+          <Route path="/buy" element={<MaintenanceMode><Buy /></MaintenanceMode>} />
+          <Route path="/rent" element={<MaintenanceMode><Rent /></MaintenanceMode>} />
+          <Route path="/short-stay" element={<MaintenanceMode><ShortStay /></MaintenanceMode>} />
+          <Route path="/about" element={<MaintenanceMode><About /></MaintenanceMode>} />
+          <Route path="/blog" element={<MaintenanceMode><Blog /></MaintenanceMode>} />
+          <Route path="/blog/:id" element={<MaintenanceMode><BlogPost /></MaintenanceMode>} />
+          <Route path="/messages" element={<MaintenanceMode><Messages /></MaintenanceMode>} />
+          <Route path="/property/:id" element={<MaintenanceMode><Property /></MaintenanceMode>} />
+          <Route path="/city/:cityId" element={<MaintenanceMode><City /></MaintenanceMode>} />
+          <Route path="/contact-advisor" element={<MaintenanceMode><ContactAdvisor /></MaintenanceMode>} />
 
-          {/* Payment routes */}
-          <Route path="/payment-success" element={<PaymentSuccess />} />
-          <Route path="/payment-cancelled" element={<PaymentCancelled />} />
-          <Route path="/booking/success" element={<BookingSuccess />} />
-          <Route path="/booking/cancel" element={<BookingCancel />} />
+          {/* ✅ Payment routes also gated */}
+          <Route path="/payment-success" element={<MaintenanceMode><PaymentSuccess /></MaintenanceMode>} />
+          <Route path="/payment-cancelled" element={<MaintenanceMode><PaymentCancelled /></MaintenanceMode>} />
+          <Route path="/booking/success" element={<MaintenanceMode><BookingSuccess /></MaintenanceMode>} />
+          <Route path="/booking/cancel" element={<MaintenanceMode><BookingCancel /></MaintenanceMode>} />
 
-          {/* Auth routes */}
+          {/* Auth routes (you may want to allow login/register even in maintenance) */}
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
 
@@ -90,7 +90,9 @@ const App = () => (
             path="/publish-property"
             element={
               <ProtectedRoute requireAuth>
-                <PublishProperty />
+                <MaintenanceMode>
+                  <PublishProperty />
+                </MaintenanceMode>
               </ProtectedRoute>
             }
           />
@@ -98,7 +100,9 @@ const App = () => (
             path="/edit-property/:id"
             element={
               <ProtectedRoute requireAuth>
-                <EditProperty />
+                <MaintenanceMode>
+                  <EditProperty />
+                </MaintenanceMode>
               </ProtectedRoute>
             }
           />
@@ -106,7 +110,9 @@ const App = () => (
             path="/bookings"
             element={
               <ProtectedRoute requireAuth>
-                <Bookings />
+                <MaintenanceMode>
+                  <Bookings />
+                </MaintenanceMode>
               </ProtectedRoute>
             }
           />
@@ -114,7 +120,9 @@ const App = () => (
             path="/profile"
             element={
               <ProtectedRoute requireAuth>
-                <Profile />
+                <MaintenanceMode>
+                  <Profile />
+                </MaintenanceMode>
               </ProtectedRoute>
             }
           />
@@ -122,7 +130,9 @@ const App = () => (
             path="/wishlist"
             element={
               <ProtectedRoute requireAuth>
-                <Wishlist />
+                <MaintenanceMode>
+                  <Wishlist />
+                </MaintenanceMode>
               </ProtectedRoute>
             }
           />
@@ -132,7 +142,9 @@ const App = () => (
             path="/host/onboarding"
             element={
               <ProtectedRoute requireAuth>
-                <HostOnboarding />
+                <MaintenanceMode>
+                  <HostOnboarding />
+                </MaintenanceMode>
               </ProtectedRoute>
             }
           />
@@ -144,17 +156,17 @@ const App = () => (
               <ProtectedRoute requiredRole="admin">
                 <AdminLayout>
                   <Routes>
-                    <Route index element={<AdminDashboard />} />
-                    <Route path="profile" element={<AdminProfile />} />
-                    <Route path="properties" element={<AdminProperties />} />
-                    <Route path="users" element={<AdminUsers />} />
-                    <Route path="superhosts" element={<AdminSuperhost />} />
-                    <Route path="commissions" element={<AdminCommissions />} />
-                    <Route path="users/:userId" element={<Profile />} />
-                    <Route path="messages" element={<AdminMessages />} />
-                    <Route path="blogs" element={<AdminBlogs />} />
-                    <Route path="create-blog" element={<CreateBlog />} />
-                    <Route path="settings" element={<AdminSettings />} />
+                    <Route index element={<MaintenanceMode><AdminDashboard /></MaintenanceMode>} />
+                    <Route path="profile" element={<MaintenanceMode><AdminProfile /></MaintenanceMode>} />
+                    <Route path="properties" element={<MaintenanceMode><AdminProperties /></MaintenanceMode>} />
+                    <Route path="users" element={<MaintenanceMode><AdminUsers /></MaintenanceMode>} />
+                    <Route path="superhosts" element={<MaintenanceMode><AdminSuperhost /></MaintenanceMode>} />
+                    <Route path="commissions" element={<MaintenanceMode><AdminCommissions /></MaintenanceMode>} />
+                    <Route path="users/:userId" element={<MaintenanceMode><Profile /></MaintenanceMode>} />
+                    <Route path="messages" element={<MaintenanceMode><AdminMessages /></MaintenanceMode>} />
+                    <Route path="blogs" element={<MaintenanceMode><AdminBlogs /></MaintenanceMode>} />
+                    <Route path="create-blog" element={<MaintenanceMode><CreateBlog /></MaintenanceMode>} />
+                    <Route path="settings" element={<MaintenanceMode><AdminSettings /></MaintenanceMode>} />
                   </Routes>
                 </AdminLayout>
               </ProtectedRoute>
@@ -168,12 +180,12 @@ const App = () => (
               <ProtectedRoute requiredRole="host">
                 <HostLayout>
                   <Routes>
-                    <Route index element={<HostDashboard />} />
-                    <Route path="bookings" element={<HostBookings />} />
-                    <Route path="calendar" element={<PropertyCalendar />} />
-                    <Route path="listings" element={<HostListings />} />
-                    <Route path="messages" element={<HostMessages />} />
-                    <Route path="payouts" element={<HostPayouts />} />
+                    <Route index element={<MaintenanceMode><HostDashboard /></MaintenanceMode>} />
+                    <Route path="bookings" element={<MaintenanceMode><HostBookings /></MaintenanceMode>} />
+                    <Route path="calendar" element={<MaintenanceMode><PropertyCalendar /></MaintenanceMode>} />
+                    <Route path="listings" element={<MaintenanceMode><HostListings /></MaintenanceMode>} />
+                    <Route path="messages" element={<MaintenanceMode><HostMessages /></MaintenanceMode>} />
+                    <Route path="payouts" element={<MaintenanceMode><HostPayouts /></MaintenanceMode>} />
                   </Routes>
                 </HostLayout>
               </ProtectedRoute>
@@ -181,7 +193,7 @@ const App = () => (
           />
 
           {/* Catch-all */}
-          <Route path="*" element={<NotFound />} />
+          <Route path="*" element={<MaintenanceMode><NotFound /></MaintenanceMode>} />
         </Routes>
       </ErrorBoundary>
     </TooltipProvider>
