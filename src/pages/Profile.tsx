@@ -65,6 +65,25 @@ const Profile = () => {
     bookingsCount: 0,
   });
 
+  // Fetch profile data for current user
+  useEffect(() => {
+    if (user && !isViewingOtherUser) {
+      const fetchCurrentUserProfile = async () => {
+        const { data: profileData } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', user.id)
+          .single();
+
+        if (profileData) {
+          // Merge profile data with user data
+          Object.assign(user, profileData);
+        }
+      };
+      fetchCurrentUserProfile();
+    }
+  }, [user, isViewingOtherUser]);
+
   useEffect(() => {
     if (isViewingOtherUser && hasRole('admin')) {
       setLoading(true);
