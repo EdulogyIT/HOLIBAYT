@@ -96,7 +96,7 @@ const adminProfileStrings = {
       viewFull: "View full audit log"
     },
     danger: {
-      title: "Danger Zone",
+      title: "Alert Zone",
       subtitle: "Permanent actions. Please proceed with caution.",
       deactivate: "Deactivate Account",
       deactivateDesc: "Temporarily disables access; another Super Admin can re-enable.",

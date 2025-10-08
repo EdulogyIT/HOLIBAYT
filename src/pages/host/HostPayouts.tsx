@@ -226,7 +226,7 @@ export default function HostPayouts() {
             <DollarSign className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{formatPrice(totalEarnings)}</div>
+            <div className="text-2xl font-bold">{formatPrice(totalEarnings, undefined, 'EUR')}</div>
             <p className="text-xs text-muted-foreground mt-1">Completed bookings</p>
           </CardContent>
         </Card>
@@ -237,7 +237,7 @@ export default function HostPayouts() {
             <Clock className="h-4 w-4 text-yellow-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-yellow-600">{formatPrice(pendingAmount)}</div>
+            <div className="text-2xl font-bold text-yellow-600">{formatPrice(pendingAmount, undefined, 'EUR')}</div>
             <p className="text-xs text-muted-foreground mt-1">In active bookings</p>
           </CardContent>
         </Card>
@@ -285,13 +285,13 @@ export default function HostPayouts() {
                           {new Date(transaction.created_at).toLocaleDateString()}
                         </p>
                         <p className="text-xs text-muted-foreground mt-1">
-                          Total: {formatPrice(transaction.total_amount)} • 
+                          Total: {formatPrice(transaction.total_amount, undefined, transaction.payments?.currency || transaction.properties?.price_currency || 'EUR')} • 
                           Commission: {(transaction.commission_rate * 100).toFixed(0)}%
                         </p>
                       </div>
                       <div className="text-right">
                         <p className="font-bold text-lg">
-                          {formatPrice(transaction.host_amount)}
+                          {formatPrice(transaction.host_amount, undefined, transaction.payments?.currency || transaction.properties?.price_currency || 'EUR')}
                         </p>
                         <Badge 
                           variant={
