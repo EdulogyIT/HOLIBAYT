@@ -174,6 +174,8 @@ export const NotificationBell = () => {
       navigate('/messages');
     } else if (notification.type === 'property_approval' || notification.type === 'property_rejection' || notification.type === 'property_approved') {
       navigate('/host/listings');
+    } else if (notification.type === 'withdrawal_approved' || notification.type === 'withdrawal_rejected') {
+      navigate('/host/payouts');
     } else if (notification.type === 'review_request' && notification.related_id) {
       // related_id is booking_id for review_request
       // Check if review already exists for this booking

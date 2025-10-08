@@ -63,7 +63,7 @@ interface WithdrawalRequest {
 
 export default function HostPayouts() {
   const { user } = useAuth();
-  const { formatPrice } = useCurrency();
+  const { formatPrice, currentCurrency } = useCurrency();
   const { toast } = useToast();
   const [paymentAccounts, setPaymentAccounts] = useState<PaymentAccount[]>([]);
   const [commissionTransactions, setCommissionTransactions] = useState<CommissionTransaction[]>([]);
@@ -282,7 +282,14 @@ export default function HostPayouts() {
       return;
     }
 
-    if (amount > availableBalance) {
+    // Convert the display amount back to DZD for storage
+    // The user sees and enters amounts in their selected currency
+    // But we need to store it as DZD in the database
+    const amountInDZD = currentCurrency === 'DZD' ? amount : 
+                        currentCurrency === 'USD' ? amount * 135 :
+                        currentCurrency === 'EUR' ? amount * 145 : amount;
+
+    if (amountInDZD > availableBalance) {
       toast({
         title: "Error",
         description: `Withdrawal amount (${formatPrice(amount)}) exceeds available balance (${formatPrice(availableBalance)})`,
@@ -301,13 +308,13 @@ export default function HostPayouts() {
     }
 
     try {
-      // Insert with the exact amount entered by user (in DZD)
+      // Insert with the amount converted to DZD
       const { error } = await supabase
         .from('withdrawal_requests')
         .insert({
           host_user_id: user?.id,
           payment_account_id: selectedAccountId,
-          amount: amount, // Use the exact amount entered
+          amount: amountInDZD, // Store in DZD
           status: 'pending'
         });
 

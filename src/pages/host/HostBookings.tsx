@@ -121,8 +121,7 @@ export default function HostBookings() {
   const getPastBookings = () => {
     const today = new Date().toISOString().split('T')[0];
     return bookings.filter(b => 
-      b.check_out_date < today || 
-      b.status === 'completed'
+      b.status !== 'cancelled' && (b.check_out_date < today || b.status === 'completed')
     );
   };
 
