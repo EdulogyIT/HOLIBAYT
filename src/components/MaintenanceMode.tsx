@@ -20,11 +20,12 @@ export const MaintenanceMode = ({ children }: { children: React.ReactNode }) => 
   const { user, login } = useAuth();
 
   const [dbMaintenanceMode, setDbMaintenanceMode] = useState<boolean | null>(null);
+  const [isChecking, setIsChecking] = useState(true);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoggingIn, setIsLoggingIn] = useState(false);
 
-  // Always fetch maintenance status once
+  // Fetch maintenance status and subscribe to real-time changes
   useEffect(() => {
     const fetchStatus = async () => {
       const { data } = await supabase
@@ -34,12 +35,45 @@ export const MaintenanceMode = ({ children }: { children: React.ReactNode }) => 
         .maybeSingle();
 
       setDbMaintenanceMode(toBool((data?.setting_value as any)?.maintenance_mode));
+      setIsChecking(false);
     };
+    
     fetchStatus();
+
+    // Subscribe to real-time changes
+    const channel = supabase
+      .channel("maintenance-mode-changes")
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "platform_settings",
+          filter: "setting_key=eq.general_settings",
+        },
+        (payload) => {
+          const newValue = (payload.new as any)?.setting_value?.maintenance_mode;
+          setDbMaintenanceMode(toBool(newValue));
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, []);
 
   const maintenanceOn =
     toBool(generalSettings?.maintenance_mode) || dbMaintenanceMode === true;
+
+  // Show loading spinner while checking maintenance status
+  if (isChecking) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-background">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
 
   const handleAdminLogin = async (e: React.FormEvent) => {
     e.preventDefault();
