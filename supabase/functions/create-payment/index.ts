@@ -85,11 +85,11 @@ serve(async (req) => {
       throw new Error(`Invalid amount: ${amount}. Must be between 0.5 and 500,000`);
     }
 
-    // Get property details
+    // Get property details with commission rate
     console.log("[CREATE-PAYMENT] Fetching property...");
     const { data: property, error: propertyError } = await dbClient
       .from("properties")
-      .select("id, title, user_id, owner_account_id")
+      .select("id, title, user_id, owner_account_id, commission_rate")
       .eq("id", propertyId)
       .single();
 
@@ -99,6 +99,23 @@ serve(async (req) => {
     }
 
     console.log("[CREATE-PAYMENT] Property found:", property.title);
+
+    // Get host's Stripe Connect account
+    let hostStripeAccountId = null;
+    if (property.user_id && paymentType === 'booking_fee') {
+      const { data: hostAccount } = await dbClient
+        .from("host_payment_accounts")
+        .select("stripe_account_id")
+        .eq("user_id", property.user_id)
+        .eq("is_active", true)
+        .eq("is_verified", true)
+        .not("stripe_account_id", "is", null)
+        .limit(1)
+        .single();
+
+      hostStripeAccountId = hostAccount?.stripe_account_id;
+      console.log("[CREATE-PAYMENT] Host Stripe account:", hostStripeAccountId || "Not connected");
+    }
 
     // Initialize Stripe
     console.log("[CREATE-PAYMENT] Initializing Stripe...");
@@ -177,7 +194,19 @@ serve(async (req) => {
       console.log(`[CREATE-PAYMENT] Converting DZD ${amount} to EUR ${stripeAmount}`);
     }
     
-    const sessionData = {
+    // Calculate commission if this is a booking fee with Stripe Connect
+    const commissionRate = property.commission_rate || 0.15;
+    const applicationFeeAmount = hostStripeAccountId && paymentType === 'booking_fee' 
+      ? Math.round(stripeAmount * 100 * commissionRate) 
+      : undefined;
+    
+    console.log("[CREATE-PAYMENT] Commission setup:", {
+      hasStripeAccount: !!hostStripeAccountId,
+      commissionRate,
+      applicationFeeAmount
+    });
+
+    const sessionData: any = {
       mode: "payment" as const,
       customer: customerId,
       line_items: [{
@@ -199,8 +228,20 @@ serve(async (req) => {
         payment_type: paymentType,
         original_currency: currency || "EUR",
         original_amount: amount.toString(),
+        commission_rate: commissionRate.toString(),
       },
     };
+
+    // Add Stripe Connect transfer if host has connected account
+    if (hostStripeAccountId && applicationFeeAmount) {
+      sessionData.payment_intent_data = {
+        application_fee_amount: applicationFeeAmount,
+        transfer_data: {
+          destination: hostStripeAccountId,
+        },
+      };
+      console.log("[CREATE-PAYMENT] Using Stripe Connect automatic split payment");
+    }
 
     console.log("[CREATE-PAYMENT] Session data:", JSON.stringify(sessionData, null, 2));
     

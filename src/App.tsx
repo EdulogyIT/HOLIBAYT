@@ -39,7 +39,7 @@ import AdminMessages from "./pages/admin/AdminMessages";
 import AdminSettings from "./pages/admin/AdminSettings";
 import AdminBlogs from "./pages/admin/AdminBlogs";
 import AdminSuperhost from "./pages/admin/AdminSuperhost";
-import AdminWithdrawals from "./pages/admin/AdminWithdrawals";
+import AdminCommissions from "./pages/admin/AdminCommissions";
 import CreateBlog from "./pages/host/CreateBlog";
 import HostDashboard from "./pages/host/HostDashboard";
 import HostOnboarding from "./pages/host/HostOnboarding";
@@ -132,7 +132,7 @@ const App = () => (
                     <Route path="properties" element={<AdminProperties />} />
                     <Route path="users" element={<AdminUsers />} />
                     <Route path="superhosts" element={<AdminSuperhost />} />
-                    <Route path="withdrawals" element={<AdminWithdrawals />} />
+                    <Route path="commissions" element={<AdminCommissions />} />
                     <Route path="users/:userId" element={<Profile />} />
                     <Route path="messages" element={<AdminMessages />} />
                     <Route path="blogs" element={<AdminBlogs />} />
