@@ -36,14 +36,12 @@ const Navigation = () => {
   };
 
   const handleLogout = async () => {
-    try {
-      console.log('[Navigation] Logout button clicked');
-      await logout();
-      console.log('[Navigation] Logout completed, navigating to home');
-      navigate('/');
-    } catch (error) {
-      console.error('[Navigation] Logout failed:', error);
-    }
+    console.log('[Navigation] Logout button clicked');
+    await logout();
+    console.log('[Navigation] Logout completed, navigating to home');
+    navigate('/');
+    // Force reload to ensure clean state
+    window.location.reload();
   };
 
   return (

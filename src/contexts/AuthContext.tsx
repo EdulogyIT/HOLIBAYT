@@ -133,19 +133,24 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   };
 
   const logout = async () => {
+    console.log('[AuthContext] Logout initiated');
+    
+    // Try to sign out from Supabase, but don't let errors block local cleanup
+    const { error } = await supabase.auth.signOut();
+    if (error) {
+      console.warn('[AuthContext] Supabase signOut error (will clear local state anyway):', error);
+    }
+    
+    // Always clear local state and storage, even if Supabase signOut failed
+    console.log('[AuthContext] Clearing local state and storage');
+    setUser(null);
+    setSession(null);
+    
+    // Force clear localStorage as a fallback
     try {
-      console.log('[AuthContext] Logout initiated');
-      const { error } = await supabase.auth.signOut();
-      if (error) {
-        console.error('[AuthContext] Logout error:', error);
-        throw error;
-      }
-      console.log('[AuthContext] Logout successful, clearing state');
-      setUser(null);
-      setSession(null);
-    } catch (error) {
-      console.error('[AuthContext] Logout error:', error);
-      throw error;
+      localStorage.removeItem('supabase.auth.token');
+    } catch (e) {
+      console.warn('[AuthContext] Could not clear localStorage:', e);
     }
   };
 
