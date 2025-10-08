@@ -322,7 +322,8 @@ export default function HostPayouts() {
 
       toast({
         title: "Success",
-        description: `Withdrawal request for ${formatPrice(amount)} submitted successfully. An admin will review your request.`
+        description: `Withdrawal request for ${formatPrice(amount, currentCurrency)} submitted successfully. An admin will review your request.`,
+        variant: "default"
       });
 
       setShowWithdrawModal(false);

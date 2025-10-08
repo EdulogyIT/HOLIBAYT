@@ -347,7 +347,9 @@ export default function HostBookings() {
             <CardTitle className="text-sm font-medium text-muted-foreground">Total Bookings</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{bookings.length}</div>
+            <div className="text-2xl font-bold">
+              {getUpcomingBookings().length + getPastBookings().length + getCancelledBookings().length}
+            </div>
           </CardContent>
         </Card>
         <Card>
