@@ -352,18 +352,18 @@ const Property = () => {
                           <>
                             <div className="flex justify-between text-sm font-inter">
                               <span className="text-muted-foreground">
-                                {nights} nights × {formatPrice(dailyPrice)}
+                                {nights} nights × {formatPrice(dailyPrice, undefined, property.price_currency)}
                               </span>
-                              <span className="font-medium">{formatPrice(subtotal)}</span>
+                              <span className="font-medium">{formatPrice(subtotal, undefined, property.price_currency)}</span>
                             </div>
                             <div className="flex justify-between text-sm font-inter">
                               <span className="text-muted-foreground">Taxes</span>
-                              <span className="font-medium">{formatPrice(taxes)}</span>
+                              <span className="font-medium">{formatPrice(taxes, undefined, property.price_currency)}</span>
                             </div>
                             <Separator />
                             <div className="flex justify-between font-semibold font-inter">
                               <span>Total</span>
-                              <span>{formatPrice(total)}</span>
+                              <span>{formatPrice(total, undefined, property.price_currency)}</span>
                             </div>
                             <Button 
                               variant="link" 
