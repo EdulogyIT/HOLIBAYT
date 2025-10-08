@@ -24,6 +24,24 @@
 
   <body>
     <div id="root"></div>
+    <script>
+  (async () => {
+    try {
+      // Call your Supabase Edge Function (or API route) that checks maintenance mode
+      const resp = await fetch("https://YOUR-PROJECT.supabase.co/functions/v1/check-maintenance");
+      const { allowed } = await resp.json();
+
+      if (!allowed) {
+        // Redirect to static maintenance page before React loads
+        window.location.replace("/maintenance.html");
+      }
+    } catch (err) {
+      console.error("Maintenance check failed", err);
+      // Fail open (allow site if API fails)
+    }
+  })();
+</script>
+
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
