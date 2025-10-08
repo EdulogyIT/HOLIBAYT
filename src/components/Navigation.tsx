@@ -35,9 +35,15 @@ const Navigation = () => {
     setIsMenuOpen(false); // Close mobile menu when changing language
   };
 
-  const handleLogout = () => {
-    logout();
-    navigate('/');
+  const handleLogout = async () => {
+    try {
+      console.log('[Navigation] Logout button clicked');
+      await logout();
+      console.log('[Navigation] Logout completed, navigating to home');
+      navigate('/');
+    } catch (error) {
+      console.error('[Navigation] Logout failed:', error);
+    }
   };
 
   return (

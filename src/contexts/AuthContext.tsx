@@ -134,9 +134,18 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   const logout = async () => {
     try {
-      await supabase.auth.signOut();
+      console.log('[AuthContext] Logout initiated');
+      const { error } = await supabase.auth.signOut();
+      if (error) {
+        console.error('[AuthContext] Logout error:', error);
+        throw error;
+      }
+      console.log('[AuthContext] Logout successful, clearing state');
+      setUser(null);
+      setSession(null);
     } catch (error) {
-      console.error('Logout error:', error);
+      console.error('[AuthContext] Logout error:', error);
+      throw error;
     }
   };
 
