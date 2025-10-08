@@ -39,12 +39,16 @@ serve(async (req) => {
     if (!user) throw new Error("User not authenticated");
     logStep("User authenticated", { userId: user.id });
 
-    // Get host payment account
+    // Get host payment account - get the most recent one with a stripe_account_id
     const { data: paymentAccount, error: accountError } = await supabaseClient
       .from("host_payment_accounts")
       .select("stripe_account_id")
       .eq("user_id", user.id)
-      .single();
+      .not("stripe_account_id", "is", null)
+      .eq("is_active", true)
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .maybeSingle();
 
     if (accountError || !paymentAccount?.stripe_account_id) {
       throw new Error("No Stripe account found for this user");
