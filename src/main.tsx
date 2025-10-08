@@ -8,7 +8,6 @@ import { CurrencyProvider } from "./contexts/CurrencyContext";
 import { PlatformSettingsProvider } from "./contexts/PlatformSettingsContext";
 
 import App from './App';
-import { MaintenanceMode } from "@/components/MaintenanceMode";
 
 createRoot(document.getElementById("root")!).render(
   <BrowserRouter>
@@ -16,10 +15,7 @@ createRoot(document.getElementById("root")!).render(
       <PlatformSettingsProvider>
         <LanguageProvider>
           <CurrencyProvider>
-            {/* ✅ MaintenanceMode wraps everything, including App */}
-            <MaintenanceMode>
-              <App />
-            </MaintenanceMode>
+            <App />
           </CurrencyProvider>
         </LanguageProvider>
       </PlatformSettingsProvider>

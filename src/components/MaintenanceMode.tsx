@@ -17,13 +17,23 @@ const toBool = (v: any) => {
 
 export const MaintenanceMode = ({ children }: { children: React.ReactNode }) => {
   const { generalSettings } = usePlatformSettings();
-  const { user, login } = useAuth();
+  const { user, login, isAuthenticated } = useAuth();
 
   const [dbMaintenanceMode, setDbMaintenanceMode] = useState<boolean | null>(null);
   const [isChecking, setIsChecking] = useState(true);
+  const [isAuthChecking, setIsAuthChecking] = useState(true);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoggingIn, setIsLoggingIn] = useState(false);
+
+  // Wait for auth to initialize
+  useEffect(() => {
+    // Give auth context time to check for existing session
+    const timer = setTimeout(() => {
+      setIsAuthChecking(false);
+    }, 500);
+    return () => clearTimeout(timer);
+  }, [user, isAuthenticated]);
 
   // Fetch maintenance status and subscribe to real-time changes
   useEffect(() => {
@@ -66,8 +76,8 @@ export const MaintenanceMode = ({ children }: { children: React.ReactNode }) => 
   const maintenanceOn =
     toBool(generalSettings?.maintenance_mode) || dbMaintenanceMode === true;
 
-  // Show loading spinner while checking maintenance status
-  if (isChecking) {
+  // Show loading spinner while checking maintenance status and auth
+  if (isChecking || isAuthChecking) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-background">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
@@ -87,7 +97,7 @@ export const MaintenanceMode = ({ children }: { children: React.ReactNode }) => 
   };
 
   // 🚨 If maintenance is ON and user is not admin → always show maintenance page
-  if (maintenanceOn && user?.role !== "admin") {
+  if (maintenanceOn && (!user || user?.role !== "admin")) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-background p-4">
         <Card className="max-w-md w-full">
