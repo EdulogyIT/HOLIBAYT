@@ -1,12 +1,13 @@
 import { createRoot } from 'react-dom/client'
 import { BrowserRouter } from "react-router-dom";
-import App from './App.tsx'
 import './index.css'
+
 import { LanguageProvider } from "./contexts/LanguageContext";
 import { AuthProvider } from "./contexts/AuthContext";
 import { CurrencyProvider } from "./contexts/CurrencyContext";
 import { PlatformSettingsProvider } from "./contexts/PlatformSettingsContext";
-import { MaintenanceMode } from "./components/MaintenanceMode";
+
+import App from './App';
 
 createRoot(document.getElementById("root")!).render(
   <BrowserRouter>
@@ -14,9 +15,8 @@ createRoot(document.getElementById("root")!).render(
       <PlatformSettingsProvider>
         <LanguageProvider>
           <CurrencyProvider>
-            <MaintenanceMode>
-              <App />
-            </MaintenanceMode>
+            {/* No MaintenanceMode here anymore */}
+            <App />
           </CurrencyProvider>
         </LanguageProvider>
       </PlatformSettingsProvider>
