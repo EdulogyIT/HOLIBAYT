@@ -9,8 +9,6 @@ import { AdminLayout } from "@/components/layouts/AdminLayout";
 import { HostLayout } from "@/components/layouts/HostLayout";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 
-import { MaintenanceMode } from "@/components/MaintenanceMode"; // ✅ Move here
-
 // import all pages...
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
@@ -62,68 +60,87 @@ const App = () => (
         <Toaster />
         <Sonner />
 
-        {/* ✅ Wrap ALL routes in MaintenanceMode */}
-        <MaintenanceMode>
-          <Routes>
-            {/* Public routes */}
-            <Route path="/" element={<Index />} />
-            <Route path="/buy" element={<Buy />} />
-            <Route path="/rent" element={<Rent />} />
-            <Route path="/short-stay" element={<ShortStay />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/blog" element={<Blog />} />
-            <Route path="/blog/:id" element={<BlogPost />} />
-            <Route path="/messages" element={<Messages />} />
-            <Route path="/property/:id" element={<Property />} />
-            <Route path="/city/:cityId" element={<City />} />
-            <Route path="/contact-advisor" element={<ContactAdvisor />} />
+        {/* ✅ Routes only — MaintenanceMode is now applied globally in index.tsx */}
+        <Routes>
+          {/* Public routes */}
+          <Route path="/" element={<Index />} />
+          <Route path="/buy" element={<Buy />} />
+          <Route path="/rent" element={<Rent />} />
+          <Route path="/short-stay" element={<ShortStay />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/blog" element={<Blog />} />
+          <Route path="/blog/:id" element={<BlogPost />} />
+          <Route path="/messages" element={<Messages />} />
+          <Route path="/property/:id" element={<Property />} />
+          <Route path="/city/:cityId" element={<City />} />
+          <Route path="/contact-advisor" element={<ContactAdvisor />} />
 
-            {/* Payment routes */}
-            <Route path="/payment-success" element={<PaymentSuccess />} />
-            <Route path="/payment-cancelled" element={<PaymentCancelled />} />
-            <Route path="/booking/success" element={<BookingSuccess />} />
-            <Route path="/booking/cancel" element={<BookingCancel />} />
+          {/* Payment routes */}
+          <Route path="/payment-success" element={<PaymentSuccess />} />
+          <Route path="/payment-cancelled" element={<PaymentCancelled />} />
+          <Route path="/booking/success" element={<BookingSuccess />} />
+          <Route path="/booking/cancel" element={<BookingCancel />} />
 
-            {/* Auth routes */}
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/register" element={<RegisterPage />} />
+          {/* Auth routes */}
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
 
-            {/* Protected routes */}
-            <Route path="/publish-property" element={
+          {/* Protected routes */}
+          <Route
+            path="/publish-property"
+            element={
               <ProtectedRoute requireAuth>
                 <PublishProperty />
               </ProtectedRoute>
-            } />
-            <Route path="/edit-property/:id" element={
+            }
+          />
+          <Route
+            path="/edit-property/:id"
+            element={
               <ProtectedRoute requireAuth>
                 <EditProperty />
               </ProtectedRoute>
-            } />
-            <Route path="/bookings" element={
+            }
+          />
+          <Route
+            path="/bookings"
+            element={
               <ProtectedRoute requireAuth>
                 <Bookings />
               </ProtectedRoute>
-            } />
-            <Route path="/profile" element={
+            }
+          />
+          <Route
+            path="/profile"
+            element={
               <ProtectedRoute requireAuth>
                 <Profile />
               </ProtectedRoute>
-            } />
-            <Route path="/wishlist" element={
+            }
+          />
+          <Route
+            path="/wishlist"
+            element={
               <ProtectedRoute requireAuth>
                 <Wishlist />
               </ProtectedRoute>
-            } />
+            }
+          />
 
-            {/* Host onboarding */}
-            <Route path="/host/onboarding" element={
+          {/* Host onboarding */}
+          <Route
+            path="/host/onboarding"
+            element={
               <ProtectedRoute requireAuth>
                 <HostOnboarding />
               </ProtectedRoute>
-            } />
+            }
+          />
 
-            {/* Admin routes */}
-            <Route path="/admin/*" element={
+          {/* Admin routes */}
+          <Route
+            path="/admin/*"
+            element={
               <ProtectedRoute requiredRole="admin">
                 <AdminLayout>
                   <Routes>
@@ -141,10 +158,13 @@ const App = () => (
                   </Routes>
                 </AdminLayout>
               </ProtectedRoute>
-            } />
+            }
+          />
 
-            {/* Host routes */}
-            <Route path="/host/*" element={
+          {/* Host routes */}
+          <Route
+            path="/host/*"
+            element={
               <ProtectedRoute requiredRole="host">
                 <HostLayout>
                   <Routes>
@@ -157,12 +177,12 @@ const App = () => (
                   </Routes>
                 </HostLayout>
               </ProtectedRoute>
-            } />
+            }
+          />
 
-            {/* Catch-all */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </MaintenanceMode>
+          {/* Catch-all */}
+          <Route path="*" element={<NotFound />} />
+        </Routes>
       </ErrorBoundary>
     </TooltipProvider>
   </QueryClientProvider>
