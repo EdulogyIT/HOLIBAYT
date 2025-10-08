@@ -18,14 +18,16 @@ serve(async (req) => {
 
     console.log('Fetching DZD to EUR exchange rate from OANDA...');
 
+    // Get today's date in YYYY-MM-DD format
+    const today = new Date().toISOString().split('T')[0];
+    
     // Fetch from OANDA Currency Converter API
-    // Note: OANDA doesn't have a public API for the converter page
-    // We'll use their historical rates API endpoint which is more reliable
     const response = await fetch(
-      'https://www.oanda.com/fx-for-business/historical-rates/api/data/update/?source=DZD&destinations=EUR&start=2025-10-08&end=2025-10-08&view=graph&base_currency_select=true',
+      `https://www.oanda.com/fx-for-business/historical-rates/api/data/update/?source=DZD&destinations=EUR&start=${today}&end=${today}&view=graph&base_currency_select=true`,
       {
         headers: {
           'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+          'Accept': 'application/json',
         }
       }
     );
@@ -39,17 +41,22 @@ serve(async (req) => {
 
     // Extract the latest rate from OANDA response
     // OANDA returns data in format: {base_currency: {...}, quotes: {EUR: [...rates...]}}
-    let dzdToEurRate = 0.0069; // fallback
+    let dzdToEurRate = 0.00655; // Updated fallback to current rate
     
     if (data?.quotes?.EUR && Array.isArray(data.quotes.EUR) && data.quotes.EUR.length > 0) {
       // Get the most recent rate (last element)
       const latestRate = data.quotes.EUR[data.quotes.EUR.length - 1];
       if (latestRate?.mid) {
         dzdToEurRate = parseFloat(latestRate.mid);
+        console.log(`Successfully extracted rate from OANDA: ${dzdToEurRate}`);
+      } else if (Array.isArray(latestRate) && latestRate.length >= 2) {
+        // Sometimes OANDA returns [timestamp, rate] format
+        dzdToEurRate = parseFloat(latestRate[1]);
+        console.log(`Extracted rate from array format: ${dzdToEurRate}`);
       }
     }
 
-    console.log(`Extracted DZD to EUR rate: ${dzdToEurRate}`);
+    console.log(`Final DZD to EUR rate: ${dzdToEurRate}`);
 
     // Update the platform settings with the new rate
     const { error: updateError } = await supabaseClient

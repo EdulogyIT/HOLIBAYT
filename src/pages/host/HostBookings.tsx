@@ -255,7 +255,7 @@ export default function HostBookings() {
               <div className="flex items-center gap-2">
                 <DollarSign className="h-4 w-4 text-muted-foreground" />
                 <span className="text-lg font-semibold">
-                  {formatPrice(Number(booking.total_amount), booking.payments?.currency || 'DZD')}
+                  {formatPrice(Number(booking.total_amount), undefined, booking.payments?.currency || 'EUR')}
                 </span>
               </div>
               <div className="flex gap-2">

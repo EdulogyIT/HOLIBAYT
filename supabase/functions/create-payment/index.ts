@@ -182,15 +182,23 @@ serve(async (req) => {
     const productName = `${paymentType.replace(/_/g, " ")} - ${property.title}`;
     
     // Handle currency conversion for Stripe
-    // Stripe doesn't support DZD, so we convert to EUR
-    // USD and EUR are supported directly by Stripe
-    const DZD_TO_EUR_RATE = 145;
+    // Stripe doesn't support DZD, so we convert to EUR using dynamic rate
     let stripeAmount = amount;
     let stripeCurrency = (currency || "USD").toUpperCase();
     
     if (stripeCurrency === "DZD") {
+      // Fetch dynamic DZD to EUR rate from platform settings
+      const { data: rateSettings } = await dbClient
+        .from("platform_settings")
+        .select("setting_value")
+        .eq("setting_key", "currency_exchange_rates")
+        .single();
+      
+      const dzdToEurRate = (rateSettings?.setting_value as any)?.dzd_to_eur || 0.00655;
+      console.log(`[CREATE-PAYMENT] Using dynamic DZD to EUR rate: ${dzdToEurRate}`);
+      
       // Convert DZD to EUR for Stripe
-      stripeAmount = Math.round((amount / DZD_TO_EUR_RATE) * 100) / 100;
+      stripeAmount = Math.round((amount * dzdToEurRate) * 100) / 100;
       stripeCurrency = "EUR";
       console.log(`[CREATE-PAYMENT] Converting DZD ${amount} to EUR ${stripeAmount}`);
     } else if (stripeCurrency === "USD" || stripeCurrency === "EUR") {

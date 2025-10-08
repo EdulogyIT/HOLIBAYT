@@ -136,10 +136,14 @@ export const CurrencyProvider = ({ children }: CurrencyProviderProps) => {
     let amountInDZD = numAmount;
     
     if (sourceCurrency === 'USD') {
+      // USD to DZD: divide by the DZD-to-USD rate (or multiply by USD-to-DZD)
       amountInDZD = numAmount / exchangeRates.USD;
     } else if (sourceCurrency === 'EUR') {
+      // EUR to DZD: divide by the DZD-to-EUR rate
+      // If dzd_to_eur = 0.00655, then eur_to_dzd = 1/0.00655 = 152.67
       amountInDZD = numAmount / exchangeRates.EUR;
     }
+    // If sourceCurrency is 'DZD', amountInDZD stays as numAmount
     
     // Now convert from DZD to display currency
     let convertedAmount = amountInDZD;

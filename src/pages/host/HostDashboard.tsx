@@ -177,8 +177,8 @@ export default function HostDashboard() {
             <CalendarDays className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{formatPrice(monthlyRevenue)}</div>
-            <p className="text-xs text-muted-foreground">Total earnings</p>
+            <div className="text-2xl font-bold">{formatPrice(monthlyRevenue, undefined, 'EUR')}</div>
+            <p className="text-xs text-muted-foreground">Total earnings from completed bookings</p>
           </CardContent>
         </Card>
       </div>
