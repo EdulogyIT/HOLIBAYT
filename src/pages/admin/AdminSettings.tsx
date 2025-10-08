@@ -69,7 +69,7 @@ export default function AdminSettings() {
           case 'general_settings':
             setPlatformName(value?.platform_name || 'Holibayt');
             setSupportEmail(value?.support_email || 'contact@holibayt.com');
-            setMaintenanceMode(value?.maintenance_mode || false);
+            setMaintenanceMode(typeof value?.maintenance_mode === 'boolean' ? value.maintenance_mode : false);
             break;
           case 'commission_rates':
             setDefaultCommission(value?.default || 15);

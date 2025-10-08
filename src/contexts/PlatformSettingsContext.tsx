@@ -89,10 +89,11 @@ export const PlatformSettingsProvider = ({ children }: PlatformSettingsProviderP
         const value = setting.setting_value as any;
         switch (setting.setting_key) {
           case 'general_settings':
+            console.log('[PlatformSettings] Raw maintenance_mode:', value?.maintenance_mode, typeof value?.maintenance_mode);
             setGeneralSettings({
               platform_name: value?.platform_name || 'Holibayt',
               support_email: value?.support_email || 'contact@holibayt.com',
-              maintenance_mode: value?.maintenance_mode || false
+              maintenance_mode: typeof value?.maintenance_mode === 'boolean' ? value.maintenance_mode : false
             });
             break;
           case 'commission_rates':
