@@ -176,35 +176,53 @@ serve(async (req) => {
 
       logStep("No booking conflicts - proceeding with booking creation");
       
-      // Get property details for commission calculation
-      const { data: property } = await dbClient
-        .from('properties')
-        .select('commission_rate, user_id')
-        .eq('id', payment.property_id)
-        .single();
+      // Check if booking already exists for this payment (idempotency check)
+      const { data: existingBooking } = await dbClient
+        .from("bookings")
+        .select("*")
+        .eq("payment_id", paymentId)
+        .maybeSingle();
+
+      let booking = existingBooking;
+      let bookingCreateError = null;
       
-      const { data: booking, error: bookingCreateError } = await dbClient
-        .from('bookings')
-        .insert({
-          user_id: user.id,
-          property_id: payment.property_id,
-          payment_id: paymentId,
-          check_in_date: bookingData.checkInDate,
-          check_out_date: bookingData.checkOutDate,
-          guests_count: bookingData.guestsCount,
-          total_amount: payment.amount,
-          booking_fee: payment.payment_type === 'booking_fee' ? payment.amount : 0,
-          security_deposit: payment.payment_type === 'security_deposit' ? payment.amount : 0,
-          special_requests: bookingData.specialRequests,
-          contact_phone: bookingData.contactPhone,
-          status: 'confirmed',
-        })
-        .select()
-        .single();
+      if (existingBooking) {
+        logStep("Booking already exists for this payment", { bookingId: existingBooking.id });
+      } else {
+        // Get property details for commission calculation
+        const { data: property } = await dbClient
+          .from('properties')
+          .select('commission_rate, user_id')
+          .eq('id', payment.property_id)
+          .single();
+        
+        // Create new booking
+        const { data: newBooking, error: createError } = await dbClient
+          .from('bookings')
+          .insert({
+            user_id: user.id,
+            property_id: payment.property_id,
+            payment_id: paymentId,
+            check_in_date: bookingData.checkInDate,
+            check_out_date: bookingData.checkOutDate,
+            guests_count: bookingData.guestsCount,
+            total_amount: payment.amount,
+            booking_fee: payment.payment_type === 'booking_fee' ? payment.amount : 0,
+            security_deposit: payment.payment_type === 'security_deposit' ? payment.amount : 0,
+            special_requests: bookingData.specialRequests,
+            contact_phone: bookingData.contactPhone,
+            status: 'confirmed',
+          })
+          .select()
+          .single();
+
+        booking = newBooking;
+        bookingCreateError = createError;
+      }
 
       if (bookingCreateError) {
         logStep("Booking creation failed", { error: bookingCreateError.message });
-      } else {
+      } else if (booking) {
         logStep("Booking created successfully", { bookingId: booking.id });
         
         // Get property and profile details for notifications
