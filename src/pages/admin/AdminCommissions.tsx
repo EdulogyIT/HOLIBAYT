@@ -12,6 +12,7 @@ interface CommissionData {
   commission_rate: number;
   commission_amount: number;
   host_amount: number;
+  host_user_id: string;
   status: string;
   created_at: string;
   properties: {
@@ -21,14 +22,11 @@ interface CommissionData {
   payments: {
     currency: string;
   };
-  host_profile: {
-    name: string;
-    email: string;
-  } | null;
 }
 
 export default function AdminCommissions() {
   const [commissions, setCommissions] = useState<CommissionData[]>([]);
+  const [hosts, setHosts] = useState<Record<string, { name: string; email: string }>>({});
   const [loading, setLoading] = useState(true);
   const [timeFilter, setTimeFilter] = useState('all');
   const [totalCommissions, setTotalCommissions] = useState(0);
@@ -46,10 +44,9 @@ export default function AdminCommissions() {
         .select(`
           *,
           properties!inner(id, title),
-          payments!inner(currency),
-          host_profile:profiles!commission_transactions_host_user_id_fkey(name, email)
+          payments!inner(currency)
         `)
-        .order('created_at', { ascending: false});
+        .order('created_at', { ascending: false });
 
       // Apply time filter
       if (timeFilter !== 'all') {
@@ -74,6 +71,21 @@ export default function AdminCommissions() {
       if (error) throw error;
 
       setCommissions(data || []);
+
+      // Fetch host profiles for all transactions
+      const hostIds = [...new Set(data?.map(c => c.host_user_id) || [])];
+      if (hostIds.length > 0) {
+        const { data: profilesData } = await supabase
+          .from('profiles')
+          .select('id, name, email')
+          .in('id', hostIds);
+        
+        const profilesMap: Record<string, { name: string; email: string }> = {};
+        profilesData?.forEach(profile => {
+          profilesMap[profile.id] = { name: profile.name || '', email: profile.email };
+        });
+        setHosts(profilesMap);
+      }
 
       // Calculate totals
       const total = data?.reduce((sum, c) => sum + Number(c.commission_amount), 0) || 0;
@@ -221,7 +233,7 @@ export default function AdminCommissions() {
                       <div className="flex-1">
                         <p className="font-medium">{commission.properties?.title}</p>
                         <p className="text-sm text-muted-foreground">
-                          Host: {commission.host_profile?.name || commission.host_profile?.email || 'Unknown'}
+                          Host: {hosts[commission.host_user_id]?.name || hosts[commission.host_user_id]?.email || 'Unknown'}
                         </p>
                         <p className="text-xs text-muted-foreground mt-1">
                           {new Date(commission.created_at).toLocaleDateString()} • 
