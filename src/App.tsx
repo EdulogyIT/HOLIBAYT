@@ -3,10 +3,17 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Routes, Route } from "react-router-dom";
+
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { AdminLayout } from "@/components/layouts/AdminLayout";
 import { HostLayout } from "@/components/layouts/HostLayout";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
+
+// ⬇️ ADD THESE THREE IMPORTS
+import { AuthProvider } from "@/contexts/AuthContext";
+import { PlatformSettingsProvider } from "@/contexts/PlatformSettingsContext";
+import { MaintenanceMode } from "@/components/MaintenanceMode";
+
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import Buy from "./pages/Buy";
@@ -52,102 +59,137 @@ const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
       <ErrorBoundary>
+        {/* Keep toast providers outside so they work even on the maintenance screen */}
         <Toaster />
         <Sonner />
-        <Routes>
-              {/* Public routes */}
-              <Route path="/" element={<Index />} />
-              <Route path="/buy" element={<Buy />} />
-              <Route path="/rent" element={<Rent />} />
-              <Route path="/short-stay" element={<ShortStay />} />
-              <Route path="/about" element={<About />} />
-              <Route path="/blog" element={<Blog />} />
-              <Route path="/blog/:id" element={<BlogPost />} />
-              <Route path="/publish-property" element={
-                <ProtectedRoute requireAuth>
-                  <PublishProperty />
-                </ProtectedRoute>
-              } />
-              <Route path="/edit-property/:id" element={
-                <ProtectedRoute requireAuth>
-                  <EditProperty />
-                </ProtectedRoute>
-              } />
-              <Route path="/bookings" element={
-                <ProtectedRoute requireAuth>
-                  <Bookings />
-                </ProtectedRoute>
-              } />
-              <Route path="/profile" element={
-                <ProtectedRoute requireAuth>
-                  <Profile />
-                </ProtectedRoute>
-              } />
-              <Route path="/wishlist" element={
-                <ProtectedRoute requireAuth>
-                  <Wishlist />
-                </ProtectedRoute>
-              } />
-              <Route path="/messages" element={<Messages />} />
-              <Route path="/property/:id" element={<Property />} />
-              <Route path="/city/:cityId" element={<City />} />
-              <Route path="/contact-advisor" element={<ContactAdvisor />} />
-              
-              {/* Payment routes */}
-              <Route path="/payment-success" element={<PaymentSuccess />} />
-              <Route path="/payment-cancelled" element={<PaymentCancelled />} />
-              <Route path="/booking/success" element={<BookingSuccess />} />
-              <Route path="/booking/cancel" element={<BookingCancel />} />
-              
-              {/* Auth routes */}
-              <Route path="/login" element={<LoginPage />} />
-              <Route path="/register" element={<RegisterPage />} />
-              
-              {/* Host onboarding - requires login but not host role */}
-              <Route path="/host/onboarding" element={
-                <ProtectedRoute requireAuth>
-                  <HostOnboarding />
-                </ProtectedRoute>
-              } />
-              
-              {/* Admin routes */}
-              <Route path="/admin/*" element={
-                <ProtectedRoute requiredRole="admin">
-                  <AdminLayout>
-                    <Routes>
-                      <Route index element={<AdminDashboard />} />
-                      <Route path="profile" element={<AdminProfile />} />
-                      <Route path="properties" element={<AdminProperties />} />
-                      <Route path="users" element={<AdminUsers />} />
-                      <Route path="superhosts" element={<AdminSuperhost />} />
-                      <Route path="users/:userId" element={<Profile />} />
-                      <Route path="messages" element={<AdminMessages />} />
-                      <Route path="blogs" element={<AdminBlogs />} />
-                      <Route path="create-blog" element={<CreateBlog />} />
-                      <Route path="settings" element={<AdminSettings />} />
-                    </Routes>
-                  </AdminLayout>
-                </ProtectedRoute>
-              } />
-              
-              {/* Host routes */}
-              <Route path="/host/*" element={
-                <ProtectedRoute requiredRole="host">
-                  <HostLayout>
-                    <Routes>
-                      <Route index element={<HostDashboard />} />
-                      <Route path="calendar" element={<PropertyCalendar />} />
-                      <Route path="listings" element={<HostListings />} />
-                      <Route path="messages" element={<HostMessages />} />
-                      <Route path="payouts" element={<HostPayouts />} />
-                    </Routes>
-                  </HostLayout>
-                </ProtectedRoute>
-              } />
-              
-              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-              <Route path="*" element={<NotFound />} />
-        </Routes>
+
+        {/* ⬇️ WRAP THE WHOLE APP */}
+        <AuthProvider>
+          <PlatformSettingsProvider>
+            <MaintenanceMode>
+              <Routes>
+                {/* Public routes */}
+                <Route path="/" element={<Index />} />
+                <Route path="/buy" element={<Buy />} />
+                <Route path="/rent" element={<Rent />} />
+                <Route path="/short-stay" element={<ShortStay />} />
+                <Route path="/about" element={<About />} />
+                <Route path="/blog" element={<Blog />} />
+                <Route path="/blog/:id" element={<BlogPost />} />
+                <Route path="/messages" element={<Messages />} />
+                <Route path="/property/:id" element={<Property />} />
+                <Route path="/city/:cityId" element={<City />} />
+                <Route path="/contact-advisor" element={<ContactAdvisor />} />
+
+                {/* Payment routes */}
+                <Route path="/payment-success" element={<PaymentSuccess />} />
+                <Route path="/payment-cancelled" element={<PaymentCancelled />} />
+                <Route path="/booking/success" element={<BookingSuccess />} />
+                <Route path="/booking/cancel" element={<BookingCancel />} />
+
+                {/* Auth routes */}
+                <Route path="/login" element={<LoginPage />} />
+                <Route path="/register" element={<RegisterPage />} />
+
+                {/* Requires auth */}
+                <Route
+                  path="/publish-property"
+                  element={
+                    <ProtectedRoute requireAuth>
+                      <PublishProperty />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/edit-property/:id"
+                  element={
+                    <ProtectedRoute requireAuth>
+                      <EditProperty />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/bookings"
+                  element={
+                    <ProtectedRoute requireAuth>
+                      <Bookings />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/profile"
+                  element={
+                    <ProtectedRoute requireAuth>
+                      <Profile />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/wishlist"
+                  element={
+                    <ProtectedRoute requireAuth>
+                      <Wishlist />
+                    </ProtectedRoute>
+                  }
+                />
+
+                {/* Host onboarding (logged-in, any role) */}
+                <Route
+                  path="/host/onboarding"
+                  element={
+                    <ProtectedRoute requireAuth>
+                      <HostOnboarding />
+                    </ProtectedRoute>
+                  }
+                />
+
+                {/* Admin routes */}
+                <Route
+                  path="/admin/*"
+                  element={
+                    <ProtectedRoute requiredRole="admin">
+                      <AdminLayout>
+                        <Routes>
+                          <Route index element={<AdminDashboard />} />
+                          <Route path="profile" element={<AdminProfile />} />
+                          <Route path="properties" element={<AdminProperties />} />
+                          <Route path="users" element={<AdminUsers />} />
+                          <Route path="superhosts" element={<AdminSuperhost />} />
+                          <Route path="users/:userId" element={<Profile />} />
+                          <Route path="messages" element={<AdminMessages />} />
+                          <Route path="blogs" element={<AdminBlogs />} />
+                          <Route path="create-blog" element={<CreateBlog />} />
+                          <Route path="settings" element={<AdminSettings />} />
+                        </Routes>
+                      </AdminLayout>
+                    </ProtectedRoute>
+                  }
+                />
+
+                {/* Host routes */}
+                <Route
+                  path="/host/*"
+                  element={
+                    <ProtectedRoute requiredRole="host">
+                      <HostLayout>
+                        <Routes>
+                          <Route index element={<HostDashboard />} />
+                          <Route path="calendar" element={<PropertyCalendar />} />
+                          <Route path="listings" element={<HostListings />} />
+                          <Route path="messages" element={<HostMessages />} />
+                          <Route path="payouts" element={<HostPayouts />} />
+                        </Routes>
+                      </HostLayout>
+                    </ProtectedRoute>
+                  }
+                />
+
+                {/* Catch-all */}
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </MaintenanceMode>
+          </PlatformSettingsProvider>
+        </AuthProvider>
       </ErrorBoundary>
     </TooltipProvider>
   </QueryClientProvider>
