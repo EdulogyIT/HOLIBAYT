@@ -108,8 +108,9 @@ export default function HostPayouts() {
         .eq('user_id', user?.id)
         .eq('is_active', true)
         .not('stripe_account_id', 'is', null)
+        .order('created_at', { ascending: false })
         .limit(1)
-        .single();
+        .maybeSingle();
 
       // If account exists but not verified, try to verify it
       if (data?.stripe_account_id && !data?.is_verified) {
