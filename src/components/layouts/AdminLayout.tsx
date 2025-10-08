@@ -46,6 +46,7 @@ export const AdminLayout = ({ children }: AdminLayoutProps) => {
     { title: t('admin.properties'), url: '/admin/properties', icon: Building2 },
     { title: t('admin.hostsGuests'), url: '/admin/users', icon: Users },
     { title: 'Superhosts', url: '/admin/superhosts', icon: Users },
+    { title: 'Withdrawals', url: '/admin/withdrawals', icon: Calendar },
     { title: t('admin.messages'), url: '/admin/messages', icon: MessageSquare },
     { title: 'Blogs', url: '/admin/blogs', icon: FileText },
     { title: t('admin.settings'), url: '/admin/settings', icon: Settings },

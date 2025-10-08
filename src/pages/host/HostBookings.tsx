@@ -3,10 +3,10 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Calendar, MapPin, User, DollarSign, Phone, Mail, Clock } from 'lucide-react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useCurrency } from '@/contexts/CurrencyContext';
 import { supabase } from '@/integrations/supabase/client';
-import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 
@@ -47,6 +47,7 @@ export default function HostBookings() {
   const navigate = useNavigate();
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [loading, setLoading] = useState(true);
+  const [contactingGuest, setContactingGuest] = useState<string | null>(null);
 
   useEffect(() => {
     fetchBookings();
@@ -269,9 +270,48 @@ export default function HostBookings() {
                 <Button 
                   variant="default" 
                   size="sm"
-                  onClick={() => navigate(`/messages?conversation=${booking.id}`)}
+                  disabled={contactingGuest === booking.id}
+                  onClick={async () => {
+                    setContactingGuest(booking.id);
+                    try {
+                      // Check if conversation exists
+                      const { data: existingConv } = await supabase
+                        .from('conversations')
+                        .select('id')
+                        .or(`and(user_id.eq.${user?.id},recipient_id.eq.${booking.user_id}),and(user_id.eq.${booking.user_id},recipient_id.eq.${user?.id})`)
+                        .limit(1)
+                        .single();
+
+                      if (existingConv) {
+                        navigate(`/messages?conversation=${existingConv.id}`);
+                      } else {
+                        // Create new conversation
+                        const { data: newConv, error } = await supabase
+                          .from('conversations')
+                          .insert({
+                            user_id: user?.id,
+                            recipient_id: booking.user_id,
+                            property_id: booking.properties.id,
+                            conversation_type: 'property_inquiry',
+                            subject: `Booking for ${booking.properties.title}`
+                          })
+                          .select()
+                          .single();
+                        
+                        if (error) throw error;
+                        if (newConv) {
+                          navigate(`/messages?conversation=${newConv.id}`);
+                        }
+                      }
+                    } catch (error) {
+                      console.error('Error creating conversation:', error);
+                      toast.error('Failed to open conversation');
+                    } finally {
+                      setContactingGuest(null);
+                    }
+                  }}
                 >
-                  Contact Guest
+                  {contactingGuest === booking.id ? 'Loading...' : 'Contact Guest'}
                 </Button>
               </div>
             </div>

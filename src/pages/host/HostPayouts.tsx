@@ -285,7 +285,7 @@ export default function HostPayouts() {
     if (amount > availableBalance) {
       toast({
         title: "Error",
-        description: "Withdrawal amount exceeds available balance",
+        description: `Withdrawal amount (${formatPrice(amount)}) exceeds available balance (${formatPrice(availableBalance)})`,
         variant: "destructive"
       });
       return;
@@ -301,12 +301,13 @@ export default function HostPayouts() {
     }
 
     try {
+      // Insert with the exact amount entered by user (in DZD)
       const { error } = await supabase
         .from('withdrawal_requests')
         .insert({
           host_user_id: user?.id,
           payment_account_id: selectedAccountId,
-          amount: amount,
+          amount: amount, // Use the exact amount entered
           status: 'pending'
         });
 
@@ -314,14 +315,13 @@ export default function HostPayouts() {
 
       toast({
         title: "Success",
-        description: "Withdrawal request submitted successfully"
+        description: `Withdrawal request for ${formatPrice(amount)} submitted successfully. An admin will review your request.`
       });
 
       setShowWithdrawModal(false);
       setWithdrawalAmount('');
       setSelectedAccountId('');
       fetchWithdrawalRequests();
-      fetchCommissionTransactions();
     } catch (error) {
       console.error('Error creating withdrawal request:', error);
       toast({
