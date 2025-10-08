@@ -13,18 +13,27 @@ import { useToast } from '@/hooks/use-toast';
 // Routes that should be accessible even during maintenance
 const MAINTENANCE_EXEMPT_ROUTES = ['/login', '/register', '/maintenance.html'];
 
+// Utility to coerce any value to boolean
+const toBool = (v: unknown): boolean => {
+  if (typeof v === 'boolean') return v;
+  if (typeof v === 'string') return v.toLowerCase() === 'true';
+  if (typeof v === 'number') return v === 1;
+  return false;
+};
+
 export const MaintenanceMode = ({ children }: { children: React.ReactNode }) => {
   const { generalSettings, loading: settingsLoading, settingsInitialized } = usePlatformSettings();
   const { user, login, logout } = useAuth();
   const { toast } = useToast();
   const location = useLocation();
+
   const [shouldBlock, setShouldBlock] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoggingIn, setIsLoggingIn] = useState(false);
   const [dbMaintenanceMode, setDbMaintenanceMode] = useState<boolean | null>(null);
 
-  // Direct database query on mount
+  // Direct DB query once on mount to verify
   useEffect(() => {
     const verifyMaintenanceStatus = async () => {
       try {
@@ -36,8 +45,8 @@ export const MaintenanceMode = ({ children }: { children: React.ReactNode }) => 
 
         if (error) throw error;
 
-        const maintenanceMode = (data?.setting_value as any)?.maintenance_mode || false;
-        console.log('[MaintenanceMode] Direct DB query result:', { maintenanceMode });
+        const maintenanceMode = toBool((data?.setting_value as any)?.maintenance_mode);
+        console.log('[MaintenanceMode] Direct DB query result:', maintenanceMode);
         setDbMaintenanceMode(maintenanceMode);
       } catch (error) {
         console.error('[MaintenanceMode] Error fetching maintenance status:', error);
@@ -48,61 +57,44 @@ export const MaintenanceMode = ({ children }: { children: React.ReactNode }) => 
     verifyMaintenanceStatus();
   }, []);
 
+  // Decide whether to block current route
   useEffect(() => {
-    // Wait until settings are loaded and DB query is complete
     if (settingsLoading || !settingsInitialized || dbMaintenanceMode === null) return;
 
-    // Check if current route is exempt from maintenance
-    const isExemptRoute = MAINTENANCE_EXEMPT_ROUTES.some(route => 
+    const isExemptRoute = MAINTENANCE_EXEMPT_ROUTES.some(route =>
       location.pathname.startsWith(route)
     );
 
     if (isExemptRoute) {
-      console.log('[MaintenanceMode] Exempt route, allowing access:', location.pathname);
       setShouldBlock(false);
       return;
     }
 
-    // If maintenance is OFF, always allow access
     if (!dbMaintenanceMode) {
       setShouldBlock(false);
       return;
     }
 
-    // Maintenance is ON - only block non-admin users
-    console.log('[MaintenanceMode] Status check:', { 
-      dbMaintenanceMode,
-      userRole: user?.role,
-      userEmail: user?.email,
-      currentPath: location.pathname
-    });
-
-    // Allow admin access
-    if (user && user.role === 'admin') {
+    if (user?.role === 'admin') {
       setShouldBlock(false);
       return;
     }
 
-    // Block everyone else
     setShouldBlock(true);
   }, [dbMaintenanceMode, user, settingsLoading, settingsInitialized, location.pathname]);
 
-  // Force logout non-admin users when maintenance mode is enabled
+  // Force logout for non-admins during maintenance
   useEffect(() => {
-    // Only check if we're not on an exempt route
-    const isExemptRoute = MAINTENANCE_EXEMPT_ROUTES.some(route => 
+    const isExemptRoute = MAINTENANCE_EXEMPT_ROUTES.some(route =>
       location.pathname.startsWith(route)
     );
 
     if (!isExemptRoute && dbMaintenanceMode && user && user.role !== 'admin') {
-      console.log('[MaintenanceMode] Forcing logout - non-admin during maintenance:', user.email);
-      
       logout();
-      
       toast({
-        title: "Maintenance Mode Active",
-        description: "The platform is under maintenance. Only administrators can access at this time.",
-        variant: "destructive",
+        title: 'Maintenance Mode Active',
+        description: 'The platform is under maintenance. Only administrators can access.',
+        variant: 'destructive',
       });
     }
   }, [dbMaintenanceMode, user, logout, toast, location.pathname]);
@@ -113,49 +105,43 @@ export const MaintenanceMode = ({ children }: { children: React.ReactNode }) => 
 
     try {
       const success = await login(email, password);
-      
+
       if (!success) {
         toast({
-          title: "Login Failed",
-          description: "Invalid credentials. Please try again.",
-          variant: "destructive",
+          title: 'Login Failed',
+          description: 'Invalid credentials. Please try again.',
+          variant: 'destructive',
         });
         setIsLoggingIn(false);
         return;
       }
 
-      // Wait a bit for the user context to update
-      setTimeout(() => {
-        setIsLoggingIn(false);
-      }, 1000);
+      setTimeout(() => setIsLoggingIn(false), 1000);
     } catch (error) {
       console.error('Login error:', error);
       toast({
-        title: "Login Failed",
-        description: "An error occurred. Please try again.",
-        variant: "destructive",
+        title: 'Login Failed',
+        description: 'An error occurred. Please try again.',
+        variant: 'destructive',
       });
       setIsLoggingIn(false);
     }
   };
 
-  // After login, verify admin status during maintenance
+  // Non-admins who manage to log in during maintenance → logout
   useEffect(() => {
     if (user && dbMaintenanceMode && user.role && user.role !== 'admin') {
-      console.log('[MaintenanceMode] Non-admin logged in during maintenance, logging out:', user.email);
-      
       logout();
       toast({
-        title: "Access Denied",
-        description: "Platform is under maintenance. Only administrators can access at this time.",
-        variant: "destructive",
+        title: 'Access Denied',
+        description: 'Platform is under maintenance. Only administrators can access.',
+        variant: 'destructive',
       });
       setEmail('');
       setPassword('');
     }
   }, [user, dbMaintenanceMode, logout, toast]);
 
-  // Show loading only until initial settings are loaded
   if (settingsLoading || !settingsInitialized || dbMaintenanceMode === null) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -183,7 +169,7 @@ export const MaintenanceMode = ({ children }: { children: React.ReactNode }) => 
           <CardContent className="space-y-6">
             <div className="text-center space-y-4">
               <p className="text-sm text-muted-foreground">
-                Our platform is temporarily unavailable while we perform important updates. 
+                Our platform is temporarily unavailable while we perform important updates.
                 We'll be back online shortly.
               </p>
               <p className="text-sm text-muted-foreground">
@@ -191,7 +177,6 @@ export const MaintenanceMode = ({ children }: { children: React.ReactNode }) => 
               </p>
             </div>
 
-            {/* Admin Login Form */}
             <div className="border-t pt-6">
               <h3 className="text-sm font-semibold mb-4 text-center">Administrator Login</h3>
               <form onSubmit={handleAdminLogin} className="space-y-4">
@@ -219,11 +204,7 @@ export const MaintenanceMode = ({ children }: { children: React.ReactNode }) => 
                     disabled={isLoggingIn}
                   />
                 </div>
-                <Button 
-                  type="submit" 
-                  className="w-full"
-                  disabled={isLoggingIn}
-                >
+                <Button type="submit" className="w-full" disabled={isLoggingIn}>
                   {isLoggingIn ? 'Logging in...' : 'Admin Login'}
                 </Button>
               </form>
@@ -232,7 +213,7 @@ export const MaintenanceMode = ({ children }: { children: React.ReactNode }) => 
             <div className="text-center pt-4 border-t">
               <p className="text-xs text-muted-foreground">
                 For urgent matters, please contact: <br />
-                <a 
+                <a
                   href={`mailto:${generalSettings.support_email}`}
                   className="text-primary hover:underline"
                 >
