@@ -22,26 +22,34 @@
     <meta name="twitter:image" content="/lovable-uploads/b974fb79-9873-41fb-b3ad-9b4bf38b8a77.png" />
   </head>
 
-  <body>
-    <div id="root"></div>
-    <script>
-  (async () => {
-    try {
-      // Call your Supabase Edge Function (or API route) that checks maintenance mode
-      const resp = await fetch("https://YOUR-PROJECT.supabase.co/functions/v1/check-maintenance");
-      const { allowed } = await resp.json();
+<body>
+  <div id="root"></div>
 
-      if (!allowed) {
-        // Redirect to static maintenance page before React loads
-        window.location.replace("/maintenance.html");
+  <script>
+    // Hide React root until maintenance check finishes
+    document.write("<style>#root{display:none}</style>");
+
+    (async () => {
+      try {
+        const resp = await fetch("https://YOUR-PROJECT.supabase.co/functions/v1/check-maintenance");
+        const { allowed } = await resp.json();
+
+        if (!allowed) {
+          // Redirect immediately if in maintenance
+          window.location.replace("/maintenance.html");
+        } else {
+          // Reveal app root and let React load
+          document.getElementById("root").style.display = "block";
+        }
+      } catch (err) {
+        console.error("Maintenance check failed", err);
+        // Fail open = show app
+        document.getElementById("root").style.display = "block";
       }
-    } catch (err) {
-      console.error("Maintenance check failed", err);
-      // Fail open (allow site if API fails)
-    }
-  })();
-</script>
+    })();
+  </script>
 
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
+  <script type="module" src="/src/main.tsx"></script>
+</body>
+
 </html>
