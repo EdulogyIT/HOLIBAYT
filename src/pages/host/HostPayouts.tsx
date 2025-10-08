@@ -53,11 +53,44 @@ export default function HostPayouts() {
     const refresh = searchParams.get('refresh');
     
     if (success === 'true') {
-      toast({
-        title: "Stripe Connected Successfully",
-        description: "Your Stripe account is now connected. Payouts will be automatic."
-      });
-      fetchStripeStatus();
+      // Verify the Stripe account after successful onboarding
+      const verifyAccount = async () => {
+        try {
+          const { data: sessionData } = await supabase.auth.getSession();
+          if (!sessionData.session) return;
+
+          const { data, error } = await supabase.functions.invoke('verify-stripe-account', {
+            headers: {
+              Authorization: `Bearer ${sessionData.session.access_token}`,
+            },
+          });
+          
+          if (error) throw error;
+          
+          if (data?.is_verified) {
+            toast({
+              title: "Stripe Connected Successfully",
+              description: "Your Stripe account is verified. Automatic payouts are enabled."
+            });
+          } else {
+            toast({
+              title: "Stripe Account Connected",
+              description: "Verification in progress. This may take a few moments.",
+            });
+          }
+          
+          fetchStripeStatus();
+        } catch (error) {
+          console.error('Error verifying Stripe account:', error);
+          toast({
+            title: "Connected but Verification Failed",
+            description: "Please refresh the page or contact support.",
+            variant: "destructive"
+          });
+        }
+      };
+      
+      verifyAccount();
     } else if (refresh === 'true') {
       toast({
         title: "Please Try Again",
@@ -78,6 +111,27 @@ export default function HostPayouts() {
         .limit(1)
         .single();
 
+      // If account exists but not verified, try to verify it
+      if (data?.stripe_account_id && !data?.is_verified) {
+        try {
+          const { data: sessionData } = await supabase.auth.getSession();
+          if (sessionData.session) {
+            const { data: verifyData, error: verifyError } = await supabase.functions.invoke('verify-stripe-account', {
+              headers: {
+                Authorization: `Bearer ${sessionData.session.access_token}`,
+              },
+            });
+            
+            if (!verifyError && verifyData?.is_verified) {
+              setIsStripeConnected(true);
+              return;
+            }
+          }
+        } catch (verifyError) {
+          console.error('Error verifying account:', verifyError);
+        }
+      }
+      
       setIsStripeConnected(!!data?.stripe_account_id && data?.is_verified);
     } catch (error) {
       console.error('Error checking Stripe status:', error);
