@@ -288,31 +288,9 @@ serve(async (req) => {
           logStep("No host user_id found for notifications", { propertyDetails });
         }
         
-        // Create commission transaction for the host
-        if (property && payment.payment_type === 'booking_fee') {
-          const commissionRate = property.commission_rate || 0.15;
-          const commissionAmount = payment.amount * commissionRate;
-          const hostAmount = payment.amount - commissionAmount;
-          
-          const { error: commissionError } = await dbClient
-            .from('commission_transactions')
-            .insert({
-              payment_id: paymentId,
-              property_id: payment.property_id,
-              host_user_id: property.user_id,
-              total_amount: payment.amount,
-              commission_rate: commissionRate,
-              commission_amount: commissionAmount,
-              host_amount: hostAmount,
-              status: 'pending'
-            });
-          
-          if (commissionError) {
-            logStep("Commission transaction creation failed", { error: commissionError.message });
-          } else {
-            logStep("Commission transaction created successfully");
-          }
-        }
+        // NOTE: Commission transaction is automatically created by database trigger
+        // on booking insert (create_commission_transaction_on_booking function)
+        logStep("Commission transaction will be created by database trigger");
       }
     }
 

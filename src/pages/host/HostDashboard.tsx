@@ -64,10 +64,16 @@ export default function HostDashboard() {
     if (!user) return;
     
     try {
+      // Get current month start date
+      const now = new Date();
+      const monthStart = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
+      
       const { data, error } = await supabase
         .from('commission_transactions')
-        .select('host_amount')
-        .eq('host_user_id', user.id);
+        .select('host_amount, status')
+        .eq('host_user_id', user.id)
+        .eq('status', 'completed') // Only count completed commissions
+        .gte('created_at', monthStart);
 
       if (error) {
         console.error('Error fetching revenue:', error);
