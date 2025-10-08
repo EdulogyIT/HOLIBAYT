@@ -28,6 +28,7 @@ interface BookingWithProperty {
   contact_phone?: string;
   special_requests?: string;
   created_at: string;
+  payment_id: string;
   properties: {
     id: string;
     title: string;
@@ -39,6 +40,9 @@ interface BookingWithProperty {
     contact_phone: string;
     user_id: string;
     category: string;
+  };
+  payments?: {
+    currency: string;
   };
 }
 
@@ -85,6 +89,7 @@ const Bookings = () => {
           contact_phone,
           special_requests,
           created_at,
+          payment_id,
           properties:property_id (
             id,
             title,
@@ -96,6 +101,9 @@ const Bookings = () => {
             contact_phone,
             user_id,
             category
+          ),
+          payments:payment_id (
+            currency
           )
         `)
         .eq('user_id', user.id)
@@ -311,7 +319,7 @@ const Bookings = () => {
 
               <div className="text-sm">
                 <span className="text-muted-foreground">Total Amount: </span>
-                <span className="font-semibold">{formatPrice(booking.total_amount)}</span>
+                <span className="font-semibold">{formatPrice(booking.total_amount, undefined, booking.payments?.currency || 'EUR')}</span>
               </div>
 
               <div className="text-sm text-muted-foreground">
