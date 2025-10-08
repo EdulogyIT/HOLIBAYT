@@ -40,8 +40,6 @@ const Navigation = () => {
     await logout();
     console.log('[Navigation] Logout completed, navigating to home');
     navigate('/');
-    // Force reload to ensure clean state
-    window.location.reload();
   };
 
   return (
