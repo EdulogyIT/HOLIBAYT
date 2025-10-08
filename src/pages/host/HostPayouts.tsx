@@ -9,7 +9,7 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Plus, CreditCard, Building2, CheckCircle, AlertCircle, Trash2, DollarSign, Clock } from 'lucide-react';
+import { Plus, CreditCard, Building2, CheckCircle, AlertCircle, Trash2, DollarSign, Clock, Wallet, ArrowDownToLine } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 interface PaymentAccount {
@@ -45,17 +45,36 @@ interface CommissionTransaction {
   };
 }
 
+interface WithdrawalRequest {
+  id: string;
+  amount: number;
+  status: string;
+  rejection_reason?: string;
+  created_at: string;
+  processed_at?: string;
+  payment_account_id?: string;
+  host_payment_accounts?: {
+    bank_name: string;
+    account_number: string;
+  };
+}
+
 export default function HostPayouts() {
   const { user } = useAuth();
   const { formatPrice } = useCurrency();
   const { toast } = useToast();
   const [paymentAccounts, setPaymentAccounts] = useState<PaymentAccount[]>([]);
   const [commissionTransactions, setCommissionTransactions] = useState<CommissionTransaction[]>([]);
+  const [withdrawalRequests, setWithdrawalRequests] = useState<WithdrawalRequest[]>([]);
   const [loading, setLoading] = useState(true);
   const [showAddAccount, setShowAddAccount] = useState(false);
+  const [showWithdrawModal, setShowWithdrawModal] = useState(false);
   const [totalEarnings, setTotalEarnings] = useState(0);
   const [withdrawnAmount, setWithdrawnAmount] = useState(0);
   const [pendingAmount, setPendingAmount] = useState(0);
+  const [availableBalance, setAvailableBalance] = useState(0);
+  const [withdrawalAmount, setWithdrawalAmount] = useState('');
+  const [selectedAccountId, setSelectedAccountId] = useState('');
   const [formData, setFormData] = useState({
     bank_name: '',
     account_holder_name: '',
@@ -75,6 +94,12 @@ export default function HostPayouts() {
       fetchCommissionTransactions();
     }
   }, [user]);
+
+  useEffect(() => {
+    if (user) {
+      fetchWithdrawalRequests();
+    }
+  }, [user, totalEarnings]);
 
   const fetchPaymentAccounts = async () => {
     try {
@@ -113,19 +138,45 @@ export default function HostPayouts() {
       setCommissionTransactions(data || []);
 
       // Calculate earnings breakdown
-      const total = data?.reduce((sum, t) => sum + Number(t.host_amount), 0) || 0;
-      const withdrawn = data?.filter(t => t.status === 'completed')
+      const completedEarnings = data?.filter(t => t.status === 'completed')
         .reduce((sum, t) => sum + Number(t.host_amount), 0) || 0;
       const pending = data?.filter(t => t.status === 'pending')
         .reduce((sum, t) => sum + Number(t.host_amount), 0) || 0;
 
-      setTotalEarnings(total);
-      setWithdrawnAmount(withdrawn);
+      setTotalEarnings(completedEarnings);
       setPendingAmount(pending);
     } catch (error) {
       console.error('Error fetching commission transactions:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchWithdrawalRequests = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('withdrawal_requests')
+        .select(`
+          *,
+          host_payment_accounts(bank_name, account_number)
+        `)
+        .eq('host_user_id', user?.id)
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      setWithdrawalRequests(data || []);
+
+      // Calculate withdrawn and available amounts
+      const withdrawn = data?.filter(r => r.status === 'completed')
+        .reduce((sum, r) => sum + Number(r.amount), 0) || 0;
+      setWithdrawnAmount(withdrawn);
+
+      // Available balance = completed earnings - (completed + pending withdrawals)
+      const pendingWithdrawals = data?.filter(r => r.status === 'pending' || r.status === 'approved')
+        .reduce((sum, r) => sum + Number(r.amount), 0) || 0;
+      setAvailableBalance(totalEarnings - withdrawn - pendingWithdrawals);
+    } catch (error) {
+      console.error('Error fetching withdrawal requests:', error);
     }
   };
 
@@ -196,6 +247,69 @@ export default function HostPayouts() {
     }
   };
 
+  const handleWithdrawalRequest = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    const amount = parseFloat(withdrawalAmount);
+    if (isNaN(amount) || amount <= 0) {
+      toast({
+        title: "Error",
+        description: "Please enter a valid amount",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    if (amount > availableBalance) {
+      toast({
+        title: "Error",
+        description: "Withdrawal amount exceeds available balance",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    if (!selectedAccountId) {
+      toast({
+        title: "Error",
+        description: "Please select a payment account",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    try {
+      const { error } = await supabase
+        .from('withdrawal_requests')
+        .insert({
+          host_user_id: user?.id,
+          payment_account_id: selectedAccountId,
+          amount: amount,
+          status: 'pending'
+        });
+
+      if (error) throw error;
+
+      toast({
+        title: "Success",
+        description: "Withdrawal request submitted successfully"
+      });
+
+      setShowWithdrawModal(false);
+      setWithdrawalAmount('');
+      setSelectedAccountId('');
+      fetchWithdrawalRequests();
+      fetchCommissionTransactions();
+    } catch (error) {
+      console.error('Error creating withdrawal request:', error);
+      toast({
+        title: "Error",
+        description: "Failed to submit withdrawal request",
+        variant: "destructive"
+      });
+    }
+  };
+
 
   if (loading) {
     return (
@@ -218,7 +332,7 @@ export default function HostPayouts() {
       </div>
 
       {/* Earnings Overview */}
-      <div className="grid gap-4 md:grid-cols-4">
+      <div className="grid gap-4 md:grid-cols-5">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Earnings</CardTitle>
@@ -226,7 +340,18 @@ export default function HostPayouts() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{formatPrice(totalEarnings)}</div>
-            <p className="text-xs text-muted-foreground mt-1">All-time earnings</p>
+            <p className="text-xs text-muted-foreground mt-1">Completed commissions</p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Available Balance</CardTitle>
+            <Wallet className="h-4 w-4 text-blue-600" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-blue-600">{formatPrice(availableBalance)}</div>
+            <p className="text-xs text-muted-foreground mt-1">Ready to withdraw</p>
           </CardContent>
         </Card>
 
@@ -248,7 +373,7 @@ export default function HostPayouts() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-yellow-600">{formatPrice(pendingAmount)}</div>
-            <p className="text-xs text-muted-foreground mt-1">Awaiting transfer</p>
+            <p className="text-xs text-muted-foreground mt-1">In bookings</p>
           </CardContent>
         </Card>
         
@@ -264,9 +389,83 @@ export default function HostPayouts() {
         </Card>
       </div>
 
+      {/* Withdrawal Request Button */}
+      {availableBalance > 0 && paymentAccounts.length > 0 && (
+        <Card className="border-blue-200 bg-blue-50/50">
+          <CardContent className="pt-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="font-semibold">Ready to withdraw {formatPrice(availableBalance)}</h3>
+                <p className="text-sm text-muted-foreground">Request a payout to your bank account</p>
+              </div>
+              <Button onClick={() => setShowWithdrawModal(true)} className="gap-2">
+                <ArrowDownToLine className="h-4 w-4" />
+                Request Withdrawal
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Withdrawal Modal */}
+      {showWithdrawModal && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Request Withdrawal</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleWithdrawalRequest} className="space-y-4">
+              <div>
+                <Label htmlFor="amount">Withdrawal Amount</Label>
+                <Input
+                  id="amount"
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  max={availableBalance}
+                  placeholder="Enter amount"
+                  value={withdrawalAmount}
+                  onChange={(e) => setWithdrawalAmount(e.target.value)}
+                  required
+                />
+                <p className="text-xs text-muted-foreground mt-1">
+                  Available balance: {formatPrice(availableBalance)}
+                </p>
+              </div>
+              <div>
+                <Label htmlFor="account">Payment Account</Label>
+                <Select value={selectedAccountId} onValueChange={setSelectedAccountId} required>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select account" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {paymentAccounts.map((account) => (
+                      <SelectItem key={account.id} value={account.id}>
+                        {account.bank_name} - ****{account.account_number.slice(-4)}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="flex gap-2">
+                <Button type="submit">Submit Request</Button>
+                <Button type="button" variant="outline" onClick={() => {
+                  setShowWithdrawModal(false);
+                  setWithdrawalAmount('');
+                  setSelectedAccountId('');
+                }}>
+                  Cancel
+                </Button>
+              </div>
+            </form>
+          </CardContent>
+        </Card>
+      )}
+
       <Tabs defaultValue="accounts" className="space-y-4">
         <TabsList>
           <TabsTrigger value="accounts">Payment Accounts</TabsTrigger>
+          <TabsTrigger value="withdrawals">Withdrawals</TabsTrigger>
           <TabsTrigger value="transactions">Transactions</TabsTrigger>
         </TabsList>
 
@@ -422,6 +621,65 @@ export default function HostPayouts() {
                 </CardContent>
               </Card>
             ))}
+          </div>
+        </TabsContent>
+
+        <TabsContent value="withdrawals" className="space-y-4">
+          <h2 className="text-xl font-semibold">Withdrawal History</h2>
+          
+          <div className="space-y-4">
+            {withdrawalRequests.map((request) => (
+              <Card key={request.id}>
+                <CardContent className="pt-6">
+                  <div className="flex justify-between items-start">
+                    <div className="space-y-2">
+                      <div className="flex items-center gap-2">
+                        <span className="font-medium text-lg">{formatPrice(request.amount)}</span>
+                        <Badge 
+                          variant={
+                            request.status === 'completed' ? 'default' : 
+                            request.status === 'approved' ? 'secondary' :
+                            request.status === 'pending' ? 'outline' : 'destructive'
+                          }
+                        >
+                          {request.status}
+                        </Badge>
+                      </div>
+                      {request.host_payment_accounts && (
+                        <p className="text-sm text-muted-foreground">
+                          To: {request.host_payment_accounts.bank_name} - ****{request.host_payment_accounts.account_number.slice(-4)}
+                        </p>
+                      )}
+                      {request.rejection_reason && (
+                        <p className="text-sm text-destructive">
+                          Rejection reason: {request.rejection_reason}
+                        </p>
+                      )}
+                      <div className="flex gap-4 text-xs text-muted-foreground">
+                        <span>Requested: {new Date(request.created_at).toLocaleDateString()}</span>
+                        {request.processed_at && (
+                          <span>Processed: {new Date(request.processed_at).toLocaleDateString()}</span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+            
+            {withdrawalRequests.length === 0 && (
+              <Card>
+                <CardContent className="pt-6">
+                  <div className="text-center py-8">
+                    <Wallet className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
+                    <h3 className="text-lg font-medium mb-2">No withdrawal requests yet</h3>
+                    <p className="text-muted-foreground">
+                      Your withdrawal requests will appear here. Request a payout when you have available balance.
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
           </div>
         </TabsContent>
 
