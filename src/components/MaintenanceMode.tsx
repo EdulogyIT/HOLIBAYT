@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { usePlatformSettings } from '@/contexts/PlatformSettingsContext';
+import { useLocation } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { AlertCircle } from 'lucide-react';
@@ -9,18 +10,21 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 
+// Routes that should be accessible even during maintenance
+const MAINTENANCE_EXEMPT_ROUTES = ['/login', '/register', '/maintenance.html'];
+
 export const MaintenanceMode = ({ children }: { children: React.ReactNode }) => {
   const { generalSettings, loading: settingsLoading, settingsInitialized } = usePlatformSettings();
   const { user, login, logout } = useAuth();
   const { toast } = useToast();
+  const location = useLocation();
   const [shouldBlock, setShouldBlock] = useState(false);
-  const [isCheckingAuth, setIsCheckingAuth] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoggingIn, setIsLoggingIn] = useState(false);
   const [dbMaintenanceMode, setDbMaintenanceMode] = useState<boolean | null>(null);
 
-  // CRITICAL: Direct database query on mount as safety measure
+  // Direct database query on mount
   useEffect(() => {
     const verifyMaintenanceStatus = async () => {
       try {
@@ -28,13 +32,13 @@ export const MaintenanceMode = ({ children }: { children: React.ReactNode }) => 
           .from('platform_settings')
           .select('setting_value')
           .eq('setting_key', 'general_settings')
-          .single();
+          .maybeSingle();
 
         if (error) throw error;
 
-        const maintenanceMode = (data?.setting_value as any)?.maintenance_mode;
-        console.log('[MaintenanceMode] Direct DB query result:', { maintenanceMode, type: typeof maintenanceMode });
-        setDbMaintenanceMode(typeof maintenanceMode === 'boolean' ? maintenanceMode : false);
+        const maintenanceMode = (data?.setting_value as any)?.maintenance_mode || false;
+        console.log('[MaintenanceMode] Direct DB query result:', { maintenanceMode });
+        setDbMaintenanceMode(maintenanceMode);
       } catch (error) {
         console.error('[MaintenanceMode] Error fetching maintenance status:', error);
         setDbMaintenanceMode(false);
@@ -45,59 +49,63 @@ export const MaintenanceMode = ({ children }: { children: React.ReactNode }) => 
   }, []);
 
   useEffect(() => {
-    // Wait until both settings are initialized AND db query is complete
+    // Wait until settings are loaded and DB query is complete
     if (settingsLoading || !settingsInitialized || dbMaintenanceMode === null) return;
 
-    // Use DB query result as source of truth
-    const isMaintenanceMode = dbMaintenanceMode;
-    
-    console.log('[MaintenanceMode] Status check:', { 
-      isMaintenanceMode,
-      contextValue: generalSettings.maintenance_mode,
-      dbValue: dbMaintenanceMode,
-      userRole: user?.role,
-      userEmail: user?.email 
-    });
+    // Check if current route is exempt from maintenance
+    const isExemptRoute = MAINTENANCE_EXEMPT_ROUTES.some(route => 
+      location.pathname.startsWith(route)
+    );
 
-    // If maintenance is OFF, always allow access
-    if (!isMaintenanceMode) {
+    if (isExemptRoute) {
+      console.log('[MaintenanceMode] Exempt route, allowing access:', location.pathname);
       setShouldBlock(false);
-      setIsCheckingAuth(false);
       return;
     }
 
-    // Maintenance is ON - check if we have user data
-    if (user === null) {
-      // No user logged in - block and show login form
-      setShouldBlock(true);
-      setIsCheckingAuth(false);
-    } else if (user.role === undefined || user.role === null) {
-      // User is logged in but role hasn't loaded yet - show checking state
-      setIsCheckingAuth(true);
+    // If maintenance is OFF, always allow access
+    if (!dbMaintenanceMode) {
       setShouldBlock(false);
-    } else {
-      // User data is complete - make final decision
-      setIsCheckingAuth(false);
-      const isAdmin = user.role === 'admin';
-      setShouldBlock(!isAdmin);
+      return;
     }
-  }, [dbMaintenanceMode, user, settingsLoading, settingsInitialized]);
 
-  // CRITICAL: Real-time enforcement - Force logout non-admin users when maintenance is enabled
+    // Maintenance is ON - only block non-admin users
+    console.log('[MaintenanceMode] Status check:', { 
+      dbMaintenanceMode,
+      userRole: user?.role,
+      userEmail: user?.email,
+      currentPath: location.pathname
+    });
+
+    // Allow admin access
+    if (user && user.role === 'admin') {
+      setShouldBlock(false);
+      return;
+    }
+
+    // Block everyone else
+    setShouldBlock(true);
+  }, [dbMaintenanceMode, user, settingsLoading, settingsInitialized, location.pathname]);
+
+  // Force logout non-admin users when maintenance mode is enabled
   useEffect(() => {
-    if (dbMaintenanceMode && user && user.role !== 'admin') {
-      console.log('[MaintenanceMode] FORCING LOGOUT - Maintenance enabled for non-admin user:', user.email);
+    // Only check if we're not on an exempt route
+    const isExemptRoute = MAINTENANCE_EXEMPT_ROUTES.some(route => 
+      location.pathname.startsWith(route)
+    );
+
+    if (!isExemptRoute && dbMaintenanceMode && user && user.role !== 'admin') {
+      console.log('[MaintenanceMode] Forcing logout - non-admin during maintenance:', user.email);
       
-      // Force immediate logout
       logout();
       
       toast({
         title: "Maintenance Mode Active",
-        description: "The platform is under maintenance. You have been logged out.",
+        description: "The platform is under maintenance. Only administrators can access at this time.",
         variant: "destructive",
       });
     }
-  }, [dbMaintenanceMode, user, logout, toast]);
+  }, [dbMaintenanceMode, user, logout, toast, location.pathname]);
 
   const handleAdminLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -131,48 +139,29 @@ export const MaintenanceMode = ({ children }: { children: React.ReactNode }) => 
     }
   };
 
-  // CRITICAL: After successful login, verify user is admin during maintenance
+  // After login, verify admin status during maintenance
   useEffect(() => {
-    if (user && dbMaintenanceMode) {
-      console.log('[MaintenanceMode] Login verification:', { 
-        userRole: user.role, 
-        isAdmin: user.role === 'admin',
-        email: user.email 
-      });
+    if (user && dbMaintenanceMode && user.role && user.role !== 'admin') {
+      console.log('[MaintenanceMode] Non-admin logged in during maintenance, logging out:', user.email);
       
-      if (user.role !== 'admin') {
-        // Non-admin tried to login during maintenance - logout immediately
-        console.log('[MaintenanceMode] Non-admin detected, forcing logout');
-        logout();
-        toast({
-          title: "Access Denied",
-          description: "Platform is under maintenance. Only administrators can login at this time.",
-          variant: "destructive",
-        });
-        setEmail('');
-        setPassword('');
-      }
+      logout();
+      toast({
+        title: "Access Denied",
+        description: "Platform is under maintenance. Only administrators can access at this time.",
+        variant: "destructive",
+      });
+      setEmail('');
+      setPassword('');
     }
   }, [user, dbMaintenanceMode, logout, toast]);
 
-  // Block access until settings are initialized and DB query completes
+  // Show loading only until initial settings are loaded
   if (settingsLoading || !settingsInitialized || dbMaintenanceMode === null) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
           <p className="mt-4 text-muted-foreground">Loading...</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (isCheckingAuth) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
-          <p className="mt-4 text-muted-foreground">Verifying access...</p>
         </div>
       </div>
     );
