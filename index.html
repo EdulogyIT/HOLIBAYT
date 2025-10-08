@@ -1,23 +1,24 @@
 <script>
-  // Hide React until maintenance status is known
+  // Hide React root until we know maintenance status
   document.write("<style>#root{display:none}</style>");
 
   (async () => {
     try {
-      const resp = await fetch("https://<YOUR_PROJECT>.supabase.co/functions/v1/check-maintenance");
+      // ✅ Replace with your real Supabase project ref
+      const resp = await fetch("https://vsruezynaanqprobpvrr.supabase.co/functions/v1/check-maintenance");
       const { allowed } = await resp.json();
 
       if (!allowed) {
-        // Redirect if maintenance mode ON
+        // Redirect to static maintenance page before React loads
         window.location.replace("/maintenance.html");
       } else {
-        // Show React app
-        document.getElementById("root").style.display = "block";
+        const root = document.getElementById("root");
+        if (root) root.style.display = "block";
       }
     } catch (err) {
       console.error("Maintenance check failed", err);
-      // Fail open = show app
-      document.getElementById("root").style.display = "block";
+      const root = document.getElementById("root");
+      if (root) root.style.display = "block"; // fail open
     }
   })();
 </script>
