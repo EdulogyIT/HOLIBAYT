@@ -62,37 +62,73 @@ export type Database = {
       blog_posts: {
         Row: {
           author_name: string
+          author_name_ar: string | null
+          author_name_en: string | null
+          author_name_fr: string | null
           category: string | null
+          category_ar: string | null
+          category_en: string | null
+          category_fr: string | null
           content: string
+          content_ar: string | null
+          content_en: string | null
+          content_fr: string | null
           created_at: string | null
           id: string
           image_url: string | null
           status: string | null
           title: string
+          title_ar: string | null
+          title_en: string | null
+          title_fr: string | null
           updated_at: string | null
           user_id: string
         }
         Insert: {
           author_name: string
+          author_name_ar?: string | null
+          author_name_en?: string | null
+          author_name_fr?: string | null
           category?: string | null
+          category_ar?: string | null
+          category_en?: string | null
+          category_fr?: string | null
           content: string
+          content_ar?: string | null
+          content_en?: string | null
+          content_fr?: string | null
           created_at?: string | null
           id?: string
           image_url?: string | null
           status?: string | null
           title: string
+          title_ar?: string | null
+          title_en?: string | null
+          title_fr?: string | null
           updated_at?: string | null
           user_id: string
         }
         Update: {
           author_name?: string
+          author_name_ar?: string | null
+          author_name_en?: string | null
+          author_name_fr?: string | null
           category?: string | null
+          category_ar?: string | null
+          category_en?: string | null
+          category_fr?: string | null
           content?: string
+          content_ar?: string | null
+          content_en?: string | null
+          content_fr?: string | null
           created_at?: string | null
           id?: string
           image_url?: string | null
           status?: string | null
           title?: string
+          title_ar?: string | null
+          title_en?: string | null
+          title_fr?: string | null
           updated_at?: string | null
           user_id?: string
         }
