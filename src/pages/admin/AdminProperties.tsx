@@ -36,6 +36,7 @@ import {
   Award
 } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useCurrency } from '@/contexts/CurrencyContext';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
@@ -61,6 +62,7 @@ import { BadgeManagementDialog } from '@/components/admin/BadgeManagementDialog'
 
 export default function AdminProperties() {
   const { t } = useLanguage();
+  const { formatPrice } = useCurrency();
   const navigate = useNavigate();
   const [properties, setProperties] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -291,7 +293,7 @@ export default function AdminProperties() {
       'City': property.city,
       'Location': property.location,
       'Owner': property.contact_name,
-      'Price': `${property.price} DA`,
+      'Price': formatPrice(property.price, property.price_type, property.price_currency),
       'Status': property.status || 'active',
       'Created Date': new Date(property.created_at).toLocaleDateString(),
       'Property Type': property.property_type,
@@ -492,7 +494,7 @@ export default function AdminProperties() {
                       </div>
                     </TableCell>
                     <TableCell>{property.contact_name}</TableCell>
-                    <TableCell>{property.price} DA</TableCell>
+                    <TableCell>{formatPrice(property.price, property.price_type, property.price_currency)}</TableCell>
                     <TableCell>
                       <Badge className={getStatusColor(property.status || 'active')}>
                         {property.status || 'active'}
