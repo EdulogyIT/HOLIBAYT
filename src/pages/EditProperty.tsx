@@ -30,6 +30,7 @@ interface PropertyData {
   floor_number: string;
   price: string;
   price_type: string;
+  price_currency: string;
   contact_name: string;
   contact_phone: string;
   contact_email: string;
@@ -81,7 +82,10 @@ export default function EditProperty() {
         return;
       }
 
-      setProperty(data);
+      setProperty({
+        ...data,
+        price_currency: data.price_currency || 'EUR'
+      });
     } catch (error) {
       console.error('Error fetching property:', error);
       toast({
@@ -116,6 +120,7 @@ export default function EditProperty() {
           floor_number: property.floor_number,
           price: property.price,
           price_type: property.price_type,
+          price_currency: property.price_currency,
           contact_name: property.contact_name,
           contact_phone: property.contact_phone,
           contact_email: property.contact_email,
@@ -454,7 +459,7 @@ export default function EditProperty() {
                 <CardTitle>Pricing</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="price">Price</Label>
                     <Input
@@ -462,6 +467,22 @@ export default function EditProperty() {
                       value={property.price}
                       onChange={(e) => updateField('price', e.target.value)}
                     />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="price_currency">Currency</Label>
+                    <Select 
+                      value={property.price_currency} 
+                      onValueChange={(value) => updateField('price_currency', value)}
+                    >
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="EUR">EUR (€)</SelectItem>
+                        <SelectItem value="DZD">DZD (DA)</SelectItem>
+                        <SelectItem value="USD">USD ($)</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="price_type">Price Type</Label>
