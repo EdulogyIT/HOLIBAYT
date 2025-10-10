@@ -21,6 +21,7 @@ import ScheduleVisitModal from "@/components/ScheduleVisitModal";
 import MessageOwnerModal from "@/components/MessageOwnerModal";
 import { PropertyReviews } from "@/components/PropertyReviews";
 import { usePropertyTranslation } from "@/hooks/usePropertyTranslation";
+import { HostProfileSection } from "@/components/HostProfileSection";
 
 interface Property {
   id: string;
@@ -169,7 +170,7 @@ const Property = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Main Content */}
-            <div className="lg:col-span-2 space-y-6">
+            <div className="lg:col-span-2 space-y-8">{/* Increased spacing from space-y-6 to space-y-8 */}
               {/* Property Images Gallery */}
               <div className="space-y-4">
                 <div className="aspect-video bg-muted rounded-lg overflow-hidden">
@@ -193,8 +194,8 @@ const Property = () => {
               </div>
 
               {/* Property Info */}
-              <Card>
-                <CardHeader>
+              <Card className="shadow-md">
+                <CardHeader className="pb-4">{/* Added padding bottom */}
                   <div className="flex justify-between items-start">
                      <div>
                        <CardTitle className="text-3xl mb-2 font-playfair">{translatedTitle || property.title}</CardTitle>
@@ -275,40 +276,56 @@ const Property = () => {
               </Card>
 
               {/* Features */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="font-playfair">{t('characteristics')}</CardTitle>
-                </CardHeader>
-                 <CardContent>
-                   <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                     {property.features && Object.entries(property.features).map(([key, value]) => (
-                       value && (
-                         <div key={key} className="flex items-center p-3 bg-muted/50 rounded-lg">
-                           <div className="w-2 h-2 bg-primary rounded-full mr-3" />
-                           <span className="text-sm font-inter">{t(key) || key}</span>
-                         </div>
-                       )
-                     ))}
-                   </div>
-                 </CardContent>
-               </Card>
-                 {/* Map */}
+              <Card className="shadow-md">
+                <CardHeader className="pb-4">{/* Added padding */}
+                  <CardTitle className="text-2xl font-playfair">{t('characteristics')}</CardTitle>{/* Increased title size */}
+                 </CardHeader>
+                  <CardContent>
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                      {property.features && Object.entries(property.features).map(([key, value]) => (
+                        value && (
+                          <div key={key} className="flex items-center p-3 bg-muted/50 rounded-lg">
+                            <div className="w-2 h-2 bg-primary rounded-full mr-3" />
+                            <span className="text-sm font-inter">{t(key) || key}</span>
+                          </div>
+                        )
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+
+               {/* Meet Your Host Section */}
+               <div className="border-t-2 border-border pt-8">{/* Added visual separator */}
+                 {property.user_id && (
+                   <HostProfileSection 
+                     userId={property.user_id}
+                     onContactHost={() => setIsMessageModalOpen(true)}
+                   />
+                 )}
+               </div>
+
+               {/* Map */}
+               <div className="border-t-2 border-border pt-8">
+                 <h2 className="text-2xl font-playfair font-semibold mb-6">Where you'll be</h2>
                  <StaticPropertyMap 
                    location={`${property.city}, ${property.location}`}
                    address={property.full_address || `${property.city}, ${property.location}`}
                  />
-                
-                {/* Reviews Section - Only for Short Stay */}
-                {property.category === 'short-stay' && property.user_id && (
-                  <PropertyReviews 
-                    propertyId={property.id}
-                    hostUserId={property.user_id}
-                  />
-                )}
+               </div>
+              
+               {/* Reviews Section - Only for Short Stay */}
+               <div className="border-t-2 border-border pt-8">{/* Added visual separator */}
+                 {property.category === 'short-stay' && property.user_id && (
+                   <PropertyReviews 
+                     propertyId={property.id}
+                     hostUserId={property.user_id}
+                   />
+                 )}
+               </div>
              </div>
 
             {/* Sidebar */}
-            <div className="space-y-6">
+            <div className="space-y-6 lg:sticky lg:top-24 lg:self-start">{/* Made sidebar sticky on desktop */}
               {/* Booking/Visit Section */}
               {property.category === 'short-stay' ? (
                 <div className="space-y-4">
@@ -318,7 +335,7 @@ const Property = () => {
                   />
                   
                   {/* Price Breakdown Card */}
-                  <Card>
+                  <Card className="shadow-md">{/* Added shadow */}
                     <CardHeader>
                       <CardTitle className="text-lg font-playfair">Price details</CardTitle>
                     </CardHeader>
@@ -377,7 +394,7 @@ const Property = () => {
                     </CardContent>
                   </Card>
                   
-                  <Card>
+                  <Card className="shadow-md">{/* Added shadow */}
                     <CardContent className="pt-6">
                       <BookingModal 
                         property={{
@@ -393,7 +410,7 @@ const Property = () => {
                   </Card>
                 </div>
               ) : property.category === 'sale' ? (
-                <Card>
+                <Card className="shadow-md">{/* Added shadow */}
                   <CardHeader>
                     <CardTitle className="font-playfair">
                       {t('purchaseProperty') || 'Purchase Property'}
@@ -433,7 +450,7 @@ const Property = () => {
                   </CardContent>
                 </Card>
               ) : (
-                <Card>
+                <Card className="shadow-md">{/* Added shadow */}
                   <CardHeader>
                     <CardTitle className="font-playfair">
                       {t('scheduleVisit') || 'Schedule Property Visit'}
@@ -475,7 +492,7 @@ const Property = () => {
               )}
 
               {/* Contact Owner */}
-              <Card>
+              <Card className="shadow-md">{/* Added shadow */}
                 <CardHeader>
                   <CardTitle className="flex items-center font-playfair">
                     <User className="w-5 h-5 mr-2" />
@@ -534,7 +551,7 @@ const Property = () => {
               </Card>
 
               {/* Property Details */}
-              <Card>
+              <Card className="shadow-md">{/* Added shadow */}
                 <CardHeader>
                   <CardTitle className="font-playfair">{t('listingDetails')}</CardTitle>
                 </CardHeader>
