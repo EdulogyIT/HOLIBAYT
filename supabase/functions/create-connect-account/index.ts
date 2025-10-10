@@ -98,7 +98,7 @@ serve(async (req) => {
           stripe_account_id: accountId,
           account_holder_name: profile?.name || 'Host',
           bank_name: 'Stripe Connect',
-          account_number: 'N/A',
+          account_number: accountId,
           account_type: 'express',
           country: 'FR',
           currency: 'EUR',
