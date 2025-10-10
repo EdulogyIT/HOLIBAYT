@@ -202,6 +202,10 @@ export default function HostDashboard() {
               <MessageSquare className="h-4 w-4 mr-2" />
               {t('host.messages')}
             </Button>
+            <Button variant="outline" onClick={() => navigate('/host/kyc')}>
+              <CheckCircle className="h-4 w-4 mr-2" />
+              Get Verified
+            </Button>
           </div>
         </CardContent>
       </Card>

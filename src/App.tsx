@@ -39,6 +39,7 @@ import AdminSettings from "./pages/admin/AdminSettings";
 import AdminBlogs from "./pages/admin/AdminBlogs";
 import AdminSuperhost from "./pages/admin/AdminSuperhost";
 import AdminCommissions from "./pages/admin/AdminCommissions";
+import AdminKYC from "./pages/admin/AdminKYC";
 import CreateBlog from "./pages/host/CreateBlog";
 import HostDashboard from "./pages/host/HostDashboard";
 import HostOnboarding from "./pages/host/HostOnboarding";
@@ -46,6 +47,7 @@ import HostListings from "./pages/host/HostListings";
 import HostMessages from "./pages/host/HostMessages";
 import HostPayouts from "./pages/host/HostPayouts";
 import HostBookings from "./pages/host/HostBookings";
+import HostKYC from "./pages/host/HostKYC";
 import PropertyCalendar from "@/components/PropertyCalendar";
 import PaymentSuccess from "./pages/PaymentSuccess";
 import PaymentCancelled from "./pages/PaymentCancelled";
@@ -169,6 +171,7 @@ const App = () => (
                     <Route path="blogs" element={<MaintenanceMode><AdminBlogs /></MaintenanceMode>} />
                     <Route path="create-blog" element={<MaintenanceMode><CreateBlog /></MaintenanceMode>} />
                     <Route path="settings" element={<MaintenanceMode><AdminSettings /></MaintenanceMode>} />
+                    <Route path="kyc" element={<MaintenanceMode><AdminKYC /></MaintenanceMode>} />
                   </Routes>
                 </AdminLayout>
               </ProtectedRoute>
@@ -188,6 +191,7 @@ const App = () => (
                     <Route path="listings" element={<MaintenanceMode><HostListings /></MaintenanceMode>} />
                     <Route path="messages" element={<MaintenanceMode><HostMessages /></MaintenanceMode>} />
                     <Route path="payouts" element={<MaintenanceMode><HostPayouts /></MaintenanceMode>} />
+                    <Route path="kyc" element={<MaintenanceMode><HostKYC /></MaintenanceMode>} />
                   </Routes>
                 </HostLayout>
               </ProtectedRoute>

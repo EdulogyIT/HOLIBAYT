@@ -23,6 +23,7 @@ import { HostProfileSection } from "@/components/HostProfileSection";
 import { GuestFavouriteBadge } from "@/components/GuestFavouriteBadge";
 import { RatingBreakdown } from "@/components/RatingBreakdown";
 import { ReviewTags } from "@/components/ReviewTags";
+import { RatingDistributionChart } from "@/components/RatingDistributionChart";
 
 interface Property {
   id: string;
@@ -63,6 +64,7 @@ const Property = () => {
   const [isScheduleModalOpen, setIsScheduleModalOpen] = useState(false);
   const [isMessageModalOpen, setIsMessageModalOpen] = useState(false);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
+  const [reviews, setReviews] = useState<Array<{ rating: number }>>([]);
   const [selectedDates, setSelectedDates] = useState<{ checkIn: Date | undefined; checkOut: Date | undefined }>({
     checkIn: undefined,
     checkOut: undefined
@@ -73,8 +75,23 @@ const Property = () => {
   useEffect(() => {
     if (id) {
       fetchProperty();
+      fetchReviews();
     }
   }, [id]);
+
+  const fetchReviews = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('reviews')
+        .select('rating')
+        .eq('property_id', id);
+
+      if (error) throw error;
+      setReviews(data || []);
+    } catch (error) {
+      console.error('Error fetching reviews:', error);
+    }
+  };
 
   const fetchProperty = async () => {
     try {
@@ -332,17 +349,21 @@ const Property = () => {
 
               {/* Rating Breakdown */}
               {averageRating > 0 && (
-                <RatingBreakdown 
-                  averageRating={averageRating}
-                  categoryRatings={{
-                    cleanliness: property.features?.cleanliness_rating,
-                    accuracy: property.features?.accuracy_rating,
-                    checkin: property.features?.checkin_rating,
-                    communication: property.features?.communication_rating,
-                    location: property.features?.location_rating,
-                    value: property.features?.value_rating,
-                  }}
-                />
+                <>
+                  <RatingDistributionChart reviews={reviews} />
+                  
+                  <RatingBreakdown 
+                    averageRating={averageRating}
+                    categoryRatings={{
+                      cleanliness: property.features?.cleanliness_rating,
+                      accuracy: property.features?.accuracy_rating,
+                      checkin: property.features?.checkin_rating,
+                      communication: property.features?.communication_rating,
+                      location: property.features?.location_rating,
+                      value: property.features?.value_rating,
+                    }}
+                  />
+                </>
               )}
 
               {/* Review Tags */}

@@ -1,5 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Star, Sparkles, CheckCircle, MessageCircle, MapPin, DollarSign } from "lucide-react";
+import { Star, Sparkles, CheckCircle, MessageCircle, MapPin, Tag } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 
 interface RatingBreakdownProps {
@@ -21,19 +21,16 @@ export const RatingBreakdown = ({ averageRating, categoryRatings }: RatingBreakd
     { key: "checkin", label: "Check-in", icon: Star, rating: categoryRatings?.checkin || 0 },
     { key: "communication", label: "Communication", icon: MessageCircle, rating: categoryRatings?.communication || 0 },
     { key: "location", label: "Location", icon: MapPin, rating: categoryRatings?.location || 0 },
-    { key: "value", label: "Value", icon: DollarSign, rating: categoryRatings?.value || 0 },
+    { key: "value", label: "Value", icon: Tag, rating: categoryRatings?.value || 0 },
   ];
 
   return (
-    <Card>
+    <Card className="border-2">
       <CardHeader>
-        <CardTitle className="text-2xl font-semibold flex items-center gap-2">
-          <Star className="w-6 h-6 fill-primary text-primary" />
-          {averageRating.toFixed(1)} · Rating Breakdown
-        </CardTitle>
+        <CardTitle className="text-xl font-semibold">Category Ratings</CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {categories.map((category) => {
             const Icon = category.icon;
             const percentage = (category.rating / 5) * 100;
@@ -42,10 +39,10 @@ export const RatingBreakdown = ({ averageRating, categoryRatings }: RatingBreakd
               <div key={category.key} className="space-y-2">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <Icon className="w-4 h-4 text-muted-foreground" />
-                    <span className="text-sm font-medium">{category.label}</span>
+                    <Icon className="w-5 h-5 text-primary" />
+                    <span className="font-medium">{category.label}</span>
                   </div>
-                  <span className="text-sm font-semibold">{category.rating.toFixed(1)}</span>
+                  <span className="text-lg font-bold">{category.rating.toFixed(1)}</span>
                 </div>
                 <Progress value={percentage} className="h-2" />
               </div>

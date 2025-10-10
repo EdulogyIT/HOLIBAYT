@@ -366,6 +366,114 @@ export type Database = {
           },
         ]
       }
+      host_kyc_submissions: {
+        Row: {
+          account_holder_name: string | null
+          account_number: string | null
+          address_line_1: string
+          address_line_2: string | null
+          address_proof_type: string | null
+          address_proof_url: string | null
+          admin_notes: string | null
+          bank_name: string | null
+          bio: string | null
+          city: string
+          country: string
+          created_at: string | null
+          date_of_birth: string
+          full_name: string
+          hosting_experience: string | null
+          iban: string | null
+          id: string
+          id_document_url: string | null
+          id_expiry_date: string
+          id_number: string
+          id_type: string
+          languages_spoken: string[] | null
+          nationality: string
+          phone_number: string
+          postal_code: string
+          rejection_reason: string | null
+          state: string
+          status: string
+          swift_code: string | null
+          updated_at: string | null
+          user_id: string
+          verified_at: string | null
+          verified_by: string | null
+        }
+        Insert: {
+          account_holder_name?: string | null
+          account_number?: string | null
+          address_line_1: string
+          address_line_2?: string | null
+          address_proof_type?: string | null
+          address_proof_url?: string | null
+          admin_notes?: string | null
+          bank_name?: string | null
+          bio?: string | null
+          city: string
+          country?: string
+          created_at?: string | null
+          date_of_birth: string
+          full_name: string
+          hosting_experience?: string | null
+          iban?: string | null
+          id?: string
+          id_document_url?: string | null
+          id_expiry_date: string
+          id_number: string
+          id_type: string
+          languages_spoken?: string[] | null
+          nationality: string
+          phone_number: string
+          postal_code: string
+          rejection_reason?: string | null
+          state: string
+          status?: string
+          swift_code?: string | null
+          updated_at?: string | null
+          user_id: string
+          verified_at?: string | null
+          verified_by?: string | null
+        }
+        Update: {
+          account_holder_name?: string | null
+          account_number?: string | null
+          address_line_1?: string
+          address_line_2?: string | null
+          address_proof_type?: string | null
+          address_proof_url?: string | null
+          admin_notes?: string | null
+          bank_name?: string | null
+          bio?: string | null
+          city?: string
+          country?: string
+          created_at?: string | null
+          date_of_birth?: string
+          full_name?: string
+          hosting_experience?: string | null
+          iban?: string | null
+          id?: string
+          id_document_url?: string | null
+          id_expiry_date?: string
+          id_number?: string
+          id_type?: string
+          languages_spoken?: string[] | null
+          nationality?: string
+          phone_number?: string
+          postal_code?: string
+          rejection_reason?: string | null
+          state?: string
+          status?: string
+          swift_code?: string | null
+          updated_at?: string | null
+          user_id?: string
+          verified_at?: string | null
+          verified_by?: string | null
+        }
+        Relationships: []
+      }
       host_payment_accounts: {
         Row: {
           account_holder_name: string
@@ -599,10 +707,13 @@ export type Database = {
           email: string
           id: string
           is_superhost: boolean | null
+          kyc_approved_at: string | null
+          kyc_submitted_at: string | null
           name: string | null
           role: Database["public"]["Enums"]["app_role"]
           total_reviews: number | null
           updated_at: string
+          verified_host: boolean | null
         }
         Insert: {
           avatar_url?: string | null
@@ -611,10 +722,13 @@ export type Database = {
           email: string
           id: string
           is_superhost?: boolean | null
+          kyc_approved_at?: string | null
+          kyc_submitted_at?: string | null
           name?: string | null
           role?: Database["public"]["Enums"]["app_role"]
           total_reviews?: number | null
           updated_at?: string
+          verified_host?: boolean | null
         }
         Update: {
           avatar_url?: string | null
@@ -623,10 +737,13 @@ export type Database = {
           email?: string
           id?: string
           is_superhost?: boolean | null
+          kyc_approved_at?: string | null
+          kyc_submitted_at?: string | null
           name?: string | null
           role?: Database["public"]["Enums"]["app_role"]
           total_reviews?: number | null
           updated_at?: string
+          verified_host?: boolean | null
         }
         Relationships: []
       }

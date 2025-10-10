@@ -40,21 +40,9 @@ const HeroSection = () => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
-  // Validation logic
+  // Validation logic - only location is required
   const isFormValid = () => {
-    if (!formData.location.trim()) return false;
-    
-    switch (selectedMode) {
-      case 'buy':
-        return formData.propertyType !== '' && formData.budget.trim() !== '';
-      case 'rent':
-        return formData.housingType !== '' && formData.maxRent.trim() !== '';
-      case 'stay':
-        const totalGuests = formData.travelers.adults + formData.travelers.children + formData.travelers.infants;
-        return formData.dateRange?.from && formData.dateRange?.to && totalGuests > 0;
-      default:
-        return false;
-    }
+    return formData.location.trim() !== '';
   };
 
   // Stay Date Picker Component using unified DateRangePicker

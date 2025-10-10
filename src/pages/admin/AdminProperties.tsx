@@ -33,7 +33,8 @@ import {
   Check,
   X,
   Ban,
-  Award
+  Award,
+  DollarSign
 } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useCurrency } from '@/contexts/CurrencyContext';
@@ -58,6 +59,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { exportToExcel, exportToPDF, exportToWord } from '@/utils/exportData';
 import { BadgeManagementDialog } from '@/components/admin/BadgeManagementDialog';
+import { PropertyFeesDialog } from '@/components/admin/PropertyFeesDialog';
 
 
 export default function AdminProperties() {
@@ -72,6 +74,7 @@ export default function AdminProperties() {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [propertyToDelete, setPropertyToDelete] = useState<string | null>(null);
   const [badgeDialogOpen, setBadgeDialogOpen] = useState(false);
+  const [feesDialogOpen, setFeesDialogOpen] = useState(false);
   const [selectedProperty, setSelectedProperty] = useState<any>(null);
 
   useEffect(() => {
@@ -547,6 +550,17 @@ export default function AdminProperties() {
                         <Button 
                           size="sm" 
                           variant="ghost"
+                          onClick={() => {
+                            setSelectedProperty(property);
+                            setFeesDialogOpen(true);
+                          }}
+                          title="Manage Fees"
+                        >
+                          <DollarSign className="h-4 w-4" />
+                        </Button>
+                        <Button 
+                          size="sm" 
+                          variant="ghost"
                           onClick={() => handleView(property.id)}
                           title="View Property"
                         >
@@ -616,6 +630,16 @@ export default function AdminProperties() {
             // Refresh properties list
             window.location.reload();
           }}
+        />
+      )}
+
+      {/* Property Fees Dialog */}
+      {selectedProperty && (
+        <PropertyFeesDialog
+          property={selectedProperty}
+          open={feesDialogOpen}
+          onOpenChange={setFeesDialogOpen}
+          onUpdate={() => window.location.reload()}
         />
       )}
     </div>
