@@ -203,6 +203,41 @@ export default function HostPayouts() {
     }
   };
 
+  const handleDisconnectStripe = async () => {
+    if (!confirm('Are you sure you want to disconnect your Stripe account? You will need to reconnect to receive future payouts.')) {
+      return;
+    }
+
+    try {
+      const { error } = await supabase
+        .from('host_payment_accounts')
+        .update({ 
+          is_active: false,
+          updated_at: new Date().toISOString()
+        })
+        .eq('user_id', user?.id)
+        .eq('is_active', true)
+        .not('stripe_account_id', 'is', null);
+
+      if (error) throw error;
+
+      toast({
+        title: "Stripe Disconnected",
+        description: "Your Stripe account has been disconnected. You can reconnect anytime."
+      });
+
+      setIsStripeConnected(false);
+      fetchStripeStatus();
+    } catch (error) {
+      console.error('Error disconnecting Stripe:', error);
+      toast({
+        title: "Error",
+        description: "Failed to disconnect Stripe account. Please try again.",
+        variant: "destructive"
+      });
+    }
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
@@ -260,14 +295,24 @@ export default function HostPayouts() {
       {isStripeConnected && (
         <Card className="border-green-200 bg-green-50/50">
           <CardContent className="pt-6">
-            <div className="flex items-center gap-2">
-              <CheckCircle className="h-5 w-5 text-green-600" />
-              <div>
-                <h3 className="font-semibold text-green-900">Stripe Connected</h3>
-                <p className="text-sm text-green-700">
-                  Your payouts are automatic. Funds are transferred when bookings are completed.
-                </p>
+            <div className="flex items-center justify-between gap-4">
+              <div className="flex items-center gap-2">
+                <CheckCircle className="h-5 w-5 text-green-600" />
+                <div>
+                  <h3 className="font-semibold text-green-900">Stripe Connected</h3>
+                  <p className="text-sm text-green-700">
+                    Your payouts are automatic. Funds are transferred when bookings are completed.
+                  </p>
+                </div>
               </div>
+              <Button 
+                variant="outline" 
+                size="sm"
+                onClick={handleDisconnectStripe}
+                className="text-red-600 hover:text-red-700 hover:bg-red-50 border-red-200"
+              >
+                Disconnect
+              </Button>
             </div>
           </CardContent>
         </Card>
