@@ -48,6 +48,12 @@ interface FormData {
   };
   description: string;
   
+  // Fees Configuration
+  fees: {
+    cleaningFee: {enabled: boolean; amount: number};
+    serviceFee: {enabled: boolean; amount: number};
+  };
+  
   // Contact Information
   fullName: string;
   phoneNumber: string;
@@ -95,12 +101,16 @@ const PublishPropertySteps = ({ onSubmit, isSubmitting = false }: PublishPropert
       petsAllowed: false,
     },
     description: "",
+    fees: {
+      cleaningFee: { enabled: false, amount: 0 },
+      serviceFee: { enabled: false, amount: 0 },
+    },
     fullName: "",
     phoneNumber: "",
     email: "",
   });
 
-  const handleInputChange = (field: string, value: string | boolean) => {
+  const handleInputChange = (field: string, value: string | boolean | number) => {
     if (field.startsWith('features.')) {
       const featureKey = field.split('.')[1];
       setFormData(prev => ({
@@ -108,6 +118,20 @@ const PublishPropertySteps = ({ onSubmit, isSubmitting = false }: PublishPropert
         features: {
           ...prev.features,
           [featureKey]: value
+        }
+      }));
+    } else if (field.startsWith('fees.')) {
+      const parts = field.split('.');
+      const feeType = parts[1]; // cleaningFee or serviceFee
+      const prop = parts[2]; // enabled or amount
+      setFormData(prev => ({
+        ...prev,
+        fees: {
+          ...prev.fees,
+          [feeType]: {
+            ...prev.fees[feeType as keyof typeof prev.fees],
+            [prop]: value
+          }
         }
       }));
     } else {
@@ -476,6 +500,55 @@ const PublishPropertySteps = ({ onSubmit, isSubmitting = false }: PublishPropert
                   rows={4}
                 />
               </div>
+
+              {/* Fees Configuration (for short-stay properties) */}
+              {formData.category === 'short-stay' && (
+                <Card className="bg-muted/30">
+                  <CardHeader>
+                    <CardTitle className="text-lg">Optional Fees</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="flex items-center justify-between p-3 bg-background rounded-lg">
+                      <div className="flex items-center space-x-3">
+                        <Checkbox
+                          id="cleaningFeeEnabled"
+                          checked={formData.fees.cleaningFee.enabled}
+                          onCheckedChange={(checked) => handleInputChange("fees.cleaningFee.enabled", checked)}
+                        />
+                        <Label htmlFor="cleaningFeeEnabled" className="cursor-pointer">Cleaning Fee</Label>
+                      </div>
+                      {formData.fees.cleaningFee.enabled && (
+                        <Input
+                          type="number"
+                          placeholder="Amount"
+                          className="w-32"
+                          value={formData.fees.cleaningFee.amount}
+                          onChange={(e) => handleInputChange("fees.cleaningFee.amount", Number(e.target.value))}
+                        />
+                      )}
+                    </div>
+                    <div className="flex items-center justify-between p-3 bg-background rounded-lg">
+                      <div className="flex items-center space-x-3">
+                        <Checkbox
+                          id="serviceFeeEnabled"
+                          checked={formData.fees.serviceFee.enabled}
+                          onCheckedChange={(checked) => handleInputChange("fees.serviceFee.enabled", checked)}
+                        />
+                        <Label htmlFor="serviceFeeEnabled" className="cursor-pointer">Service Fee</Label>
+                      </div>
+                      {formData.fees.serviceFee.enabled && (
+                        <Input
+                          type="number"
+                          placeholder="Amount"
+                          className="w-32"
+                          value={formData.fees.serviceFee.amount}
+                          onChange={(e) => handleInputChange("fees.serviceFee.amount", Number(e.target.value))}
+                        />
+                      )}
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
 
               {/* Image Upload */}
               <div className="space-y-4">

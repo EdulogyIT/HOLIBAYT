@@ -142,18 +142,32 @@ const Rent = () => {
       'property_title'
     );
 
+    const handleCardClick = () => {
+      navigate(`/property/${property.id}`);
+    };
+
+    const handleWishlistClick = (e: React.MouseEvent) => {
+      e.stopPropagation();
+      toggleWishlist(property.id);
+    };
+
     return (
-      <Card className="overflow-hidden hover:shadow-lg transition-shadow duration-300 cursor-pointer group">
+      <Card 
+        className="overflow-hidden hover:shadow-lg transition-shadow duration-300 cursor-pointer group"
+        onClick={handleCardClick}
+      >
         <div className="relative h-48 overflow-hidden">
           <PropertyBadges 
             isHotDeal={property.is_hot_deal}
             isVerified={property.is_verified}
             isNew={property.is_new}
           />
-          <WishlistButton 
-            isInWishlist={wishlistIds.has(property.id)}
-            onToggle={() => toggleWishlist(property.id)}
-          />
+          <div onClick={handleWishlistClick}>
+            <WishlistButton 
+              isInWishlist={wishlistIds.has(property.id)}
+              onToggle={() => {}}
+            />
+          </div>
           <img
             src={property.images?.[0] || "/placeholder-property.jpg"}
             alt={property.title}
@@ -199,7 +213,7 @@ const Rent = () => {
           </div>
         </div>
 
-        <Button className="w-full" onClick={() => navigate(`/property/${property.id}`)}>
+        <Button className="w-full" onClick={(e) => { e.stopPropagation(); handleCardClick(); }}>
           {t("viewDetails")}
         </Button>
       </CardContent>

@@ -51,6 +51,7 @@ import PaymentSuccess from "./pages/PaymentSuccess";
 import PaymentCancelled from "./pages/PaymentCancelled";
 import BookingSuccess from "./pages/BookingSuccess";
 import BookingCancel from "./pages/BookingCancel";
+import HolibaytPay from "./pages/HolibaytPay";
 
 const queryClient = new QueryClient();
 
@@ -67,6 +68,7 @@ const App = () => (
           <Route path="/buy" element={<MaintenanceMode><Buy /></MaintenanceMode>} />
           <Route path="/rent" element={<MaintenanceMode><Rent /></MaintenanceMode>} />
           <Route path="/short-stay" element={<MaintenanceMode><ShortStay /></MaintenanceMode>} />
+          <Route path="/holibayt-pay" element={<MaintenanceMode><HolibaytPay /></MaintenanceMode>} />
           <Route path="/about" element={<MaintenanceMode><About /></MaintenanceMode>} />
           <Route path="/blog" element={<MaintenanceMode><Blog /></MaintenanceMode>} />
           <Route path="/blog/:id" element={<MaintenanceMode><BlogPost /></MaintenanceMode>} />

@@ -647,6 +647,7 @@ export type Database = {
           description: string | null
           district: string | null
           features: Json | null
+          fees: Json | null
           floor_number: string | null
           full_address: string | null
           id: string
@@ -683,6 +684,7 @@ export type Database = {
           description?: string | null
           district?: string | null
           features?: Json | null
+          fees?: Json | null
           floor_number?: string | null
           full_address?: string | null
           id?: string
@@ -719,6 +721,7 @@ export type Database = {
           description?: string | null
           district?: string | null
           features?: Json | null
+          fees?: Json | null
           floor_number?: string | null
           full_address?: string | null
           id?: string
