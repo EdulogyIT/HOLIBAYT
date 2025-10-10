@@ -73,7 +73,7 @@ serve(async (req) => {
       // Create new Stripe Connect account
       const account = await stripe.accounts.create({
         type: 'express',
-        country: 'US', // Will be updated during onboarding
+        country: 'FR', // France - matches platform account region
         email: user.email,
         capabilities: {
           card_payments: { requested: true },
@@ -100,8 +100,8 @@ serve(async (req) => {
           bank_name: 'Stripe Connect',
           account_number: 'N/A',
           account_type: 'express',
-          country: 'DZ',
-          currency: 'DZD',
+          country: 'FR',
+          currency: 'EUR',
           is_active: true,
           is_verified: false,
         });
