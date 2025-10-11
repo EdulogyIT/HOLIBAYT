@@ -1,15 +1,16 @@
-import { Shield, CheckCircle2, Scale } from "lucide-react";
+import { Shield, CheckCircle2, Scale, Clock, HeadphonesIcon } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 interface TrustIndicatorsProps {
   variant?: 'full' | 'compact';
+  type?: 'default' | 'shortStay';
   className?: string;
 }
 
-export const TrustIndicators = ({ variant = 'full', className = '' }: TrustIndicatorsProps) => {
+export const TrustIndicators = ({ variant = 'full', type = 'default', className = '' }: TrustIndicatorsProps) => {
   const { t } = useLanguage();
 
-  const indicators = [
+  const defaultIndicators = [
     {
       icon: CheckCircle2,
       label: t('trustVerifiedListings') || '100% Verified Listings',
@@ -18,7 +19,7 @@ export const TrustIndicators = ({ variant = 'full', className = '' }: TrustIndic
     {
       icon: Shield,
       label: t('trustPaymentsProtected') || 'Payments Protected',
-      color: 'text-blue-600 dark:text-blue-400'
+      color: 'text-primary'
     },
     {
       icon: Scale,
@@ -26,6 +27,31 @@ export const TrustIndicators = ({ variant = 'full', className = '' }: TrustIndic
       color: 'text-amber-600 dark:text-amber-400'
     }
   ];
+
+  const shortStayIndicators = [
+    {
+      icon: Shield,
+      label: t('verifiedHosts') || 'Verified Hosts',
+      color: 'text-green-600 dark:text-green-400'
+    },
+    {
+      icon: CheckCircle2,
+      label: t('securedPaymentsEscrow') || 'Secured Payments (Escrow)',
+      color: 'text-primary'
+    },
+    {
+      icon: Clock,
+      label: t('instantBookingConfirmation') || 'Instant Booking',
+      color: 'text-blue-600 dark:text-blue-400'
+    },
+    {
+      icon: HeadphonesIcon,
+      label: t('localSupport247') || '24/7 Local Support',
+      color: 'text-amber-600 dark:text-amber-400'
+    }
+  ];
+
+  const indicators = type === 'shortStay' ? shortStayIndicators : defaultIndicators;
 
   if (variant === 'compact') {
     return (

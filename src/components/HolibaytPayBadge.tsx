@@ -36,8 +36,8 @@ export const HolibaytPayBadge = ({
   const badgeContent = (
     <Badge 
       className={`
-        bg-gradient-to-r from-blue-600 to-blue-700 
-        hover:from-blue-700 hover:to-blue-800 
+        bg-gradient-to-r from-primary to-primary/90 
+        hover:from-primary/90 hover:to-primary 
         text-white border-0 
         flex items-center gap-1.5 
         ${sizeClasses[variant]} 

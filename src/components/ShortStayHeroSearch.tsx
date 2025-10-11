@@ -11,6 +11,7 @@ import { DateRangePicker } from "@/components/DateRangePicker";
 import { GuestsSelector } from "@/components/GuestsSelector";
 import shortStayHeroBg from "@/assets/short-stay-hero-bg.jpg";
 import LocationAutocomplete from "@/components/LocationAutocomplete";
+import { TrustIndicators } from "./TrustIndicators";
 
 type DateRange = { from?: Date; to?: Date };
 type SearchVals = {
@@ -128,10 +129,10 @@ const ShortStayHeroSearch: React.FC<ShortStayHeroSearchProps> = ({ onSearch }) =
             <span className="text-white font-semibold font-inter">{t("shortStay")}</span>
           </div>
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-playfair font-bold text-white mb-4 leading-tight">
-            {t("findPerfectStay")}
+            {t("shortStayHeroHeading") || "Book trusted short stays across Algeria"}
           </h1>
           <p className="text-xl md:text-2xl text-white/90 font-inter font-light max-w-3xl mx-auto leading-relaxed">
-            {t("shortStayHeroDescription")}
+            {t("shortStayHeroSubtitle") || "Enjoy your trip with confidence, not uncertainty."}
           </p>
         </div>
 
@@ -249,6 +250,11 @@ const ShortStayHeroSearch: React.FC<ShortStayHeroSearchProps> = ({ onSearch }) =
             </div>
           </form>
         </Card>
+        
+        {/* Trust Indicators */}
+        <div className="mt-8">
+          <TrustIndicators variant="compact" type="shortStay" />
+        </div>
       </div>
     </section>
   );

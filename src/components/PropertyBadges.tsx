@@ -9,6 +9,8 @@ interface PropertyBadgesProps {
   isHolibaytPayEligible?: boolean;
   isNewBuild?: boolean;
   showVerifiedOwner?: boolean;
+  showInstantBooking?: boolean;
+  showVerifiedHost?: boolean;
 }
 
 export const PropertyBadges = ({ 
@@ -17,15 +19,29 @@ export const PropertyBadges = ({
   isNew, 
   isHolibaytPayEligible = true, 
   isNewBuild = false,
-  showVerifiedOwner = false 
+  showVerifiedOwner = false,
+  showInstantBooking = false,
+  showVerifiedHost = false
 }: PropertyBadgesProps) => {
   const { t } = useLanguage();
   
   return (
     <div className="absolute top-3 left-3 z-10 flex flex-col gap-2">
+      {showVerifiedHost && (
+        <Badge className="bg-gradient-to-r from-green-600 to-emerald-600 text-white hover:from-green-700 hover:to-emerald-700 flex items-center gap-1 shadow-lg">
+          <ShieldCheck className="h-3 w-3" />
+          {t('verifiedHost') || 'Verified Host'}
+        </Badge>
+      )}
+      {showInstantBooking && (
+        <Badge className="bg-gradient-to-r from-blue-500 to-blue-600 text-white hover:from-blue-600 hover:to-blue-700 flex items-center gap-1 shadow-lg">
+          <Sparkles className="h-3 w-3" />
+          {t('instantBooking') || 'Instant Booking'}
+        </Badge>
+      )}
       {isHotDeal && (
-        <Badge className="bg-gradient-to-r from-red-500 to-red-600 text-white hover:from-red-600 hover:to-red-700 flex items-center gap-1 shadow-lg">
-          <Flame className="h-3 w-3" />
+        <Badge className="bg-gradient-to-r from-red-500 to-red-600 text-white hover:from-red-600 hover:to-red-700 flex items-center gap-1 text-xs px-2 py-0.5 shadow-lg">
+          <Flame className="h-2.5 w-2.5" />
           {t('hotDeal') || 'Hot Deal'}
         </Badge>
       )}
@@ -54,7 +70,7 @@ export const PropertyBadges = ({
         </Badge>
       )}
       {isHolibaytPayEligible && (
-        <Badge className="bg-gradient-to-r from-blue-600 to-blue-700 text-white hover:from-blue-700 hover:to-blue-800 flex items-center gap-1 shadow-lg">
+        <Badge className="bg-gradient-to-r from-primary to-primary/90 text-white hover:from-primary/90 hover:to-primary flex items-center gap-1 shadow-lg">
           <Shield className="h-3 w-3" />
           {t('holibaytPayBrand') || 'Holibayt Pay™'}
         </Badge>

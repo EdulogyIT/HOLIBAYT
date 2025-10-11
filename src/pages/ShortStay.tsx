@@ -19,6 +19,7 @@ import { useWishlist } from "@/hooks/useWishlist";
 import { WishlistButton } from "@/components/WishlistButton";
 import { PropertyBadges } from "@/components/PropertyBadges";
 import { usePropertyTranslation } from "@/hooks/usePropertyTranslation";
+import { LocationInsights } from "@/components/LocationInsights";
 
 interface Property {
   id: string;
@@ -177,6 +178,8 @@ const ShortStay = () => {
             isHotDeal={property.is_hot_deal}
             isVerified={property.is_verified}
             isNew={property.is_new}
+            showVerifiedHost={true}
+            showInstantBooking={true}
           />
           <div onClick={handleWishlistClick}>
             <WishlistButton
@@ -247,7 +250,7 @@ const ShortStay = () => {
         )}
 
         <Button className="w-full" onClick={(e) => { e.stopPropagation(); handleCardClick(); }}>
-          {t("bookNow")}
+          {t("secureYourStay") || t("bookNow")}
         </Button>
       </CardContent>
     </Card>
@@ -323,6 +326,14 @@ const ShortStay = () => {
                   );
                   setFilteredProperties(filtered);
                 }}
+              />
+              
+              {/* Location Insights */}
+              <LocationInsights 
+                zoneName="Algeria" 
+                averagePrice={8500}
+                topRatedCount={12}
+                safetyScore={8.5}
               />
             </div>
 
