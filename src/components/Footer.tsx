@@ -86,9 +86,16 @@ const Footer = () => {
                   {t('publishProperty')}
                 </Link>
               </li>
+              <li>
+                <Link to="/holibayt-pay" className="text-muted-foreground hover:text-primary transition-colors hover:translate-x-1 inline-block duration-300 py-1">
+                  {t('holibaytPay')}
+                </Link>
+              </li>
               <li className="text-muted-foreground hover:text-foreground transition-colors py-1 cursor-pointer">{t('propertyValuation')}</li>
               <li className="text-muted-foreground hover:text-foreground transition-colors py-1 cursor-pointer">{t('legalSupport')}</li>
               <li className="text-muted-foreground hover:text-foreground transition-colors py-1 cursor-pointer">{t('mortgageAdvice')}</li>
+              <li className="text-muted-foreground hover:text-foreground transition-colors py-1 cursor-pointer">{t('partners')}</li>
+              <li className="text-muted-foreground hover:text-foreground transition-colors py-1 cursor-pointer">{t('press')}</li>
             </ul>
           </div>
 
@@ -125,10 +132,33 @@ const Footer = () => {
         </div>
 
         {/* Bottom Section - Enhanced */}
-        <div className="border-t border-border/50 mt-12 pt-8">
+        <div className="border-t border-border/50 mt-12 pt-8 space-y-6">
+          <div className="text-center">
+            <p className="text-sm text-muted-foreground font-inter">
+              {t('legalNotice')}
+            </p>
+          </div>
+          
+          <div className="flex flex-wrap items-center justify-center gap-4 text-xs text-muted-foreground font-inter">
+            <span className="flex items-center gap-1">
+              <span className="w-2 h-2 rounded-full bg-green-500"></span>
+              {t('stripeSecure')}
+            </span>
+            <span>|</span>
+            <span className="flex items-center gap-1">
+              <span className="w-2 h-2 rounded-full bg-primary"></span>
+              {t('verifiedListingsBadge')}
+            </span>
+            <span>|</span>
+            <span className="flex items-center gap-1">
+              <span className="w-2 h-2 rounded-full bg-blue-500"></span>
+              {t('gdprCompliant')}
+            </span>
+          </div>
+          
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
             <p className="text-muted-foreground font-inter text-sm">
-              © 2024 Holibayt. {t('allRightsReserved')}
+              © {new Date().getFullYear()} Holibayt. {t('allRightsReserved')}
             </p>
             <div className="flex items-center space-x-6 text-xs text-muted-foreground font-inter">
               <span className="hover:text-foreground cursor-pointer transition-colors duration-300">{t('privacyPolicy')}</span>

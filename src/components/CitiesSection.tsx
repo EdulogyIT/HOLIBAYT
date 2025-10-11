@@ -142,7 +142,7 @@ const CitiesSection = () => {
                     navigate(`/city/${city.id}`);
                   }}
                 >
-                  <span>{t('viewDetails')}</span>
+                  <span>{t('viewOnMap')}</span>
                   <ArrowRight className="ml-2 h-4 w-4 group-hover/btn:translate-x-1 transition-transform duration-300" />
                 </Button>
               </CardContent>

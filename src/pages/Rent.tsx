@@ -19,6 +19,7 @@ import { WishlistButton } from "@/components/WishlistButton";
 import { PropertyBadges } from "@/components/PropertyBadges";
 import PropertyMapWithZone from "@/components/PropertyMapWithZone";
 import { usePropertyTranslation } from "@/hooks/usePropertyTranslation";
+import { ConversionBanner } from "@/components/ConversionBanner";
 
 interface Property {
   id: string;
@@ -324,6 +325,8 @@ const Rent = () => {
             </div>
           </div>
         </div>
+
+        <ConversionBanner type="rent" />
 
         <AIChatBox />
       </main>

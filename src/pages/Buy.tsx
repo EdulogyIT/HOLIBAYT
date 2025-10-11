@@ -20,6 +20,7 @@ import { PropertyBadges } from "@/components/PropertyBadges";
 import CitiesSection from "@/components/CitiesSection";
 import PropertyMapWithZone from "@/components/PropertyMapWithZone";
 import { usePropertyTranslation } from "@/hooks/usePropertyTranslation";
+import { ConversionBanner } from "@/components/ConversionBanner";
 
 interface Property {
   id: string;
@@ -329,6 +330,8 @@ const Buy = () => {
         <div className="py-16">
           <CitiesSection />
         </div>
+
+        <ConversionBanner type="buy" />
 
         <AIChatBox />
       </main>

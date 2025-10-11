@@ -310,10 +310,10 @@ const HeroSection = () => {
         <div className="max-w-6xl mx-auto mb-12">
           <div className="text-center mb-8">
             <h1 className="text-5xl md:text-7xl lg:text-8xl font-playfair font-bold text-foreground mb-4 leading-tight">
-              {t('heroTrustTagline') || 'Buy. Rent. Live Algeria safely'}
+              {t('heroTrustTagline') || 'Holibayt'}
             </h1>
             <p className="text-2xl md:text-3xl lg:text-4xl font-playfair font-medium text-primary mb-6 leading-tight">
-              {t('heroSubheading') || 'with verified listings and secure payments'}
+              {t('heroSubheading') || 'Buy. Rent. Live Algeria safely with verified listings and secure payments'}
             </p>
             <p className="text-lg md:text-xl text-muted-foreground font-inter font-light max-w-3xl mx-auto leading-relaxed">
               {t('heroTrustDescription') || 'Holibayt combines verified owners, legal support, and escrow protection for every transaction.'}
@@ -360,7 +360,7 @@ const HeroSection = () => {
               <LocationAutocomplete
                 value={formData.location}
                 onChange={(value) => updateFormField('location', value)}
-                placeholder={getSearchPlaceholder()}
+                placeholder={t('searchPlaceholder')}
                 className="h-10 sm:h-12 font-inter text-sm"
               />
               
