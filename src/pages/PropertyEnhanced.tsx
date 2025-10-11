@@ -19,6 +19,7 @@ import { PropertyReviews } from "@/components/PropertyReviews";
 import { usePropertyTranslation } from "@/hooks/usePropertyTranslation";
 import { GuestFavouriteBadge } from "@/components/GuestFavouriteBadge";
 import { PropertyShareButton } from "@/components/PropertyShareButton";
+import { useAuth } from "@/contexts/AuthContext";
 import { PropertyImageGallery } from "@/components/PropertyImageGallery";
 import { PropertyHighlights } from "@/components/PropertyHighlights";
 import { KeyDetailsTable } from "@/components/KeyDetailsTable";
@@ -30,8 +31,9 @@ import { SimilarProperties } from "@/components/SimilarProperties";
 import { RecentlySoldRented } from "@/components/RecentlySoldRented";
 import { NeighborhoodInsights } from "@/components/NeighborhoodInsights";
 import CurrencySelector from "@/components/CurrencySelector";
-import WishlistButton from "@/components/WishlistButton";
+import { WishlistButton } from "@/components/WishlistButton";
 import { buyRentTranslations } from "@/contexts/LanguageTranslations";
+import { useWishlist } from "@/hooks/useWishlist";
 
 interface Property {
   id: string;
@@ -87,14 +89,15 @@ const PropertyEnhanced = () => {
   const { id } = useParams();
   const { t, currentLang } = useLanguage();
   const { formatPrice } = useCurrency();
+  const { user } = useAuth();
   const [property, setProperty] = useState<Property | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isScheduleModalOpen, setIsScheduleModalOpen] = useState(false);
   const [isMessageModalOpen, setIsMessageModalOpen] = useState(false);
-  const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
   const [showFullDescription, setShowFullDescription] = useState(false);
+  const { wishlistIds, toggleWishlist } = useWishlist(user?.id);
   
   useScrollToTop();
 
@@ -189,6 +192,7 @@ const PropertyEnhanced = () => {
   const verificationYear = profile?.kyc_approved_at 
     ? new Date(profile.kyc_approved_at).getFullYear() 
     : new Date().getFullYear();
+  const isInWishlist = wishlistIds.has(property.id);
 
   return (
     <div className="min-h-screen bg-cream">
@@ -223,7 +227,10 @@ const PropertyEnhanced = () => {
                 </div>
                 <div className="flex gap-2">
                   <PropertyShareButton propertyId={property.id} propertyTitle={translatedTitle} />
-                  <WishlistButton property={property} />
+                  <WishlistButton 
+                    isInWishlist={isInWishlist} 
+                    onToggle={() => toggleWishlist(property.id)} 
+                  />
                 </div>
               </div>
 
@@ -435,20 +442,19 @@ const PropertyEnhanced = () => {
       <ScheduleVisitModal
         isOpen={isScheduleModalOpen}
         onClose={() => setIsScheduleModalOpen(false)}
-        property={property}
+        propertyTitle={translatedTitle}
       />
       <MessageOwnerModal
         isOpen={isMessageModalOpen}
         onClose={() => setIsMessageModalOpen(false)}
+        ownerName={profile?.name || "Property Owner"}
+        ownerEmail={property.contact_email || ""}
+        propertyTitle={translatedTitle}
         propertyId={property.id}
-        hostId={property.user_id || ""}
+        isSecureMode={true}
       />
       {property.category === "short-stay" && (
-        <BookingModal
-          isOpen={isBookingModalOpen}
-          onClose={() => setIsBookingModalOpen(false)}
-          property={property}
-        />
+        <BookingModal property={property} />
       )}
     </div>
   );

@@ -22,6 +22,7 @@ import BlogPost from "./pages/BlogPost";
 import PublishProperty from "./pages/PublishProperty";
 import EditProperty from "./pages/EditProperty";
 import Property from "./pages/Property";
+import PropertyEnhanced from "./pages/PropertyEnhanced";
 import City from "./pages/City";
 import ContactAdvisor from "./pages/ContactAdvisor";
 import LoginPage from "./pages/auth/LoginPage";
@@ -75,7 +76,7 @@ const App = () => (
           <Route path="/blog" element={<MaintenanceMode><Blog /></MaintenanceMode>} />
           <Route path="/blog/:id" element={<MaintenanceMode><BlogPost /></MaintenanceMode>} />
           <Route path="/messages" element={<MaintenanceMode><Messages /></MaintenanceMode>} />
-          <Route path="/property/:id" element={<MaintenanceMode><Property /></MaintenanceMode>} />
+          <Route path="/property/:id" element={<MaintenanceMode><PropertyEnhanced /></MaintenanceMode>} />
           <Route path="/city/:cityId" element={<MaintenanceMode><City /></MaintenanceMode>} />
           <Route path="/contact-advisor" element={<MaintenanceMode><ContactAdvisor /></MaintenanceMode>} />
 
