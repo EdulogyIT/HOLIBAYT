@@ -263,7 +263,7 @@ const ShortStay = () => {
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="flex flex-col lg:flex-row gap-8">
-            {/* Filters Sidebar */}
+            {/* Filters Sidebar with Map */}
             <div className="lg:w-1/4 space-y-6">
               <PropertyFilters
                 onFilterChange={(filters) => {
@@ -312,11 +312,8 @@ const ShortStay = () => {
                 }}
                 listingType="shortStay"
               />
-            </div>
 
-            {/* Properties Grid and Map */}
-            <div className="lg:w-3/4 space-y-6">
-              {/* Map first */}
+              {/* Map and Nearby Zones in Sidebar */}
               <PropertyMapWithZone 
                 location="Algeria"
                 onZoneSearch={(zone) => {
@@ -327,6 +324,10 @@ const ShortStay = () => {
                   setFilteredProperties(filtered);
                 }}
               />
+            </div>
+
+            {/* Properties Grid */}
+            <div className="lg:w-3/4 space-y-6">
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-2xl font-bold text-foreground font-playfair">
                   {t("shortStayProperties")}

@@ -21,7 +21,7 @@ import { PropertyReviews } from "@/components/PropertyReviews";
 import { usePropertyTranslation } from "@/hooks/usePropertyTranslation";
 import { HostProfileSection } from "@/components/HostProfileSection";
 import { GuestFavouriteBadge } from "@/components/GuestFavouriteBadge";
-import { RatingSection } from "@/components/RatingSection";
+import { RatingShowcase } from "@/components/RatingShowcase";
 import { ReviewTags } from "@/components/ReviewTags";
 import { PropertyShareButton } from "@/components/PropertyShareButton";
 import { HostDetailsSection } from "@/components/HostDetailsSection";
@@ -313,15 +313,13 @@ const Property = () => {
           </Card>
         )}
 
-        {/* Guest Favourite Badge - After Host */}
-        {averageRating >= 4.5 && totalReviews >= 5 && (
-          <GuestFavouriteBadge rating={averageRating} reviewCount={totalReviews} />
-        )}
-
-        {/* Rating Section - Right After Badge */}
+        {/* Unified Rating Showcase - One Beautiful Section */}
         {averageRating > 0 && (
-          <RatingSection 
+          <RatingShowcase 
             reviews={reviews}
+            averageRating={averageRating}
+            totalReviews={totalReviews}
+            showBadge={averageRating >= 4.5 && totalReviews >= 5}
             categoryRatings={{
               cleanliness: property.features?.cleanliness_rating,
               accuracy: property.features?.accuracy_rating,
