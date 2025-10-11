@@ -17,6 +17,8 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useWishlist } from "@/hooks/useWishlist";
 import { WishlistButton } from "@/components/WishlistButton";
 import { PropertyBadges } from "@/components/PropertyBadges";
+import { PropertyIcons } from "@/components/PropertyIcons";
+import { MarketDataBar } from "@/components/MarketDataBar";
 import CitiesSection from "@/components/CitiesSection";
 import PropertyMapWithZone from "@/components/PropertyMapWithZone";
 import { usePropertyTranslation } from "@/hooks/usePropertyTranslation";
@@ -42,6 +44,12 @@ interface Property {
   is_hot_deal?: boolean;
   is_verified?: boolean;
   is_new?: boolean;
+  financing_available?: boolean;
+  verified?: boolean;
+  holibayt_pay_eligible?: boolean;
+  new_build?: boolean;
+  contract_digitally_available?: boolean;
+  category?: string;
 }
 
 const num = (v: unknown) => {
@@ -196,6 +204,16 @@ const Buy = () => {
           </div>
         </div>
 
+        {/* Property Icons - Trust Indicators */}
+        <div className="mb-3">
+          <PropertyIcons 
+            showEscrow={true}
+            showLegal={true}
+            showFinancing={property.financing_available || false}
+            size="sm"
+          />
+        </div>
+
         <div className="flex items-center gap-4 text-muted-foreground text-sm mb-4">
           {property.bedrooms && (
             <div className="flex items-center">
@@ -227,7 +245,15 @@ const Buy = () => {
     <div className="min-h-screen bg-background">
       <Navigation />
       <main className="pt-20">
-        {/* ⬇️ wire up the search */}
+        {/* Market Data Bar */}
+        <MarketDataBar 
+          city="Alger"
+          medianPrice={25000000}
+          yearOverYearChange={8}
+          currency="DZD"
+        />
+        
+        {/* Hero Search */}
         <BuyHeroSearch onSearch={handleSearch} />
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">

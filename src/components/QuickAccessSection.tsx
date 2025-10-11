@@ -64,8 +64,13 @@ const QuickAccessSection = () => {
                 className={`group relative overflow-hidden border-2 ${action.borderColor} hover:shadow-elegant transition-all duration-300 hover:-translate-y-2 cursor-pointer bg-card/50 backdrop-blur-sm flex flex-col h-full min-h-[420px]`}
               >
                 <CardContent className="p-6 md:p-8 text-center flex flex-col h-full">
+                  {/* Watermark Icon */}
+                  <div className="absolute top-4 right-4 opacity-5 pointer-events-none">
+                    <IconComponent className="h-32 w-32 md:h-40 md:w-40" />
+                  </div>
+                  
                   {/* Icon Container */}
-                  <div className="relative mb-6">
+                  <div className="relative mb-6 z-10">
                     <div className={`inline-flex items-center justify-center w-16 h-16 md:w-20 md:h-20 ${action.color} text-primary-foreground rounded-2xl group-hover:scale-110 transition-transform duration-300 shadow-lg`}>
                       <IconComponent className="h-8 w-8 md:h-10 md:w-10" />
                     </div>

@@ -11,6 +11,8 @@ interface PropertyBadgesProps {
   showVerifiedOwner?: boolean;
   showInstantBooking?: boolean;
   showVerifiedHost?: boolean;
+  showContractDigitallyAvailable?: boolean;
+  showVerifiedLandlord?: boolean;
 }
 
 export const PropertyBadges = ({ 
@@ -21,7 +23,9 @@ export const PropertyBadges = ({
   isNewBuild = false,
   showVerifiedOwner = false,
   showInstantBooking = false,
-  showVerifiedHost = false
+  showVerifiedHost = false,
+  showContractDigitallyAvailable = false,
+  showVerifiedLandlord = false
 }: PropertyBadgesProps) => {
   const { t } = useLanguage();
   
@@ -31,6 +35,18 @@ export const PropertyBadges = ({
         <Badge className="bg-gradient-to-r from-green-600 to-emerald-600 text-white hover:from-green-700 hover:to-emerald-700 flex items-center gap-1 shadow-lg">
           <ShieldCheck className="h-3 w-3" />
           {t('verifiedHost') || 'Verified Host'}
+        </Badge>
+      )}
+      {showVerifiedLandlord && (
+        <Badge className="bg-gradient-to-r from-green-600 to-emerald-600 text-white hover:from-green-700 hover:to-emerald-700 flex items-center gap-1 shadow-lg">
+          <ShieldCheck className="h-3 w-3" />
+          {t('verifiedLandlord') || 'Verified Landlord'}
+        </Badge>
+      )}
+      {showContractDigitallyAvailable && (
+        <Badge className="bg-gradient-to-r from-indigo-500 to-indigo-600 text-white hover:from-indigo-600 hover:to-indigo-700 flex items-center gap-1 shadow-lg">
+          <Shield className="h-3 w-3" />
+          {t('contractDigitallyAvailable') || 'Digital Contract Available'}
         </Badge>
       )}
       {showInstantBooking && (

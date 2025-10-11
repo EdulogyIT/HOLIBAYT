@@ -60,6 +60,7 @@ const allTranslations = {
     heroSubheading: 'Achetez. Louez. Vivez l\'Algérie en toute sécurité avec des annonces vérifiées et des paiements sécurisés',
     heroTrustDescription: 'Holibayt combine propriétaires vérifiés, support juridique et protection escrow pour chaque transaction.',
     searchPlaceholder: 'ex : Alger, Oran, Constantine…',
+    searchPlaceholderExample: 'par ex., Alger, Oran, Constantine…',
     
     // Trust Indicators
     trustVerifiedListings: '✅ 100% Annonces vérifiées',
@@ -114,6 +115,13 @@ const allTranslations = {
     depositRequired: 'Dépôt requis',
     resetFilters: 'Réinitialiser les filtres',
     contractDigitallyAvailable: 'Contrat disponible numériquement',
+    lastUpdatedDays: 'Dernière mise à jour : il y a {{days}} jours',
+    saveSearch: 'Enregistrer la recherche',
+    notifyWhenSimilar: 'Me notifier quand des biens similaires apparaissent',
+    newBuildResale: 'Neuf / Revente',
+    financingAvailableFilter: 'Financement disponible',
+    holibaytPayEligibleFilter: 'Éligible Holibayt Pay™',
+    fundsHeldTooltip: 'Les fonds sont détenus en séquestre jusqu\'à confirmation de votre transaction.',
     fundsHeldUntilMoveIn: 'Fonds détenus en dépôt fiduciaire jusqu\'à votre emménagement.',
     contractSignOnline: 'Le contrat de cette propriété peut être signé en ligne.',
     availableFrom: 'Disponible à partir de',

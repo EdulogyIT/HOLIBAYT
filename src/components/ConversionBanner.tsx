@@ -39,23 +39,23 @@ export const ConversionBanner = ({ type }: ConversionBannerProps) => {
 
   return (
     <div className="bg-gradient-to-br from-primary/10 via-primary/5 to-background border-t border-primary/20">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div className="text-center space-y-6">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="text-center space-y-4">
           <div className="flex justify-center">
-            <HolibaytPayBadge variant="large" showTooltip={false} />
+            <HolibaytPayBadge variant="default" showTooltip={false} />
           </div>
           
-          <h2 className="text-3xl md:text-4xl font-bold text-foreground font-playfair">
+          <h2 className="text-2xl md:text-3xl font-bold text-foreground font-playfair">
             {content.title}
           </h2>
           
           {content.description && (
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+            <p className="text-base text-muted-foreground max-w-2xl mx-auto">
               {content.description}
             </p>
           )}
 
-          <div className="flex flex-wrap items-center justify-center gap-6 pt-4">
+          <div className="flex flex-wrap items-center justify-center gap-4 pt-2">
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
               <Shield className="h-5 w-5 text-primary" />
               <span>{t('verifiedProperties')}</span>
@@ -71,8 +71,8 @@ export const ConversionBanner = ({ type }: ConversionBannerProps) => {
           </div>
 
           <Button 
-            size="lg" 
-            className="mt-4"
+            size="default"
+            className="mt-2"
             onClick={() => navigate('/holibayt-pay')}
           >
             {content.cta}

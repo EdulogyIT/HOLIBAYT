@@ -53,6 +53,11 @@ interface Property {
   check_in_time?: string;
   check_out_time?: string;
   fees?: any;
+  verified?: boolean;
+  financing_available?: boolean;
+  holibayt_pay_eligible?: boolean;
+  new_build?: boolean;
+  contract_digitally_available?: boolean;
 }
 
 const Property = () => {
@@ -335,12 +340,86 @@ const Property = () => {
               {translatedDescription && (
                 <Card className="shadow-lg">
                   <CardHeader>
-                    <CardTitle className="text-2xl">{t('description')}</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-muted-foreground leading-relaxed text-lg whitespace-pre-wrap">
-                      {translatedDescription}
-                    </p>
+              <CardTitle className="text-2xl">{t('description')}</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {/* Conditional Buy Property Info Blocks */}
+              {property.category === 'sale' && (
+                <div className="space-y-4 mb-6 p-4 bg-primary/5 rounded-lg border border-primary/20">
+                  <div className="flex items-start gap-3">
+                    <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                      <span className="text-primary text-xl">🛡️</span>
+                    </div>
+                    <div>
+                      <h4 className="font-semibold text-foreground mb-1">{t('transactionSecured')}</h4>
+                      <p className="text-sm text-muted-foreground">{t('fundsInEscrow')}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <div className="w-10 h-10 rounded-full bg-green-500/10 flex items-center justify-center flex-shrink-0">
+                      <span className="text-green-600 text-xl">✓</span>
+                    </div>
+                    <div>
+                      <h4 className="font-semibold text-foreground mb-1">{t('verified')}</h4>
+                      <p className="text-sm text-muted-foreground">{t('listingVerified')}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <div className="w-10 h-10 rounded-full bg-blue-500/10 flex items-center justify-center flex-shrink-0">
+                      <span className="text-blue-600 text-xl">📅</span>
+                    </div>
+                    <div>
+                      <h4 className="font-semibold text-foreground mb-1">{t('estimatedClose')}</h4>
+                      <p className="text-sm text-muted-foreground">7-10 {t('day')}s</p>
+                    </div>
+                  </div>
+                  <Button 
+                    variant="outline" 
+                    className="w-full mt-2"
+                    onClick={() => setIsMessageModalOpen(true)}
+                  >
+                    <span>⚖️</span>
+                    <span className="ml-2">{t('requestLegalReview')}</span>
+                  </Button>
+                </div>
+              )}
+
+              {/* Conditional Rent Property Info Blocks */}
+              {property.category === 'rent' && (
+                <div className="space-y-4 mb-6 p-4 bg-primary/5 rounded-lg border border-primary/20">
+                  <div className="flex items-start gap-3">
+                    <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                      <span className="text-primary text-xl">🛡️</span>
+                    </div>
+                    <div>
+                      <h4 className="font-semibold text-foreground mb-1">{t('securePayments')}</h4>
+                      <p className="text-sm text-muted-foreground">{t('rentDepositProtected')}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <div className="w-10 h-10 rounded-full bg-green-500/10 flex items-center justify-center flex-shrink-0">
+                      <span className="text-green-600 text-xl">✓</span>
+                    </div>
+                    <div>
+                      <h4 className="font-semibold text-foreground mb-1">{t('verifiedLandlord')}</h4>
+                      <p className="text-sm text-muted-foreground">{t('landlordVerified')}</p>
+                    </div>
+                  </div>
+                  {property.contract_digitally_available && (
+                    <div className="flex items-start gap-3">
+                      <div className="w-10 h-10 rounded-full bg-indigo-500/10 flex items-center justify-center flex-shrink-0">
+                        <span className="text-indigo-600 text-xl">📜</span>
+                      </div>
+                      <div>
+                        <h4 className="font-semibold text-foreground mb-1">{t('digitalLeaseOption')}</h4>
+                        <p className="text-sm text-muted-foreground">{t('contractSignOnline')}</p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              <p className="text-muted-foreground leading-relaxed text-lg whitespace-pre-wrap">{translatedDescription}</p>
                   </CardContent>
                 </Card>
               )}

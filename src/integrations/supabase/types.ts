@@ -706,13 +706,16 @@ export type Database = {
           created_at: string
           email: string
           id: string
+          id_verified: boolean | null
           is_superhost: boolean | null
           kyc_approved_at: string | null
           kyc_submitted_at: string | null
           name: string | null
+          ownership_verified: boolean | null
           role: Database["public"]["Enums"]["app_role"]
           total_reviews: number | null
           updated_at: string
+          verification_date: string | null
           verified_host: boolean | null
         }
         Insert: {
@@ -721,13 +724,16 @@ export type Database = {
           created_at?: string
           email: string
           id: string
+          id_verified?: boolean | null
           is_superhost?: boolean | null
           kyc_approved_at?: string | null
           kyc_submitted_at?: string | null
           name?: string | null
+          ownership_verified?: boolean | null
           role?: Database["public"]["Enums"]["app_role"]
           total_reviews?: number | null
           updated_at?: string
+          verification_date?: string | null
           verified_host?: boolean | null
         }
         Update: {
@@ -736,13 +742,16 @@ export type Database = {
           created_at?: string
           email?: string
           id?: string
+          id_verified?: boolean | null
           is_superhost?: boolean | null
           kyc_approved_at?: string | null
           kyc_submitted_at?: string | null
           name?: string | null
+          ownership_verified?: boolean | null
           role?: Database["public"]["Enums"]["app_role"]
           total_reviews?: number | null
           updated_at?: string
+          verification_date?: string | null
           verified_host?: boolean | null
         }
         Relationships: []
@@ -760,20 +769,26 @@ export type Database = {
           contact_email: string
           contact_name: string
           contact_phone: string
+          contract_digitally_available: boolean | null
           created_at: string
           description: string | null
           district: string | null
           features: Json | null
           fees: Json | null
+          financing_available: boolean | null
           floor_number: string | null
           full_address: string | null
+          holibayt_pay_eligible: boolean | null
           id: string
           images: string[] | null
           is_featured: boolean | null
           is_hot_deal: boolean | null
           is_new: boolean | null
           is_verified: boolean | null
+          last_verified_at: string | null
           location: string
+          new_build: boolean | null
+          occupancy_available_from: string | null
           owner_account_id: string | null
           pets_allowed: boolean | null
           price: string
@@ -784,6 +799,8 @@ export type Database = {
           title: string
           updated_at: string
           user_id: string
+          verification_notes: string | null
+          verified: boolean | null
         }
         Insert: {
           area: string
@@ -797,20 +814,26 @@ export type Database = {
           contact_email: string
           contact_name: string
           contact_phone: string
+          contract_digitally_available?: boolean | null
           created_at?: string
           description?: string | null
           district?: string | null
           features?: Json | null
           fees?: Json | null
+          financing_available?: boolean | null
           floor_number?: string | null
           full_address?: string | null
+          holibayt_pay_eligible?: boolean | null
           id?: string
           images?: string[] | null
           is_featured?: boolean | null
           is_hot_deal?: boolean | null
           is_new?: boolean | null
           is_verified?: boolean | null
+          last_verified_at?: string | null
           location: string
+          new_build?: boolean | null
+          occupancy_available_from?: string | null
           owner_account_id?: string | null
           pets_allowed?: boolean | null
           price: string
@@ -821,6 +844,8 @@ export type Database = {
           title: string
           updated_at?: string
           user_id: string
+          verification_notes?: string | null
+          verified?: boolean | null
         }
         Update: {
           area?: string
@@ -834,20 +859,26 @@ export type Database = {
           contact_email?: string
           contact_name?: string
           contact_phone?: string
+          contract_digitally_available?: boolean | null
           created_at?: string
           description?: string | null
           district?: string | null
           features?: Json | null
           fees?: Json | null
+          financing_available?: boolean | null
           floor_number?: string | null
           full_address?: string | null
+          holibayt_pay_eligible?: boolean | null
           id?: string
           images?: string[] | null
           is_featured?: boolean | null
           is_hot_deal?: boolean | null
           is_new?: boolean | null
           is_verified?: boolean | null
+          last_verified_at?: string | null
           location?: string
+          new_build?: boolean | null
+          occupancy_available_from?: string | null
           owner_account_id?: string | null
           pets_allowed?: boolean | null
           price?: string
@@ -858,6 +889,8 @@ export type Database = {
           title?: string
           updated_at?: string
           user_id?: string
+          verification_notes?: string | null
+          verified?: boolean | null
         }
         Relationships: []
       }
@@ -927,6 +960,36 @@ export type Database = {
           },
         ]
       }
+      saved_searches: {
+        Row: {
+          created_at: string | null
+          filters: Json | null
+          id: string
+          notification_enabled: boolean | null
+          search_type: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          filters?: Json | null
+          id?: string
+          notification_enabled?: boolean | null
+          search_type: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          filters?: Json | null
+          id?: string
+          notification_enabled?: boolean | null
+          search_type?: string
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string | null
@@ -966,6 +1029,54 @@ export type Database = {
           id?: string
           property_id?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      zone_statistics: {
+        Row: {
+          average_price_buy: number | null
+          average_price_rent: number | null
+          average_price_short_stay: number | null
+          city: string
+          commute_to_downtown_minutes: number | null
+          created_at: string | null
+          id: string
+          monthly_views: number | null
+          popularity_index: number | null
+          safety_score: number | null
+          updated_at: string | null
+          verified_percentage: number | null
+          zone_name: string
+        }
+        Insert: {
+          average_price_buy?: number | null
+          average_price_rent?: number | null
+          average_price_short_stay?: number | null
+          city: string
+          commute_to_downtown_minutes?: number | null
+          created_at?: string | null
+          id?: string
+          monthly_views?: number | null
+          popularity_index?: number | null
+          safety_score?: number | null
+          updated_at?: string | null
+          verified_percentage?: number | null
+          zone_name: string
+        }
+        Update: {
+          average_price_buy?: number | null
+          average_price_rent?: number | null
+          average_price_short_stay?: number | null
+          city?: string
+          commute_to_downtown_minutes?: number | null
+          created_at?: string | null
+          id?: string
+          monthly_views?: number | null
+          popularity_index?: number | null
+          safety_score?: number | null
+          updated_at?: string | null
+          verified_percentage?: number | null
+          zone_name?: string
         }
         Relationships: []
       }
