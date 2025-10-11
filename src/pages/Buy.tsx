@@ -231,18 +231,8 @@ const Buy = () => {
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="flex flex-col lg:flex-row gap-8">
+            {/* Filters Sidebar */}
             <div className="lg:w-1/4 space-y-6">
-              <PropertyMapWithZone 
-                location="Algeria"
-                onZoneSearch={(zone) => {
-                  const filtered = properties.filter(p => 
-                    (p.city || "").toLowerCase().includes(zone.toLowerCase()) ||
-                    (p.location || "").toLowerCase().includes(zone.toLowerCase())
-                  );
-                  setFilteredProperties(filtered);
-                }}
-              />
-              
               <PropertyFilters
                 onFilterChange={(filters) => {
                   let filtered = properties;
@@ -290,7 +280,19 @@ const Buy = () => {
               />
             </div>
 
-            <div className="lg:w-3/4">
+            {/* Properties Grid and Map */}
+            <div className="lg:w-3/4 space-y-6">
+              {/* Map first */}
+              <PropertyMapWithZone 
+                location="Algeria"
+                onZoneSearch={(zone) => {
+                  const filtered = properties.filter(p => 
+                    (p.city || "").toLowerCase().includes(zone.toLowerCase()) ||
+                    (p.location || "").toLowerCase().includes(zone.toLowerCase())
+                  );
+                  setFilteredProperties(filtered);
+                }}
+              />
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-2xl font-bold text-foreground font-playfair">
                   {t("propertiesForSale")}

@@ -21,9 +21,9 @@ import { PropertyReviews } from "@/components/PropertyReviews";
 import { usePropertyTranslation } from "@/hooks/usePropertyTranslation";
 import { HostProfileSection } from "@/components/HostProfileSection";
 import { GuestFavouriteBadge } from "@/components/GuestFavouriteBadge";
-import { RatingBreakdown } from "@/components/RatingBreakdown";
+import { RatingSection } from "@/components/RatingSection";
 import { ReviewTags } from "@/components/ReviewTags";
-import { RatingDistributionChart } from "@/components/RatingDistributionChart";
+import { PropertyShareButton } from "@/components/PropertyShareButton";
 
 interface Property {
   id: string;
@@ -249,8 +249,8 @@ const Property = () => {
               {/* Property Title & Basic Info */}
               <Card className="shadow-lg">
                 <CardHeader>
-                  <div className="flex justify-between items-start">
-                    <div>
+                  <div className="flex justify-between items-start gap-4">
+                    <div className="flex-1">
                       <CardTitle className="text-3xl font-bold mb-2">
                         {translatedTitle || property.title}
                       </CardTitle>
@@ -262,9 +262,17 @@ const Property = () => {
                         </span>
                       </div>
                     </div>
-                    <Badge variant="secondary" className="text-lg px-4 py-2">
-                      {property.category === 'sale' ? t('forSale') : property.category === 'rent' ? t('forRent') : t('shortStay')}
-                    </Badge>
+                    <div className="flex items-center gap-3">
+                      <PropertyShareButton 
+                        propertyId={property.id}
+                        propertyTitle={property.title}
+                        variant="outline"
+                        size="default"
+                      />
+                      <Badge variant="secondary" className="text-lg px-4 py-2">
+                        {property.category === 'sale' ? t('forSale') : property.category === 'rent' ? t('forRent') : t('shortStay')}
+                      </Badge>
+                    </div>
                   </div>
                 </CardHeader>
                 <CardContent>
@@ -347,23 +355,19 @@ const Property = () => {
                 </Card>
               )}
 
-              {/* Rating Breakdown */}
+              {/* Rating Section - Unified */}
               {averageRating > 0 && (
-                <>
-                  <RatingDistributionChart reviews={reviews} />
-                  
-                  <RatingBreakdown 
-                    averageRating={averageRating}
-                    categoryRatings={{
-                      cleanliness: property.features?.cleanliness_rating,
-                      accuracy: property.features?.accuracy_rating,
-                      checkin: property.features?.checkin_rating,
-                      communication: property.features?.communication_rating,
-                      location: property.features?.location_rating,
-                      value: property.features?.value_rating,
-                    }}
-                  />
-                </>
+                <RatingSection 
+                  reviews={reviews}
+                  categoryRatings={{
+                    cleanliness: property.features?.cleanliness_rating,
+                    accuracy: property.features?.accuracy_rating,
+                    checkin: property.features?.checkin_rating,
+                    communication: property.features?.communication_rating,
+                    location: property.features?.location_rating,
+                    value: property.features?.value_rating,
+                  }}
+                />
               )}
 
               {/* Review Tags */}

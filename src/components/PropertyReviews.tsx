@@ -279,69 +279,6 @@ export const PropertyReviews = ({ propertyId, hostUserId }: PropertyReviewsProps
         </Card>
       )}
 
-      {/* Enhanced Host Info Section */}
-      {hostProfile && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-2xl">Meet your host</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-start gap-6">
-              <div className="relative">
-                <Avatar className="h-24 w-24 border-4 border-primary/10">
-                  {hostProfile.avatar_url && <AvatarImage src={hostProfile.avatar_url} alt={hostProfile.name} />}
-                  <AvatarFallback className="text-2xl bg-primary/10">{hostProfile.name?.[0]}</AvatarFallback>
-                </Avatar>
-                {hostProfile.is_superhost && (
-                  <div className="absolute -bottom-2 -right-2 bg-primary text-primary-foreground rounded-full p-2">
-                    <Trophy className="h-4 w-4" />
-                  </div>
-                )}
-              </div>
-              <div className="flex-1 space-y-4">
-                <div>
-                  <h3 className="text-2xl font-bold">{hostProfile.name}</h3>
-                  {hostProfile.is_superhost && (
-                    <Badge className="mt-1 bg-primary/10 text-primary border-primary/20">
-                      <Trophy className="h-3 w-3 mr-1" />
-                      Superhost
-                    </Badge>
-                  )}
-                </div>
-                
-                <div className="grid grid-cols-3 gap-4">
-                  <div>
-                    <div className="text-2xl font-bold">{hostProfile.total_reviews}</div>
-                    <div className="text-sm text-muted-foreground">Reviews</div>
-                  </div>
-                  <div>
-                    <div className="text-2xl font-bold flex items-center gap-1">
-                      <Star className="h-5 w-5 fill-yellow-400 text-yellow-400" />
-                      {hostProfile.average_rating?.toFixed(2) || '0.00'}
-                    </div>
-                    <div className="text-sm text-muted-foreground">Rating</div>
-                  </div>
-                  <div>
-                    <div className="text-2xl font-bold">{yearsHosting}+</div>
-                    <div className="text-sm text-muted-foreground">Years hosting</div>
-                  </div>
-                </div>
-
-                <div className="pt-2">
-                  <Button 
-                    variant="outline" 
-                    className="w-full sm:w-auto"
-                    onClick={() => window.open(`mailto:${hostProfile.email}`, '_blank')}
-                  >
-                    <MessageCircle className="h-4 w-4 mr-2" />
-                    Message host
-                  </Button>
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      )}
 
       {/* Overall Rating with Category Breakdown */}
       {reviews.length > 0 && (

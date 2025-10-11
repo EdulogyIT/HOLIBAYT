@@ -313,7 +313,7 @@ export default function AdminUsers() {
               <SelectContent className="bg-background border border-input shadow-lg z-[9999]" sideOffset={5}>
                 <SelectItem value="all" className="cursor-pointer hover:bg-accent">{t('admin.allRoles')}</SelectItem>
                 <SelectItem value="user" className="cursor-pointer hover:bg-accent">{t('admin.users')}</SelectItem>
-                <SelectItem value="host" className="cursor-pointer hover:bg-accent">Hosts</SelectItem>
+                <SelectItem value="host" className="cursor-pointer hover:bg-accent">{t('admin.hosts') || 'Hosts'}</SelectItem>
                 <SelectItem value="admin" className="cursor-pointer hover:bg-accent">Admins</SelectItem>
               </SelectContent>
             </Select>

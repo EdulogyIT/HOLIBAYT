@@ -354,7 +354,7 @@ export const BlogComments = ({ blogPostId }: BlogCommentsProps) => {
       <div className="flex items-center gap-2 mb-6">
         <MessageCircle className="w-5 h-5 text-primary" />
         <h3 className="text-xl font-semibold text-foreground">
-          {t("comments") || "Comments"} ({comments.reduce((acc, c) => acc + 1 + (c.replies?.length || 0), 0)})
+          {t("comments")} ({comments.reduce((acc, c) => acc + 1 + (c.replies?.length || 0), 0)})
         </h3>
       </div>
 
@@ -364,7 +364,7 @@ export const BlogComments = ({ blogPostId }: BlogCommentsProps) => {
             <Textarea
               value={newComment}
               onChange={(e) => setNewComment(e.target.value)}
-              placeholder={t("writeComment") || "Write a comment..."}
+              placeholder={t("writeComment")}
               className="min-h-[100px]"
             />
             <Button onClick={handleSubmitComment} disabled={loading || !newComment.trim()}>
@@ -389,7 +389,7 @@ export const BlogComments = ({ blogPostId }: BlogCommentsProps) => {
       <div className="space-y-4">
         {comments.length === 0 ? (
           <p className="text-muted-foreground text-center py-8">
-            {t("noComments") || "No comments yet. Be the first to comment!"}
+            {t("noComments")}
           </p>
         ) : (
           comments.map((comment) => <CommentItem key={comment.id} comment={comment} />)
