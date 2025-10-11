@@ -4,6 +4,8 @@ import HeroSection from "@/components/HeroSection";
 import QuickAccessSection from "@/components/QuickAccessSection";
 import ServicesSection from "@/components/ServicesSection";
 import CitiesSection from "@/components/CitiesSection";
+import WhyChooseSection from "@/components/WhyChooseSection";
+import TestimonialsCarousel from "@/components/TestimonialsCarousel";
 import AIChatBox from "@/components/AIChatBox";
 import SEOHead from "@/components/SEOHead";
 
@@ -45,6 +47,12 @@ const Index = () => {
         <HeroSection />
         <div className="py-1">
           <QuickAccessSection />
+        </div>
+        <div className="py-1">
+          <WhyChooseSection />
+        </div>
+        <div className="py-1">
+          <TestimonialsCarousel />
         </div>
         <div className="py-1">
           <ServicesSection />

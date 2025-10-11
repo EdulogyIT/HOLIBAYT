@@ -27,7 +27,7 @@ interface PropertyFiltersProps {
 
 const PropertyFilters = ({ onFilterChange, listingType }: PropertyFiltersProps) => {
   const { t } = useLanguage();
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(true); // Always open by default
   const [filters, setFilters] = useState<FilterState>({
     location: "",
     propertyType: "all",

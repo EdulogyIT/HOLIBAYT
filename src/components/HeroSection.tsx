@@ -13,6 +13,8 @@ import algeriaHero from "@/assets/algeria-architecture-hero.jpg";
 import { DateRangePicker } from "@/components/DateRangePicker";
 import LocationAutocomplete from "@/components/LocationAutocomplete";
 import { GuestsSelector } from "@/components/GuestsSelector";
+import { TrustIndicators } from "@/components/TrustIndicators";
+import { HolibaytPayBadge } from "@/components/HolibaytPayBadge";
 
 const HeroSection = () => {
   const { t } = useLanguage();
@@ -308,14 +310,24 @@ const HeroSection = () => {
         <div className="max-w-6xl mx-auto mb-12">
           <div className="text-center mb-8">
             <h1 className="text-5xl md:text-7xl lg:text-8xl font-playfair font-bold text-foreground mb-4 leading-tight">
-              {t('heroTitle')}
+              {t('heroTrustTagline') || 'Buy. Rent. Live Algeria safely'}
             </h1>
             <p className="text-2xl md:text-3xl lg:text-4xl font-playfair font-medium text-primary mb-6 leading-tight">
-              {t('heroSubtitle')}
+              {t('heroSubheading') || 'with verified listings and secure payments'}
             </p>
             <p className="text-lg md:text-xl text-muted-foreground font-inter font-light max-w-3xl mx-auto leading-relaxed">
-              {t('heroDescription')}
+              {t('heroTrustDescription') || 'Holibayt combines verified owners, legal support, and escrow protection for every transaction.'}
             </p>
+            
+            {/* Trust Indicators */}
+            <div className="mt-8 flex items-center justify-center">
+              <TrustIndicators variant="compact" />
+            </div>
+            
+            {/* Holibayt Pay Badge */}
+            <div className="mt-4 flex justify-center">
+              <HolibaytPayBadge variant="default" showTooltip={true} />
+            </div>
           </div>
           
           {/* Mode Selector */}

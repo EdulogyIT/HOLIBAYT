@@ -56,6 +56,66 @@ const allTranslations = {
     heroTitle: 'Holibayt',
     heroSubtitle: 'Achetez. Louez. Vivez l\'Algérie autrement.',
     heroDescription: 'La première plateforme immobilière digitale nouvelle génération pour l\'Algérie.',
+    heroTrustTagline: 'Achetez. Louez. Vivez l\'Algérie en toute sécurité',
+    heroSubheading: 'avec des annonces vérifiées et des paiements sécurisés',
+    heroTrustDescription: 'Holibayt combine propriétaires vérifiés, support juridique et protection escrow pour chaque transaction.',
+    
+    // Trust Indicators
+    trustVerifiedListings: '✅ 100% Annonces vérifiées',
+    trustPaymentsProtected: '🛡️ Paiements protégés',
+    trustLegalSupport: '⚖️ Support juridique',
+    
+    // Holibayt Pay
+    holibaytPayBrand: 'Holibayt Pay™',
+    holibaytPayBadge: 'Sécurisé par Holibayt Pay™ - fonds en escrow jusqu\'à confirmation',
+    holibaytPayTooltip: 'Fonds conservés en escrow jusqu\'à confirmation de la transaction. Votre paiement est protégé.',
+    securedByHolibaytPay: 'Sécurisé par Holibayt Pay™',
+    
+    // Verification Badges
+    verifiedOwner: 'Propriétaire vérifié',
+    verifiedLandlord: 'Bailleur vérifié',
+    verifiedProperty: 'Propriété vérifiée',
+    verified: 'Vérifié',
+    newBuild: 'Nouvelle construction',
+    hotDeal: 'Offre spéciale',
+    
+    // Buy Page Trust
+    buyHeroHeading: 'Trouvez des propriétés vérifiées à vendre en Algérie - sécurisé par Holibayt Pay™ et support juridique',
+    buyHeroSubheading: 'Chaque annonce est vérifiée, chaque paiement protégé.',
+    buyNewDescription: 'Trouvez votre futur logement avec vendeurs vérifiés et support juridique complet.',
+    verifiedProperties: '100% Propriétés vérifiées',
+    securePayments: 'Paiements sécurisés avec Holibayt Pay™',
+    legalAssistance: 'Assistance juridique pour chaque transaction',
+    
+    // Rent Page Trust
+    rentHeroHeading: 'Trouvez des locations vérifiées en Algérie - payez en toute sécurité avec Holibayt Pay™ et évitez les arnaques',
+    rentNewDescription: 'Locations long terme avec bailleurs vérifiés et paiements garantis.',
+    verifiedLandlords: '100% Bailleurs vérifiés',
+    digitalContracts: '📜 Contrats de location digitaux',
+    
+    // Short Stay Trust
+    shortStayNewDescription: 'Votre Airbnb algérien — sûr, vérifié et pratique.',
+    
+    // Why Choose Section
+    whyChooseTitle: 'Pourquoi des milliers font confiance à',
+    whyChooseSubtitle: 'La plateforme immobilière la plus fiable d\'Algérie avec propriétés vérifiées et transactions sécurisées.',
+    whyFeature1Title: '100% Annonces vérifiées',
+    whyFeature1Desc: 'Chaque propriété et propriétaire est vérifié par notre équipe locale.',
+    whyFeature2Title: 'Transactions sécurisées',
+    whyFeature2Desc: 'Tous les paiements protégés avec sécurité et cryptage bancaires.',
+    whyFeature3Title: 'Support juridique',
+    whyFeature3Desc: 'Assistance juridique experte pour chaque transaction.',
+    whyFeature4Title: 'Holibayt Pay™ Escrow',
+    whyFeature4Desc: 'Fonds conservés en escrow jusqu\'à finalisation. Votre argent est protégé.',
+    
+    // Testimonials
+    testimonialsTitle: 'Ce que disent nos clients',
+    testimonialsSubtitle: 'Rejoignez des milliers d\'utilisateurs satisfaits qui font confiance à Holibayt',
+    testimonial1: 'Holibayt a rendu l\'achat de mon premier appartement sans stress. Tout était vérifié et le processus de paiement était complètement sécurisé!',
+    testimonial2: 'En tant que propriétaire, j\'adore que Holibayt Pay protège à la fois moi et mes locataires. La vérification a donné plus de crédibilité à ma propriété.',
+    testimonial3: 'Trouvé la location de vacances parfaite pour ma famille. L\'hôte était vérifié, le paiement sécurisé!',
+    testimonial4: 'Le service de support juridique m\'a aidé à naviguer le processus d\'achat en toute confiance. Je recommande vivement Holibayt!',
+    testimonial5: 'Meilleure plateforme pour trouver des locations en Algérie. Toutes les annonces sont vérifiées.',
     
     // Quick Access
     buyProperty: 'Acheter un bien',
@@ -709,6 +769,66 @@ const allTranslations = {
     heroTitle: 'Holibayt',
     heroSubtitle: 'Buy. Rent. Live Algeria differently.',
     heroDescription: 'The first next-generation digital real estate platform for Algeria.',
+    heroTrustTagline: 'Buy. Rent. Live Algeria safely',
+    heroSubheading: 'with verified listings and secure payments',
+    heroTrustDescription: 'Holibayt combines verified owners, legal support, and escrow protection for every transaction.',
+    
+    // Trust Indicators
+    trustVerifiedListings: '✅ 100% Verified Listings',
+    trustPaymentsProtected: '🛡️ Payments Protected',
+    trustLegalSupport: '⚖️ Legal Support',
+    
+    // Holibayt Pay
+    holibaytPayBrand: 'Holibayt Pay™',
+    holibaytPayBadge: 'Secured by Holibayt Pay™ - funds held in escrow until confirmation',
+    holibaytPayTooltip: 'Funds held in escrow until transaction confirmation. Your payment is protected.',
+    securedByHolibaytPay: 'Secured by Holibayt Pay™',
+    
+    // Verification Badges
+    verifiedOwner: 'Verified Owner',
+    verifiedLandlord: 'Verified Landlord',
+    verifiedProperty: 'Verified Property',
+    verified: 'Verified',
+    newBuild: 'New Build',
+    hotDeal: 'Hot Deal',
+    
+    // Buy Page Trust
+    buyHeroHeading: 'Find verified properties for sale across Algeria - secured by Holibayt Pay™ and legal support',
+    buyHeroSubheading: 'Every listing is verified, every payment protected.',
+    buyNewDescription: 'Find your future home with verified sellers and full legal support.',
+    verifiedProperties: '100% Verified Properties',
+    securePayments: 'Secure Payments with Holibayt Pay™',
+    legalAssistance: 'Legal Assistance for Every Transaction',
+    
+    // Rent Page Trust
+    rentHeroHeading: 'Find verified rentals across Algeria - pay securely with Holibayt Pay™ and avoid scams',
+    rentNewDescription: 'Long-term rentals with verified landlords and guaranteed payments.',
+    verifiedLandlords: '100% Verified Landlords',
+    digitalContracts: '📜 Digital Rental Contracts',
+    
+    // Short Stay Trust
+    shortStayNewDescription: 'Your Algerian Airbnb — safe, verified, and convenient.',
+    
+    // Why Choose Section
+    whyChooseTitle: 'Why Thousands Trust',
+    whyChooseSubtitle: 'Algeria\'s most trusted real estate platform with verified properties and secure transactions.',
+    whyFeature1Title: '100% Verified Listings',
+    whyFeature1Desc: 'Every property and owner is verified by our local validation team.',
+    whyFeature2Title: 'Secure Transactions',
+    whyFeature2Desc: 'All payments protected with bank-level security and encryption.',
+    whyFeature3Title: 'Legal Support',
+    whyFeature3Desc: 'Expert legal assistance for every transaction, ensuring peace of mind.',
+    whyFeature4Title: 'Holibayt Pay™ Escrow',
+    whyFeature4Desc: 'Funds held in escrow until transaction completion. Your money is protected.',
+    
+    // Testimonials
+    testimonialsTitle: 'What Our Clients Say',
+    testimonialsSubtitle: 'Join thousands of satisfied users who trust Holibayt for their real estate needs',
+    testimonial1: 'Holibayt made buying my first apartment stress-free. Everything was verified and the payment process was completely secure!',
+    testimonial2: 'As a landlord, I love that Holibayt Pay protects both me and my tenants. The verification process gave my property more credibility.',
+    testimonial3: 'Found the perfect vacation rental for my family. The host was verified, payment was secure, and we had an amazing stay!',
+    testimonial4: 'The legal support service helped me navigate the buying process with confidence. Highly recommend Holibayt!',
+    testimonial5: 'Best platform for finding rentals in Algeria. All listings are verified and the communication with landlords is seamless.',
     
     // Quick Access
     buyProperty: 'Buy a property',
@@ -1363,6 +1483,66 @@ const allTranslations = {
     heroTitle: 'هولي بايت',
     heroSubtitle: 'اشتري. استأجر. عش الجزائر بشكل مختلف.',
     heroDescription: 'أول منصة عقارية رقمية من الجيل الجديد للجزائر.',
+    heroTrustTagline: 'اشتري. استأجر. عش الجزائر بأمان',
+    heroSubheading: 'مع إعلانات موثقة ومدفوعات آمنة',
+    heroTrustDescription: 'تجمع هولي بايت بين الملاك الموثقين والدعم القانوني وحماية الضمان لكل معاملة.',
+    
+    // Trust Indicators
+    trustVerifiedListings: '✅ 100٪ إعلانات موثقة',
+    trustPaymentsProtected: '🛡️ مدفوعات محمية',
+    trustLegalSupport: '⚖️ دعم قانوني',
+    
+    // Holibayt Pay
+    holibaytPayBrand: 'هولي بايت باي™',
+    holibaytPayBadge: 'محمي بواسطة هولي بايت باي™ - الأموال محفوظة حتى التأكيد',
+    holibaytPayTooltip: 'الأموال محفوظة حتى تأكيد المعاملة. دفعتك محمية.',
+    securedByHolibaytPay: 'محمي بواسطة هولي بايت باي™',
+    
+    // Verification Badges
+    verifiedOwner: 'مالك موثق',
+    verifiedLandlord: 'مالك موثق',
+    verifiedProperty: 'عقار موثق',
+    verified: 'موثق',
+    newBuild: 'بناء جديد',
+    hotDeal: 'عرض ساخن',
+    
+    // Buy Page Trust
+    buyHeroHeading: 'ابحث عن عقارات موثقة للبيع في الجزائر - محمية بواسطة هولي بايت باي™ ودعم قانوني',
+    buyHeroSubheading: 'كل إعلان موثق، كل دفعة محمية.',
+    buyNewDescription: 'ابحث عن منزل المستقبل مع بائعين موثقين ودعم قانوني كامل.',
+    verifiedProperties: '100٪ عقارات موثقة',
+    securePayments: 'مدفوعات آمنة مع هولي بايت باي™',
+    legalAssistance: 'مساعدة قانونية لكل معاملة',
+    
+    // Rent Page Trust
+    rentHeroHeading: 'ابحث عن إيجارات موثقة في الجزائر - ادفع بأمان مع هولي بايت باي™ وتجنب الاحتيال',
+    rentNewDescription: 'إيجارات طويلة الأجل مع ملاك موثقين ومدفوعات مضمونة.',
+    verifiedLandlords: '100٪ ملاك موثقين',
+    digitalContracts: '📜 عقود إيجار رقمية',
+    
+    // Short Stay Trust
+    shortStayNewDescription: 'Airbnb الجزائري الخاص بك — آمن، موثق، ومريح.',
+    
+    // Why Choose Section
+    whyChooseTitle: 'لماذا يثق الآلاف في',
+    whyChooseSubtitle: 'منصة العقارات الأكثر ثقة في الجزائر مع عقارات موثقة ومعاملات آمنة.',
+    whyFeature1Title: '100٪ إعلانات موثقة',
+    whyFeature1Desc: 'كل عقار ومالك موثق من قبل فريق التحقق المحلي لدينا.',
+    whyFeature2Title: 'معاملات آمنة',
+    whyFeature2Desc: 'جميع المدفوعات محمية بأمان وتشفير على مستوى البنوك.',
+    whyFeature3Title: 'دعم قانوني',
+    whyFeature3Desc: 'مساعدة قانونية خبيرة لكل معاملة، مما يضمن راحة البال.',
+    whyFeature4Title: 'ضمان هولي بايت باي™',
+    whyFeature4Desc: 'الأموال محفوظة حتى إتمام المعاملة. أموالك محمية.',
+    
+    // Testimonials
+    testimonialsTitle: 'ماذا يقول عملاؤنا',
+    testimonialsSubtitle: 'انضم إلى آلاف المستخدمين الراضين الذين يثقون في هولي بايت',
+    testimonial1: 'جعلت هولي بايت شراء شقتي الأولى خاليًا من الإجهاد. كل شيء كان موثقًا!',
+    testimonial2: 'كمالك، أحب أن هولي بايت باي يحمي كلاً مني ومن المستأجرين. عملية التحقق أعطت عقاري مزيدًا من المصداقية.',
+    testimonial3: 'وجدت الإيجار المثالي للعطلات لعائلتي. المضيف كان موثقًا، الدفع كان آمنًا!',
+    testimonial4: 'خدمة الدعم القانوني ساعدتني على التنقل في عملية الشراء بثقة. أوصي بشدة بهولي بايت!',
+    testimonial5: 'أفضل منصة للعثور على إيجارات في الجزائر. جميع الإعلانات موثقة.',
     
     // Quick Access
     buyProperty: 'شراء عقار',
