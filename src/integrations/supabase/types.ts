@@ -710,10 +710,13 @@ export type Database = {
           is_superhost: boolean | null
           kyc_approved_at: string | null
           kyc_submitted_at: string | null
+          languages_spoken: string[] | null
           name: string | null
           ownership_verified: boolean | null
+          response_rate: number | null
           role: Database["public"]["Enums"]["app_role"]
           total_reviews: number | null
+          transaction_count: number | null
           updated_at: string
           verification_date: string | null
           verified_host: boolean | null
@@ -728,10 +731,13 @@ export type Database = {
           is_superhost?: boolean | null
           kyc_approved_at?: string | null
           kyc_submitted_at?: string | null
+          languages_spoken?: string[] | null
           name?: string | null
           ownership_verified?: boolean | null
+          response_rate?: number | null
           role?: Database["public"]["Enums"]["app_role"]
           total_reviews?: number | null
+          transaction_count?: number | null
           updated_at?: string
           verification_date?: string | null
           verified_host?: boolean | null
@@ -746,10 +752,13 @@ export type Database = {
           is_superhost?: boolean | null
           kyc_approved_at?: string | null
           kyc_submitted_at?: string | null
+          languages_spoken?: string[] | null
           name?: string | null
           ownership_verified?: boolean | null
+          response_rate?: number | null
           role?: Database["public"]["Enums"]["app_role"]
           total_reviews?: number | null
+          transaction_count?: number | null
           updated_at?: string
           verification_date?: string | null
           verified_host?: boolean | null
@@ -759,6 +768,7 @@ export type Database = {
       properties: {
         Row: {
           area: string
+          availability_status: string | null
           bathrooms: string | null
           bedrooms: string | null
           category: string
@@ -766,6 +776,7 @@ export type Database = {
           check_out_time: string | null
           city: string
           commission_rate: number | null
+          condition: string | null
           contact_email: string
           contact_name: string
           contact_phone: string
@@ -778,6 +789,7 @@ export type Database = {
           financing_available: boolean | null
           floor_number: string | null
           full_address: string | null
+          furnished: boolean | null
           holibayt_pay_eligible: boolean | null
           id: string
           images: string[] | null
@@ -787,6 +799,7 @@ export type Database = {
           is_verified: boolean | null
           last_verified_at: string | null
           location: string
+          minimum_rental_term: string | null
           new_build: boolean | null
           occupancy_available_from: string | null
           owner_account_id: string | null
@@ -804,6 +817,7 @@ export type Database = {
         }
         Insert: {
           area: string
+          availability_status?: string | null
           bathrooms?: string | null
           bedrooms?: string | null
           category: string
@@ -811,6 +825,7 @@ export type Database = {
           check_out_time?: string | null
           city: string
           commission_rate?: number | null
+          condition?: string | null
           contact_email: string
           contact_name: string
           contact_phone: string
@@ -823,6 +838,7 @@ export type Database = {
           financing_available?: boolean | null
           floor_number?: string | null
           full_address?: string | null
+          furnished?: boolean | null
           holibayt_pay_eligible?: boolean | null
           id?: string
           images?: string[] | null
@@ -832,6 +848,7 @@ export type Database = {
           is_verified?: boolean | null
           last_verified_at?: string | null
           location: string
+          minimum_rental_term?: string | null
           new_build?: boolean | null
           occupancy_available_from?: string | null
           owner_account_id?: string | null
@@ -849,6 +866,7 @@ export type Database = {
         }
         Update: {
           area?: string
+          availability_status?: string | null
           bathrooms?: string | null
           bedrooms?: string | null
           category?: string
@@ -856,6 +874,7 @@ export type Database = {
           check_out_time?: string | null
           city?: string
           commission_rate?: number | null
+          condition?: string | null
           contact_email?: string
           contact_name?: string
           contact_phone?: string
@@ -868,6 +887,7 @@ export type Database = {
           financing_available?: boolean | null
           floor_number?: string | null
           full_address?: string | null
+          furnished?: boolean | null
           holibayt_pay_eligible?: boolean | null
           id?: string
           images?: string[] | null
@@ -877,6 +897,7 @@ export type Database = {
           is_verified?: boolean | null
           last_verified_at?: string | null
           location?: string
+          minimum_rental_term?: string | null
           new_build?: boolean | null
           occupancy_available_from?: string | null
           owner_account_id?: string | null

@@ -29,6 +29,14 @@ All colors MUST be HSL.
 
     --accent: 45 96% 69%; /* Sable doré #FEC260 */
     --accent-foreground: 237 15% 30%;
+    
+    /* Gold accent for premium features */
+    --gold: 45 92% 55%; /* Gold #D4AF37 */
+    --gold-foreground: 237 15% 30%;
+    
+    /* Cream backgrounds */
+    --cream: 35 35% 95%; /* Cream */
+    --cream-dark: 35 25% 92%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
