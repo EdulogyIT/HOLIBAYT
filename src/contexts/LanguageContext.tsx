@@ -108,6 +108,7 @@ const allTranslations = {
     propertiesForRentDesc: 'Trouvez votre location idéale',
     shortStayTitle: 'Séjours Courts',
     shortStayDesc: 'Hébergements parfaits pour vos courts séjours',
+    shortStayProperties: 'Propriétés de Court Séjour',
     
     // Quick Access Section
     howCanWeHelp: 'Comment pouvons-nous vous aider ?',
@@ -760,6 +761,7 @@ const allTranslations = {
     propertiesForRentDesc: 'Find your ideal rental',
     shortStayTitle: 'Short Stays',
     shortStayDesc: 'Perfect accommodations for your short stays',
+    shortStayProperties: 'Short Stay Properties',
     
     // Quick Access Section
     howCanWeHelp: 'How can we help you?',
@@ -1413,6 +1415,7 @@ const allTranslations = {
     propertiesForRentDesc: 'اعثر على الإيجار المثالي',
     shortStayTitle: 'الإقامات القصيرة',
     shortStayDesc: 'أماكن إقامة مثالية لإقاماتك القصيرة',
+    shortStayProperties: 'عقارات الإقامة القصيرة',
     
     // Quick Access Section
     howCanWeHelp: 'كيف يمكننا مساعدتك؟',

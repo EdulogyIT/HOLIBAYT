@@ -24,6 +24,7 @@ import { GuestFavouriteBadge } from "@/components/GuestFavouriteBadge";
 import { RatingSection } from "@/components/RatingSection";
 import { ReviewTags } from "@/components/ReviewTags";
 import { PropertyShareButton } from "@/components/PropertyShareButton";
+import { HostDetailsSection } from "@/components/HostDetailsSection";
 
 interface Property {
   id: string;
@@ -297,27 +298,42 @@ const Property = () => {
                 </CardContent>
               </Card>
 
-              {/* Guest Favourite Badge */}
-              {averageRating >= 4.5 && totalReviews >= 5 && (
-                <GuestFavouriteBadge rating={averageRating} reviewCount={totalReviews} />
-              )}
+        {/* Meet Your Host Section */}
+        {property.user_id && (
+          <Card className="shadow-lg">
+            <CardHeader>
+              <CardTitle className="text-2xl">Meet Your Host</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <HostProfileSection 
+                userId={property.user_id}
+                onContactHost={() => setIsMessageModalOpen(true)}
+              />
+            </CardContent>
+          </Card>
+        )}
 
-              {/* Meet Your Host - Right After Images */}
-              {property.user_id && (
-                <Card className="shadow-lg">
-                  <CardHeader>
-                    <CardTitle className="text-2xl">Meet Your Host</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <HostProfileSection 
-                      userId={property.user_id}
-                      onContactHost={() => setIsMessageModalOpen(true)}
-                    />
-                  </CardContent>
-                </Card>
-              )}
+        {/* Guest Favourite Badge - After Host */}
+        {averageRating >= 4.5 && totalReviews >= 5 && (
+          <GuestFavouriteBadge rating={averageRating} reviewCount={totalReviews} />
+        )}
 
-              {/* Description */}
+        {/* Rating Section - Right After Badge */}
+        {averageRating > 0 && (
+          <RatingSection 
+            reviews={reviews}
+            categoryRatings={{
+              cleanliness: property.features?.cleanliness_rating,
+              accuracy: property.features?.accuracy_rating,
+              checkin: property.features?.checkin_rating,
+              communication: property.features?.communication_rating,
+              location: property.features?.location_rating,
+              value: property.features?.value_rating,
+            }}
+          />
+        )}
+
+        {/* Description */}
               {translatedDescription && (
                 <Card className="shadow-lg">
                   <CardHeader>
@@ -355,30 +371,15 @@ const Property = () => {
                 </Card>
               )}
 
-              {/* Rating Section - Unified */}
-              {averageRating > 0 && (
-                <RatingSection 
-                  reviews={reviews}
-                  categoryRatings={{
-                    cleanliness: property.features?.cleanliness_rating,
-                    accuracy: property.features?.accuracy_rating,
-                    checkin: property.features?.checkin_rating,
-                    communication: property.features?.communication_rating,
-                    location: property.features?.location_rating,
-                    value: property.features?.value_rating,
-                  }}
-                />
-              )}
+        {/* Review Tags */}
+        {totalReviews > 0 && (
+          <ReviewTags tags={property.features?.review_tags} />
+        )}
 
-              {/* Review Tags */}
-              {totalReviews > 0 && (
-                <ReviewTags tags={property.features?.review_tags} />
-              )}
+        {/* Reviews */}
+        <PropertyReviews propertyId={property.id} hostUserId={property.user_id || ''} />
 
-              {/* Reviews */}
-              <PropertyReviews propertyId={property.id} hostUserId={property.user_id || ''} />
-
-              {/* Location Map */}
+        {/* Location Map */}
               <Card className="shadow-lg">
                 <CardHeader>
                   <CardTitle className="text-2xl">{t('location')}</CardTitle>
@@ -390,6 +391,11 @@ const Property = () => {
                   <StaticPropertyMap location={`${property.city}, ${property.location}`} />
                 </CardContent>
               </Card>
+
+              {/* Detailed Host Information Section */}
+              {property.user_id && (
+                <HostDetailsSection userId={property.user_id} onContactHost={() => setIsMessageModalOpen(true)} />
+              )}
             </div>
 
             {/* Sticky Sidebar - Booking Card */}
