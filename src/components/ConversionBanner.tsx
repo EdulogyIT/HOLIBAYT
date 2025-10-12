@@ -1,8 +1,8 @@
-import { Button } from "@/components/ui/button";
-import { Shield, ArrowRight } from "lucide-react";
-import { useLanguage } from "@/contexts/LanguageContext";
-import { HolibaytPayBadge } from "./HolibaytPayBadge";
-import { useNavigate } from "react-router-dom";
+import React from 'react';
+import { useLanguage } from '@/contexts/LanguageContext';
+import { Button } from '@/components/ui/button';
+import { Shield, DollarSign, FileCheck, ArrowRight } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 interface ConversionBannerProps {
   type: 'buy' | 'rent' | 'short-stay';
@@ -16,21 +16,21 @@ export const ConversionBanner = ({ type }: ConversionBannerProps) => {
     switch (type) {
       case 'buy':
         return {
-          title: t('secureTransaction'),
-          description: t('fundsInEscrow'),
-          cta: t('learnMore')
+          title: t('staySafeHolibaytPay') || 'Stay Safe with Holibayt Pay™',
+          description: t('fundsInEscrow') || 'Your funds are held in escrow until you receive your property keys',
+          cta: t('learnMore') || 'Learn More'
         };
       case 'rent':
         return {
-          title: t('avoidScams'),
+          title: t('staySafeHolibaytPay') || 'Stay Safe with Holibayt Pay™',
           description: "",
-          cta: t('learnMore')
+          cta: t('learnMore') || 'Learn More'
         };
       case 'short-stay':
         return {
-          title: t('staySafeHolibaytPay'),
-          description: t('holibaytPayProtected'),
-          cta: t('learnMore')
+          title: t('holibaytPayProtected') || 'Protected by Holibayt Pay™',
+          description: t('secureTransaction') || 'Your payment is held in escrow until check-in confirmation',
+          cta: t('learnMore') || 'Learn More'
         };
     }
   };
@@ -38,42 +38,49 @@ export const ConversionBanner = ({ type }: ConversionBannerProps) => {
   const content = getContent();
 
   return (
-    <div className="bg-gradient-to-br from-primary/10 via-primary/5 to-background border-t border-primary/20">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="text-center space-y-4">
-          <div className="flex justify-center">
-            <HolibaytPayBadge variant="default" showTooltip={false} />
-          </div>
-          
-          <h2 className="text-2xl md:text-3xl font-bold text-foreground font-playfair">
-            {content.title}
-          </h2>
-          
-          {content.description && (
-            <p className="text-base text-muted-foreground max-w-2xl mx-auto">
-              {content.description}
-            </p>
-          )}
+    <div className="bg-gradient-to-r from-primary via-primary to-primary-glow relative overflow-hidden">
+      {/* Decorative background pattern */}
+      <div className="absolute inset-0 opacity-10">
+        <div className="absolute inset-0" style={{
+          backgroundImage: `radial-gradient(circle at 2px 2px, white 1px, transparent 0)`,
+          backgroundSize: '40px 40px'
+        }}></div>
+      </div>
 
-          <div className="flex flex-wrap items-center justify-center gap-4 pt-2">
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <Shield className="h-5 w-5 text-primary" />
-              <span>{t('verifiedProperties')}</span>
-            </div>
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <Shield className="h-5 w-5 text-primary" />
-              <span>{t('securePayments')}</span>
-            </div>
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <Shield className="h-5 w-5 text-primary" />
-              <span>{t('legalAssistance')}</span>
-            </div>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 relative z-10">
+        <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+          {/* Left Content */}
+          <div className="flex-1 text-center md:text-left">
+            <h3 className="text-2xl md:text-3xl font-bold text-white mb-2 font-playfair">
+              {content.title}
+            </h3>
+            {content.description && (
+              <p className="text-white/90 text-sm md:text-base font-inter max-w-xl">
+                {content.description}
+              </p>
+            )}
           </div>
 
+          {/* Trust Indicators - Different Icons */}
+          <div className="flex flex-col sm:flex-row items-center gap-4">
+            <div className="flex items-center gap-2 text-white bg-white/10 backdrop-blur-sm px-4 py-2 rounded-lg">
+              <Shield className="w-5 h-5" />
+              <span className="text-sm font-medium">{t('verifiedProperties') || 'Verified'}</span>
+            </div>
+            <div className="flex items-center gap-2 text-white bg-white/10 backdrop-blur-sm px-4 py-2 rounded-lg">
+              <DollarSign className="w-5 h-5" />
+              <span className="text-sm font-medium">{t('securePayments') || 'Secure'}</span>
+            </div>
+            <div className="flex items-center gap-2 text-white bg-white/10 backdrop-blur-sm px-4 py-2 rounded-lg">
+              <FileCheck className="w-5 h-5" />
+              <span className="text-sm font-medium">{t('legalAssistance') || 'Legal'}</span>
+            </div>
+          </div>
+
+          {/* CTA Button */}
           <Button 
-            size="default"
-            className="mt-2"
             onClick={() => navigate('/holibayt-pay')}
+            className="bg-white text-primary hover:bg-white/90 font-semibold shadow-lg"
           >
             {content.cta}
             <ArrowRight className="ml-2 h-4 w-4" />

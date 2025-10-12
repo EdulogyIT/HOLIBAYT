@@ -1,6 +1,6 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Home, Key, Bed, ArrowRight } from "lucide-react";
+import { Home, Key, Bed, ArrowRight, Shield, DollarSign, Scale } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useLanguage } from "@/contexts/LanguageContext";
 
@@ -17,7 +17,12 @@ const QuickAccessSection = () => {
       subtitle: t('buyPropertySubtitle'),
       color: 'bg-primary',
       hoverColor: 'group-hover:bg-primary',
-      borderColor: 'border-primary/20 group-hover:border-primary/40'
+      borderColor: 'border-primary/20 group-hover:border-primary/40',
+      trustIndicators: [
+        { icon: Shield, text: t('verifiedProperties') || 'Verified Properties' },
+        { icon: DollarSign, text: t('securePayments') || 'Secure Payments' },
+        { icon: Scale, text: t('legalAssistance') || 'Legal Support' }
+      ]
     },
     {
       id: 'rent',
@@ -27,7 +32,12 @@ const QuickAccessSection = () => {
       subtitle: t('rentPropertySubtitle'),
       color: 'bg-accent',
       hoverColor: 'group-hover:bg-accent',
-      borderColor: 'border-accent/20 group-hover:border-accent/40'
+      borderColor: 'border-accent/20 group-hover:border-accent/40',
+      trustIndicators: [
+        { icon: Shield, text: t('verifiedProperties') || 'Verified Properties' },
+        { icon: DollarSign, text: t('securePayments') || 'Secure Payments' },
+        { icon: Scale, text: t('legalAssistance') || 'Legal Support' }
+      ]
     },
     {
       id: 'stay',
@@ -37,7 +47,12 @@ const QuickAccessSection = () => {
       subtitle: t('shortStaySubtitle'),
       color: 'bg-foreground',
       hoverColor: 'group-hover:bg-foreground',
-      borderColor: 'border-foreground/20 group-hover:border-foreground/40'
+      borderColor: 'border-foreground/20 group-hover:border-foreground/40',
+      trustIndicators: [
+        { icon: Shield, text: t('verifiedHosts') || 'Verified Hosts' },
+        { icon: DollarSign, text: t('securedPaymentsEscrow') || 'Secured Payments' },
+        { icon: Scale, text: t('localSupport247') || '24/7 Support' }
+      ]
     }
   ];
 
@@ -61,7 +76,7 @@ const QuickAccessSection = () => {
             return (
               <Card 
                 key={action.id} 
-                className={`group relative overflow-hidden border-2 ${action.borderColor} hover:shadow-elegant transition-all duration-300 hover:-translate-y-2 cursor-pointer bg-card/50 backdrop-blur-sm flex flex-col h-full min-h-[420px]`}
+                className={`group relative overflow-hidden border-2 ${action.borderColor} hover:shadow-elegant transition-all duration-300 hover:-translate-y-2 cursor-pointer bg-card/50 backdrop-blur-sm flex flex-col h-full min-h-[480px]`}
               >
                 <CardContent className="p-6 md:p-8 text-center flex flex-col h-full">
                   {/* Watermark Icon */}
@@ -84,9 +99,22 @@ const QuickAccessSection = () => {
                     <p className="text-sm text-primary font-inter font-medium mb-3">
                       {action.subtitle}
                     </p>
-                    <p className="text-muted-foreground font-inter text-sm md:text-base leading-relaxed">
+                    <p className="text-muted-foreground font-inter text-sm md:text-base leading-relaxed mb-4">
                       {action.description}
                     </p>
+
+                    {/* Trust Indicators - Single Icons */}
+                    <div className="space-y-2">
+                      {action.trustIndicators.map((indicator, idx) => {
+                        const TrustIcon = indicator.icon;
+                        return (
+                          <div key={idx} className="flex items-center justify-center gap-2 text-xs text-muted-foreground">
+                            <TrustIcon className="h-4 w-4 text-primary" />
+                            <span>{indicator.text}</span>
+                          </div>
+                        );
+                      })}
+                    </div>
                   </div>
 
                   {/* CTA Button - Footer */}

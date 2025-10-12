@@ -18,6 +18,11 @@ interface FilterState {
   bathrooms: string;
   minArea: string;
   maxArea: string;
+  verifiedOnly?: boolean;
+  furnished?: string;
+  financingAvailable?: boolean;
+  newBuild?: boolean;
+  instantBooking?: boolean;
 }
 
 interface PropertyFiltersProps {
@@ -36,7 +41,12 @@ const PropertyFilters = ({ onFilterChange, listingType }: PropertyFiltersProps) 
     bedrooms: "all",
     bathrooms: "all",
     minArea: "",
-    maxArea: ""
+    maxArea: "",
+    verifiedOnly: false,
+    furnished: "all",
+    financingAvailable: false,
+    newBuild: false,
+    instantBooking: false
   });
 
   const handleFilterChange = (key: keyof FilterState, value: any) => {
@@ -54,7 +64,12 @@ const PropertyFilters = ({ onFilterChange, listingType }: PropertyFiltersProps) 
       bedrooms: "all",
       bathrooms: "all",
       minArea: "",
-      maxArea: ""
+      maxArea: "",
+      verifiedOnly: false,
+      furnished: "all",
+      financingAvailable: false,
+      newBuild: false,
+      instantBooking: false
     };
     setFilters(clearedFilters);
     onFilterChange(clearedFilters);
@@ -69,6 +84,11 @@ const PropertyFilters = ({ onFilterChange, listingType }: PropertyFiltersProps) 
     if (filters.minArea) count++;
     if (filters.maxArea) count++;
     if (filters.minPrice[0] > 0) count++;
+    if (filters.verifiedOnly) count++;
+    if (filters.furnished && filters.furnished !== "all") count++;
+    if (filters.financingAvailable) count++;
+    if (filters.newBuild) count++;
+    if (filters.instantBooking) count++;
     return count;
   };
 
@@ -262,6 +282,78 @@ const PropertyFilters = ({ onFilterChange, listingType }: PropertyFiltersProps) 
                     </div>
                   </div>
                 </div>
+              </div>
+
+              {/* Advanced Filters */}
+              <div className="mt-6 pt-6 border-t space-y-4">
+                <h3 className="font-inter font-semibold text-sm">{t('advancedFilters') || 'Advanced Filters'}</h3>
+                
+                {/* Verified Only */}
+                <div className="flex items-center justify-between">
+                  <Label className="font-inter text-sm">{t('verifiedOnly') || 'Verified Only'}</Label>
+                  <input
+                    type="checkbox"
+                    checked={filters.verifiedOnly || false}
+                    onChange={(e) => handleFilterChange('verifiedOnly', e.target.checked)}
+                    className="h-4 w-4"
+                  />
+                </div>
+
+                {/* Furnished (Rent only) */}
+                {listingType === 'rent' && (
+                  <div className="space-y-2">
+                    <Label className="font-inter text-sm">{t('furnished') || 'Furnished'}</Label>
+                    <Select value={filters.furnished || "all"} onValueChange={(value) => handleFilterChange('furnished', value)}>
+                      <SelectTrigger className="font-inter text-sm">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent className="bg-background border border-border z-50">
+                        <SelectItem value="all">{t('all') || 'All'}</SelectItem>
+                        <SelectItem value="yes">{t('furnished') || 'Furnished'}</SelectItem>
+                        <SelectItem value="no">{t('unfurnished') || 'Unfurnished'}</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                )}
+
+                {/* Financing Available (Buy only) */}
+                {listingType === 'buy' && (
+                  <div className="flex items-center justify-between">
+                    <Label className="font-inter text-sm">{t('financingAvailable') || 'Financing Available'}</Label>
+                    <input
+                      type="checkbox"
+                      checked={filters.financingAvailable || false}
+                      onChange={(e) => handleFilterChange('financingAvailable', e.target.checked)}
+                      className="h-4 w-4"
+                    />
+                  </div>
+                )}
+
+                {/* New Build (Buy only) */}
+                {listingType === 'buy' && (
+                  <div className="flex items-center justify-between">
+                    <Label className="font-inter text-sm">{t('newBuild') || 'New Build'}</Label>
+                    <input
+                      type="checkbox"
+                      checked={filters.newBuild || false}
+                      onChange={(e) => handleFilterChange('newBuild', e.target.checked)}
+                      className="h-4 w-4"
+                    />
+                  </div>
+                )}
+
+                {/* Instant Booking (Short Stay only) */}
+                {listingType === 'shortStay' && (
+                  <div className="flex items-center justify-between">
+                    <Label className="font-inter text-sm">{t('instantBooking') || 'Instant Booking'}</Label>
+                    <input
+                      type="checkbox"
+                      checked={filters.instantBooking || false}
+                      onChange={(e) => handleFilterChange('instantBooking', e.target.checked)}
+                      className="h-4 w-4"
+                    />
+                  </div>
+                )}
               </div>
             </div>
           </CardContent>

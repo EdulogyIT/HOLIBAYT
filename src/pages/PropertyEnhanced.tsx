@@ -347,7 +347,9 @@ const PropertyEnhanced = () => {
             {/* Why Buy/Rent with Holibayt */}
             {isBuy ? <WhyBuyWithHolibayt /> : isRent ? <WhyRentWithHolibayt /> : null}
 
-            {/* Reviews */}
+            <Separator />
+
+            {/* Reviews - Single Section Only */}
             <PropertyReviews propertyId={property.id} hostUserId={property.user_id || ""} />
 
             {/* Similar Properties */}

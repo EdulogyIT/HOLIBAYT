@@ -133,7 +133,7 @@ const allTranslations = {
     averageRentalPrice: 'Prix de location moyen dans cette zone',
     verifiedRentals: 'Locations vérifiées Holibayt',
     commuteDowntown: 'Trajet vers le centre-ville',
-    avoidScams: 'Évitez les arnaques et protégez votre dépôt avec Holibayt Pay™ - la première solution d\'entiercement immobilier d\'Algérie.',
+    staySafeHolibaytPay: 'Restez en sécurité avec Holibayt Pay™',
     
     // Short Stay Trust
     shortStayNewDescription: 'Votre Airbnb algérien — sûr, vérifié et pratique.',
@@ -155,7 +155,6 @@ const allTranslations = {
     stripeEscrowProtection: 'Protection Escrow Stripe',
     refundClarity: 'Conditions de remboursement claires',
     verifiedGuestReviews: 'De clients vérifiés',
-    staySafeHolibaytPay: 'Séjournez en sécurité avec Holibayt Pay™',
     everyBookingProtected: 'Chaque réservation, vérifiée. Chaque paiement, protégé.',
     learnHow: 'En savoir plus',
     averageNightlyPrice: 'Prix moyen par nuit dans cette zone',
