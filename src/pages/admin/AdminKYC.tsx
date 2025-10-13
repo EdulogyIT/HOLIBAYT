@@ -22,11 +22,15 @@ import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 
 export default function AdminKYC() {
+  const { t } = useLanguage();
+  const navigate = useNavigate();
   const [submissions, setSubmissions] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedSubmission, setSelectedSubmission] = useState<any>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [rejectionReason, setRejectionReason] = useState('');
+  const [adminNotes, setAdminNotes] = useState('');
+  const [actionType, setActionType] = useState<'approve' | 'reject' | 'request_changes'>('approve');
 
   useEffect(() => {
     fetchSubmissions();

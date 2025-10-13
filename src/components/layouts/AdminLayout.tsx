@@ -26,7 +26,8 @@ import {
   LogOut,
   Home,
   User,
-  FileText
+  FileText,
+  ShieldCheck
 } from 'lucide-react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -45,6 +46,7 @@ export const AdminLayout = ({ children }: AdminLayoutProps) => {
     { title: t('admin.dashboard'), url: '/admin', icon: LayoutDashboard },
     { title: t('admin.properties'), url: '/admin/properties', icon: Building2 },
     { title: t('admin.hostsGuests'), url: '/admin/users', icon: Users },
+    { title: t('admin.kycVerification'), url: '/admin/kyc', icon: ShieldCheck },
     { title: 'Superhosts', url: '/admin/superhosts', icon: Users },
     { title: 'Commissions', url: '/admin/commissions', icon: Calendar },
     { title: t('admin.messages'), url: '/admin/messages', icon: MessageSquare },
