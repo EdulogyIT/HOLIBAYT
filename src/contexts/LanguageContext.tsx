@@ -152,6 +152,7 @@ const allTranslations = {
     transactions: 'Transactions',
     verifiedDocuments: 'Documents vérifiés',
     verifiedOwnerSince: 'Propriétaire vérifié depuis',
+    holibaytPayProtection: 'Protection Holibayt Pay™',
     
     verifiedHosts: 'Hôtes vérifiés',
     verifiedHost: 'Hôte vérifié',
@@ -924,6 +925,7 @@ const allTranslations = {
     transactions: 'Transactions',
     verifiedDocuments: 'Verified Documents',
     verifiedOwnerSince: 'Verified Owner Since',
+    holibaytPayProtection: 'Holibayt Pay™ Protection',
     
     verifiedHosts: 'Verified Hosts',
     verifiedHost: 'Verified Host',
@@ -1680,6 +1682,7 @@ const allTranslations = {
     transactions: 'المعاملات',
     verifiedDocuments: 'الوثائق الموثقة',
     verifiedOwnerSince: 'مالك موثق منذ',
+    holibaytPayProtection: 'حماية Holibayt Pay™',
     
     verifiedHosts: 'مضيفون موثقون',
     verifiedHost: 'مضيف موثق',

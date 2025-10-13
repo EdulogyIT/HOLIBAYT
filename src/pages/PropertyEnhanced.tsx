@@ -190,7 +190,7 @@ const PropertyEnhanced = () => {
   const isBuy = property.category === "buy";
   const isRent = property.category === "rent";
   const isShortStay = property.category === "short-stay";
-  const verificationYear = profile?.kyc_approved_at
+  const verificationYear = profile?.kyc_approved_at && profile.kyc_approved_at !== null
     ? new Date(profile.kyc_approved_at).getFullYear() 
     : new Date().getFullYear();
   const isInWishlist = wishlistIds.has(property.id);
@@ -315,7 +315,7 @@ const PropertyEnhanced = () => {
                 <VerifiedOwnerSection
                   name={profile.name || "Property Owner"}
                   avatarUrl={profile.avatar_url}
-                  verifiedSince={verificationYear.toString()}
+                  verifiedSince={!isNaN(verificationYear) ? verificationYear.toString() : new Date().getFullYear().toString()}
                   city={property.city}
                   languages={profile.languages_spoken || ["Arabic", "French"]}
                   transactionCount={profile.transaction_count || 0}
@@ -376,7 +376,7 @@ const PropertyEnhanced = () => {
               <div>
                 <div className="flex items-baseline justify-between mb-2">
                   <div className="text-3xl font-bold text-primary">
-                    {formatPrice(parseFloat(property.price), property.price_currency || "DZD")}
+                    {formatPrice(parseFloat(property.price), property.price_type, property.price_currency || "DZD")}
                   </div>
                   <CurrencySelector />
                 </div>
@@ -386,7 +386,7 @@ const PropertyEnhanced = () => {
                 </p>
                 {property.fees?.security_deposit?.enabled && (
                   <p className="text-sm text-muted-foreground mt-1">
-                    {tKey("deposit")}: {formatPrice(property.fees.security_deposit.amount, property.price_currency || "DZD")} {tKey("depositHeldVia")}
+                    {tKey("deposit")}: {formatPrice(property.fees.security_deposit.amount, property.price_type, property.price_currency || "DZD")} {tKey("depositHeldVia")}
                   </p>
                 )}
               </div>
