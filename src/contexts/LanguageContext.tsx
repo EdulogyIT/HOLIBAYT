@@ -139,6 +139,14 @@ const allTranslations = {
     shortStayNewDescription: 'Votre Airbnb algérien — sûr, vérifié et pratique.',
     shortStayHeroHeading: 'Réservez des séjours de confiance en Algérie - tous les hôtes vérifiés, tous les paiements sécurisés par Holibayt Pay™',
     shortStayHeroSubtitle: 'Profitez de votre voyage avec confiance, pas avec incertitude.',
+    
+    // CTA Buttons
+    requestVisit: 'Demander une visite',
+    scheduleVisit: 'Planifier une visite',
+    bookViewingSafely: 'Réserver une visite en toute sécurité',
+    chatSecurely: 'Discuter en toute sécurité via Holibayt',
+    communicationWarning: 'Toutes les communications et paiements doivent passer par Holibayt Pay™ pour rester protégés.',
+    
     verifiedHosts: 'Hôtes vérifiés',
     verifiedHost: 'Hôte vérifié',
     securedPaymentsEscrow: 'Paiements sécurisés (Escrow)',
@@ -897,6 +905,13 @@ const allTranslations = {
     shortStayNewDescription: 'Your Algerian Airbnb — safe, verified, and convenient.',
     shortStayHeroHeading: 'Book trusted short stays across Algeria - all hosts verified, all payments secured by Holibayt Pay™',
     shortStayHeroSubtitle: 'Enjoy your trip with confidence, not uncertainty.',
+    
+    // CTA Buttons
+    requestVisit: 'Request Visit',
+    scheduleVisit: 'Schedule Visit',
+    bookViewingSafely: 'Book a Viewing Safely',
+    chatSecurely: 'Chat Securely via Holibayt',
+    communicationWarning: 'All communication and payments must go through Holibayt Pay™ to remain protected.',
     verifiedHosts: 'Verified Hosts',
     verifiedHost: 'Verified Host',
     securedPaymentsEscrow: 'Secured Payments (Escrow)',
@@ -1639,6 +1654,14 @@ const allTranslations = {
     shortStayNewDescription: 'Airbnb الجزائري الخاص بك — آمن، موثق، ومريح.',
     shortStayHeroHeading: 'احجز إقامات موثوقة في جميع أنحاء الجزائر - جميع المضيفين موثقون، جميع المدفوعات مؤمنة بواسطة Holibayt Pay™',
     shortStayHeroSubtitle: 'استمتع برحلتك بثقة، وليس بعدم يقين.',
+    
+    // CTA Buttons
+    requestVisit: 'طلب زيارة',
+    scheduleVisit: 'جدولة زيارة',
+    bookViewingSafely: 'احجز معاينة بأمان',
+    chatSecurely: 'الدردشة بأمان عبر Holibayt',
+    communicationWarning: 'يجب أن تتم جميع الاتصالات والمدفوعات عبر Holibayt Pay™ لتبقى محمية.',
+    
     verifiedHosts: 'مضيفون موثقون',
     verifiedHost: 'مضيف موثق',
     securedPaymentsEscrow: 'مدفوعات مؤمنة (الضمان)',

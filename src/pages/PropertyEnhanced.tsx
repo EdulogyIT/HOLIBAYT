@@ -189,7 +189,8 @@ const PropertyEnhanced = () => {
 
   const isBuy = property.category === "buy";
   const isRent = property.category === "rent";
-  const verificationYear = profile?.kyc_approved_at 
+  const isShortStay = property.category === "short-stay";
+  const verificationYear = profile?.kyc_approved_at
     ? new Date(profile.kyc_approved_at).getFullYear() 
     : new Date().getFullYear();
   const isInWishlist = wishlistIds.has(property.id);
@@ -398,7 +399,7 @@ const PropertyEnhanced = () => {
                   size="lg"
                 >
                   <Calendar className="w-4 h-4 mr-2" />
-                  {isBuy ? tKey("requestVisit") : isRent ? tKey("bookViewingSafely") : t("scheduleVisit")}
+                  {isBuy ? tKey("requestVisit") : isRent ? tKey("scheduleVisit") : tKey("bookViewingSafely")}
                 </Button>
                 
                 <Button
@@ -418,11 +419,13 @@ const PropertyEnhanced = () => {
                 )}
               </div>
 
-              {/* Warning */}
-              {(isBuy || isRent) && (
-                <div className="flex items-start gap-2 p-3 rounded-lg bg-yellow-50 border border-yellow-200 text-sm">
-                  <AlertTriangle className="w-4 h-4 text-yellow-600 flex-shrink-0 mt-0.5" />
-                  <p className="text-yellow-800">{tKey("communicationWarning")}</p>
+              {/* Warning - Only for Short Stay */}
+              {isShortStay && (
+                <div className="flex items-start gap-3 p-4 rounded-lg bg-yellow-50 border border-yellow-200">
+                  <AlertTriangle className="w-5 h-5 text-yellow-600 flex-shrink-0 mt-0.5" />
+                  <p className="text-sm text-yellow-800 whitespace-normal break-words leading-relaxed">
+                    {tKey("communicationWarning")}
+                  </p>
                 </div>
               )}
 
