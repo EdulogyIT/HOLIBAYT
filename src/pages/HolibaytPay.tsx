@@ -213,7 +213,7 @@ export default function HolibaytPay() {
                 </CardHeader>
                 <CardContent>
                   <p className="text-muted-foreground font-inter">
-                    {t('securityDesc') || 'Your payment information is encrypted and protected with industry-leading security standards. We never store your card details.'}
+                    {t('holibaytPaySecurityDesc') || 'Your payment information is encrypted and protected with industry-leading security standards. We never store your card details.'}
                   </p>
                 </CardContent>
               </Card>
@@ -225,7 +225,7 @@ export default function HolibaytPay() {
                 </CardHeader>
                 <CardContent>
                   <p className="text-muted-foreground font-inter">
-                    {t('stripeDesc') || 'All transactions are processed through Stripe, a globally trusted payment platform used by millions of businesses worldwide.'}
+                    {t('holibaytPayStripeDesc') || 'All transactions are processed through Stripe, a globally trusted payment platform used by millions of businesses worldwide.'}
                   </p>
                 </CardContent>
               </Card>
@@ -237,7 +237,7 @@ export default function HolibaytPay() {
                 </CardHeader>
                 <CardContent>
                   <p className="text-muted-foreground font-inter">
-                    {t('paymentMethodsDesc') || 'Accept payments via credit cards, debit cards, and other popular payment methods. Support for EUR, USD, and DZD currencies.'}
+                    {t('holibaytPayPaymentMethodsDesc') || 'Accept payments via credit cards, debit cards, and other popular payment methods. Support for EUR, USD, and DZD currencies.'}
                   </p>
                 </CardContent>
               </Card>
@@ -249,7 +249,7 @@ export default function HolibaytPay() {
                 </CardHeader>
                 <CardContent>
                   <p className="text-muted-foreground font-inter">
-                    {t('confirmationDesc') || 'Get immediate booking confirmation once payment is processed. Both guests and hosts receive instant notifications.'}
+                    {t('holibaytPayConfirmationDesc') || 'Get immediate booking confirmation once payment is processed. Both guests and hosts receive instant notifications.'}
                   </p>
                 </CardContent>
               </Card>
@@ -261,7 +261,7 @@ export default function HolibaytPay() {
                 </CardHeader>
                 <CardContent>
                   <p className="text-muted-foreground font-inter">
-                    {t('payoutsDesc') || 'Hosts receive their payouts automatically after successful bookings. Transparent commission structure with no hidden fees.'}
+                    {t('holibaytPayPayoutsDesc') || 'Hosts receive their payouts automatically after successful bookings. Transparent commission structure with no hidden fees.'}
                   </p>
                 </CardContent>
               </Card>
@@ -273,7 +273,7 @@ export default function HolibaytPay() {
                 </CardHeader>
                 <CardContent>
                   <p className="text-muted-foreground font-inter">
-                    {t('refundsDesc') || 'Simple refund process for cancellations. Security deposits are automatically refunded after checkout according to the policy.'}
+                    {t('holibaytPayRefundsDesc') || 'Simple refund process for cancellations. Security deposits are automatically refunded after checkout according to the policy.'}
                   </p>
                 </CardContent>
               </Card>
