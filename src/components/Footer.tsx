@@ -124,7 +124,7 @@ const Footer = () => {
                   <div className="p-1 rounded bg-foreground/10 text-foreground group-hover:bg-foreground group-hover:text-background transition-colors duration-300">
                     <Mail className="h-4 w-4" />
                   </div>
-                  <span className="text-muted-foreground group-hover:text-foreground transition-colors duration-300">contact@holibayt.dz</span>
+                  <span className="text-muted-foreground group-hover:text-foreground transition-colors duration-300">contact@holibayt.com</span>
                 </div>
               </li>
             </ul>
