@@ -93,7 +93,7 @@ export const VerifiedOwnerSection = ({
       )}
 
       {/* Rating Block */}
-      {(transactionCount > 0 || (averageRating && averageRating > 0)) && (
+      {((transactionCount && transactionCount > 0) || (averageRating && Number(averageRating) > 0)) && (
         <div className="flex items-center gap-6 pt-4 border-t border-border">
           {averageRating && averageRating > 0 && (
             <div className="flex items-center gap-2">

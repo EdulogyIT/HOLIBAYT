@@ -22,6 +22,7 @@ import { CheckCircle, XCircle, Eye, Clock, AlertCircle } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { LoadingSpinner } from '@/components/LoadingSpinner';
 
 export default function AdminKYC() {
   const { t } = useLanguage();
@@ -42,10 +43,15 @@ export default function AdminKYC() {
     try {
       const { data, error } = await supabase
         .from('host_kyc_submissions')
-        .select('*, profiles(name, email)')
+        .select('*, profiles!host_kyc_submissions_user_id_fkey(name, email)')
         .order('created_at', { ascending: false });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error fetching KYC submissions:', error);
+        toast.error('Failed to load KYC submissions');
+        return;
+      }
+      
       setSubmissions(data || []);
     } catch (error) {
       console.error('Error fetching KYC submissions:', error);
@@ -106,6 +112,33 @@ export default function AdminKYC() {
     }
   };
 
+  const handleRequestChanges = async (submissionId: string) => {
+    if (!adminNotes.trim()) {
+      toast.error('Please provide notes for requested changes');
+      return;
+    }
+
+    try {
+      const { error } = await supabase
+        .from('host_kyc_submissions')
+        .update({
+          status: 'requires_changes',
+          admin_notes: adminNotes,
+        })
+        .eq('id', submissionId);
+
+      if (error) throw error;
+
+      toast.success('Changes requested');
+      fetchSubmissions();
+      setDialogOpen(false);
+      setAdminNotes('');
+    } catch (error) {
+      console.error('Error requesting changes:', error);
+      toast.error('Failed to request changes');
+    }
+  };
+
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'approved':
@@ -124,7 +157,11 @@ export default function AdminKYC() {
   const pendingCount = submissions.filter(s => s.status === 'pending').length;
 
   if (loading) {
-    return <div className="flex items-center justify-center h-64">Loading...</div>;
+    return (
+      <div className="flex items-center justify-center h-64">
+        <LoadingSpinner size="lg" text="Loading KYC submissions..." />
+      </div>
+    );
   }
 
   return (
@@ -271,20 +308,46 @@ export default function AdminKYC() {
               {selectedSubmission.status === 'pending' && (
                 <div className="space-y-4">
                   <Textarea
-                    placeholder="Rejection reason (if rejecting)..."
-                    value={rejectionReason}
-                    onChange={(e) => setRejectionReason(e.target.value)}
+                    placeholder={
+                      actionType === 'reject' 
+                        ? "Rejection reason..." 
+                        : actionType === 'request_changes'
+                        ? "Notes for requested changes..."
+                        : "Admin notes (optional)..."
+                    }
+                    value={actionType === 'reject' ? rejectionReason : adminNotes}
+                    onChange={(e) => 
+                      actionType === 'reject' 
+                        ? setRejectionReason(e.target.value) 
+                        : setAdminNotes(e.target.value)
+                    }
                   />
                   <div className="flex justify-end gap-3">
                     <Button
+                      variant="outline"
+                      onClick={() => {
+                        setActionType('request_changes');
+                        handleRequestChanges(selectedSubmission.id);
+                      }}
+                    >
+                      <AlertCircle className="w-4 h-4 mr-2" />
+                      Request Changes
+                    </Button>
+                    <Button
                       variant="destructive"
-                      onClick={() => handleReject(selectedSubmission.id)}
+                      onClick={() => {
+                        setActionType('reject');
+                        handleReject(selectedSubmission.id);
+                      }}
                     >
                       <XCircle className="w-4 h-4 mr-2" />
                       Reject
                     </Button>
                     <Button
-                      onClick={() => handleApprove(selectedSubmission.id)}
+                      onClick={() => {
+                        setActionType('approve');
+                        handleApprove(selectedSubmission.id);
+                      }}
                     >
                       <CheckCircle className="w-4 h-4 mr-2" />
                       Approve
