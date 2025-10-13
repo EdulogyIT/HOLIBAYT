@@ -71,7 +71,7 @@ export default function HolibaytPay() {
                 {t('howItWorks') || 'How Holibayt Pay™ Works'}
               </h2>
               <p className="text-lg text-muted-foreground font-inter">
-                {t('fundsHeldSecurely') || 'Funds held securely until check-in or confirmation.'}
+                {t('howItWorksSubtitle') || 'Simple, secure, and transparent — here\'s how we protect your transaction from start to finish.'}
               </p>
             </div>
 
@@ -130,12 +130,15 @@ export default function HolibaytPay() {
             <div className="grid md:grid-cols-2 gap-8">
               {/* Direct Payment - Risks */}
               <Card className="border-destructive/50 bg-destructive/5">
-                <CardHeader>
-                  <div className="flex items-center gap-3">
-                    <AlertTriangle className="w-8 h-8 text-destructive" />
+              <CardHeader>
+                <div className="flex items-center gap-3">
+                  <AlertTriangle className="w-8 h-8 text-destructive" />
+                  <div>
                     <CardTitle className="text-2xl">{t('directPayment') || 'Direct Payment'}</CardTitle>
+                    <p className="text-sm text-muted-foreground mt-1">{t('directPaymentSubtitle') || 'Risks you take without protection'}</p>
                   </div>
-                </CardHeader>
+                </div>
+              </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="flex items-start gap-3">
                     <div className="w-2 h-2 rounded-full bg-destructive mt-2" />
@@ -158,12 +161,15 @@ export default function HolibaytPay() {
 
               {/* Holibayt Pay - Benefits */}
               <Card className="border-primary/50 bg-primary/5">
-                <CardHeader>
-                  <div className="flex items-center gap-3">
-                    <Shield className="w-8 h-8 text-primary" />
+              <CardHeader>
+                <div className="flex items-center gap-3">
+                  <Shield className="w-8 h-8 text-primary" />
+                  <div>
                     <CardTitle className="text-2xl">{t('holibaytPayBrand') || 'Holibayt Pay™'}</CardTitle>
+                    <p className="text-sm text-muted-foreground mt-1">{t('holibaytPayBenefitsSubtitle') || 'Built-in protection at every step'}</p>
                   </div>
-                </CardHeader>
+                </div>
+              </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="flex items-start gap-3">
                     <CheckCircle className="w-5 h-5 text-green-600 mt-0.5" />
@@ -194,6 +200,9 @@ export default function HolibaytPay() {
               <h2 className="text-4xl font-bold text-foreground font-playfair mb-4">
                 {t('keyFeatures') || 'Why Choose Holibayt Pay™'}
               </h2>
+              <p className="text-lg text-muted-foreground font-inter">
+                {t('keyFeaturesSubtitle') || 'Trust, security, and peace of mind — built into every transaction'}
+              </p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -277,10 +286,10 @@ export default function HolibaytPay() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-12">
               <h3 className="text-2xl font-bold text-foreground font-playfair mb-4">
-                {t('trustedPartners') || 'Trusted by Leading Payment Providers'}
+                {t('trustedPartners') || 'Trusted Payment Partners'}
               </h3>
               <p className="text-muted-foreground font-inter">
-                {t('pciCompliant') || 'PCI-DSS compliant and secured by Stripe'}
+                {t('trustedPartnersSubtitle') || 'Your payments are protected by global leaders in financial security'}
               </p>
             </div>
 
