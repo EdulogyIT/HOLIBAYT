@@ -108,7 +108,7 @@ export const SimilarProperties = ({
               <h3 className="font-semibold mb-2 line-clamp-1">{property.title}</h3>
               <p className="text-sm text-muted-foreground mb-2">{property.location}</p>
               <p className="text-lg font-bold text-primary">
-                {formatPrice(parseFloat(property.price), property.price_currency || "DZD")}
+                {formatPrice(parseFloat(property.price), property.price_type, property.price_currency || "DZD")}
               </p>
             </div>
           </Card>

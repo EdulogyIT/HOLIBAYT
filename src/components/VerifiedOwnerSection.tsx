@@ -57,7 +57,7 @@ export const VerifiedOwnerSection = ({
             )}
           </div>
           
-          {verifiedSince && (
+          {verifiedSince && !isNaN(Number(verifiedSince)) && Number(verifiedSince) > 2000 && (
             <p className="text-sm text-muted-foreground flex items-center gap-1">
               <CheckCircle2 className="w-4 h-4 text-primary" />
               {t("verifiedOwnerSince").replace("{{year}}", verifiedSince)}
