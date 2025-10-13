@@ -281,7 +281,7 @@ export const PropertyReviews = ({ propertyId, hostUserId }: PropertyReviewsProps
 
 
       {/* Overall Rating with Category Breakdown */}
-      {reviews.length > 0 && (
+      {reviews.length > 0 && averageRating > 0 && (
         <Card>
           <CardHeader>
             <div className="flex items-center gap-3">
