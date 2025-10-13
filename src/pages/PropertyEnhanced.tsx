@@ -24,6 +24,7 @@ import { PropertyImageGallery } from "@/components/PropertyImageGallery";
 import { PropertyHighlights } from "@/components/PropertyHighlights";
 import { KeyDetailsTable } from "@/components/KeyDetailsTable";
 import { VerifiedOwnerSection } from "@/components/VerifiedOwnerSection";
+import { HostDetailsSection } from "@/components/HostDetailsSection";
 import { WhyBuyWithHolibayt } from "@/components/WhyBuyWithHolibayt";
 import { WhyRentWithHolibayt } from "@/components/WhyRentWithHolibayt";
 import { HolibaytPayExplainer } from "@/components/HolibaytPayExplainer";
@@ -323,6 +324,13 @@ const PropertyEnhanced = () => {
                   averageRating={profile.average_rating}
                   isVerified={profile.id_verified || profile.ownership_verified || false}
                   category={isBuy ? "buy" : (isRent ? "rent" : "short-stay")}
+                />
+                <Separator />
+                
+                {/* Host Details Section */}
+                <HostDetailsSection 
+                  userId={property.user_id || ""} 
+                  onContactHost={() => setIsMessageModalOpen(true)}
                 />
                 <Separator />
               </>

@@ -65,7 +65,18 @@ export default function AdminKYC() {
     try {
       const { data: { user } } = await supabase.auth.getUser();
       
-      const { error } = await supabase
+      // Step 1: Get the submission to find user_id
+      const { data: submission, error: fetchError } = await supabase
+        .from('host_kyc_submissions')
+        .select('user_id')
+        .eq('id', submissionId)
+        .single();
+
+      if (fetchError) throw fetchError;
+      if (!submission) throw new Error('Submission not found');
+
+      // Step 2: Update KYC submission status
+      const { error: kycError } = await supabase
         .from('host_kyc_submissions')
         .update({
           status: 'approved',
@@ -74,14 +85,26 @@ export default function AdminKYC() {
         })
         .eq('id', submissionId);
 
-      if (error) throw error;
+      if (kycError) throw kycError;
 
-      toast.success('KYC approved successfully');
+      // Step 3: Update profile to mark host as verified
+      const { error: profileError } = await supabase
+        .from('profiles')
+        .update({
+          id_verified: true,
+          verified_host: true,
+          kyc_approved_at: new Date().toISOString(),
+        })
+        .eq('id', submission.user_id);
+
+      if (profileError) throw profileError;
+
+      toast.success('KYC approved successfully! Host is now verified.');
       fetchSubmissions();
       setDialogOpen(false);
     } catch (error) {
       console.error('Error approving KYC:', error);
-      toast.error('Failed to approve KYC');
+      toast.error('Failed to approve KYC: ' + (error as Error).message);
     }
   };
 
