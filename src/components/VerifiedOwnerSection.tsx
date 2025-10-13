@@ -92,7 +92,14 @@ export const VerifiedOwnerSection = ({
         </div>
       )}
 
-      {/* Rating Block */}
+      {/* Meet Your Host - Simple Description */}
+      <div className="pt-4 border-t border-border">
+        <p className="text-sm text-muted-foreground leading-relaxed">
+          {t("meetYourHostDescription")}
+        </p>
+      </div>
+
+      {/* Rating Block - Only show if there's actual data */}
       {((transactionCount && transactionCount > 0) || (averageRating && Number(averageRating) > 0)) && (
         <div className="flex items-center gap-6 pt-4 border-t border-border">
           {averageRating && averageRating > 0 && (

@@ -80,7 +80,7 @@ const RentHeroSearch: React.FC<RentHeroSearchProps> = ({ onSearch }) => {
         className="absolute inset-0 bg-cover bg-center bg-no-repeat"
         style={{ backgroundImage: `url(${rentHeroBg})` }}
       />
-      <div className="absolute inset-0 bg-gradient-to-br from-secondary/80 via-background/60 to-primary/70" />
+      <div className="absolute inset-0 bg-gradient-to-br from-secondary/70 via-background/75 to-primary/65" />
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 z-10">
         <div className="text-center mb-12">
