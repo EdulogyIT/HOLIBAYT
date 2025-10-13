@@ -63,9 +63,9 @@ const allTranslations = {
     searchPlaceholderExample: 'par ex., Alger, Oran, Constantine…',
     
     // Trust Indicators
-    trustVerifiedListings: '✅ 100% Annonces vérifiées',
-    trustPaymentsProtected: '🛡️ Paiements protégés',
-    trustLegalSupport: '⚖️ Support juridique',
+    trustVerifiedListings: '100% Annonces vérifiées',
+    trustPaymentsProtected: 'Paiements protégés',
+    trustLegalSupport: 'Support juridique',
     
     // Holibayt Pay
     holibaytPayBrand: 'Holibayt Pay™',
@@ -895,9 +895,9 @@ const allTranslations = {
     searchPlaceholder: 'e.g., Algiers, Oran, Constantine…',
     
     // Trust Indicators
-    trustVerifiedListings: '✅ 100% Verified Listings',
-    trustPaymentsProtected: '🛡️ Payments Protected',
-    trustLegalSupport: '⚖️ Legal Support',
+    trustVerifiedListings: '100% Verified Listings',
+    trustPaymentsProtected: 'Payments Protected',
+    trustLegalSupport: 'Legal Support',
     
     // Holibayt Pay
     holibaytPayBrand: 'Holibayt Pay™',
@@ -1689,9 +1689,9 @@ const allTranslations = {
     heroTrustDescription: 'تجمع هولي بايت بين الملاك الموثقين والدعم القانوني وحماية الضمان لكل معاملة.',
     
     // Trust Indicators
-    trustVerifiedListings: '✅ 100٪ إعلانات موثقة',
-    trustPaymentsProtected: '🛡️ مدفوعات محمية',
-    trustLegalSupport: '⚖️ دعم قانوني',
+    trustVerifiedListings: '100٪ إعلانات موثقة',
+    trustPaymentsProtected: 'مدفوعات محمية',
+    trustLegalSupport: 'دعم قانوني',
     
     // Holibayt Pay
     holibaytPayBrand: 'هولي بايت باي™',
