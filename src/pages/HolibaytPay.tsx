@@ -3,9 +3,11 @@ import Footer from "@/components/Footer";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Shield, Lock, CreditCard, CheckCircle, Clock, RefreshCcw } from "lucide-react";
+import { useScrollToTop } from "@/hooks/useScrollToTop";
 
 export default function HolibaytPay() {
   const { t } = useLanguage();
+  useScrollToTop();
 
   return (
     <div className="min-h-screen bg-background">

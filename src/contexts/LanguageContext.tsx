@@ -147,6 +147,12 @@ const allTranslations = {
     chatSecurely: 'Discuter en toute sécurité via Holibayt',
     communicationWarning: 'Toutes les communications et paiements doivent passer par Holibayt Pay™ pour rester protégés.',
     
+    // Host Section
+    responseRate: 'Taux de réponse',
+    transactions: 'Transactions',
+    verifiedDocuments: 'Documents vérifiés',
+    verifiedOwnerSince: 'Propriétaire vérifié depuis',
+    
     verifiedHosts: 'Hôtes vérifiés',
     verifiedHost: 'Hôte vérifié',
     securedPaymentsEscrow: 'Paiements sécurisés (Escrow)',
@@ -912,6 +918,13 @@ const allTranslations = {
     bookViewingSafely: 'Book a Viewing Safely',
     chatSecurely: 'Chat Securely via Holibayt',
     communicationWarning: 'All communication and payments must go through Holibayt Pay™ to remain protected.',
+    
+    // Host Section
+    responseRate: 'Response Rate',
+    transactions: 'Transactions',
+    verifiedDocuments: 'Verified Documents',
+    verifiedOwnerSince: 'Verified Owner Since',
+    
     verifiedHosts: 'Verified Hosts',
     verifiedHost: 'Verified Host',
     securedPaymentsEscrow: 'Secured Payments (Escrow)',
@@ -1661,6 +1674,12 @@ const allTranslations = {
     bookViewingSafely: 'احجز معاينة بأمان',
     chatSecurely: 'الدردشة بأمان عبر Holibayt',
     communicationWarning: 'يجب أن تتم جميع الاتصالات والمدفوعات عبر Holibayt Pay™ لتبقى محمية.',
+    
+    // Host Section
+    responseRate: 'معدل الاستجابة',
+    transactions: 'المعاملات',
+    verifiedDocuments: 'الوثائق الموثقة',
+    verifiedOwnerSince: 'مالك موثق منذ',
     
     verifiedHosts: 'مضيفون موثقون',
     verifiedHost: 'مضيف موثق',

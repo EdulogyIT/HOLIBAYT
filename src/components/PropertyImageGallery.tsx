@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ChevronLeft, ChevronRight, X, Maximize2 } from "lucide-react";
+import { ChevronLeft, ChevronRight, X, Maximize2, ZoomIn, ZoomOut } from "lucide-react";
 import { Button } from "./ui/button";
 import { Dialog, DialogContent } from "./ui/dialog";
 
@@ -11,13 +11,24 @@ interface PropertyImageGalleryProps {
 export const PropertyImageGallery = ({ images, title }: PropertyImageGalleryProps) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
+  const [zoomLevel, setZoomLevel] = useState(1);
 
   const nextImage = () => {
     setCurrentIndex((prev) => (prev + 1) % images.length);
+    setZoomLevel(1);
   };
 
   const prevImage = () => {
     setCurrentIndex((prev) => (prev - 1 + images.length) % images.length);
+    setZoomLevel(1);
+  };
+
+  const handleZoomIn = () => {
+    setZoomLevel((prev) => Math.min(prev + 0.5, 3));
+  };
+
+  const handleZoomOut = () => {
+    setZoomLevel((prev) => Math.max(prev - 0.5, 1));
   };
 
   if (!images || images.length === 0) return null;
@@ -92,7 +103,10 @@ export const PropertyImageGallery = ({ images, title }: PropertyImageGalleryProp
       )}
 
       {/* Lightbox Dialog */}
-      <Dialog open={isLightboxOpen} onOpenChange={setIsLightboxOpen}>
+      <Dialog open={isLightboxOpen} onOpenChange={(open) => {
+        setIsLightboxOpen(open);
+        if (!open) setZoomLevel(1);
+      }}>
         <DialogContent className="max-w-7xl w-full h-[90vh] p-0">
           <div className="relative w-full h-full flex items-center justify-center bg-black">
             <Button
@@ -104,11 +118,44 @@ export const PropertyImageGallery = ({ images, title }: PropertyImageGalleryProp
               <X className="w-6 h-6" />
             </Button>
 
-            <img
-              src={images[currentIndex]}
-              alt={`${title} - Image ${currentIndex + 1}`}
-              className="max-w-full max-h-full object-contain"
-            />
+            {/* Zoom Controls */}
+            <div className="absolute top-4 left-4 z-50 flex gap-2">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="bg-background/80 backdrop-blur-sm hover:bg-background"
+                onClick={handleZoomOut}
+                disabled={zoomLevel <= 1}
+              >
+                <ZoomOut className="w-5 h-5" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="bg-background/80 backdrop-blur-sm hover:bg-background"
+                onClick={handleZoomIn}
+                disabled={zoomLevel >= 3}
+              >
+                <ZoomIn className="w-5 h-5" />
+              </Button>
+              <span className="bg-background/90 backdrop-blur-sm px-3 py-2 rounded-md text-sm font-medium">
+                {Math.round(zoomLevel * 100)}%
+              </span>
+            </div>
+
+            <div className="relative w-full h-full flex items-center justify-center overflow-auto">
+              <img
+                src={images[currentIndex]}
+                alt={`${title} - Image ${currentIndex + 1}`}
+                className="object-contain transition-transform duration-200"
+                style={{
+                  transform: `scale(${zoomLevel})`,
+                  cursor: zoomLevel > 1 ? 'move' : 'default',
+                  maxWidth: zoomLevel > 1 ? 'none' : '100%',
+                  maxHeight: zoomLevel > 1 ? 'none' : '100%',
+                }}
+              />
+            </div>
 
             {images.length > 1 && (
               <>

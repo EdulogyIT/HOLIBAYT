@@ -393,14 +393,29 @@ const PropertyEnhanced = () => {
 
               {/* CTAs */}
               <div className="space-y-3">
-                <Button
-                  onClick={() => setIsScheduleModalOpen(true)}
-                  className="w-full hover:-translate-y-0.5 transition-transform shadow-md"
-                  size="lg"
-                >
-                  <Calendar className="w-4 h-4 mr-2" />
-                  {isBuy ? tKey("requestVisit") : isRent ? tKey("scheduleVisit") : tKey("bookViewingSafely")}
-                </Button>
+                {isShortStay ? (
+                  <BookingModal 
+                    property={property}
+                    trigger={
+                      <Button
+                        className="w-full hover:-translate-y-0.5 transition-transform shadow-md"
+                        size="lg"
+                      >
+                        <Calendar className="w-4 h-4 mr-2" />
+                        {tKey("bookViewingSafely")}
+                      </Button>
+                    }
+                  />
+                ) : (
+                  <Button
+                    onClick={() => setIsScheduleModalOpen(true)}
+                    className="w-full hover:-translate-y-0.5 transition-transform shadow-md"
+                    size="lg"
+                  >
+                    <Calendar className="w-4 h-4 mr-2" />
+                    {isBuy ? tKey("requestVisit") : tKey("scheduleVisit")}
+                  </Button>
+                )}
                 
                 <Button
                   onClick={() => setIsMessageModalOpen(true)}
@@ -444,11 +459,15 @@ const PropertyEnhanced = () => {
       <Footer />
 
       {/* Modals */}
-      <ScheduleVisitModal
-        isOpen={isScheduleModalOpen}
-        onClose={() => setIsScheduleModalOpen(false)}
-        propertyTitle={translatedTitle}
-      />
+      {/* Schedule Visit Modal - For Buy/Rent */}
+      {(isBuy || isRent) && (
+        <ScheduleVisitModal
+          isOpen={isScheduleModalOpen}
+          onClose={() => setIsScheduleModalOpen(false)}
+          propertyTitle={translatedTitle}
+        />
+      )}
+      
       <MessageOwnerModal
         isOpen={isMessageModalOpen}
         onClose={() => setIsMessageModalOpen(false)}
@@ -458,9 +477,6 @@ const PropertyEnhanced = () => {
         propertyId={property.id}
         isSecureMode={true}
       />
-      {property.category === "short-stay" && (
-        <BookingModal property={property} />
-      )}
     </div>
   );
 };
