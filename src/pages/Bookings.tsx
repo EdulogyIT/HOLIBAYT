@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Calendar, MapPin, Users, Star, MessageCircle, Loader2 } from "lucide-react";
+import { Calendar, MapPin, Users, Star, MessageCircle, Loader2, Shield } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useEffect, useState } from "react";
@@ -15,6 +15,7 @@ import { useCurrency } from "@/contexts/CurrencyContext";
 import { useToast } from "@/hooks/use-toast";
 import { CancelBookingButton } from "@/components/CancelBookingButton";
 import { ReviewDialog } from "@/components/ReviewDialog";
+import { ReleaseEscrowButton } from "@/components/ReleaseEscrowButton";
 
 interface BookingWithProperty {
   id: string;
@@ -176,11 +177,17 @@ const Bookings = () => {
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'confirmed': return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200';
+      case 'payment_escrowed': return 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200';
       case 'pending': return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200';
       case 'completed': return 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200';
       case 'cancelled': return 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200';
       default: return 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200';
     }
+  };
+
+  const getStatusLabel = (status: string) => {
+    if (status === 'payment_escrowed') return 'Payment in Escrow';
+    return status.charAt(0).toUpperCase() + status.slice(1);
   };
 
   const handleMessageHost = async (hostId: string, propertyId: string, propertyTitle: string) => {
@@ -291,9 +298,17 @@ const Bookings = () => {
                 <CardTitle className="text-lg font-semibold">
                   {property?.title || 'Property'}
                 </CardTitle>
-                <Badge className={getStatusColor(booking.status)}>
-                  {booking.status.charAt(0).toUpperCase() + booking.status.slice(1)}
-                </Badge>
+                <div className="flex flex-col gap-1 items-end">
+                  <Badge className={getStatusColor(booking.status)}>
+                    {getStatusLabel(booking.status)}
+                  </Badge>
+                  {booking.status === 'payment_escrowed' && (
+                    <div className="flex items-center gap-1 text-xs text-blue-600">
+                      <Shield className="h-3 w-3" />
+                      <span>Funds Protected</span>
+                    </div>
+                  )}
+                </div>
               </div>
               <CardDescription className="flex items-center text-muted-foreground">
                 <MapPin className="h-4 w-4 mr-1" />
@@ -356,7 +371,7 @@ const Bookings = () => {
                     Message Host
                   </Button>
                 )}
-                {!isPast && (booking.status === 'confirmed' || booking.status === 'pending') && (
+                {!isPast && (booking.status === 'confirmed' || booking.status === 'pending' || booking.status === 'payment_escrowed') && (
                   <>
                     <CancelBookingButton
                       bookingId={booking.id}
@@ -373,6 +388,13 @@ const Bookings = () => {
                       </Button>
                     )}
                   </>
+                )}
+                {isPast && booking.status === 'payment_escrowed' && (
+                  <ReleaseEscrowButton
+                    bookingId={booking.id}
+                    propertyTitle={property?.title || 'Property'}
+                    onSuccess={fetchBookings}
+                  />
                 )}
                 {canReview && (
                   <Button 

@@ -109,7 +109,7 @@ export default function HolibaytPay() {
             <div className="mt-12 p-6 bg-primary/5 border border-primary/20 rounded-lg text-center">
               <p className="text-sm text-foreground font-inter">
                 <Lock className="w-4 h-4 inline mr-2 text-primary" />
-                {t('escrowExplainer') || 'Your money is held in a secure escrow account and only released when both parties confirm the transaction.'}
+                {t('escrowExplainer') || 'Your funds are held in our secure escrow system and only released to the host after you complete your stay or receive your property keys. This protects both parties throughout the transaction.'}
               </p>
             </div>
           </div>
@@ -257,11 +257,11 @@ export default function HolibaytPay() {
               <Card className="hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
                 <CardHeader>
                   <Clock className="w-12 h-12 text-primary mb-4" />
-                  <CardTitle>{t('timelyPayouts') || 'Timely Payouts'}</CardTitle>
+                  <CardTitle>{t('timelyPayouts') || 'Escrow Release & Payouts'}</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <p className="text-muted-foreground font-inter">
-                    {t('holibaytPayPayoutsDesc') || 'Hosts receive their payouts automatically after successful bookings. Transparent commission structure with no hidden fees.'}
+                    {t('holibaytPayPayoutsDesc') || 'Funds are held in escrow until stay completion. For short-stays, payment is automatically released 24 hours after checkout. For purchases, payment is released upon key handover confirmation.'}
                   </p>
                 </CardContent>
               </Card>

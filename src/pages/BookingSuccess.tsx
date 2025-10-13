@@ -27,12 +27,12 @@ const BookingSuccess: React.FC = () => {
             </p>
           )}
           
-          <p className="text-sm text-muted-foreground">
-            {isDeposit 
-              ? 'Your security deposit has been processed successfully.'
-              : 'Your booking payment has been processed successfully. You will receive a confirmation email shortly.'
-            }
-          </p>
+            <p className="text-sm text-muted-foreground">
+              {isDeposit 
+                ? 'Your security deposit has been processed successfully and is held in escrow.'
+                : 'Your booking payment has been processed successfully and is secured in escrow. You will receive a confirmation email shortly.'
+              }
+            </p>
           
           <div className="space-y-2 pt-4">
             <Button asChild className="w-full">

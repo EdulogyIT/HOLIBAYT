@@ -14,3 +14,9 @@ verify_jwt = true
 
 [functions.verify-stripe-account]
 verify_jwt = true
+
+[functions.release-escrow]
+verify_jwt = true
+
+[functions.auto-release-escrow]
+verify_jwt = false

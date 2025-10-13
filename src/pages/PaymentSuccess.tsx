@@ -77,10 +77,39 @@ export default function PaymentSuccess() {
                 ? 'Please wait while we verify your payment with Stripe.'
                 : errorMsg
                 ? errorMsg
-                : 'Thank you! You will be redirected to your bookings page in 5 seconds.'}
+                : 'Thank you! Your payment is now secured in escrow.'}
             </p>
           </CardHeader>
-          <CardContent>
+          <CardContent className="space-y-4">
+            {!verifying && !errorMsg && (
+              <Card className="bg-blue-50 border-blue-200">
+                <CardHeader>
+                  <div className="flex items-center gap-2">
+                    <CheckCircle className="w-5 h-5 text-blue-600" />
+                    <CardTitle className="text-lg">Your Payment is Protected</CardTitle>
+                  </div>
+                </CardHeader>
+                <CardContent className="space-y-2">
+                  <p className="text-sm text-gray-700">
+                    Your funds are securely held in escrow until you complete your stay or receive your property keys.
+                  </p>
+                  <ul className="space-y-1 text-sm text-gray-600">
+                    <li className="flex items-center gap-2">
+                      <CheckCircle className="w-4 h-4 text-green-600" />
+                      <span>Funds held safely by Holibayt</span>
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <CheckCircle className="w-4 h-4 text-green-600" />
+                      <span>Released to host after stay completion</span>
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <CheckCircle className="w-4 h-4 text-green-600" />
+                      <span>Easy refunds if you need to cancel</span>
+                    </li>
+                  </ul>
+                </CardContent>
+              </Card>
+            )}
             <div className="flex flex-col sm:flex-row gap-4">
               <Button onClick={() => navigate('/bookings')} className="flex-1">
                 <Calendar className="w-4 h-4 mr-2" />

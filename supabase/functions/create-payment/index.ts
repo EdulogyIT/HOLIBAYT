@@ -154,6 +154,7 @@ serve(async (req) => {
         currency: currency || "USD",
         payment_type: paymentType,
         status: "pending",
+        escrow_status: "escrowed", // ESCROW: Payment will be held in escrow
         description: description || `Payment for ${property.title}`,
         metadata: { propertyTitle: property.title, paymentType, bookingData },
       })
@@ -248,15 +249,14 @@ serve(async (req) => {
       },
     };
 
-    // Add Stripe Connect transfer if host has connected account
+    // Add Stripe Connect metadata for escrow release (DO NOT transfer immediately)
     if (hostStripeAccountId && applicationFeeAmount) {
-      sessionData.payment_intent_data = {
-        application_fee_amount: applicationFeeAmount,
-        transfer_data: {
-          destination: hostStripeAccountId,
-        },
+      sessionData.metadata = {
+        ...sessionData.metadata,
+        host_stripe_account_id: hostStripeAccountId,
+        commission_amount: applicationFeeAmount.toString(),
       };
-      console.log("[CREATE-PAYMENT] Using Stripe Connect automatic split payment");
+      console.log("[CREATE-PAYMENT] Saved host account info for escrow release - funds will be held");
     }
 
     console.log("[CREATE-PAYMENT] Session data:", JSON.stringify(sessionData, null, 2));

@@ -211,7 +211,7 @@ serve(async (req) => {
             security_deposit: payment.payment_type === 'security_deposit' ? payment.amount : 0,
             special_requests: bookingData.specialRequests,
             contact_phone: bookingData.contactPhone,
-            status: 'confirmed',
+            status: 'payment_escrowed', // ESCROW: Funds held in escrow
           })
           .select()
           .single();

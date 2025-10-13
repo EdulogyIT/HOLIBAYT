@@ -136,14 +136,18 @@ export type Database = {
       }
       bookings: {
         Row: {
+          auto_release_scheduled: boolean | null
           booking_fee: number
           cancelled_at: string | null
           check_in_date: string
           check_out_date: string
           contact_phone: string | null
           created_at: string
+          escrow_release_eligible_at: string | null
+          guest_confirmed_completion: boolean | null
           guests_count: number
           id: string
+          keys_received_at: string | null
           payment_id: string | null
           property_id: string
           refund_amount: number | null
@@ -155,14 +159,18 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          auto_release_scheduled?: boolean | null
           booking_fee?: number
           cancelled_at?: string | null
           check_in_date: string
           check_out_date: string
           contact_phone?: string | null
           created_at?: string
+          escrow_release_eligible_at?: string | null
+          guest_confirmed_completion?: boolean | null
           guests_count?: number
           id?: string
+          keys_received_at?: string | null
           payment_id?: string | null
           property_id: string
           refund_amount?: number | null
@@ -174,14 +182,18 @@ export type Database = {
           user_id: string
         }
         Update: {
+          auto_release_scheduled?: boolean | null
           booking_fee?: number
           cancelled_at?: string | null
           check_in_date?: string
           check_out_date?: string
           contact_phone?: string | null
           created_at?: string
+          escrow_release_eligible_at?: string | null
+          guest_confirmed_completion?: boolean | null
           guests_count?: number
           id?: string
+          keys_received_at?: string | null
           payment_id?: string | null
           property_id?: string
           refund_amount?: number | null
@@ -214,6 +226,7 @@ export type Database = {
           commission_amount: number
           commission_rate: number
           created_at: string | null
+          escrow_released_at: string | null
           host_amount: number
           host_user_id: string
           id: string
@@ -228,6 +241,7 @@ export type Database = {
           commission_amount: number
           commission_rate: number
           created_at?: string | null
+          escrow_released_at?: string | null
           host_amount: number
           host_user_id: string
           id?: string
@@ -242,6 +256,7 @@ export type Database = {
           commission_amount?: number
           commission_rate?: number
           created_at?: string | null
+          escrow_released_at?: string | null
           host_amount?: number
           host_user_id?: string
           id?: string
@@ -625,6 +640,9 @@ export type Database = {
           created_at: string
           currency: string
           description: string | null
+          escrow_release_reason: string | null
+          escrow_released_at: string | null
+          escrow_status: string | null
           id: string
           metadata: Json | null
           payment_type: Database["public"]["Enums"]["payment_type"]
@@ -642,6 +660,9 @@ export type Database = {
           created_at?: string
           currency?: string
           description?: string | null
+          escrow_release_reason?: string | null
+          escrow_released_at?: string | null
+          escrow_status?: string | null
           id?: string
           metadata?: Json | null
           payment_type: Database["public"]["Enums"]["payment_type"]
@@ -659,6 +680,9 @@ export type Database = {
           created_at?: string
           currency?: string
           description?: string | null
+          escrow_release_reason?: string | null
+          escrow_released_at?: string | null
+          escrow_status?: string | null
           id?: string
           metadata?: Json | null
           payment_type?: Database["public"]["Enums"]["payment_type"]
