@@ -65,17 +65,7 @@ export default function AdminKYC() {
     try {
       const { data: { user } } = await supabase.auth.getUser();
       
-      // Get the submission to find the user_id
-      const { data: submission } = await supabase
-        .from('host_kyc_submissions')
-        .select('user_id')
-        .eq('id', submissionId)
-        .single();
-      
-      if (!submission) throw new Error('Submission not found');
-      
-      // Update KYC submission
-      const { error: kycError } = await supabase
+      const { error } = await supabase
         .from('host_kyc_submissions')
         .update({
           status: 'approved',
@@ -84,19 +74,7 @@ export default function AdminKYC() {
         })
         .eq('id', submissionId);
 
-      if (kycError) throw kycError;
-
-      // Update profile to mark as verified
-      const { error: profileError } = await supabase
-        .from('profiles')
-        .update({
-          id_verified: true,
-          kyc_approved_at: new Date().toISOString(),
-          verified_host: true,
-        })
-        .eq('id', submission.user_id);
-
-      if (profileError) throw profileError;
+      if (error) throw error;
 
       toast.success('KYC approved successfully');
       fetchSubmissions();
