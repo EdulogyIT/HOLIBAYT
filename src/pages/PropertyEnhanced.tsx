@@ -417,7 +417,7 @@ const PropertyEnhanced = () => {
 
           {/* Sticky Sidebar */}
           <div className="lg:col-span-1">
-            <Card className="sticky top-24 p-6 shadow-lg hover:shadow-2xl transition-shadow space-y-6">
+            <Card className="sticky top-20 p-6 shadow-lg hover:shadow-2xl transition-shadow space-y-6 max-h-[calc(100vh-6rem)] overflow-y-auto">
               {/* Price */}
               <div>
                 <div className="flex items-baseline justify-between mb-2">
@@ -452,7 +452,7 @@ const PropertyEnhanced = () => {
                       </Button>
                     }
                   />
-                ) : (
+                ) : (isBuy || isRent) && (
                   <Button
                     onClick={() => setIsScheduleModalOpen(true)}
                     className="w-full hover:-translate-y-0.5 transition-transform shadow-md"
@@ -481,7 +481,7 @@ const PropertyEnhanced = () => {
               </div>
 
               {/* Trust Info Blocks */}
-              <div className="pt-6 border-t">
+              <div className="pt-4 border-t">
                 <PropertyTrustInfoBlocks 
                   isVerified={property.verified}
                   holibaytPayEligible={property.holibayt_pay_eligible}
