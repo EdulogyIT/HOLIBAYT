@@ -190,7 +190,7 @@ export default function EditProperty() {
       
       for (const file of Array.from(files)) {
         const fileExt = file.name.split('.').pop();
-        const fileName = `${property.id}-${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
+        const fileName = `${user?.id}/${property.id}-${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
         
         console.log(`Uploading ${uploadCount + 1}/${totalFiles}: ${file.name}`);
         

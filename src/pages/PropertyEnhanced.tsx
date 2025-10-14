@@ -36,6 +36,8 @@ import { WishlistButton } from "@/components/WishlistButton";
 import { buyRentTranslations } from "@/contexts/LanguageTranslations";
 import { PropertyTrustBadge } from "@/components/PropertyTrustBadge";
 import { useWishlist } from "@/hooks/useWishlist";
+import { PropertyAmenities } from "@/components/PropertyAmenities";
+import { PropertyThingsToKnow } from "@/components/PropertyThingsToKnow";
 
 interface Property {
   id: string;
@@ -211,46 +213,39 @@ const PropertyEnhanced = () => {
             {/* Image Gallery */}
             <PropertyImageGallery images={property.images} title={translatedTitle} />
 
-            {/* Verified Owner Section - Moved up for prominence */}
-            {profile && (
-              <>
-                <VerifiedOwnerSection
-                  name={profile.name || "Property Owner"}
-                  avatarUrl={profile.avatar_url}
-                  verifiedSince={!isNaN(verificationYear) ? verificationYear.toString() : new Date().getFullYear().toString()}
-                  city={property.city}
-                  languages={profile.languages_spoken || ["Arabic", "French"]}
-                  transactionCount={profile.transaction_count || 0}
-                  responseRate={profile.response_rate || 100}
-                  averageRating={profile.average_rating}
-                  isVerified={profile.id_verified || profile.ownership_verified || false}
-                  category={isBuy ? "buy" : (isRent ? "rent" : "short-stay")}
-                />
-                
-                <Separator />
-                
-                {/* Host Details Section */}
-                <HostDetailsSection 
-                  userId={property.user_id || ""} 
-                  onContactHost={() => setIsMessageModalOpen(true)}
-                />
-                <Separator />
-              </>
-            )}
-
             {/* Title & Location */}
             <div>
               <div className="flex items-start justify-between mb-4">
-                <div>
-                  <h1 className="text-3xl md:text-4xl font-playfair font-bold mb-2">
+                <div className="flex-1">
+                  <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-3 leading-tight">
                     {translatedTitle}
                   </h1>
-                  <div className="flex items-center gap-2 text-muted-foreground">
-                    <MapPin className="w-4 h-4" />
-                    <span>{property.location}, {property.city}</span>
+                  <div className="flex items-center gap-2 text-muted-foreground mb-3">
+                    <MapPin className="w-5 h-5" />
+                    <span className="text-lg">{property.location}, {property.city}</span>
+                  </div>
+                  
+                  {/* Badges */}
+                  <div className="flex flex-wrap gap-2">
+                    {property.verified && (
+                      <Badge variant="secondary" className="gap-1">
+                        <Shield className="w-3 h-3" />
+                        {t("verified")}
+                      </Badge>
+                    )}
+                    {property.holibayt_pay_eligible && (
+                      <Badge variant="default">Holibayt Pay™</Badge>
+                    )}
+                    {property.new_build && (
+                      <Badge variant="outline">{t("newBuild")}</Badge>
+                    )}
+                    {isRent && property.furnished && (
+                      <Badge variant="outline">{tKey("furnished")}</Badge>
+                    )}
                   </div>
                 </div>
-                <div className="flex gap-2">
+                
+                <div className="flex gap-2 ml-4">
                   <PropertyShareButton propertyId={property.id} propertyTitle={translatedTitle} />
                   <WishlistButton 
                     isInWishlist={isInWishlist} 
@@ -258,36 +253,43 @@ const PropertyEnhanced = () => {
                   />
                 </div>
               </div>
-
-              {/* Badges */}
-              <div className="flex flex-wrap gap-2">
-                {property.verified && (
-                  <Badge variant="secondary" className="gap-1">
-                    <Shield className="w-3 h-3" />
-                    {t("verified")}
-                  </Badge>
-                )}
-                {property.holibayt_pay_eligible && (
-                  <Badge variant="default">Holibayt Pay™</Badge>
-                )}
-                {property.new_build && (
-                  <Badge variant="outline">{t("newBuild")}</Badge>
-                )}
-                {isRent && property.furnished && (
-                  <Badge variant="outline">{tKey("furnished")}</Badge>
-                )}
-              </div>
             </div>
+
+            <Separator />
+
+            {/* Small Host Card - Compact VerifiedOwnerSection */}
+            {profile && (
+              <>
+                <div className="bg-card border border-border rounded-xl p-6 hover:shadow-md transition-shadow">
+                  <h3 className="text-lg font-semibold mb-4">
+                    {isBuy ? "Meet the seller" : isRent ? "Meet your landlord" : "Meet your host"}
+                  </h3>
+                  <VerifiedOwnerSection
+                    name={profile.name || "Property Owner"}
+                    avatarUrl={profile.avatar_url}
+                    verifiedSince={!isNaN(verificationYear) ? verificationYear.toString() : new Date().getFullYear().toString()}
+                    city={property.city}
+                    languages={profile.languages_spoken || ["Arabic", "French"]}
+                    transactionCount={profile.transaction_count || 0}
+                    responseRate={profile.response_rate || 100}
+                    averageRating={profile.average_rating}
+                    isVerified={profile.id_verified || profile.ownership_verified || false}
+                    category={isBuy ? "buy" : (isRent ? "rent" : "short-stay")}
+                  />
+                </div>
+                <Separator />
+              </>
+            )}
 
             {/* About This Property */}
             <div className="space-y-4">
-              <h2 className="text-2xl font-bold">
+              <h2 className="text-2xl md:text-3xl font-bold">
                 {isBuy || isRent ? tKey(isBuy ? "aboutThisProperty" : "aboutThisRental") : t("propertyDetails")}
               </h2>
-              <p className="text-muted-foreground leading-relaxed">
+              <p className="text-muted-foreground leading-relaxed text-base">
                 {translatedDescription || "No description available"}
                 {property.verified && (
-                  <span className="block mt-2 text-sm text-primary flex items-center gap-1">
+                  <span className="block mt-3 text-sm text-primary flex items-center gap-1">
                     <Shield className="w-4 h-4" />
                     {tKey("verifiedByTeam")}
                   </span>
@@ -295,11 +297,11 @@ const PropertyEnhanced = () => {
               </p>
               {translatedDescription && translatedDescription.length > 300 && (
                 <Button
-                  variant="ghost"
-                  size="sm"
+                  variant="link"
+                  className="p-0 font-semibold"
                   onClick={() => setShowFullDescription(!showFullDescription)}
                 >
-                  {showFullDescription ? "Show less" : tKey("readMore")}
+                  {showFullDescription ? "Show less" : tKey("readMore") + " >"}
                 </Button>
               )}
             </div>
@@ -307,8 +309,8 @@ const PropertyEnhanced = () => {
             <Separator />
 
             {/* Property Highlights */}
-            <div className="space-y-4">
-              <h3 className="text-xl font-semibold">{tKey("propertyHighlights")}</h3>
+            <div className="space-y-6">
+              <h3 className="text-xl md:text-2xl font-bold">{tKey("propertyHighlights")}</h3>
               <PropertyHighlights
                 bedrooms={property.bedrooms}
                 bathrooms={property.bathrooms}
@@ -320,18 +322,69 @@ const PropertyEnhanced = () => {
 
             <Separator />
 
+            {/* What This Place Offers - Amenities */}
+            <PropertyAmenities features={property.features} />
+
+            <Separator />
+
             {/* Key Details Table */}
-            <KeyDetailsTable
-              propertyType={property.property_type}
-              condition={property.condition}
-              ownership={property.verified ? "Verified by Holibayt" : "Pending verification"}
-              availability={property.availability_status}
-              minimumTerm={property.minimum_rental_term}
-              furnished={property.furnished}
-              category={property.category}
+            <div className="space-y-4">
+              <h3 className="text-xl md:text-2xl font-bold">Key Details</h3>
+              <KeyDetailsTable
+                propertyType={property.property_type}
+                condition={property.condition}
+                ownership={property.verified ? "Verified by Holibayt" : "Pending verification"}
+                availability={property.availability_status}
+                minimumTerm={property.minimum_rental_term}
+                furnished={property.furnished}
+                category={property.category}
+              />
+            </div>
+
+            <Separator />
+
+            {/* Reviews */}
+            <PropertyReviews propertyId={property.id} hostUserId={property.user_id || ""} />
+
+            <Separator />
+
+            {/* Where You'll Be - Location & Neighborhood */}
+            <div className="space-y-4">
+              <h2 className="text-2xl md:text-3xl font-bold">Where you'll be</h2>
+              <NeighborhoodInsights
+                city={property.city}
+                location={property.location}
+                district={property.district}
+              />
+            </div>
+
+            <Separator />
+
+            {/* Things to Know */}
+            <PropertyThingsToKnow 
+              category={property.category as "buy" | "rent" | "short-stay"}
+              checkInTime={property.check_in_time}
+              checkOutTime={property.check_out_time}
+              cancellationPolicy="flexible"
             />
 
             <Separator />
+
+            {/* Full Host Details - At the Bottom */}
+            {profile && (
+              <>
+                <div className="space-y-4">
+                  <h2 className="text-2xl md:text-3xl font-bold">
+                    {isBuy ? "About the seller" : isRent ? "About your landlord" : "Meet your host"}
+                  </h2>
+                  <HostDetailsSection 
+                    userId={property.user_id || ""} 
+                    onContactHost={() => setIsMessageModalOpen(true)}
+                  />
+                </div>
+                <Separator />
+              </>
+            )}
 
             {/* Holibayt Pay Protection */}
             {property.holibayt_pay_eligible && (
@@ -341,22 +394,8 @@ const PropertyEnhanced = () => {
               </>
             )}
 
-            {/* Location & Neighborhood */}
-            <NeighborhoodInsights
-              city={property.city}
-              location={property.location}
-              district={property.district}
-            />
-
-            <Separator />
-
             {/* Why Buy/Rent with Holibayt */}
             {isBuy ? <WhyBuyWithHolibayt /> : isRent ? <WhyRentWithHolibayt /> : null}
-
-            <Separator />
-
-            {/* Reviews - Single Section Only */}
-            <PropertyReviews propertyId={property.id} hostUserId={property.user_id || ""} />
 
             {/* Similar Properties */}
             <SimilarProperties
