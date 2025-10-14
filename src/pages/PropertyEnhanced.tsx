@@ -192,14 +192,9 @@ const PropertyEnhanced = () => {
     );
   }
 
-  const isBuy = property.category === "buy";
+  const isBuy = property.category === "buy" || property.category === "sale";
   const isRent = property.category === "rent";
   const isShortStay = property.category === "short-stay";
-  
-  // Debug logging
-  console.log('Property category:', property.category);
-  console.log('isBuy:', isBuy, 'isRent:', isRent, 'isShortStay:', isShortStay);
-  
   const verificationYear = profile?.kyc_approved_at && profile.kyc_approved_at !== null
     ? new Date(profile.kyc_approved_at).getFullYear() 
     : new Date().getFullYear();
@@ -459,11 +454,7 @@ const PropertyEnhanced = () => {
                   />
                 ) : (
                   <Button
-                    onClick={() => {
-                      console.log('Schedule Visit button clicked!');
-                      console.log('Setting modal open to true');
-                      setIsScheduleModalOpen(true);
-                    }}
+                    onClick={() => setIsScheduleModalOpen(true)}
                     className="w-full hover:-translate-y-0.5 transition-transform shadow-md"
                     size="lg"
                   >
@@ -523,19 +514,14 @@ const PropertyEnhanced = () => {
       <Footer />
 
       {/* Modals */}
-      {/* Schedule Visit Modal - For Buy/Rent */}
-      {(() => {
-        const shouldShowModal = property.category === "buy" || property.category === "rent";
-        console.log('Should show Schedule Visit modal?', shouldShowModal, 'Category:', property.category);
-        console.log('Modal open state:', isScheduleModalOpen);
-        return shouldShowModal && (
-          <ScheduleVisitModal
-            isOpen={isScheduleModalOpen}
-            onClose={() => setIsScheduleModalOpen(false)}
-            propertyTitle={translatedTitle}
-          />
-        );
-      })()}
+      {/* Schedule Visit Modal - For Buy/Rent/Sale */}
+      {(isBuy || isRent) && (
+        <ScheduleVisitModal
+          isOpen={isScheduleModalOpen}
+          onClose={() => setIsScheduleModalOpen(false)}
+          propertyTitle={translatedTitle}
+        />
+      )}
       
       <MessageOwnerModal
         isOpen={isMessageModalOpen}
