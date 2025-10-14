@@ -20,6 +20,7 @@ import { WishlistButton } from "@/components/WishlistButton";
 import { PropertyBadges } from "@/components/PropertyBadges";
 import { usePropertyTranslation } from "@/hooks/usePropertyTranslation";
 import { LocationInsights } from "@/components/LocationInsights";
+import { MarketDataBar } from "@/components/MarketDataBar";
 
 interface Property {
   id: string;
@@ -60,6 +61,7 @@ const ShortStay = () => {
   const [properties, setProperties] = useState<Property[]>([]);
   const [filteredProperties, setFilteredProperties] = useState<Property[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [currentCity, setCurrentCity] = useState<string>("Constantine");
 
   useScrollToTop();
 
@@ -79,6 +81,11 @@ const ShortStay = () => {
     const checkIn = (urlParams.get("checkIn") || "").trim();
     const checkOut = (urlParams.get("checkOut") || "").trim();
     const travelers = (urlParams.get("travelers") || "").trim();
+
+    // Update current city for MarketDataBar
+    if (location) {
+      setCurrentCity(location);
+    }
 
     let filtered = [...properties];
 
@@ -261,7 +268,18 @@ const ShortStay = () => {
   return (
     <div className="min-h-screen bg-background">
       <Navigation />
-      <main className="pt-20">
+      
+      {/* Market Data Bar */}
+      <div className="pt-20">
+        <MarketDataBar 
+          city={currentCity}
+          medianPrice={45000}
+          yearOverYearChange={5}
+          currency="DZD"
+        />
+      </div>
+      
+      <main>
         {/* Wire up search just like Rent/Buy pages */}
         <ShortStayHeroSearch onSearch={handleSearch} />
 

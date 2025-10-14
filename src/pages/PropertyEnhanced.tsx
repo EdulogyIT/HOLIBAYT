@@ -39,7 +39,6 @@ import { useWishlist } from "@/hooks/useWishlist";
 import { PropertyAmenities } from "@/components/PropertyAmenities";
 import { PropertyThingsToKnow } from "@/components/PropertyThingsToKnow";
 import { PropertyTrustInfoBlocks } from "@/components/PropertyTrustInfoBlocks";
-import { MarketDataBar } from "@/components/MarketDataBar";
 
 interface Property {
   id: string;
@@ -205,26 +204,9 @@ const PropertyEnhanced = () => {
     <div className="min-h-screen bg-cream">
       <Navigation />
       
-      {/* Market Data Bar */}
-      <div className="pt-20">
-        <MarketDataBar 
-          city={property.city}
-          medianPrice={isBuy ? 25000000 : 45000}
-          yearOverYearChange={isBuy ? 8 : 5}
-          currency={property.price_currency || "DZD"}
-        />
-      </div>
-      
       <main className="container mx-auto px-4 py-8">
         {/* Trust Badge Line - Responsive */}
         <PropertyTrustBadge className="mb-6" />
-        
-        {/* Trust Info Blocks */}
-        <PropertyTrustInfoBlocks 
-          isVerified={property.verified}
-          holibaytPayEligible={property.holibayt_pay_eligible}
-          category={property.category as "sale" | "rent" | "short-stay"}
-        />
 
         <div className="grid lg:grid-cols-3 gap-8">
           {/* Main Content */}
@@ -235,6 +217,13 @@ const PropertyEnhanced = () => {
               title={translatedTitle}
               isInWishlist={isInWishlist}
               onWishlistToggle={() => toggleWishlist(property.id)}
+            />
+            
+            {/* Trust Info Blocks */}
+            <PropertyTrustInfoBlocks 
+              isVerified={property.verified}
+              holibaytPayEligible={property.holibayt_pay_eligible}
+              category={property.category as "sale" | "rent" | "short-stay"}
             />
 
             {/* Title & Location */}
@@ -466,7 +455,7 @@ const PropertyEnhanced = () => {
                         size="lg"
                       >
                         <Calendar className="w-4 h-4 mr-2" />
-                        {tKey("bookViewingSafely")}
+                        {t("bookViewingSafely")}
                       </Button>
                     }
                   />
@@ -477,7 +466,7 @@ const PropertyEnhanced = () => {
                     size="lg"
                   >
                     <Calendar className="w-4 h-4 mr-2" />
-                    {isBuy ? tKey("requestVisit") : tKey("scheduleVisit")}
+                    {isBuy ? t("requestVisit") : t("scheduleVisit")}
                   </Button>
                 )}
                 
@@ -488,7 +477,7 @@ const PropertyEnhanced = () => {
                   size="lg"
                 >
                   <MessageCircle className="w-4 h-4 mr-2" />
-                  {tKey("chatSecurely")}
+                  {t("chatSecurely")}
                 </Button>
 
                 {property.financing_available && isBuy && (
