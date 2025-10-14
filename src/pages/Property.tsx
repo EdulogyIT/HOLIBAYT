@@ -448,15 +448,15 @@ const Property = () => {
                 </Card>
               )}
 
-        {/* Review Tags */}
-        {totalReviews > 0 && (
-          <ReviewTags tags={property.features?.review_tags} />
-        )}
+              {/* Review Tags */}
+              {totalReviews > 0 && (
+                <ReviewTags tags={property.features?.review_tags} />
+              )}
 
-        {/* Reviews */}
-        <PropertyReviews propertyId={property.id} hostUserId={property.user_id || ''} />
+              {/* Reviews */}
+              <PropertyReviews propertyId={property.id} hostUserId={property.user_id || ''} />
 
-        {/* Location Map */}
+              {/* Location Map - Moved after reviews */}
               <Card className="shadow-lg">
                 <CardHeader>
                   <CardTitle className="text-2xl">{t('location')}</CardTitle>
@@ -468,11 +468,6 @@ const Property = () => {
                   <StaticPropertyMap location={`${property.city}, ${property.location}`} />
                 </CardContent>
               </Card>
-
-              {/* Detailed Host Information Section */}
-              {property.user_id && (
-                <HostDetailsSection userId={property.user_id} onContactHost={() => setIsMessageModalOpen(true)} />
-              )}
             </div>
 
             {/* Sticky Sidebar - Booking Card */}

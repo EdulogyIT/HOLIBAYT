@@ -167,7 +167,24 @@ export default function EditProperty() {
     const files = e.target.files;
     if (!files || files.length === 0 || !property || !user) return;
 
+    // Validate file sizes (max 5MB per file)
+    const maxSize = 5 * 1024 * 1024; // 5MB
+    for (const file of Array.from(files)) {
+      if (file.size > maxSize) {
+        toast({
+          title: "File too large",
+          description: `${file.name} exceeds 5MB. Please compress the image.`,
+          variant: "destructive",
+        });
+        e.target.value = ''; // Clear input
+        return;
+      }
+    }
+
     setUploading(true);
+    let uploadCount = 0;
+    const totalFiles = files.length;
+    
     try {
       const uploadedUrls: string[] = [];
       
@@ -175,12 +192,22 @@ export default function EditProperty() {
         const fileExt = file.name.split('.').pop();
         const fileName = `${property.id}-${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
         
+        console.log(`Uploading ${uploadCount + 1}/${totalFiles}: ${file.name}`);
+        
         const { data, error: uploadError } = await supabase.storage
           .from('property-images')
-          .upload(fileName, file);
+          .upload(fileName, file, {
+            cacheControl: '3600',
+            upsert: false
+          });
 
         if (uploadError) {
           console.error('Error uploading file:', uploadError);
+          toast({
+            title: "Upload Error",
+            description: `Failed to upload ${file.name}: ${uploadError.message}`,
+            variant: "destructive",
+          });
           continue;
         }
 
@@ -189,11 +216,22 @@ export default function EditProperty() {
           .getPublicUrl(fileName);
         
         uploadedUrls.push(publicUrl);
+        uploadCount++;
+        
+        // Show progress
+        if (totalFiles > 1) {
+          toast({
+            title: "Uploading...",
+            description: `${uploadCount} of ${totalFiles} images uploaded`,
+          });
+        }
       }
 
       if (uploadedUrls.length > 0) {
         const updatedImages = [...(property.images || []), ...uploadedUrls];
         setProperty({ ...property, images: updatedImages });
+        
+        console.log('Updating database with new images...');
         
         // Save to database immediately
         const { error } = await supabase
@@ -206,22 +244,25 @@ export default function EditProperty() {
           console.error('Error updating images:', error);
           toast({
             title: "Error",
-            description: "Failed to save images",
+            description: "Failed to save images to database",
             variant: "destructive"
           });
           return;
         }
 
         toast({
-          title: "Success",
+          title: "Success! 🎉",
           description: `${uploadedUrls.length} image(s) uploaded successfully`,
         });
+        
+        // Clear file input to allow re-uploading
+        e.target.value = '';
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error uploading images:', error);
       toast({
         title: "Error",
-        description: "Failed to upload images",
+        description: error.message || "Failed to upload images",
         variant: "destructive"
       });
     } finally {

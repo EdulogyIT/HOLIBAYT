@@ -34,6 +34,7 @@ import { NeighborhoodInsights } from "@/components/NeighborhoodInsights";
 import CurrencySelector from "@/components/CurrencySelector";
 import { WishlistButton } from "@/components/WishlistButton";
 import { buyRentTranslations } from "@/contexts/LanguageTranslations";
+import { PropertyTrustBadge } from "@/components/PropertyTrustBadge";
 import { useWishlist } from "@/hooks/useWishlist";
 
 interface Property {
@@ -201,19 +202,41 @@ const PropertyEnhanced = () => {
       <Navigation />
       
       <main className="container mx-auto px-4 py-8">
-        {/* Trust Badge Line */}
-        <div className="mb-6 flex items-center gap-2 text-sm text-muted-foreground">
-          <Shield className="w-4 h-4 text-primary" />
-          <span>
-            {isBuy ? tKey("protectedByHolibaytPay") : tKey("rentSafelyWithHolibayt")}
-          </span>
-        </div>
+        {/* Trust Badge Line - Responsive */}
+        <PropertyTrustBadge className="mb-6" />
 
         <div className="grid lg:grid-cols-3 gap-8">
           {/* Main Content */}
           <div className="lg:col-span-2 space-y-8">
             {/* Image Gallery */}
             <PropertyImageGallery images={property.images} title={translatedTitle} />
+
+            {/* Verified Owner Section - Moved up for prominence */}
+            {profile && (
+              <>
+                <VerifiedOwnerSection
+                  name={profile.name || "Property Owner"}
+                  avatarUrl={profile.avatar_url}
+                  verifiedSince={!isNaN(verificationYear) ? verificationYear.toString() : new Date().getFullYear().toString()}
+                  city={property.city}
+                  languages={profile.languages_spoken || ["Arabic", "French"]}
+                  transactionCount={profile.transaction_count || 0}
+                  responseRate={profile.response_rate || 100}
+                  averageRating={profile.average_rating}
+                  isVerified={profile.id_verified || profile.ownership_verified || false}
+                  category={isBuy ? "buy" : (isRent ? "rent" : "short-stay")}
+                />
+                
+                <Separator />
+                
+                {/* Host Details Section */}
+                <HostDetailsSection 
+                  userId={property.user_id || ""} 
+                  onContactHost={() => setIsMessageModalOpen(true)}
+                />
+                <Separator />
+              </>
+            )}
 
             {/* Title & Location */}
             <div>
@@ -309,32 +332,6 @@ const PropertyEnhanced = () => {
             />
 
             <Separator />
-
-            {/* Verified Owner Section */}
-            {profile && (
-              <>
-                <VerifiedOwnerSection
-                  name={profile.name || "Property Owner"}
-                  avatarUrl={profile.avatar_url}
-                  verifiedSince={!isNaN(verificationYear) ? verificationYear.toString() : new Date().getFullYear().toString()}
-                  city={property.city}
-                  languages={profile.languages_spoken || ["Arabic", "French"]}
-                  transactionCount={profile.transaction_count || 0}
-                  responseRate={profile.response_rate || 100}
-                  averageRating={profile.average_rating}
-                  isVerified={profile.id_verified || profile.ownership_verified || false}
-                  category={isBuy ? "buy" : (isRent ? "rent" : "short-stay")}
-                />
-                <Separator />
-                
-                {/* Host Details Section */}
-                <HostDetailsSection 
-                  userId={property.user_id || ""} 
-                  onContactHost={() => setIsMessageModalOpen(true)}
-                />
-                <Separator />
-              </>
-            )}
 
             {/* Holibayt Pay Protection */}
             {property.holibayt_pay_eligible && (

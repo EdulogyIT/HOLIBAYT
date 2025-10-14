@@ -37,10 +37,13 @@ export const usePropertyTranslation = (
   const [isTranslating, setIsTranslating] = useState(false);
 
   useEffect(() => {
-    if (!text || targetLanguage === 'EN') {
+    if (!text || targetLanguage === 'EN' || !text.trim()) {
       setTranslatedText(text || '');
       return;
     }
+
+    // Show original text immediately
+    setTranslatedText(text);
 
     const cacheKey = getCacheKey(text, targetLanguage, contentType);
     const cache = getTranslationCache();
@@ -51,8 +54,8 @@ export const usePropertyTranslation = (
       return;
     }
 
-    // Translate if not in cache
-    const translateText = async () => {
+    // Translate if not in cache with retry logic
+    const translateText = async (retryCount = 0) => {
       setIsTranslating(true);
       try {
         const { data, error } = await supabase.functions.invoke('translate-content', {
@@ -63,7 +66,10 @@ export const usePropertyTranslation = (
           }
         });
 
-        if (error) throw error;
+        if (error) {
+          console.error('Translation API error:', error);
+          throw error;
+        }
 
         const translated = data?.translatedText || text;
         setTranslatedText(translated);
@@ -71,9 +77,18 @@ export const usePropertyTranslation = (
         // Update cache
         const updatedCache = { ...cache, [cacheKey]: translated };
         setTranslationCache(updatedCache);
-      } catch (error) {
+      } catch (error: any) {
         console.error('Translation error:', error);
-        setTranslatedText(text); // Fallback to original
+        
+        // Retry logic for network errors (max 2 retries)
+        if (retryCount < 2 && (error.message?.includes('fetch') || error.message?.includes('network'))) {
+          console.log(`Retrying translation (attempt ${retryCount + 1})...`);
+          setTimeout(() => translateText(retryCount + 1), 1000 * (retryCount + 1));
+        } else {
+          // Fallback to original text on permanent error
+          console.warn('Translation failed, using original text');
+          setTranslatedText(text);
+        }
       } finally {
         setIsTranslating(false);
       }
@@ -82,5 +97,5 @@ export const usePropertyTranslation = (
     translateText();
   }, [text, targetLanguage, contentType]);
 
-  return { translatedText, isTranslating };
+  return { translatedText: translatedText || text, isTranslating };
 };
