@@ -151,6 +151,41 @@ const allTranslations = {
     protectedByHolibaytPay: "Protégé par Holibayt Pay™",
     securePaymentGuaranteed: "Paiement Sécurisé Garanti",
     
+    // Schedule Visit & Booking
+    scheduleVisit: "Planifier une Visite",
+    requestVisit: "Demander une Visite",
+    chatSecurely: "Discuter en Sécurité",
+    bookViewingSafely: "Réserver une Visite en Sécurité",
+    
+    // Advanced Filters
+    advancedFilters: "Filtres Avancés",
+    propertyAge: "Âge de la Propriété",
+    resale: "Revente",
+    holibaytPayEligible: "Éligible Holibayt Pay™",
+    verifiedListingsDefault: "Seuls les annonces vérifiées apparaissent par défaut",
+    
+    // Trust Info Blocks
+    transactionSecured: "Transaction Sécurisée par Holibayt Pay™",
+    transactionSecuredDesc: "Fonds détenus en dépôt fiduciaire jusqu'à confirmation de la transaction",
+    verifiedListing: "Annonce Vérifiée",
+    verifiedListingDesc: "Cette annonce a été vérifiée par notre équipe de validation locale",
+    estimatedTimeToClose: "Délai Estimé de Clôture",
+    estimatedTimeDesc7to10: "7 à 10 jours ouvrables",
+    estimatedTimeDesc3to5: "3 à 5 jours ouvrables",
+    estimatedTimeDescInstant: "Confirmation instantanée",
+    requestLegalReview: "Demander un Examen Juridique",
+    legalReviewDesc: "Obtenez une assistance juridique experte tout au long du processus",
+    
+    // Footer
+    stayUpdated: "Restez Informé",
+    subscribeNewsletter: "Abonnez-vous à notre newsletter pour les dernières propriétés",
+    enterEmail: "Entrez votre email",
+    subscribe: "S'abonner",
+    
+    // Market Data
+    medianPrice: "Prix Médian",
+    vsLastYear: "vs l'Année Dernière",
+    
     // Verification Badges
     verifiedOwner: 'Propriétaire vérifié',
     verifiedLandlord: 'Bailleur vérifié',
@@ -167,18 +202,10 @@ const allTranslations = {
     securePayments: 'Paiements sécurisés avec Holibayt Pay™',
     legalAssistance: 'Assistance juridique pour chaque transaction',
     verifiedOnly: 'Vérifié uniquement',
-    resale: 'Revente',
-    financingAvailable: 'Financement disponible',
-    holibaytPayEligible: 'Éligible Holibayt Pay™',
-    verifiedListingsDefault: 'Seules les annonces vérifiées apparaissent par défaut.',
-    transactionSecured: 'Transaction sécurisée par Holibayt Pay™',
     listingVerified: 'Cette annonce a été vérifiée par notre équipe de validation locale.',
     estimatedClose: 'Délai estimé de clôture : 7 à 10 jours ouvrables',
-    requestLegalReview: 'Demander un examen juridique',
     secureTransaction: 'Sécurisez votre transaction avec Holibayt Pay™',
     fundsInEscrow: 'Vos fonds sont détenus en dépôt fiduciaire jusqu\'à ce que vous receviez les clés de votre propriété.',
-    medianPrice: 'Prix médian de la propriété',
-    vsLastYear: 'par rapport à l\'année dernière',
     exploreNeighborhood: 'Explorer le quartier',
     
     // Rent Page Trust
@@ -219,10 +246,6 @@ const allTranslations = {
     shortStayHeroSubtitle: 'Profitez de votre voyage avec confiance, pas avec incertitude.',
     
     // CTA Buttons
-    requestVisit: 'Demander une visite',
-    scheduleVisit: 'Planifier une visite',
-    bookViewingSafely: 'Réserver une visite en toute sécurité',
-    chatSecurely: 'Discuter en toute sécurité via Holibayt',
     communicationWarning: 'Toutes les communications et paiements doivent passer par Holibayt Pay™ pour rester protégés.',
     
     // Host Section
@@ -656,10 +679,7 @@ const allTranslations = {
     // Blog translations
     blogInsights: 'Blog & Actualités',
     blogDescription: 'Restez informé des dernières tendances, conseils et analyses du marché immobilier algérien',
-    stayUpdated: 'Restez Informé',
     newsletterDescription: 'Abonnez-vous à notre newsletter et ne manquez jamais les dernières analyses immobilières',
-    enterEmail: 'Entrez votre email',
-    subscribe: 'S\'abonner',
     backToBlog: "Retour au Blog",
     
     // Property types (specific property type translations)
@@ -1061,6 +1081,41 @@ const allTranslations = {
     protectedByHolibaytPay: "Protected by Holibayt Pay™",
     securePaymentGuaranteed: "Secure Payment Guaranteed",
     
+    // Schedule Visit & Booking
+    scheduleVisit: "Schedule Visit",
+    requestVisit: "Request Visit",
+    chatSecurely: "Chat Securely",
+    bookViewingSafely: "Book Viewing Safely",
+    
+    // Advanced Filters
+    advancedFilters: "Advanced Filters",
+    propertyAge: "Property Age",
+    resale: "Resale",
+    holibaytPayEligible: "Holibayt Pay™ Eligible",
+    verifiedListingsDefault: "Only verified listings appear by default",
+    
+    // Trust Info Blocks
+    transactionSecured: "Transaction Secured by Holibayt Pay™",
+    transactionSecuredDesc: "Funds held in escrow until transaction confirmation",
+    verifiedListing: "Verified Listing",
+    verifiedListingDesc: "This listing has been verified by our local validation team",
+    estimatedTimeToClose: "Estimated Time to Close",
+    estimatedTimeDesc7to10: "7–10 business days",
+    estimatedTimeDesc3to5: "3–5 business days",
+    estimatedTimeDescInstant: "Instant confirmation",
+    requestLegalReview: "Request Legal Review",
+    legalReviewDesc: "Get expert legal assistance throughout the process",
+    
+    // Footer
+    stayUpdated: "Stay Updated",
+    subscribeNewsletter: "Subscribe to our newsletter for the latest properties",
+    enterEmail: "Enter your email",
+    subscribe: "Subscribe",
+    
+    // Market Data
+    medianPrice: "Median Price",
+    vsLastYear: "vs Last Year",
+    
     // Verification Badges
     verifiedOwner: 'Verified Owner',
     verifiedLandlord: 'Verified Landlord',
@@ -1098,10 +1153,6 @@ const allTranslations = {
     shortStayHeroSubtitle: 'Enjoy your trip with confidence, not uncertainty.',
     
     // CTA Buttons
-    requestVisit: 'Request Visit',
-    scheduleVisit: 'Schedule Visit',
-    bookViewingSafely: 'Book a Viewing Safely',
-    chatSecurely: 'Chat Securely via Holibayt',
     communicationWarning: 'All communication and payments must go through Holibayt Pay™ to remain protected.',
     
     // Host Section
@@ -1529,10 +1580,7 @@ const allTranslations = {
     // Blog translations
     blogInsights: 'Blog & Insights',
     blogDescription: 'Stay updated with the latest trends, tips, and insights from Algeria\'s real estate market',
-    stayUpdated: 'Stay Updated',
     newsletterDescription: 'Subscribe to our newsletter and never miss the latest real estate insights',
-    enterEmail: 'Enter your email',
-    subscribe: 'Subscribe',
     backToBlog: "Back to Blog",
     
     // Property types (specific property type translations)
@@ -1933,6 +1981,41 @@ const allTranslations = {
     protectedByHolibaytPay: "محمي بواسطة Holibayt Pay™",
     securePaymentGuaranteed: "دفع آمن ومضمون",
     
+    // Schedule Visit & Booking
+    scheduleVisit: "جدولة زيارة",
+    requestVisit: "طلب زيارة",
+    chatSecurely: "الدردشة بأمان",
+    bookViewingSafely: "حجز معاينة بأمان",
+    
+    // Advanced Filters
+    advancedFilters: "مرشحات متقدمة",
+    propertyAge: "عمر العقار",
+    resale: "إعادة البيع",
+    holibaytPayEligible: "مؤهل لـ Holibayt Pay™",
+    verifiedListingsDefault: "تظهر القوائم المعتمدة فقط افتراضيًا",
+    
+    // Trust Info Blocks
+    transactionSecured: "معاملة آمنة بواسطة Holibayt Pay™",
+    transactionSecuredDesc: "الأموال محتفظ بها في الضمان حتى تأكيد المعاملة",
+    verifiedListing: "قائمة معتمدة",
+    verifiedListingDesc: "تم التحقق من هذه القائمة من قبل فريق التحقق المحلي لدينا",
+    estimatedTimeToClose: "الوقت المقدر للإغلاق",
+    estimatedTimeDesc7to10: "7-10 أيام عمل",
+    estimatedTimeDesc3to5: "3-5 أيام عمل",
+    estimatedTimeDescInstant: "تأكيد فوري",
+    requestLegalReview: "طلب مراجعة قانونية",
+    legalReviewDesc: "احصل على المساعدة القانونية الخبيرة طوال العملية",
+    
+    // Footer
+    stayUpdated: "ابق على اطلاع",
+    subscribeNewsletter: "اشترك في نشرتنا الإخبارية للحصول على أحدث العقارات",
+    enterEmail: "أدخل بريدك الإلكتروني",
+    subscribe: "اشترك",
+    
+    // Market Data
+    medianPrice: "السعر المتوسط",
+    vsLastYear: "مقابل العام الماضي",
+    
     // Verification Badges
     verifiedOwner: 'مالك موثق',
     verifiedLandlord: 'مالك موثق',
@@ -1961,10 +2044,6 @@ const allTranslations = {
     shortStayHeroSubtitle: 'استمتع برحلتك بثقة، وليس بعدم يقين.',
     
     // CTA Buttons
-    requestVisit: 'طلب زيارة',
-    scheduleVisit: 'جدولة زيارة',
-    bookViewingSafely: 'احجز معاينة بأمان',
-    chatSecurely: 'الدردشة بأمان عبر Holibayt',
     communicationWarning: 'يجب أن تتم جميع الاتصالات والمدفوعات عبر Holibayt Pay™ لتبقى محمية.',
     
     // Host Section
@@ -2373,10 +2452,7 @@ const allTranslations = {
     // Blog translations
     blogInsights: 'المدونة والرؤى',
     blogDescription: 'ابق على اطلاع بأحدث الاتجاهات والنصائح والرؤى من سوق العقارات الجزائري',
-    stayUpdated: 'ابق مطلعاً',  
     newsletterDescription: 'اشترك في نشرتنا الإخبارية ولا تفوت أحدث الرؤى العقارية',
-    enterEmail: 'أدخل بريدك الإلكتروني',
-    subscribe: 'اشتراك',
     backToBlog: "العودة للمدونة",
     
     // Property types (specific property type translations)

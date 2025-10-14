@@ -1,0 +1,78 @@
+import { Shield, Clock, Scale, CheckCircle } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { useLanguage } from "@/contexts/LanguageContext";
+
+interface PropertyTrustInfoBlocksProps {
+  isVerified?: boolean;
+  holibaytPayEligible?: boolean;
+  category: "sale" | "rent" | "short-stay";
+}
+
+export const PropertyTrustInfoBlocks = ({ 
+  isVerified, 
+  holibaytPayEligible,
+  category 
+}: PropertyTrustInfoBlocksProps) => {
+  const { t } = useLanguage();
+  
+  const blocks = [
+    {
+      icon: Shield,
+      title: t('transactionSecured'),
+      description: t('transactionSecuredDesc'),
+      show: holibaytPayEligible,
+      color: "text-green-600 bg-green-50 dark:bg-green-950/20",
+    },
+    {
+      icon: CheckCircle,
+      title: t('verifiedListing'),
+      description: t('verifiedListingDesc'),
+      show: isVerified,
+      color: "text-blue-600 bg-blue-50 dark:bg-blue-950/20",
+    },
+    {
+      icon: Clock,
+      title: t('estimatedTimeToClose'),
+      description: category === 'sale' 
+        ? t('estimatedTimeDesc7to10') 
+        : category === 'rent' 
+        ? t('estimatedTimeDesc3to5')
+        : t('estimatedTimeDescInstant'),
+      show: true,
+      color: "text-amber-600 bg-amber-50 dark:bg-amber-950/20",
+    },
+    {
+      icon: Scale,
+      title: t('requestLegalReview'),
+      description: t('legalReviewDesc'),
+      show: category === 'sale' || category === 'rent',
+      color: "text-purple-600 bg-purple-50 dark:bg-purple-950/20",
+      isAction: true,
+    }
+  ];
+  
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+      {blocks.filter(block => block.show).map((block, idx) => {
+        const Icon = block.icon;
+        return (
+          <Card key={idx} className="border-0 shadow-sm hover:shadow-md transition-shadow">
+            <CardContent className="p-4">
+              <div className={`inline-flex p-2 rounded-lg ${block.color} mb-3`}>
+                <Icon className="w-5 h-5" />
+              </div>
+              <h4 className="font-semibold text-sm mb-1">{block.title}</h4>
+              <p className="text-xs text-muted-foreground">{block.description}</p>
+              {block.isAction && (
+                <Button variant="link" size="sm" className="px-0 h-auto mt-2 text-purple-600">
+                  {t('learnMore')} →
+                </Button>
+              )}
+            </CardContent>
+          </Card>
+        );
+      })}
+    </div>
+  );
+};

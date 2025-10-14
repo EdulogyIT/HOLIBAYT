@@ -2,6 +2,8 @@ import { Link } from "react-router-dom";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Facebook, Twitter, Instagram, Mail, Phone, MapPin } from "lucide-react";
 import footerBg from "@/assets/footer-background.jpg";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
 const Footer = () => {
   const { t } = useLanguage();
@@ -112,22 +114,50 @@ const Footer = () => {
                 </div>
               </li>
               <li className="group">
-                <div className="flex items-center space-x-3 p-2 rounded-lg hover:bg-muted/50 transition-colors duration-300">
+                <a 
+                  href="tel:+213211234567" 
+                  className="flex items-center space-x-3 p-2 rounded-lg hover:bg-muted/50 transition-colors duration-300"
+                >
                   <div className="p-1 rounded bg-accent/10 text-accent group-hover:bg-accent group-hover:text-accent-foreground transition-colors duration-300">
                     <Phone className="h-4 w-4" />
                   </div>
                   <span className="text-muted-foreground group-hover:text-foreground transition-colors duration-300">+213 21 123 456</span>
-                </div>
+                </a>
               </li>
               <li className="group">
-                <div className="flex items-center space-x-3 p-2 rounded-lg hover:bg-muted/50 transition-colors duration-300">
+                <a 
+                  href="mailto:contact@holibayt.com" 
+                  className="flex items-center space-x-3 p-2 rounded-lg hover:bg-muted/50 transition-colors duration-300"
+                >
                   <div className="p-1 rounded bg-foreground/10 text-foreground group-hover:bg-foreground group-hover:text-background transition-colors duration-300">
                     <Mail className="h-4 w-4" />
                   </div>
                   <span className="text-muted-foreground group-hover:text-foreground transition-colors duration-300">contact@holibayt.com</span>
-                </div>
+                </a>
               </li>
             </ul>
+          </div>
+
+          {/* Newsletter Subscribe */}
+          <div className="space-y-6">
+            <h3 className="font-semibold text-foreground font-playfair text-lg">
+              {t('stayUpdated')}
+            </h3>
+            <div className="space-y-3">
+              <p className="text-sm text-muted-foreground">
+                {t('subscribeNewsletter')}
+              </p>
+              <div className="flex gap-2">
+                <Input 
+                  type="email" 
+                  placeholder={t('enterEmail')}
+                  className="bg-background/50"
+                />
+                <Button className="bg-primary hover:bg-primary/90">
+                  {t('subscribe')}
+                </Button>
+              </div>
+            </div>
           </div>
         </div>
 

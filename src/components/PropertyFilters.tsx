@@ -290,7 +290,18 @@ const PropertyFilters = ({ onFilterChange, listingType }: PropertyFiltersProps) 
                 
                 {/* Verified Only */}
                 <div className="flex items-center justify-between">
-                  <Label className="font-inter text-sm">{t('verifiedOnly') || 'Verified Only'}</Label>
+                  <Label className="font-inter text-sm">{t('verifiedOnly')}</Label>
+                  <input
+                    type="checkbox"
+                    checked={filters.verifiedOnly || false}
+                    onChange={(e) => handleFilterChange('verifiedOnly', e.target.checked)}
+                    className="h-4 w-4"
+                  />
+                </div>
+                
+                {/* Holibayt Pay Eligible */}
+                <div className="flex items-center justify-between">
+                  <Label className="font-inter text-sm">{t('holibaytPayEligible')}</Label>
                   <input
                     type="checkbox"
                     checked={filters.verifiedOnly || false}
@@ -345,7 +356,7 @@ const PropertyFilters = ({ onFilterChange, listingType }: PropertyFiltersProps) 
                 {/* Instant Booking (Short Stay only) */}
                 {listingType === 'shortStay' && (
                   <div className="flex items-center justify-between">
-                    <Label className="font-inter text-sm">{t('instantBooking') || 'Instant Booking'}</Label>
+                    <Label className="font-inter text-sm">{t('instantBooking')}</Label>
                     <input
                       type="checkbox"
                       checked={filters.instantBooking || false}
@@ -354,6 +365,11 @@ const PropertyFilters = ({ onFilterChange, listingType }: PropertyFiltersProps) 
                     />
                   </div>
                 )}
+                
+                {/* Micro-copy */}
+                <p className="text-xs text-muted-foreground italic pt-2">
+                  💡 {t('verifiedListingsDefault')}
+                </p>
               </div>
             </div>
           </CardContent>

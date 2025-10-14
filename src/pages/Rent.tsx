@@ -1,6 +1,7 @@
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import RentHeroSearch from "@/components/RentHeroSearch";
+import { MarketDataBar } from "@/components/MarketDataBar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -226,6 +227,14 @@ const Rent = () => {
     <div className="min-h-screen bg-background">
       <Navigation />
       <main className="pt-20">
+        {/* Market Data Bar */}
+        <MarketDataBar 
+          city="Alger"
+          medianPrice={45000}
+          yearOverYearChange={5}
+          currency="DZD"
+        />
+        
         {/* Wire up search just like Buy page */}
         <RentHeroSearch onSearch={handleSearch} />
 

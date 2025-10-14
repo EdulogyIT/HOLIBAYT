@@ -8,23 +8,51 @@ import algerImage from "@/assets/city-alger.jpg";
 import oranImage from "@/assets/city-oran.jpg";
 import constantineImage from "@/assets/city-constantine.jpg";
 import annabaImage from "@/assets/city-annaba.jpg";
+import { supabase } from "@/integrations/supabase/client";
 
 const CitiesSection = () => {
   const navigate = useNavigate();
   const { t, currentLang } = useLanguage();
   const [showAllCities, setShowAllCities] = useState(false);
+  const [cityCounts, setCityCounts] = useState<Record<string, number>>({});
+
+  // Fetch dynamic property counts
+  useEffect(() => {
+    const fetchPropertyCounts = async () => {
+      const { data, error } = await supabase
+        .from('properties')
+        .select('city')
+        .eq('status', 'active');
+      
+      if (data && !error) {
+        const counts: Record<string, number> = {};
+        data.forEach(prop => {
+          const city = prop.city?.toLowerCase() || '';
+          counts[city] = (counts[city] || 0) + 1;
+        });
+        setCityCounts(counts);
+      }
+    };
+    
+    fetchPropertyCounts();
+  }, []);
 
   // Re-render when language changes
   useEffect(() => {
     // Component will re-render when currentLang changes
   }, [currentLang]);
   
+  const getCityPropertyCount = (cityId: string) => {
+    const count = cityCounts[cityId.toLowerCase()] || 0;
+    return count > 0 ? `${count} ${t('availableProperties')}` : "0 " + t('availableProperties');
+  };
+
   const cities = [
     {
       id: "alger",
       name: t('cityAlger'),
       description: t('algerDescription'),
-      properties: "1,200+ " + t('availableProperties'),
+      properties: getCityPropertyCount("alger"),
       image: algerImage,
       color: "from-blue-500 to-blue-600"
     },
@@ -32,7 +60,7 @@ const CitiesSection = () => {
       id: "oran",
       name: t('cityOran'),
       description: t('oranDescription'),
-      properties: "800+ " + t('availableProperties'),
+      properties: getCityPropertyCount("oran"),
       image: oranImage,
       color: "from-orange-500 to-red-500"
     },
@@ -40,7 +68,7 @@ const CitiesSection = () => {
       id: "constantine", 
       name: t('cityConstantine'),
       description: t('constantineDescription'),
-      properties: "450+ " + t('availableProperties'),
+      properties: getCityPropertyCount("constantine"),
       image: constantineImage,
       color: "from-green-500 to-emerald-600"
     },
@@ -48,7 +76,7 @@ const CitiesSection = () => {
       id: "annaba",
       name: t('cityAnnaba'),
       description: t('annabaDescription'),
-      properties: "300+ " + t('availableProperties'), 
+      properties: getCityPropertyCount("annaba"), 
       image: annabaImage,
       color: "from-purple-500 to-pink-500"
     }
@@ -60,7 +88,7 @@ const CitiesSection = () => {
       id: "setif",
       name: t('citySetif'),
       description: t('setifDescription'),
-      properties: "250+ " + t('availableProperties'),
+      properties: getCityPropertyCount("setif"),
       image: algerImage,
       color: "from-indigo-500 to-blue-600"
     },
@@ -68,7 +96,7 @@ const CitiesSection = () => {
       id: "tlemcen",
       name: t('cityTlemcen'),
       description: t('tlemcenDescription'),
-      properties: "180+ " + t('availableProperties'),
+      properties: getCityPropertyCount("tlemcen"),
       image: oranImage,
       color: "from-teal-500 to-green-600"
     },
@@ -76,7 +104,7 @@ const CitiesSection = () => {
       id: "bejaia",
       name: t('cityBejaia'),
       description: t('bejaiaDescription'),
-      properties: "200+ " + t('availableProperties'),
+      properties: getCityPropertyCount("bejaia"),
       image: annabaImage,
       color: "from-cyan-500 to-blue-500"
     },
@@ -84,7 +112,7 @@ const CitiesSection = () => {
       id: "blida",
       name: t('cityBlida'),
       description: t('blidaDescription'),
-      properties: "150+ " + t('availableProperties'),
+      properties: getCityPropertyCount("blida"),
       image: constantineImage,
       color: "from-rose-500 to-pink-600"
     }
@@ -118,7 +146,7 @@ const CitiesSection = () => {
                 <img 
                   src={city.image} 
                   alt={`${city.name} - ${city.description}`}
-                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                  className="w-full h-full object-cover group-hover:scale-110 transform-gpu transition-transform duration-500"
                 />
                 <div className={`absolute inset-0 bg-gradient-to-t ${city.color} opacity-60 group-hover:opacity-40 transition-opacity duration-300`}></div>
                 
