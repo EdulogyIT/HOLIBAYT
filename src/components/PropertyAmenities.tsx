@@ -79,7 +79,7 @@ export const PropertyAmenities = ({ features = {} }: PropertyAmenitiesProps) => 
   return (
     <>
       <div className="space-y-6">
-        <h2 className="text-2xl md:text-3xl font-bold">What this place offers</h2>
+        <h2 className="text-2xl md:text-3xl font-bold">{t('whatThisPlaceOffers')}</h2>
         
         <Card className="p-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -100,7 +100,7 @@ export const PropertyAmenities = ({ features = {} }: PropertyAmenitiesProps) => 
               className="w-full mt-6"
               onClick={() => setShowAllModal(true)}
             >
-              Show all {allAmenities.length} amenities
+              {t('showAllAmenities').replace('{{count}}', allAmenities.length.toString())}
             </Button>
           )}
         </Card>
@@ -110,7 +110,7 @@ export const PropertyAmenities = ({ features = {} }: PropertyAmenitiesProps) => 
       <Dialog open={showAllModal} onOpenChange={setShowAllModal}>
         <DialogContent className="max-w-3xl max-h-[80vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle className="text-2xl">All Amenities</DialogTitle>
+            <DialogTitle className="text-2xl">{t('allAmenities')}</DialogTitle>
           </DialogHeader>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 py-4">

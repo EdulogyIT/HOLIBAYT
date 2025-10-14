@@ -190,8 +190,8 @@ export const NotificationBell = () => {
           description: "You have already submitted a review for this stay. Thank you!"
         });
       } else {
-        // Navigate to bookings page where they can review
-        navigate('/bookings');
+        // Navigate to bookings page past tab where they can review
+        navigate('/bookings?tab=past');
       }
     } else if (notification.related_id) {
       // For other types, assume related_id is property_id

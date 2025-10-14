@@ -295,7 +295,7 @@ export default function AdminUsers() {
       {/* Filters */}
       <Card>
         <CardContent className="pt-6">
-          <div className="flex flex-col sm:flex-row gap-4">
+          <div className="flex flex-col md:flex-row gap-4">
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
               <Input
@@ -307,7 +307,7 @@ export default function AdminUsers() {
             </div>
             
             <Select value={roleFilter} onValueChange={setRoleFilter}>
-              <SelectTrigger className="w-full sm:w-40 bg-background border border-input">
+              <SelectTrigger className="w-full md:w-40 bg-background border border-input">
                 <SelectValue placeholder={t('admin.role')} />
               </SelectTrigger>
               <SelectContent className="bg-background border border-input shadow-lg z-[9999]" sideOffset={5}>
@@ -319,7 +319,7 @@ export default function AdminUsers() {
             </Select>
 
             <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger className="w-full sm:w-40 bg-background border border-input">
+              <SelectTrigger className="w-full md:w-40 bg-background border border-input">
                 <SelectValue placeholder={t('admin.status')} />
               </SelectTrigger>
               <SelectContent className="bg-background border border-input shadow-lg z-[9999]" position="popper" sideOffset={5}>
@@ -338,17 +338,17 @@ export default function AdminUsers() {
         <CardHeader>
           <CardTitle>{t('admin.users')} ({filteredUsers.length})</CardTitle>
         </CardHeader>
-        <CardContent>
-          <Table>
+        <CardContent className="overflow-x-auto">
+          <Table className="min-w-full">
             <TableHeader>
               <TableRow className="border-b">
                 <TableHead className="font-semibold text-foreground">User</TableHead>
-                <TableHead className="font-semibold text-foreground">Contact</TableHead>
+                <TableHead className="font-semibold text-foreground hidden md:table-cell">Contact</TableHead>
                 <TableHead className="font-semibold text-foreground">Role</TableHead>
                 <TableHead className="font-semibold text-foreground">Status</TableHead>
-                <TableHead className="font-semibold text-foreground">Verification</TableHead>
-                <TableHead className="font-semibold text-foreground">Activity</TableHead>
-                <TableHead className="font-semibold text-foreground">Stats</TableHead>
+                <TableHead className="font-semibold text-foreground hidden lg:table-cell">Verification</TableHead>
+                <TableHead className="font-semibold text-foreground hidden xl:table-cell">Activity</TableHead>
+                <TableHead className="font-semibold text-foreground hidden lg:table-cell">Stats</TableHead>
                 <TableHead className="font-semibold text-foreground">Actions</TableHead>
               </TableRow>
             </TableHeader>
@@ -368,7 +368,7 @@ export default function AdminUsers() {
                       </div>
                     </div>
                   </TableCell>
-                  <TableCell>
+                  <TableCell className="hidden md:table-cell">
                     <div className="space-y-1">
                       <div className="flex items-center text-sm">
                         <Mail className="h-3 w-3 mr-1 text-muted-foreground" />
@@ -392,13 +392,13 @@ export default function AdminUsers() {
                       {user.status}
                     </Badge>
                   </TableCell>
-                  <TableCell>
+                  <TableCell className="hidden lg:table-cell">
                     <div className="flex items-center">
                       {getVerificationIcon(user.verificationStatus)}
                       <span className="ml-2 text-sm">{user.verificationStatus}</span>
                     </div>
                   </TableCell>
-                  <TableCell>
+                  <TableCell className="hidden xl:table-cell">
                       <div className="space-y-1 text-sm">
                       <div className="flex items-center">
                         <Calendar className="h-3 w-3 mr-1 text-muted-foreground" />
@@ -409,7 +409,7 @@ export default function AdminUsers() {
                       </div>
                     </div>
                   </TableCell>
-                  <TableCell>
+                  <TableCell className="hidden lg:table-cell">
                     <div className="space-y-1 text-sm">
                       {user.propertyCount && (
                         <div>{user.propertyCount} {t('admin.properties')}</div>

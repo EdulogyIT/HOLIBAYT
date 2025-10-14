@@ -134,7 +134,23 @@ export const buyRentTranslations = {
     privateGarden: "Jardin privé",
     seaView: "Vue sur la mer",
     yes: "Oui",
-    no: "Non"
+    no: "Non",
+    getDirections: "Obtenir l'itinéraire",
+    writeComment: "Écrire un commentaire...",
+    thingsToKnow: "Choses à savoir",
+    houseRules: "Règles de la maison",
+    safetyProperty: "Sécurité et propriété",
+    cancellationPolicy: "Politique d'annulation",
+    showMore: "Voir plus",
+    showLess: "Voir moins",
+    whatThisPlaceOffers: "Ce que cet endroit offre",
+    showAllAmenities: "Voir toutes les {{count}} commodités",
+    allAmenities: "Toutes les commodités",
+    admin: {
+      registeredUsers: "Utilisateurs inscrits",
+      hosts: "Hôtes",
+      kycVerifications: "Vérifications KYC"
+    }
   },
   EN: {
     protectedByHolibaytPay: "Protected by Holibayt Pay™ – verified escrow payments for property purchases",
@@ -270,7 +286,23 @@ export const buyRentTranslations = {
     privateGarden: "Private Garden",
     seaView: "Sea View",
     yes: "Yes",
-    no: "No"
+    no: "No",
+    getDirections: "Get directions",
+    writeComment: "Write a comment...",
+    thingsToKnow: "Things to know",
+    houseRules: "House rules",
+    safetyProperty: "Safety & property",
+    cancellationPolicy: "Cancellation policy",
+    showMore: "Show more",
+    showLess: "Show less",
+    whatThisPlaceOffers: "What this place offers",
+    showAllAmenities: "Show all {{count}} amenities",
+    allAmenities: "All amenities",
+    admin: {
+      registeredUsers: "Registered users",
+      hosts: "Hosts",
+      kycVerifications: "KYC verifications"
+    }
   },
   AR: {
     protectedByHolibaytPay: "محمي بواسطة Holibayt Pay™ – مدفوعات ضمان موثقة لشراء العقارات",
@@ -406,6 +438,22 @@ export const buyRentTranslations = {
     privateGarden: "حديقة خاصة",
     seaView: "إطلالة على البحر",
     yes: "نعم",
-    no: "لا"
+    no: "لا",
+    getDirections: "احصل على الاتجاهات",
+    writeComment: "اكتب تعليقاً...",
+    thingsToKnow: "أشياء يجب معرفتها",
+    houseRules: "قواعد المنزل",
+    safetyProperty: "السلامة والممتلكات",
+    cancellationPolicy: "سياسة الإلغاء",
+    showMore: "عرض المزيد",
+    showLess: "عرض أقل",
+    whatThisPlaceOffers: "ما يقدمه هذا المكان",
+    showAllAmenities: "عرض جميع المرافق ({{count}})",
+    allAmenities: "جميع المرافق",
+    admin: {
+      registeredUsers: "المستخدمون المسجلون",
+      hosts: "المضيفون",
+      kycVerifications: "عمليات التحقق من الهوية"
+    }
   }
 };

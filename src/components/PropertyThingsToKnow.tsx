@@ -112,14 +112,14 @@ export const PropertyThingsToKnow = ({
 
   return (
     <div className="space-y-6">
-      <h2 className="text-2xl md:text-3xl font-bold">Things to know</h2>
+      <h2 className="text-2xl md:text-3xl font-bold">{t('thingsToKnow')}</h2>
       
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {/* House Rules */}
         <Card className="p-6 space-y-4">
           <div className="flex items-center gap-2">
             <Clock className="w-5 h-5 text-primary" />
-            <h3 className="text-lg font-semibold">House rules</h3>
+            <h3 className="text-lg font-semibold">{t('houseRules')}</h3>
           </div>
           
           <div className="space-y-3">
@@ -144,7 +144,7 @@ export const PropertyThingsToKnow = ({
               className="p-0 h-auto font-semibold"
               onClick={() => toggleSection("rules")}
             >
-              {expandedSection === "rules" ? "Show less" : `Show more >`}
+              {expandedSection === "rules" ? t('showLess') : `${t('showMore')} >`}
             </Button>
           )}
         </Card>
@@ -153,7 +153,7 @@ export const PropertyThingsToKnow = ({
         <Card className="p-6 space-y-4">
           <div className="flex items-center gap-2">
             <Shield className="w-5 h-5 text-primary" />
-            <h3 className="text-lg font-semibold">Safety & property</h3>
+            <h3 className="text-lg font-semibold">{t('safetyProperty')}</h3>
           </div>
           
           <div className="space-y-3">
@@ -171,7 +171,7 @@ export const PropertyThingsToKnow = ({
               className="p-0 h-auto font-semibold"
               onClick={() => toggleSection("safety")}
             >
-              {expandedSection === "safety" ? "Show less" : `Show more >`}
+              {expandedSection === "safety" ? t('showLess') : `${t('showMore')} >`}
             </Button>
           )}
         </Card>
@@ -180,7 +180,7 @@ export const PropertyThingsToKnow = ({
         <Card className="p-6 space-y-4">
           <div className="flex items-center gap-2">
             <AlertCircle className="w-5 h-5 text-primary" />
-            <h3 className="text-lg font-semibold">Cancellation policy</h3>
+            <h3 className="text-lg font-semibold">{t('cancellationPolicy')}</h3>
           </div>
           
           <div className="space-y-3">
@@ -206,7 +206,7 @@ export const PropertyThingsToKnow = ({
             className="p-0 h-auto font-semibold"
             onClick={() => toggleSection("cancellation")}
           >
-            {expandedSection === "cancellation" ? "Show less" : "Learn more >"}
+            {expandedSection === "cancellation" ? t('showLess') : `${t('showMore')} >`}
           </Button>
         </Card>
       </div>

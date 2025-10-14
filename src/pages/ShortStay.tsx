@@ -180,6 +180,7 @@ const ShortStay = () => {
             isNew={property.is_new}
             showVerifiedHost={true}
             showInstantBooking={true}
+            size="sm"
           />
           <div onClick={handleWishlistClick}>
             <WishlistButton

@@ -16,6 +16,7 @@ import { useToast } from "@/hooks/use-toast";
 import { CancelBookingButton } from "@/components/CancelBookingButton";
 import { ReviewDialog } from "@/components/ReviewDialog";
 import { ReleaseEscrowButton } from "@/components/ReleaseEscrowButton";
+import { useLocation } from "react-router-dom";
 
 interface BookingWithProperty {
   id: string;
@@ -53,6 +54,11 @@ const Bookings = () => {
   const { user, isAuthenticated } = useAuth();
   const { formatPrice } = useCurrency();
   const { toast } = useToast();
+  const location = useLocation();
+  
+  // Get default tab from URL parameter
+  const searchParams = new URLSearchParams(location.search);
+  const defaultTab = searchParams.get('tab') === 'past' ? 'past' : 'upcoming';
   
   const [bookings, setBookings] = useState<BookingWithProperty[]>([]);
   const [loading, setLoading] = useState(true);
@@ -476,7 +482,7 @@ const Bookings = () => {
               </CardContent>
             </Card>
           ) : (
-            <Tabs defaultValue="upcoming" className="space-y-6">
+            <Tabs defaultValue={defaultTab} className="space-y-6">
               <TabsList className="grid w-full max-w-md grid-cols-2">
                 <TabsTrigger value="upcoming">Upcoming ({upcomingBookings.length})</TabsTrigger>
                 <TabsTrigger value="past">Past Stays ({pastBookings.length})</TabsTrigger>
