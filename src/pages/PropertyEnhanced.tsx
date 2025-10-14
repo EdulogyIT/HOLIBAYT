@@ -452,7 +452,7 @@ const PropertyEnhanced = () => {
                       </Button>
                     }
                   />
-                ) : (isBuy || isRent) && (
+                ) : (
                   <Button
                     onClick={() => setIsScheduleModalOpen(true)}
                     className="w-full hover:-translate-y-0.5 transition-transform shadow-md"
@@ -481,7 +481,7 @@ const PropertyEnhanced = () => {
               </div>
 
               {/* Trust Info Blocks */}
-              <div className="pt-4 border-t">
+              <div className="pt-3 border-t">
                 <PropertyTrustInfoBlocks 
                   isVerified={property.verified}
                   holibaytPayEligible={property.holibayt_pay_eligible}

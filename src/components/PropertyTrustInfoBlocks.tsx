@@ -53,12 +53,12 @@ export const PropertyTrustInfoBlocks = ({
   ];
   
   return (
-    <div className="space-y-3">
+    <div className="space-y-2">
       {blocks.filter(block => block.show).map((block, idx) => {
         const Icon = block.icon;
         return (
           <Card key={idx} className="border shadow-sm hover:shadow-md transition-shadow">
-            <CardContent className="p-3">
+            <CardContent className="p-2.5">
               <div className="flex items-start gap-3">
                 <div className={`inline-flex p-2 rounded-lg ${block.color} flex-shrink-0`}>
                   <Icon className="w-4 h-4" />
