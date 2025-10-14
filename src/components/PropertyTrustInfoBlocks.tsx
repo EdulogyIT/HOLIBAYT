@@ -53,22 +53,26 @@ export const PropertyTrustInfoBlocks = ({
   ];
   
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+    <div className="space-y-3">
       {blocks.filter(block => block.show).map((block, idx) => {
         const Icon = block.icon;
         return (
-          <Card key={idx} className="border-0 shadow-sm hover:shadow-md transition-shadow">
-            <CardContent className="p-4">
-              <div className={`inline-flex p-2 rounded-lg ${block.color} mb-3`}>
-                <Icon className="w-5 h-5" />
+          <Card key={idx} className="border shadow-sm hover:shadow-md transition-shadow">
+            <CardContent className="p-3">
+              <div className="flex items-start gap-3">
+                <div className={`inline-flex p-2 rounded-lg ${block.color} flex-shrink-0`}>
+                  <Icon className="w-4 h-4" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <h4 className="font-semibold text-xs mb-1 leading-tight">{block.title}</h4>
+                  <p className="text-xs text-muted-foreground leading-snug">{block.description}</p>
+                  {block.isAction && (
+                    <Button variant="link" size="sm" className="px-0 h-auto mt-1 text-xs text-purple-600">
+                      {t('learnMore')} →
+                    </Button>
+                  )}
+                </div>
               </div>
-              <h4 className="font-semibold text-sm mb-1">{block.title}</h4>
-              <p className="text-xs text-muted-foreground">{block.description}</p>
-              {block.isAction && (
-                <Button variant="link" size="sm" className="px-0 h-auto mt-2 text-purple-600">
-                  {t('learnMore')} →
-                </Button>
-              )}
             </CardContent>
           </Card>
         );

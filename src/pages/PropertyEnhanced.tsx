@@ -218,13 +218,6 @@ const PropertyEnhanced = () => {
               isInWishlist={isInWishlist}
               onWishlistToggle={() => toggleWishlist(property.id)}
             />
-            
-            {/* Trust Info Blocks */}
-            <PropertyTrustInfoBlocks 
-              isVerified={property.verified}
-              holibaytPayEligible={property.holibayt_pay_eligible}
-              category={property.category as "sale" | "rent" | "short-stay"}
-            />
 
             {/* Title & Location */}
             <div>
@@ -487,6 +480,15 @@ const PropertyEnhanced = () => {
                 )}
               </div>
 
+              {/* Trust Info Blocks */}
+              <div className="pt-6 border-t">
+                <PropertyTrustInfoBlocks 
+                  isVerified={property.verified}
+                  holibaytPayEligible={property.holibayt_pay_eligible}
+                  category={property.category as "sale" | "rent" | "short-stay"}
+                />
+              </div>
+
               {/* Warning - Only for Short Stay */}
               {isShortStay && (
                 <div className="flex items-start gap-3 p-4 rounded-lg bg-yellow-50 border border-yellow-200">
@@ -513,7 +515,7 @@ const PropertyEnhanced = () => {
 
       {/* Modals */}
       {/* Schedule Visit Modal - For Buy/Rent */}
-      {(isBuy || isRent) && (
+      {(property.category === "buy" || property.category === "rent") && (
         <ScheduleVisitModal
           isOpen={isScheduleModalOpen}
           onClose={() => setIsScheduleModalOpen(false)}
