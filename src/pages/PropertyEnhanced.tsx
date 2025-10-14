@@ -203,7 +203,7 @@ const PropertyEnhanced = () => {
     <div className="min-h-screen bg-cream">
       <Navigation />
       
-      <main className="container mx-auto px-4 py-8">
+      <main className="container mx-auto px-4 pt-20 pb-8">
         {/* Trust Badge Line - Responsive */}
         <PropertyTrustBadge className="mb-6" />
 
@@ -211,7 +211,12 @@ const PropertyEnhanced = () => {
           {/* Main Content */}
           <div className="lg:col-span-2 space-y-8">
             {/* Image Gallery */}
-            <PropertyImageGallery images={property.images} title={translatedTitle} />
+            <PropertyImageGallery 
+              images={property.images} 
+              title={translatedTitle}
+              isInWishlist={isInWishlist}
+              onWishlistToggle={() => toggleWishlist(property.id)}
+            />
 
             {/* Title & Location */}
             <div>
@@ -247,10 +252,6 @@ const PropertyEnhanced = () => {
                 
                 <div className="flex gap-2 ml-4">
                   <PropertyShareButton propertyId={property.id} propertyTitle={translatedTitle} />
-                  <WishlistButton 
-                    isInWishlist={isInWishlist} 
-                    onToggle={() => toggleWishlist(property.id)} 
-                  />
                 </div>
               </div>
             </div>

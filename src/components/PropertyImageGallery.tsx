@@ -2,13 +2,16 @@ import { useState } from "react";
 import { ChevronLeft, ChevronRight, X, Maximize2, ZoomIn, ZoomOut } from "lucide-react";
 import { Button } from "./ui/button";
 import { Dialog, DialogContent } from "./ui/dialog";
+import { WishlistButton } from "./WishlistButton";
 
 interface PropertyImageGalleryProps {
   images: string[];
   title: string;
+  isInWishlist?: boolean;
+  onWishlistToggle?: () => void;
 }
 
-export const PropertyImageGallery = ({ images, title }: PropertyImageGalleryProps) => {
+export const PropertyImageGallery = ({ images, title, isInWishlist, onWishlistToggle }: PropertyImageGalleryProps) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
   const [zoomLevel, setZoomLevel] = useState(1);
@@ -42,6 +45,14 @@ export const PropertyImageGallery = ({ images, title }: PropertyImageGalleryProp
             alt={`${title} - Image ${currentIndex + 1}`}
             className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
           />
+          
+          {/* Wishlist Button Overlay - Top Right */}
+          {onWishlistToggle && (
+            <WishlistButton 
+              isInWishlist={isInWishlist || false} 
+              onToggle={onWishlistToggle}
+            />
+          )}
           
           {/* View All Photos Overlay */}
           <button
