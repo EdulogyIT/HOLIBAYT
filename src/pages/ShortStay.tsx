@@ -325,12 +325,6 @@ const ShortStay = () => {
           onAmenityClick={handleAmenityClick}
           selectedAmenity={selectedAmenity}
         />
-        
-        {/* Top Rated Stays Section - Moved above Destinations */}
-        <TopRatedStays />
-
-        {/* Destinations to Explore Section - Moved below Top Rated */}
-        <DestinationsToExplore onDestinationClick={handleDestinationClick} />
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="flex flex-col lg:flex-row gap-8">
@@ -435,11 +429,17 @@ const ShortStay = () => {
                   ))}
                 </div>
               )}
-            </div>
           </div>
         </div>
+      </div>
 
-        <AIChatBox />
+      {/* Top Rated Stays */}
+      <TopRatedStays />
+
+      {/* Destinations to Explore */}
+      <DestinationsToExplore onDestinationClick={handleDestinationClick} />
+
+      <AIChatBox />
       </main>
       <Footer />
     </div>
