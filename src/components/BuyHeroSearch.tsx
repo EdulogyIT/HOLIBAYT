@@ -74,7 +74,7 @@ const BuyHeroSearch: React.FC<BuyHeroSearchProps> = ({ onSearch }) => {
   };
 
   return (
-    <section className="relative pb-0 overflow-hidden">
+    <section className="relative py-12 md:py-16 overflow-hidden">
       {/* Background Image */}
       <div
         className="absolute inset-0 bg-cover bg-center bg-no-repeat"
@@ -83,7 +83,7 @@ const BuyHeroSearch: React.FC<BuyHeroSearchProps> = ({ onSearch }) => {
       <div className="absolute inset-0 bg-gradient-to-br from-primary/70 via-background/75 to-secondary/65" />
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 z-10">
-        <div className="text-center mb-12">
+        <div className="text-center mb-6 md:mb-8">
           <div className="inline-flex items-center gap-3 bg-white/20 backdrop-blur-sm rounded-full px-6 py-3 mb-6">
             <Home className="h-6 w-6 text-white" />
             <span className="text-white font-semibold font-inter">{t("buy")}</span>
