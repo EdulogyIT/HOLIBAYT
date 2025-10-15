@@ -577,6 +577,14 @@ const PublishPropertySteps = ({ onSubmit, isSubmitting = false }: PublishPropert
                     security: t('securityFeature'),
                     airConditioning: t('airConditioningFeature'),
                     gym: t('gymFeature'),
+                    kitchen: 'Kitchen',
+                    wifi: 'Wi-Fi',
+                    coffeeMaker: 'Coffee Maker',
+                    hotTub: 'Hot Tub',
+                    beachAccess: 'Beach Access',
+                    fireplace: 'Fireplace',
+                    mountainView: 'Mountain View',
+                    cityCenter: 'City Center',
                     petsAllowed: t('petsAllowed')
                   }).map(([key, label]) => (
                     <div key={key} className="flex items-center space-x-2">

@@ -8,16 +8,16 @@ interface DestinationsToExploreProps {
   onDestinationClick: (destination: { type: string; value: string | boolean }) => void;
 }
 
-  const destinations = [
-    { labelKey: "stays_with_hot_tub", type: "feature", value: "hotTub" },
-    { labelKey: "beachfront_stays", type: "keyword", value: "beach" },
-    { labelKey: "stays_with_pools", type: "feature", value: "swimmingPool" },
-    { labelKey: "stays_with_fireplace", type: "feature", value: "fireplace" },
-    { labelKey: "mountain_view_stays", type: "keyword", value: "mountain" },
-    { labelKey: "city_center_stays", type: "keyword", value: "city center" },
-    { labelKey: "pet_friendly_stays", type: "pets", value: true },
-    { labelKey: "luxury_stays", type: "price", value: "luxury" },
-  ];
+const destinations = [
+  { labelKey: "stays_with_hot_tub", type: "feature", value: "hotTub" },
+  { labelKey: "beachfront_stays", type: "feature", value: "beachAccess" },
+  { labelKey: "stays_with_pools", type: "feature", value: "swimmingPool" },
+  { labelKey: "stays_with_fireplace", type: "feature", value: "fireplace" },
+  { labelKey: "mountain_view_stays", type: "feature", value: "mountainView" },
+  { labelKey: "city_center_stays", type: "feature", value: "cityCenter" },
+  { labelKey: "pet_friendly_stays", type: "pets", value: true },
+  { labelKey: "luxury_stays", type: "price", value: "luxury" },
+];
 
 export const DestinationsToExplore = ({ onDestinationClick }: DestinationsToExploreProps) => {
   const { t } = useLanguage();

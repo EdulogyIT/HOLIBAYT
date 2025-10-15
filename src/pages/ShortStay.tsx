@@ -46,6 +46,7 @@ interface Property {
   is_hot_deal?: boolean;
   is_verified?: boolean;
   is_new?: boolean;
+  pets_allowed?: boolean;
 }
 
 const num = (v: unknown) => {
@@ -81,10 +82,11 @@ const ShortStay = () => {
   const applyFiltersFromURL = () => {
     const urlParams = new URLSearchParams(routerLocation.search);
     const location = (urlParams.get("location") || "").trim();
-    // Keeping these for future use (date/guest filtering later)
     const checkIn = (urlParams.get("checkIn") || "").trim();
     const checkOut = (urlParams.get("checkOut") || "").trim();
     const travelers = (urlParams.get("travelers") || "").trim();
+    const filterType = (urlParams.get("filterType") || "").trim();
+    const filterValue = (urlParams.get("filterValue") || "").trim();
 
     // Update current city for MarketDataBar
     if (location) {
@@ -100,6 +102,18 @@ const ShortStay = () => {
           (p.city || "").toLowerCase().includes(l) ||
           (p.location || "").toLowerCase().includes(l)
       );
+    }
+
+    // Apply destination filters
+    if (filterType && filterValue) {
+      if (filterType === 'feature') {
+        filtered = filtered.filter(p => p.features?.[filterValue] === true);
+      } else if (filterType === 'pets') {
+        filtered = filtered.filter(p => p.pets_allowed === true);
+      } else if (filterType === 'price') {
+        // Luxury filter: price > 20000
+        filtered = filtered.filter(p => num(p.price) > 20000);
+      }
     }
 
     // NOTE: Add check-in/out & travelers logic later when availability is modeled.

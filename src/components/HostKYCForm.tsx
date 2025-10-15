@@ -366,6 +366,53 @@ export const HostKYCForm = ({ onSubmitSuccess }: { onSubmitSuccess?: () => void 
                 />
               </div>
               <div>
+                <Label>Languages Spoken *</Label>
+                <Select
+                  value=""
+                  onValueChange={(value) => {
+                    const current = formData.languages_spoken || [];
+                    if (!current.includes(value)) {
+                      const updated = [...current, value];
+                      updateField('languages_spoken', updated.join(','));
+                    }
+                  }}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select languages..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Arabic">Arabic</SelectItem>
+                    <SelectItem value="French">French</SelectItem>
+                    <SelectItem value="English">English</SelectItem>
+                    <SelectItem value="Spanish">Spanish</SelectItem>
+                    <SelectItem value="German">German</SelectItem>
+                    <SelectItem value="Italian">Italian</SelectItem>
+                  </SelectContent>
+                </Select>
+                {formData.languages_spoken && formData.languages_spoken.length > 0 && (
+                  <div className="flex flex-wrap gap-2 mt-2">
+                    {formData.languages_spoken.map((lang) => (
+                      <span
+                        key={lang}
+                        className="inline-flex items-center gap-1 px-2 py-1 bg-primary/10 text-primary rounded-md text-sm"
+                      >
+                        {lang}
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const updated = formData.languages_spoken!.filter((l) => l !== lang);
+                            updateField('languages_spoken', updated.join(','));
+                          }}
+                          className="ml-1 hover:text-destructive"
+                        >
+                          ×
+                        </button>
+                      </span>
+                    ))}
+                  </div>
+                )}
+              </div>
+              <div>
                 <Label>Hosting Experience *</Label>
                 <Select
                   value={formData.hosting_experience}
