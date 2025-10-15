@@ -20,6 +20,58 @@ interface Testimonial {
   avatar_initials: string;
 }
 
+// Fallback testimonials in French (default language)
+const fallbackTestimonials: Testimonial[] = [
+  {
+    id: 'dummy-1',
+    client_name: 'Amina Benali',
+    client_location: 'Alger, Algérie',
+    review_text: 'Service exceptionnel ! J\'ai trouvé mon appartement idéal en quelques jours. L\'équipe est très professionnelle et à l\'écoute.',
+    rating: 5,
+    avatar_initials: 'AB'
+  },
+  {
+    id: 'dummy-2',
+    client_name: 'Karim Meziane',
+    client_location: 'Oran, Algérie',
+    review_text: 'Plateforme très intuitive et moderne. La recherche par zone facilite vraiment les choses. Je recommande vivement !',
+    rating: 5,
+    avatar_initials: 'KM'
+  },
+  {
+    id: 'dummy-3',
+    client_name: 'Sarah Khaled',
+    client_location: 'Constantine, Algérie',
+    review_text: 'Excellente expérience pour notre location saisonnière. Paiement sécurisé et communication fluide avec le propriétaire.',
+    rating: 5,
+    avatar_initials: 'SK'
+  },
+  {
+    id: 'dummy-4',
+    client_name: 'Mohamed Amrani',
+    client_location: 'Annaba, Algérie',
+    review_text: 'J\'ai acheté ma première maison grâce à Holibayt. Les outils de recherche sont puissants et le support est top.',
+    rating: 5,
+    avatar_initials: 'MA'
+  },
+  {
+    id: 'dummy-5',
+    client_name: 'Lina Bouchama',
+    client_location: 'Béjaïa, Algérie',
+    review_text: 'En tant que propriétaire, je trouve la plateforme très pratique. La gestion des réservations est simple et efficace.',
+    rating: 5,
+    avatar_initials: 'LB'
+  },
+  {
+    id: 'dummy-6',
+    client_name: 'Yacine Boudiaf',
+    client_location: 'Tizi Ouzou, Algérie',
+    review_text: 'La transparence des prix et la variété des options disponibles font de Holibayt mon premier choix pour l\'immobilier.',
+    rating: 5,
+    avatar_initials: 'YB'
+  }
+];
+
 const TestimonialsCarousel = () => {
   const { t } = useLanguage();
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
@@ -50,9 +102,8 @@ const TestimonialsCarousel = () => {
     return null;
   }
 
-  if (testimonials.length === 0) {
-    return null;
-  }
+  // Use database testimonials if available, otherwise use fallback
+  const displayTestimonials = testimonials.length > 0 ? testimonials : fallbackTestimonials;
 
   return (
     <section className="py-16 md:py-20 bg-background">
@@ -76,7 +127,7 @@ const TestimonialsCarousel = () => {
           className="w-full max-w-6xl mx-auto"
         >
           <CarouselContent>
-            {testimonials.map((testimonial, index) => (
+            {displayTestimonials.map((testimonial, index) => (
               <CarouselItem key={index} className="md:basis-1/2 lg:basis-1/3">
                 <div className="p-1">
                   <Card className="h-full border-2 border-border hover:border-primary/30 hover:shadow-elegant transition-all duration-300">

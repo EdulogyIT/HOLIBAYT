@@ -15,6 +15,12 @@ verify_jwt = true
 [functions.verify-stripe-account]
 verify_jwt = true
 
+[functions.verify-rent-payment]
+verify_jwt = false
+
+[functions.create-rent-payment]
+verify_jwt = true
+
 [functions.release-escrow]
 verify_jwt = true
 

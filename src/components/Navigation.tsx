@@ -155,6 +155,10 @@ const Navigation = () => {
                       <MessageCircle className="h-4 w-4 mr-2" />
                       Messages
                     </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => navigate('/tenant/agreements')}>
+                      <Home className="h-4 w-4 mr-2" />
+                      My Rentals
+                    </DropdownMenuItem>
                     <DropdownMenuItem onClick={() => navigate('/wishlist')}>
                       <Heart className="h-4 w-4 mr-2" />
                       {t('wishlist')}

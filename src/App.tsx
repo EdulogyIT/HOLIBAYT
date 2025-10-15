@@ -62,6 +62,7 @@ import HolibaytPay from "./pages/HolibaytPay";
 import Lawyers from "./pages/Lawyers";
 import LegalProcess from "./pages/LegalProcess";
 import SignAgreement from "./pages/SignAgreement";
+import TenantAgreements from "./pages/TenantAgreements";
 import AgreementTemplate from "./pages/AgreementTemplate";
 import AdminLawyers from "./pages/admin/AdminLawyers";
 import AdminLawyerRequests from "./pages/admin/AdminLawyerRequests";
@@ -153,6 +154,16 @@ const App = () => (
               <ProtectedRoute requireAuth>
                 <MaintenanceMode>
                   <Wishlist />
+                </MaintenanceMode>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/tenant/agreements"
+            element={
+              <ProtectedRoute requireAuth>
+                <MaintenanceMode>
+                  <TenantAgreements />
                 </MaintenanceMode>
               </ProtectedRoute>
             }

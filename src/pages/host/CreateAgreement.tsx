@@ -4,7 +4,6 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { supabase } from "@/integrations/supabase/client";
 import Navigation from "@/components/Navigation";
-import { HostLayout } from "@/components/layouts/HostLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -156,14 +155,14 @@ const CreateAgreement = () => {
     return (
       <div className="min-h-screen bg-background">
         <Navigation />
-        <HostLayout>
+        <div className="container mx-auto px-4 py-8">
           <div className="flex items-center justify-center py-12">
             <div className="text-center">
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
               <p className="mt-4 text-muted-foreground">Loading...</p>
             </div>
           </div>
-        </HostLayout>
+        </div>
       </div>
     );
   }
@@ -171,8 +170,8 @@ const CreateAgreement = () => {
   return (
     <div className="min-h-screen bg-background">
       <Navigation />
-      <HostLayout>
-        <div className="max-w-3xl mx-auto py-8">
+      <div className="container mx-auto px-4 py-8">
+        <div className="max-w-3xl mx-auto">
           <Card>
             <CardHeader>
               <div className="flex items-center gap-3">
@@ -407,7 +406,7 @@ const CreateAgreement = () => {
             </CardContent>
           </Card>
         </div>
-      </HostLayout>
+      </div>
     </div>
   );
 };
