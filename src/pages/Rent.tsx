@@ -241,12 +241,15 @@ const Rent = () => {
         </div>
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          {/* Header with Filter Button */}
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-2xl font-bold">
-              {filteredProperties.length} {t('properties') || 'properties'} {t('found') || 'found'}
-            </h2>
-            <PropertyFilters
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {/* Left: Properties */}
+            <div className="lg:col-span-2">
+              {/* Header with Filter Button */}
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-2xl font-bold">
+                  {filteredProperties.length} {t('properties') || 'properties'} {t('found') || 'found'}
+                </h2>
+                <PropertyFilters
               onFilterChange={(filters) => {
                 let filtered = properties;
 
@@ -324,9 +327,12 @@ const Rent = () => {
                   (p.location || "").toLowerCase().includes(zone.toLowerCase())
                 );
                 setFilteredProperties(filtered);
-              }}
-            />
+            }}
+          />
+              </div>
+            </div>
           </div>
+        </div>
         </div>
 
         <ConversionBanner type="rent" />
