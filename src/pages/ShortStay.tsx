@@ -21,6 +21,9 @@ import { PropertyBadges } from "@/components/PropertyBadges";
 import { usePropertyTranslation } from "@/hooks/usePropertyTranslation";
 import { LocationInsights } from "@/components/LocationInsights";
 import { MarketDataBar } from "@/components/MarketDataBar";
+import { TopRatedStays } from "@/components/TopRatedStays";
+import { PopularAmenities } from "@/components/PopularAmenities";
+import { DestinationsToExplore } from "@/components/DestinationsToExplore";
 
 interface Property {
   id: string;
@@ -62,6 +65,7 @@ const ShortStay = () => {
   const [filteredProperties, setFilteredProperties] = useState<Property[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [currentCity, setCurrentCity] = useState<string>("Constantine");
+  const [selectedAmenity, setSelectedAmenity] = useState<string>("");
 
   useScrollToTop();
 
@@ -139,6 +143,40 @@ const ShortStay = () => {
     if (vals.checkOut) qs.set("checkOut", String(vals.checkOut));
     if (vals.travelers) qs.set("travelers", String(vals.travelers));
     navigate({ pathname: "/short-stay", search: qs.toString() });
+  };
+
+  const handleAmenityClick = (amenityKey: string) => {
+    if (selectedAmenity === amenityKey) {
+      setSelectedAmenity("");
+      setFilteredProperties(properties);
+    } else {
+      setSelectedAmenity(amenityKey);
+      const filtered = properties.filter(p => p.features?.[amenityKey]);
+      setFilteredProperties(filtered);
+    }
+  };
+
+  const handleDestinationClick = (destination: { type: string; value: string | boolean }) => {
+    let filtered = [...properties];
+
+    if (destination.type === "feature") {
+      filtered = filtered.filter(p => p.features?.[destination.value as string]);
+    } else if (destination.type === "keyword") {
+      const keyword = String(destination.value).toLowerCase();
+      filtered = filtered.filter(
+        p =>
+          (p.title || "").toLowerCase().includes(keyword) ||
+          (p.description || "").toLowerCase().includes(keyword) ||
+          (p.location || "").toLowerCase().includes(keyword)
+      );
+    } else if (destination.type === "pets") {
+      filtered = filtered.filter(p => p.features?.pets_allowed);
+    } else if (destination.type === "price" && destination.value === "luxury") {
+      filtered = filtered.filter(p => num(p.price) > 20000);
+    }
+
+    setFilteredProperties(filtered);
+    setSelectedAmenity("");
   };
 
   const getFeatureIcon = (feature: string) => {
@@ -283,6 +321,15 @@ const ShortStay = () => {
           <ShortStayHeroSearch onSearch={handleSearch} />
         </div>
 
+        {/* Top Rated Stays Section */}
+        <TopRatedStays />
+
+        {/* Popular Amenities Section */}
+        <PopularAmenities 
+          onAmenityClick={handleAmenityClick}
+          selectedAmenity={selectedAmenity}
+        />
+
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="flex flex-col lg:flex-row gap-8">
             {/* Filters Sidebar with Map */}
@@ -389,6 +436,9 @@ const ShortStay = () => {
             </div>
           </div>
         </div>
+
+        {/* Destinations to Explore Section */}
+        <DestinationsToExplore onDestinationClick={handleDestinationClick} />
 
         <AIChatBox />
       </main>

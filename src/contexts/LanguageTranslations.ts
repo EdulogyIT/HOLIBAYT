@@ -208,6 +208,25 @@ export const buyRentTranslations = {
     legalSupportCTA: "Parcourez les propriétés et demandez une assistance juridique sur n'importe quelle annonce, ou contactez directement nos avocats vérifiés.",
     viewLawyers: "Voir les Avocats Disponibles",
     legalSupportDesc: "Obtenez une assistance juridique experte tout au long du processus",
+    
+    // Short Stay Page - New Components
+    popular_amenities: "Équipements Populaires",
+    destinations_to_explore: "Destinations à Explorer",
+    show_more_destinations: "Voir plus",
+    show_less_destinations: "Voir moins",
+    top_rated_holiday_stays: "Séjours de Vacances les Mieux Notés",
+    rentals_with_hot_tub: "Locations avec jacuzzi",
+    beachfront_rentals: "Locations en bord de mer",
+    rentals_with_pools: "Locations avec piscine",
+    rentals_with_fireplace: "Locations avec cheminée",
+    mountain_view_rentals: "Locations avec vue montagne",
+    city_center_rentals: "Locations centre-ville",
+    pet_friendly_rentals: "Locations acceptant les animaux",
+    luxury_rentals: "Locations de luxe",
+    kitchen: "Cuisine",
+    pool: "Piscine",
+    coffeeMaker: "Cafetière",
+    
     admin: {
       registeredUsers: "Utilisateurs inscrits",
       hosts: "Hôtes",
@@ -422,6 +441,25 @@ export const buyRentTranslations = {
     legalSupportCTA: "Browse properties and request legal assistance on any listing, or contact our verified lawyers directly.",
     viewLawyers: "View Available Lawyers",
     legalSupportDesc: "Get expert legal assistance throughout the process",
+    
+    // Short Stay Page - New Components
+    popular_amenities: "Popular Amenities",
+    destinations_to_explore: "Destinations to Explore",
+    show_more_destinations: "Show more",
+    show_less_destinations: "Show less",
+    top_rated_holiday_stays: "Top Rated Holiday Stays",
+    rentals_with_hot_tub: "Rentals with a hot tub",
+    beachfront_rentals: "Beachfront rentals",
+    rentals_with_pools: "Rentals with pools",
+    rentals_with_fireplace: "Rentals with a fireplace",
+    mountain_view_rentals: "Mountain view rentals",
+    city_center_rentals: "City center rentals",
+    pet_friendly_rentals: "Pet-friendly rentals",
+    luxury_rentals: "Luxury rentals",
+    kitchen: "Kitchen",
+    pool: "Pool",
+    coffeeMaker: "Coffee Maker",
+    
     admin: {
       registeredUsers: "Registered users",
       hosts: "Hosts",
@@ -604,6 +642,25 @@ export const buyRentTranslations = {
     submitRequest: "إرسال الطلب",
     requestSubmitted: "تم إرسال الطلب بنجاح",
     requestSubmittedDesc: "سيقوم مسؤول بمراجعة طلبك والاتصال بك قريبًا.",
+    
+    // Short Stay Page - New Components
+    popular_amenities: "الوسائل الشعبية",
+    destinations_to_explore: "وجهات للاستكشاف",
+    show_more_destinations: "عرض المزيد",
+    show_less_destinations: "عرض أقل",
+    top_rated_holiday_stays: "أفضل إقامات العطلات تقييماً",
+    rentals_with_hot_tub: "إيجارات مع جاكوزي",
+    beachfront_rentals: "إيجارات على الشاطئ",
+    rentals_with_pools: "إيجارات مع حمام سباحة",
+    rentals_with_fireplace: "إيجارات مع مدفأة",
+    mountain_view_rentals: "إيجارات بإطلالة جبلية",
+    city_center_rentals: "إيجارات وسط المدينة",
+    pet_friendly_rentals: "إيجارات تسمح بالحيوانات الأليفة",
+    luxury_rentals: "إيجارات فاخرة",
+    kitchen: "مطبخ",
+    pool: "حمام سباحة",
+    coffeeMaker: "صانعة القهوة",
+    
     admin: {
       registeredUsers: "المستخدمون المسجلون",
       hosts: "المضيفون",
