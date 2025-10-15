@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { supabase } from "@/integrations/supabase/client";
@@ -19,10 +19,14 @@ import { format } from "date-fns";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const CreateAgreement = () => {
-  const { propertyId } = useParams();
+  const location = useLocation();
   const { user } = useAuth();
   const { t } = useLanguage();
   const navigate = useNavigate();
+  
+  // Get propertyId from query params
+  const searchParams = new URLSearchParams(location.search);
+  const propertyId = searchParams.get('propertyId');
 
   const [property, setProperty] = useState<any>(null);
   const [loading, setLoading] = useState(true);

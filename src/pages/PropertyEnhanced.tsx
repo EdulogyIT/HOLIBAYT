@@ -505,6 +505,7 @@ const PropertyEnhanced = () => {
                   <RentPaymentSafetyBadge 
                     monthlyRent={parseFloat(property.price)}
                     deposit={property.fees?.security_deposit?.amount || 0}
+                    currency={property.price_currency || "DZD"}
                   />
                   
                   {(profile?.id_verified || profile?.ownership_verified) && (

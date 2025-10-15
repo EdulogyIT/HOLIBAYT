@@ -5,12 +5,14 @@ interface RentPaymentSafetyBadgeProps {
   className?: string;
   monthlyRent: number;
   deposit: number;
+  currency?: string;
 }
 
 export const RentPaymentSafetyBadge = ({ 
   className = "", 
   monthlyRent, 
-  deposit 
+  deposit,
+  currency = "DZD"
 }: RentPaymentSafetyBadgeProps) => {
   const { t } = useLanguage();
   const totalProtected = monthlyRent + deposit;
@@ -28,7 +30,7 @@ export const RentPaymentSafetyBadge = ({
           </h3>
           <div className="mt-3 flex items-center gap-2 text-sm font-semibold text-primary bg-background/60 dark:bg-background/20 rounded-lg px-3 py-2 inline-flex">
             <span>{t('total_protected')}:</span>
-            <span className="text-lg">{totalProtected.toLocaleString()} DZD</span>
+            <span className="text-lg">{totalProtected.toLocaleString()} {currency}</span>
           </div>
         </div>
       </div>
