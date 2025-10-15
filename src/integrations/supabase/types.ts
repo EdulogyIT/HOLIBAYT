@@ -14,6 +14,86 @@ export type Database = {
   }
   public: {
     Tables: {
+      admin_audit_log: {
+        Row: {
+          action: string
+          admin_id: string | null
+          created_at: string | null
+          details: Json | null
+          entity_id: string | null
+          entity_type: string
+          id: string
+          ip_address: string | null
+        }
+        Insert: {
+          action: string
+          admin_id?: string | null
+          created_at?: string | null
+          details?: Json | null
+          entity_id?: string | null
+          entity_type: string
+          id?: string
+          ip_address?: string | null
+        }
+        Update: {
+          action?: string
+          admin_id?: string | null
+          created_at?: string | null
+          details?: Json | null
+          entity_id?: string | null
+          entity_type?: string
+          id?: string
+          ip_address?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "admin_audit_log_admin_id_fkey"
+            columns: ["admin_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      blog_analytics: {
+        Row: {
+          blog_post_id: string | null
+          created_at: string | null
+          id: string
+          user_id: string | null
+          view_duration_seconds: number | null
+        }
+        Insert: {
+          blog_post_id?: string | null
+          created_at?: string | null
+          id?: string
+          user_id?: string | null
+          view_duration_seconds?: number | null
+        }
+        Update: {
+          blog_post_id?: string | null
+          created_at?: string | null
+          id?: string
+          user_id?: string | null
+          view_duration_seconds?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "blog_analytics_blog_post_id_fkey"
+            columns: ["blog_post_id"]
+            isOneToOne: false
+            referencedRelation: "blog_posts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "blog_analytics_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       blog_comments: {
         Row: {
           blog_post_id: string
@@ -76,6 +156,11 @@ export type Database = {
           created_at: string | null
           id: string
           image_url: string | null
+          like_count: number | null
+          meta_description: string | null
+          meta_title: string | null
+          scheduled_publish_at: string | null
+          slug: string | null
           status: string | null
           title: string
           title_ar: string | null
@@ -83,6 +168,7 @@ export type Database = {
           title_fr: string | null
           updated_at: string | null
           user_id: string
+          view_count: number | null
         }
         Insert: {
           author_name: string
@@ -100,6 +186,11 @@ export type Database = {
           created_at?: string | null
           id?: string
           image_url?: string | null
+          like_count?: number | null
+          meta_description?: string | null
+          meta_title?: string | null
+          scheduled_publish_at?: string | null
+          slug?: string | null
           status?: string | null
           title: string
           title_ar?: string | null
@@ -107,6 +198,7 @@ export type Database = {
           title_fr?: string | null
           updated_at?: string | null
           user_id: string
+          view_count?: number | null
         }
         Update: {
           author_name?: string
@@ -124,6 +216,11 @@ export type Database = {
           created_at?: string | null
           id?: string
           image_url?: string | null
+          like_count?: number | null
+          meta_description?: string | null
+          meta_title?: string | null
+          scheduled_publish_at?: string | null
+          slug?: string | null
           status?: string | null
           title?: string
           title_ar?: string | null
@@ -131,6 +228,7 @@ export type Database = {
           title_fr?: string | null
           updated_at?: string | null
           user_id?: string
+          view_count?: number | null
         }
         Relationships: []
       }
@@ -334,6 +432,7 @@ export type Database = {
       conversations: {
         Row: {
           admin_id: string | null
+          assigned_admin_id: string | null
           conversation_type: string | null
           created_at: string
           id: string
@@ -347,6 +446,7 @@ export type Database = {
         }
         Insert: {
           admin_id?: string | null
+          assigned_admin_id?: string | null
           conversation_type?: string | null
           created_at?: string
           id?: string
@@ -360,6 +460,7 @@ export type Database = {
         }
         Update: {
           admin_id?: string | null
+          assigned_admin_id?: string | null
           conversation_type?: string | null
           created_at?: string
           id?: string
@@ -373,6 +474,13 @@ export type Database = {
         }
         Relationships: [
           {
+            foreignKeyName: "conversations_assigned_admin_id_fkey"
+            columns: ["assigned_admin_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "conversations_property_id_fkey"
             columns: ["property_id"]
             isOneToOne: false
@@ -380,6 +488,39 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      email_templates: {
+        Row: {
+          created_at: string | null
+          html_content: string
+          id: string
+          subject: string
+          template_key: string
+          text_content: string | null
+          updated_at: string | null
+          variables: Json | null
+        }
+        Insert: {
+          created_at?: string | null
+          html_content: string
+          id?: string
+          subject: string
+          template_key: string
+          text_content?: string | null
+          updated_at?: string | null
+          variables?: Json | null
+        }
+        Update: {
+          created_at?: string | null
+          html_content?: string
+          id?: string
+          subject?: string
+          template_key?: string
+          text_content?: string | null
+          updated_at?: string | null
+          variables?: Json | null
+        }
+        Relationships: []
       }
       host_kyc_submissions: {
         Row: {
@@ -556,6 +697,44 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      message_templates: {
+        Row: {
+          category: string | null
+          content: string
+          created_at: string | null
+          created_by: string | null
+          id: string
+          name: string
+          updated_at: string | null
+        }
+        Insert: {
+          category?: string | null
+          content: string
+          created_at?: string | null
+          created_by?: string | null
+          id?: string
+          name: string
+          updated_at?: string | null
+        }
+        Update: {
+          category?: string | null
+          content?: string
+          created_at?: string | null
+          created_by?: string | null
+          id?: string
+          name?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "message_templates_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       messages: {
         Row: {
@@ -743,12 +922,14 @@ export type Database = {
           kyc_approved_at: string | null
           kyc_submitted_at: string | null
           languages_spoken: string[] | null
+          last_login_at: string | null
           name: string | null
           ownership_verified: boolean | null
           response_rate: number | null
           role: Database["public"]["Enums"]["app_role"]
           total_reviews: number | null
           transaction_count: number | null
+          trust_score: number | null
           updated_at: string
           verification_date: string | null
           verified_host: boolean | null
@@ -764,12 +945,14 @@ export type Database = {
           kyc_approved_at?: string | null
           kyc_submitted_at?: string | null
           languages_spoken?: string[] | null
+          last_login_at?: string | null
           name?: string | null
           ownership_verified?: boolean | null
           response_rate?: number | null
           role?: Database["public"]["Enums"]["app_role"]
           total_reviews?: number | null
           transaction_count?: number | null
+          trust_score?: number | null
           updated_at?: string
           verification_date?: string | null
           verified_host?: boolean | null
@@ -785,12 +968,14 @@ export type Database = {
           kyc_approved_at?: string | null
           kyc_submitted_at?: string | null
           languages_spoken?: string[] | null
+          last_login_at?: string | null
           name?: string | null
           ownership_verified?: boolean | null
           response_rate?: number | null
           role?: Database["public"]["Enums"]["app_role"]
           total_reviews?: number | null
           transaction_count?: number | null
+          trust_score?: number | null
           updated_at?: string
           verification_date?: string | null
           verified_host?: boolean | null
@@ -846,6 +1031,7 @@ export type Database = {
           user_id: string
           verification_notes: string | null
           verified: boolean | null
+          view_count: number | null
         }
         Insert: {
           area: string
@@ -895,6 +1081,7 @@ export type Database = {
           user_id: string
           verification_notes?: string | null
           verified?: boolean | null
+          view_count?: number | null
         }
         Update: {
           area?: string
@@ -944,8 +1131,48 @@ export type Database = {
           user_id?: string
           verification_notes?: string | null
           verified?: boolean | null
+          view_count?: number | null
         }
         Relationships: []
+      }
+      property_views: {
+        Row: {
+          created_at: string | null
+          id: string
+          property_id: string | null
+          session_id: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          property_id?: string | null
+          session_id?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          property_id?: string | null
+          session_id?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "property_views_property_id_fkey"
+            columns: ["property_id"]
+            isOneToOne: false
+            referencedRelation: "properties"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "property_views_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       reviews: {
         Row: {
@@ -1140,6 +1367,22 @@ export type Database = {
     Functions: {
       auto_complete_bookings: {
         Args: Record<PropertyKey, never>
+        Returns: number
+      }
+      calculate_avg_booking_value: {
+        Args: { days_back?: number }
+        Returns: number
+      }
+      calculate_avg_response_time: {
+        Args: Record<PropertyKey, never>
+        Returns: unknown
+      }
+      calculate_conversion_rate: {
+        Args: { days_back?: number }
+        Returns: number
+      }
+      calculate_platform_gmv: {
+        Args: { days_back?: number }
         Returns: number
       }
       get_booking_property_category: {

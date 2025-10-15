@@ -1,13 +1,19 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { CalendarDays, Users, Building2, DollarSign, MessageSquare } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { CalendarDays, Users, Building2, DollarSign, MessageSquare, TrendingUp, AlertCircle, Clock, Plus, ShieldCheck, Receipt } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useNavigate } from 'react-router-dom';
+import { DashboardMetricCard } from '@/components/admin/DashboardMetricCard';
+import { useDashboardMetrics } from '@/hooks/useDashboardMetrics';
+import { useCurrency } from '@/contexts/CurrencyContext';
 
 export default function AdminDashboard() {
   const { t } = useLanguage();
   const navigate = useNavigate();
+  const { formatPrice } = useCurrency();
+  const { metrics } = useDashboardMetrics();
   const [properties, setProperties] = useState<any[]>([]);
   const [profiles, setProfiles] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -79,8 +85,79 @@ export default function AdminDashboard() {
       <div>
         <h1 className="text-3xl font-bold">{t('admin.dashboard')}</h1>
         <p className="text-muted-foreground">
-          {t('admin.overviewPlatform')}
+          Holibayt Operations Hub — your performance, growth, and host activity in one view.
         </p>
+      </div>
+
+      {/* Quick Access CTAs */}
+      <div className="flex flex-wrap gap-3">
+        <Button 
+          onClick={() => navigate('/publish-property')}
+          className="gap-2"
+        >
+          <Plus className="h-4 w-4" />
+          Add New Property
+        </Button>
+        <Button 
+          onClick={() => navigate('/admin/kyc')}
+          className="gap-2"
+          variant="outline"
+        >
+          <ShieldCheck className="h-4 w-4" />
+          Verify Hosts
+          {metrics.verificationPending > 0 && (
+            <span className="ml-1 px-2 py-0.5 text-xs bg-warning text-warning-foreground rounded-full">
+              {metrics.verificationPending}
+            </span>
+          )}
+        </Button>
+        <Button 
+          onClick={() => navigate('/admin/commissions')}
+          className="gap-2"
+          variant="outline"
+        >
+          <Receipt className="h-4 w-4" />
+          Review Payments
+        </Button>
+      </div>
+
+      {/* New Insights Section */}
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-5">
+        <DashboardMetricCard
+          title="Platform GMV"
+          value={formatPrice(metrics.platformGMV)}
+          icon={TrendingUp}
+          sparklineData={metrics.gmvTrend}
+          change="+12.5%"
+        />
+        <DashboardMetricCard
+          title="Avg. Booking Value"
+          value={formatPrice(metrics.avgBookingValue)}
+          icon={DollarSign}
+          change="+8.2%"
+        />
+        <DashboardMetricCard
+          title="Conversion Rate"
+          value={`${metrics.conversionRate}%`}
+          icon={TrendingUp}
+          change="+3.1%"
+        />
+        <DashboardMetricCard
+          title="Verification Pending"
+          value={metrics.verificationPending.toString()}
+          icon={AlertCircle}
+          onClick={() => navigate('/admin/kyc')}
+          badge={
+            metrics.verificationPending > 5
+              ? { text: 'Action Required', variant: 'destructive' }
+              : undefined
+          }
+        />
+        <DashboardMetricCard
+          title="Avg. Response Time"
+          value={metrics.avgResponseTime}
+          icon={Clock}
+        />
       </div>
 
       {/* KPI Cards */}
