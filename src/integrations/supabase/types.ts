@@ -319,6 +319,45 @@ export type Database = {
           },
         ]
       }
+      client_reviews: {
+        Row: {
+          approved: boolean | null
+          avatar_initials: string | null
+          client_location: string | null
+          client_name: string
+          created_at: string | null
+          display_order: number | null
+          id: string
+          rating: number | null
+          review_text: string
+          updated_at: string | null
+        }
+        Insert: {
+          approved?: boolean | null
+          avatar_initials?: string | null
+          client_location?: string | null
+          client_name: string
+          created_at?: string | null
+          display_order?: number | null
+          id?: string
+          rating?: number | null
+          review_text: string
+          updated_at?: string | null
+        }
+        Update: {
+          approved?: boolean | null
+          avatar_initials?: string | null
+          client_location?: string | null
+          client_name?: string
+          created_at?: string | null
+          display_order?: number | null
+          id?: string
+          rating?: number | null
+          review_text?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       commission_transactions: {
         Row: {
           commission_amount: number
@@ -1306,6 +1345,68 @@ export type Database = {
           },
         ]
       }
+      rent_payments: {
+        Row: {
+          agreement_id: string
+          amount: number
+          created_at: string | null
+          currency: string | null
+          due_date: string
+          host_user_id: string
+          id: string
+          late_fee: number | null
+          notes: string | null
+          payment_date: string | null
+          payment_intent_id: string | null
+          status: string | null
+          stripe_payment_id: string | null
+          tenant_user_id: string
+          updated_at: string | null
+        }
+        Insert: {
+          agreement_id: string
+          amount: number
+          created_at?: string | null
+          currency?: string | null
+          due_date: string
+          host_user_id: string
+          id?: string
+          late_fee?: number | null
+          notes?: string | null
+          payment_date?: string | null
+          payment_intent_id?: string | null
+          status?: string | null
+          stripe_payment_id?: string | null
+          tenant_user_id: string
+          updated_at?: string | null
+        }
+        Update: {
+          agreement_id?: string
+          amount?: number
+          created_at?: string | null
+          currency?: string | null
+          due_date?: string
+          host_user_id?: string
+          id?: string
+          late_fee?: number | null
+          notes?: string | null
+          payment_date?: string | null
+          payment_intent_id?: string | null
+          status?: string | null
+          stripe_payment_id?: string | null
+          tenant_user_id?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "rent_payments_agreement_id_fkey"
+            columns: ["agreement_id"]
+            isOneToOne: false
+            referencedRelation: "rental_agreements"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       rental_agreements: {
         Row: {
           agreement_pdf_url: string | null
@@ -1315,6 +1416,7 @@ export type Database = {
           currency: string
           deposit_amount: number
           end_date: string | null
+          expires_at: string | null
           host_signature_data: Json | null
           host_signed_at: string | null
           host_user_id: string
@@ -1324,6 +1426,8 @@ export type Database = {
           monthly_rent: number
           payment_terms: Json | null
           property_id: string
+          renewal_terms: Json | null
+          renewed_from: string | null
           special_clauses: string | null
           start_date: string
           status: string
@@ -1342,6 +1446,7 @@ export type Database = {
           currency?: string
           deposit_amount: number
           end_date?: string | null
+          expires_at?: string | null
           host_signature_data?: Json | null
           host_signed_at?: string | null
           host_user_id: string
@@ -1351,6 +1456,8 @@ export type Database = {
           monthly_rent: number
           payment_terms?: Json | null
           property_id: string
+          renewal_terms?: Json | null
+          renewed_from?: string | null
           special_clauses?: string | null
           start_date: string
           status?: string
@@ -1369,6 +1476,7 @@ export type Database = {
           currency?: string
           deposit_amount?: number
           end_date?: string | null
+          expires_at?: string | null
           host_signature_data?: Json | null
           host_signed_at?: string | null
           host_user_id?: string
@@ -1378,6 +1486,8 @@ export type Database = {
           monthly_rent?: number
           payment_terms?: Json | null
           property_id?: string
+          renewal_terms?: Json | null
+          renewed_from?: string | null
           special_clauses?: string | null
           start_date?: string
           status?: string
@@ -1394,6 +1504,13 @@ export type Database = {
             columns: ["property_id"]
             isOneToOne: false
             referencedRelation: "properties"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "rental_agreements_renewed_from_fkey"
+            columns: ["renewed_from"]
+            isOneToOne: false
+            referencedRelation: "rental_agreements"
             referencedColumns: ["id"]
           },
         ]
