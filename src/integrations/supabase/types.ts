@@ -698,6 +698,129 @@ export type Database = {
         }
         Relationships: []
       }
+      lawyer_requests: {
+        Row: {
+          admin_notes: string | null
+          approved_at: string | null
+          approved_by: string | null
+          created_at: string | null
+          id: string
+          lawyer_id: string
+          message: string | null
+          property_id: string | null
+          request_type: string
+          status: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          admin_notes?: string | null
+          approved_at?: string | null
+          approved_by?: string | null
+          created_at?: string | null
+          id?: string
+          lawyer_id: string
+          message?: string | null
+          property_id?: string | null
+          request_type: string
+          status?: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          admin_notes?: string | null
+          approved_at?: string | null
+          approved_by?: string | null
+          created_at?: string | null
+          id?: string
+          lawyer_id?: string
+          message?: string | null
+          property_id?: string | null
+          request_type?: string
+          status?: string
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lawyer_requests_lawyer_id_fkey"
+            columns: ["lawyer_id"]
+            isOneToOne: false
+            referencedRelation: "lawyers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "lawyer_requests_property_id_fkey"
+            columns: ["property_id"]
+            isOneToOne: false
+            referencedRelation: "properties"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      lawyers: {
+        Row: {
+          address: string | null
+          availability_status: string | null
+          bio: string | null
+          city: string
+          consultation_fee: number | null
+          created_at: string | null
+          email: string
+          experience_years: number | null
+          full_name: string
+          id: string
+          license_number: string
+          phone: string
+          profile_photo_url: string | null
+          specializations: string[]
+          updated_at: string | null
+          user_id: string | null
+          verified: boolean | null
+          verified_at: string | null
+        }
+        Insert: {
+          address?: string | null
+          availability_status?: string | null
+          bio?: string | null
+          city: string
+          consultation_fee?: number | null
+          created_at?: string | null
+          email: string
+          experience_years?: number | null
+          full_name: string
+          id?: string
+          license_number: string
+          phone: string
+          profile_photo_url?: string | null
+          specializations?: string[]
+          updated_at?: string | null
+          user_id?: string | null
+          verified?: boolean | null
+          verified_at?: string | null
+        }
+        Update: {
+          address?: string | null
+          availability_status?: string | null
+          bio?: string | null
+          city?: string
+          consultation_fee?: number | null
+          created_at?: string | null
+          email?: string
+          experience_years?: number | null
+          full_name?: string
+          id?: string
+          license_number?: string
+          phone?: string
+          profile_photo_url?: string | null
+          specializations?: string[]
+          updated_at?: string | null
+          user_id?: string | null
+          verified?: boolean | null
+          verified_at?: string | null
+        }
+        Relationships: []
+      }
       message_templates: {
         Row: {
           category: string | null
