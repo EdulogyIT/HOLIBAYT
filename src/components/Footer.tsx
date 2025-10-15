@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { usePlatformSettings } from "@/contexts/PlatformSettingsContext";
 import { Facebook, Twitter, Instagram, Mail, Phone, MapPin } from "lucide-react";
 import footerBg from "@/assets/footer-background.jpg";
 import { Input } from "@/components/ui/input";
