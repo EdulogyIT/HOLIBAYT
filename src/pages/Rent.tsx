@@ -241,99 +241,91 @@ const Rent = () => {
         </div>
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="flex flex-col lg:flex-row gap-8">
-            {/* Filters Sidebar with Map */}
-            <div className="lg:w-1/4 space-y-6">
-              <PropertyFilters
-                onFilterChange={(filters) => {
-                  let filtered = properties;
+          {/* Header with Filter Button */}
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-2xl font-bold">
+              {filteredProperties.length} {t('properties') || 'properties'} {t('found') || 'found'}
+            </h2>
+            <PropertyFilters
+              onFilterChange={(filters) => {
+                let filtered = properties;
 
-                  if (filters.location) {
-                    const loc = filters.location.toLowerCase();
-                    filtered = filtered.filter(
-                      (p) =>
-                        (p.city || "").toLowerCase().includes(loc) ||
-                        (p.location || "").toLowerCase().includes(loc)
-                    );
-                  }
-
-                  if (filters.propertyType !== "all") {
-                    filtered = filtered.filter((p) => p.property_type === filters.propertyType);
-                  }
-
-                  if (filters.bedrooms !== "all") {
-                    filtered = filtered.filter((p) => p.bedrooms === filters.bedrooms);
-                  }
-
-                  if (filters.bathrooms !== "all") {
-                    filtered = filtered.filter((p) => p.bathrooms === filters.bathrooms);
-                  }
-
-                  if (filters.minPrice[0] > 0 || filters.maxPrice[0] < 5000000) {
-                    filtered = filtered.filter((p) => {
-                      const price = num(p.price);
-                      return price >= filters.minPrice[0] && price <= filters.maxPrice[0];
-                    });
-                  }
-
-                  if (filters.minArea || filters.maxArea) {
-                    const minArea = filters.minArea ? num(filters.minArea) : 0;
-                    const maxArea = filters.maxArea ? num(filters.maxArea) : Infinity;
-                    filtered = filtered.filter((p) => {
-                      const area = num(p.area);
-                      return area >= minArea && area <= maxArea;
-                    });
-                  }
-
-                  setFilteredProperties(filtered);
-                }}
-                listingType="rent"
-              />
-
-              {/* Map and Nearby Zones in Sidebar */}
-              <PropertyMapWithZone 
-                location="Algeria"
-                onZoneSearch={(zone) => {
-                  const filtered = properties.filter(p => 
-                    (p.city || "").toLowerCase().includes(zone.toLowerCase()) ||
-                    (p.location || "").toLowerCase().includes(zone.toLowerCase())
+                if (filters.location) {
+                  const loc = filters.location.toLowerCase();
+                  filtered = filtered.filter(
+                    (p) =>
+                      (p.city || "").toLowerCase().includes(loc) ||
+                      (p.location || "").toLowerCase().includes(loc)
                   );
-                  setFilteredProperties(filtered);
-                }}
-              />
-            </div>
+                }
 
-            {/* Properties Grid */}
-            <div className="lg:w-3/4 space-y-6">
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-2xl font-bold text-foreground font-playfair">
-                  {t("propertiesForRent")}
-                </h2>
-                <div className="text-muted-foreground">
-                  {filteredProperties.length} {t("properties")} {t("found")}
-                </div>
+                if (filters.propertyType !== "all") {
+                  filtered = filtered.filter((p) => p.property_type === filters.propertyType);
+                }
+
+                if (filters.bedrooms !== "all") {
+                  filtered = filtered.filter((p) => p.bedrooms === filters.bedrooms);
+                }
+
+                if (filters.bathrooms !== "all") {
+                  filtered = filtered.filter((p) => p.bathrooms === filters.bathrooms);
+                }
+
+                if (filters.minPrice[0] > 0 || filters.maxPrice[0] < 5000000) {
+                  filtered = filtered.filter((p) => {
+                    const price = num(p.price);
+                    return price >= filters.minPrice[0] && price <= filters.maxPrice[0];
+                  });
+                }
+
+                if (filters.minArea || filters.maxArea) {
+                  const minArea = filters.minArea ? num(filters.minArea) : 0;
+                  const maxArea = filters.maxArea ? num(filters.maxArea) : Infinity;
+                  filtered = filtered.filter((p) => {
+                    const area = num(p.area);
+                    return area >= minArea && area <= maxArea;
+                  });
+                }
+
+                setFilteredProperties(filtered);
+              }}
+              listingType="rent"
+            />
+          </div>
+
+          {/* Properties Grid - Full Width */}
+          {isLoading ? (
+            <div className="flex items-center justify-center py-12">
+              <Loader2 className="h-8 w-8 animate-spin" />
+              <span className="ml-2">{t("loading")}</span>
+            </div>
+          ) : filteredProperties.length === 0 ? (
+            <div className="text-center py-12">
+              <div className="text-lg font-semibold text-foreground mb-2">
+                {t("noPropertiesFound")}
               </div>
-
-              {isLoading ? (
-                <div className="flex items-center justify-center py-12">
-                  <Loader2 className="h-8 w-8 animate-spin" />
-                  <span className="ml-2">{t("loading")}</span>
-                </div>
-              ) : filteredProperties.length === 0 ? (
-                <div className="text-center py-12">
-                  <div className="text-lg font-semibold text-foreground mb-2">
-                    {t("noPropertiesFound")}
-                  </div>
-                  <div className="text-muted-foreground">{t("adjustFiltersOrCheckLater")}</div>
-                </div>
-              ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-                  {filteredProperties.map((property) => (
-                    <PropertyCard key={property.id} property={property} />
-                  ))}
-                </div>
-              )}
+              <div className="text-muted-foreground">{t("adjustFiltersOrCheckLater")}</div>
             </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              {filteredProperties.map((property) => (
+                <PropertyCard key={property.id} property={property} />
+              ))}
+            </div>
+          )}
+
+          {/* Map Section */}
+          <div className="mt-12">
+            <PropertyMapWithZone 
+              location="Algeria"
+              onZoneSearch={(zone) => {
+                const filtered = properties.filter(p => 
+                  (p.city || "").toLowerCase().includes(zone.toLowerCase()) ||
+                  (p.location || "").toLowerCase().includes(zone.toLowerCase())
+                );
+                setFilteredProperties(filtered);
+              }}
+            />
           </div>
         </div>
 
