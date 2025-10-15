@@ -58,6 +58,7 @@ import BookingSuccess from "./pages/BookingSuccess";
 import BookingCancel from "./pages/BookingCancel";
 import HolibaytPay from "./pages/HolibaytPay";
 import Lawyers from "./pages/Lawyers";
+import LegalProcess from "./pages/LegalProcess";
 import SignAgreement from "./pages/SignAgreement";
 import AgreementTemplate from "./pages/AgreementTemplate";
 import AdminLawyers from "./pages/admin/AdminLawyers";
@@ -88,6 +89,7 @@ const App = () => (
           <Route path="/city/:cityId" element={<MaintenanceMode><City /></MaintenanceMode>} />
           <Route path="/contact-advisor" element={<MaintenanceMode><ContactAdvisor /></MaintenanceMode>} />
           <Route path="/lawyers" element={<MaintenanceMode><Lawyers /></MaintenanceMode>} />
+          <Route path="/legal-process" element={<MaintenanceMode><LegalProcess /></MaintenanceMode>} />
           <Route path="/rental-agreement-template" element={<MaintenanceMode><AgreementTemplate /></MaintenanceMode>} />
 
           {/* ✅ Payment routes also gated */}

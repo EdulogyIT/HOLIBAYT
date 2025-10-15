@@ -2,7 +2,6 @@ import { FileText, Download, Edit } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
-import { formatTranslationKey } from "@/lib/utils";
 
 interface DigitalLeaseOptionProps {
   propertyId: string;
@@ -31,17 +30,17 @@ export const DigitalLeaseOption = ({
   };
 
   return (
-    <div className={`w-full bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-950/20 dark:to-pink-950/20 border border-purple-200 dark:border-purple-800 rounded-xl p-5 ${className}`}>
+    <div className={`w-full bg-gradient-to-r from-secondary/5 to-accent/10 dark:from-secondary/10 dark:to-accent/20 border border-secondary/20 dark:border-secondary/30 rounded-xl p-5 ${className}`}>
       <div className="flex items-start gap-3">
-        <div className="w-12 h-12 rounded-full bg-gradient-to-br from-purple-500 to-pink-600 flex items-center justify-center flex-shrink-0 shadow-lg">
+        <div className="w-12 h-12 rounded-full bg-secondary flex items-center justify-center flex-shrink-0 shadow-lg">
           <FileText className="w-6 h-6 text-white" />
         </div>
         <div className="flex-1 min-w-0">
-          <h3 className="font-semibold text-base md:text-lg text-gray-900 dark:text-gray-100 mb-2">
-            {t('sign_lease_online') || formatTranslationKey('sign_lease_online')}
+          <h3 className="font-semibold text-base md:text-lg text-foreground mb-2">
+            {t('sign_lease_online')}
           </h3>
-          <p className="text-sm md:text-base text-gray-700 dark:text-gray-300 mb-4">
-            {t('digital_lease_description') || formatTranslationKey('digital_lease_description')}
+          <p className="text-sm md:text-base text-muted-foreground mb-4">
+            {t('digital_lease_description')}
           </p>
           <div className="flex flex-wrap gap-2">
             <Button
@@ -51,16 +50,16 @@ export const DigitalLeaseOption = ({
               className="flex items-center gap-2"
             >
               <Download className="w-4 h-4" />
-              {t('view_agreement_template') || formatTranslationKey('view_agreement_template')}
+              {t('view_agreement_template')}
             </Button>
             {!hasActiveAgreement && (
               <Button
                 size="sm"
                 onClick={handleStartAgreement}
-                className="flex items-center gap-2 bg-gradient-to-r from-purple-500 to-pink-600 hover:from-purple-600 hover:to-pink-700"
+                className="flex items-center gap-2 bg-secondary hover:bg-secondary/90"
               >
                 <Edit className="w-4 h-4" />
-                {t('start_agreement') || formatTranslationKey('start_agreement')}
+                {t('start_agreement')}
               </Button>
             )}
             {hasActiveAgreement && agreementUrl && (
@@ -71,7 +70,7 @@ export const DigitalLeaseOption = ({
                 className="flex items-center gap-2"
               >
                 <FileText className="w-4 h-4" />
-                {t('view_active_agreement') || formatTranslationKey('view_active_agreement')}
+                {t('view_active_agreement')}
               </Button>
             )}
           </div>

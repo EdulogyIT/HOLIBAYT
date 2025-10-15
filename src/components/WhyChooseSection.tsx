@@ -1,9 +1,11 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Shield, CheckCircle2, Scale, CreditCard, Star } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 const WhyChooseSection = () => {
   const { t } = useLanguage();
+  const navigate = useNavigate();
   
   const features = [
     {
@@ -57,10 +59,23 @@ const WhyChooseSection = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {features.map((feature, index) => {
             const Icon = feature.icon;
+            const isLegalSupport = feature.title.includes('Legal Support') || feature.title.includes('juridique') || feature.title.includes('قانوني');
+            const isHolibaytPay = feature.title.includes('Holibayt Pay') || feature.title.includes('Séquestre');
+            const isClickable = isLegalSupport || isHolibaytPay;
+            
+            const handleClick = () => {
+              if (isLegalSupport) {
+                navigate('/lawyers');
+              } else if (isHolibaytPay) {
+                navigate('/holibayt-pay');
+              }
+            };
+            
             return (
               <Card 
                 key={index} 
-                className="group relative overflow-hidden border-2 border-border hover:border-primary/30 hover:shadow-elegant transition-all duration-300 hover:-translate-y-2 bg-card"
+                onClick={isClickable ? handleClick : undefined}
+                className={`group relative overflow-hidden border-2 border-border hover:border-primary/30 hover:shadow-elegant transition-all duration-300 hover:-translate-y-2 bg-card ${isClickable ? 'cursor-pointer' : ''}`}
               >
                 <CardContent className="p-6 text-center">
                   {/* Icon Container */}

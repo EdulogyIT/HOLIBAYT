@@ -8,7 +8,6 @@ import { Badge } from "@/components/ui/badge";
 import { X, Filter } from "lucide-react";
 import { useState } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { formatTranslationKey } from "@/lib/utils";
 
 interface FilterState {
   location: string;
@@ -295,7 +294,7 @@ const PropertyFilters = ({ onFilterChange, listingType }: PropertyFiltersProps) 
                 
                 {/* Verified Only */}
                 <div className="flex items-center justify-between">
-                  <Label className="font-inter text-sm">{t('verified_only') || formatTranslationKey('verified_only')}</Label>
+                  <Label className="font-inter text-sm">{t('verified_only')}</Label>
                   <input
                     type="checkbox"
                     checked={filters.verifiedOnly || false}
@@ -306,7 +305,7 @@ const PropertyFilters = ({ onFilterChange, listingType }: PropertyFiltersProps) 
                 
                 {/* Holibayt Pay Eligible */}
                 <div className="flex items-center justify-between">
-                  <Label className="font-inter text-sm">{t('holibaytPayEligible') || formatTranslationKey('holibaytPayEligible')}</Label>
+                  <Label className="font-inter text-sm">{t('holibaytPayEligible')}</Label>
                   <input
                     type="checkbox"
                     checked={filters.verifiedOnly || false}
@@ -336,7 +335,7 @@ const PropertyFilters = ({ onFilterChange, listingType }: PropertyFiltersProps) 
                 {/* Deposit Required (Rent only) */}
                 {listingType === 'rent' && (
                   <div className="flex items-center justify-between">
-                    <Label className="font-inter text-sm">{t('deposit_required') || formatTranslationKey('deposit_required')}</Label>
+                    <Label className="font-inter text-sm">{t('deposit_required')}</Label>
                     <input
                       type="checkbox"
                       checked={filters.depositRequired || false}
@@ -349,7 +348,7 @@ const PropertyFilters = ({ onFilterChange, listingType }: PropertyFiltersProps) 
                 {/* Financing Available (Buy only) */}
                 {listingType === 'buy' && (
                   <div className="flex items-center justify-between">
-                    <Label className="font-inter text-sm">{t('financing_available') || formatTranslationKey('financing_available')}</Label>
+                    <Label className="font-inter text-sm">{t('financing_available')}</Label>
                     <input
                       type="checkbox"
                       checked={filters.financingAvailable || false}
@@ -362,7 +361,7 @@ const PropertyFilters = ({ onFilterChange, listingType }: PropertyFiltersProps) 
                 {/* New Build (Buy only) */}
                 {listingType === 'buy' && (
                   <div className="flex items-center justify-between">
-                    <Label className="font-inter text-sm">{t('newBuild') || formatTranslationKey('newBuild')}</Label>
+                    <Label className="font-inter text-sm">{t('newBuild')}</Label>
                     <input
                       type="checkbox"
                       checked={filters.newBuild || false}
@@ -375,7 +374,7 @@ const PropertyFilters = ({ onFilterChange, listingType }: PropertyFiltersProps) 
                 {/* Instant Booking (Short Stay only) */}
                 {listingType === 'shortStay' && (
                   <div className="flex items-center justify-between">
-                    <Label className="font-inter text-sm">{t('instantBooking') || formatTranslationKey('instantBooking')}</Label>
+                    <Label className="font-inter text-sm">{t('instantBooking')}</Label>
                     <input
                       type="checkbox"
                       checked={filters.instantBooking || false}
@@ -387,7 +386,7 @@ const PropertyFilters = ({ onFilterChange, listingType }: PropertyFiltersProps) 
                 
                 {/* Micro-copy */}
                 <p className="text-xs text-muted-foreground italic pt-2">
-                  💡 {t('verifiedListingsDefault') || formatTranslationKey('verifiedListingsDefault')}
+                  💡 {t('verifiedListingsDefault')}
                 </p>
               </div>
             </div>
