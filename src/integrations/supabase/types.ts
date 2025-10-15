@@ -1183,6 +1183,98 @@ export type Database = {
           },
         ]
       }
+      rental_agreements: {
+        Row: {
+          agreement_pdf_url: string | null
+          cancellation_reason: string | null
+          cancelled_at: string | null
+          created_at: string | null
+          currency: string
+          deposit_amount: number
+          end_date: string | null
+          host_signature_data: Json | null
+          host_signed_at: string | null
+          host_user_id: string
+          house_rules: Json | null
+          id: string
+          lease_duration_months: number
+          monthly_rent: number
+          payment_terms: Json | null
+          property_id: string
+          special_clauses: string | null
+          start_date: string
+          status: string
+          template_version: string | null
+          tenant_signature_data: Json | null
+          tenant_signed_at: string | null
+          tenant_user_id: string | null
+          updated_at: string | null
+          utilities_included: Json | null
+        }
+        Insert: {
+          agreement_pdf_url?: string | null
+          cancellation_reason?: string | null
+          cancelled_at?: string | null
+          created_at?: string | null
+          currency?: string
+          deposit_amount: number
+          end_date?: string | null
+          host_signature_data?: Json | null
+          host_signed_at?: string | null
+          host_user_id: string
+          house_rules?: Json | null
+          id?: string
+          lease_duration_months: number
+          monthly_rent: number
+          payment_terms?: Json | null
+          property_id: string
+          special_clauses?: string | null
+          start_date: string
+          status?: string
+          template_version?: string | null
+          tenant_signature_data?: Json | null
+          tenant_signed_at?: string | null
+          tenant_user_id?: string | null
+          updated_at?: string | null
+          utilities_included?: Json | null
+        }
+        Update: {
+          agreement_pdf_url?: string | null
+          cancellation_reason?: string | null
+          cancelled_at?: string | null
+          created_at?: string | null
+          currency?: string
+          deposit_amount?: number
+          end_date?: string | null
+          host_signature_data?: Json | null
+          host_signed_at?: string | null
+          host_user_id?: string
+          house_rules?: Json | null
+          id?: string
+          lease_duration_months?: number
+          monthly_rent?: number
+          payment_terms?: Json | null
+          property_id?: string
+          special_clauses?: string | null
+          start_date?: string
+          status?: string
+          template_version?: string | null
+          tenant_signature_data?: Json | null
+          tenant_signed_at?: string | null
+          tenant_user_id?: string | null
+          updated_at?: string | null
+          utilities_included?: Json | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "rental_agreements_property_id_fkey"
+            columns: ["property_id"]
+            isOneToOne: false
+            referencedRelation: "properties"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       reviews: {
         Row: {
           accuracy_rating: number | null
@@ -1389,6 +1481,10 @@ export type Database = {
       calculate_conversion_rate: {
         Args: { days_back?: number }
         Returns: number
+      }
+      calculate_end_date: {
+        Args: { duration: number; start_d: string }
+        Returns: string
       }
       calculate_platform_gmv: {
         Args: { days_back?: number }
