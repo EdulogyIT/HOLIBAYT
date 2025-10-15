@@ -209,7 +209,7 @@ const App = () => (
                     <Route path="calendar" element={<MaintenanceMode><PropertyCalendar /></MaintenanceMode>} />
                     <Route path="listings" element={<MaintenanceMode><HostListings /></MaintenanceMode>} />
                     <Route path="agreements" element={<MaintenanceMode><HostAgreements /></MaintenanceMode>} />
-                    <Route path="agreements/create/:propertyId" element={<MaintenanceMode><CreateAgreement /></MaintenanceMode>} />
+                    <Route path="create-agreement" element={<MaintenanceMode><CreateAgreement /></MaintenanceMode>} />
                     <Route path="messages" element={<MaintenanceMode><HostMessages /></MaintenanceMode>} />
                     <Route path="payouts" element={<MaintenanceMode><HostPayouts /></MaintenanceMode>} />
                     <Route path="kyc" element={<MaintenanceMode><HostKYC /></MaintenanceMode>} />

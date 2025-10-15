@@ -63,11 +63,13 @@ const AdminLawyers = () => {
     city: '',
     address: '',
     experience_years: 0,
+    profile_photo_url: '',
     bio: '',
     consultation_fee: 0,
     availability_status: 'available',
     verified: true,
   });
+  const [uploadingPhoto, setUploadingPhoto] = useState(false);
 
   useEffect(() => {
     fetchLawyers();
@@ -102,6 +104,7 @@ const AdminLawyers = () => {
         city: lawyer.city,
         address: lawyer.address || '',
         experience_years: lawyer.experience_years || 0,
+        profile_photo_url: lawyer.profile_photo_url || '',
         bio: lawyer.bio || '',
         consultation_fee: lawyer.consultation_fee || 0,
         availability_status: lawyer.availability_status,
@@ -118,6 +121,7 @@ const AdminLawyers = () => {
         city: '',
         address: '',
         experience_years: 0,
+        profile_photo_url: '',
         bio: '',
         consultation_fee: 0,
         availability_status: 'available',
@@ -158,6 +162,48 @@ const AdminLawyers = () => {
     } catch (error: any) {
       console.error('Error saving lawyer:', error);
       toast.error(error.message || 'Failed to save lawyer');
+    }
+  };
+
+  const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+      toast.error('Please upload an image file');
+      return;
+    }
+
+    // Validate file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error('Image size must be less than 5MB');
+      return;
+    }
+
+    setUploadingPhoto(true);
+    try {
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${Math.random().toString(36).substring(2)}-${Date.now()}.${fileExt}`;
+      const filePath = `lawyer-photos/${fileName}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from('lawyer-photos')
+        .upload(filePath, file);
+
+      if (uploadError) throw uploadError;
+
+      const { data } = supabase.storage
+        .from('lawyer-photos')
+        .getPublicUrl(filePath);
+
+      setFormData({ ...formData, profile_photo_url: data.publicUrl });
+      toast.success('Photo uploaded successfully');
+    } catch (error: any) {
+      console.error('Error uploading photo:', error);
+      toast.error(error.message || 'Failed to upload photo');
+    } finally {
+      setUploadingPhoto(false);
     }
   };
 
@@ -446,6 +492,26 @@ const AdminLawyers = () => {
                 value={formData.address}
                 onChange={(e) => setFormData({ ...formData, address: e.target.value })}
               />
+            </div>
+
+            <div className="space-y-2 col-span-2">
+              <Label>Profile Photo</Label>
+              <div className="flex items-center gap-4">
+                {formData.profile_photo_url && (
+                  <img 
+                    src={formData.profile_photo_url} 
+                    alt="Profile preview" 
+                    className="w-20 h-20 rounded-full object-cover"
+                  />
+                )}
+                <Input
+                  type="file"
+                  accept="image/*"
+                  onChange={handlePhotoUpload}
+                  disabled={uploadingPhoto}
+                />
+                {uploadingPhoto && <span className="text-sm text-muted-foreground">Uploading...</span>}
+              </div>
             </div>
 
             <div className="space-y-2 col-span-2">

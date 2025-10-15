@@ -1,5 +1,6 @@
 import { Shield, Lock } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { formatTranslationKey } from "@/lib/utils";
 
 interface RentPaymentSafetyBadgeProps {
   className?: string;
@@ -17,6 +18,11 @@ export const RentPaymentSafetyBadge = ({
   const { t } = useLanguage();
   const totalProtected = monthlyRent + deposit;
 
+  const getTitleOrFormatted = (key: string) => {
+    const translation = t(key);
+    return translation === key ? formatTranslationKey(key) : translation;
+  };
+
   return (
     <div className={`w-full bg-gradient-to-r from-primary/5 to-primary/10 dark:from-primary/10 dark:to-primary/20 border border-primary/20 dark:border-primary/30 rounded-xl p-5 ${className}`}>
       <div className="flex items-start gap-3">
@@ -26,10 +32,10 @@ export const RentPaymentSafetyBadge = ({
         <div className="flex-1 min-w-0">
           <h3 className="font-semibold text-base md:text-lg text-foreground mb-3 flex items-center gap-2">
             <Lock className="w-4 h-4 text-primary" />
-            {t('rent_safety_notice_title')}
+            {getTitleOrFormatted('rent_safety_notice_title')}
           </h3>
           <div className="mt-3 flex items-center gap-2 text-sm font-semibold text-primary bg-background/60 dark:bg-background/20 rounded-lg px-3 py-2 inline-flex">
-            <span>{t('total_protected')}:</span>
+            <span>{getTitleOrFormatted('total_protected')}:</span>
             <span className="text-lg">{totalProtected.toLocaleString()} {currency}</span>
           </div>
         </div>

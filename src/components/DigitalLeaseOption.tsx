@@ -2,6 +2,7 @@ import { FileText, Download, Edit } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
+import { formatTranslationKey } from "@/lib/utils";
 
 interface DigitalLeaseOptionProps {
   propertyId: string;
@@ -18,6 +19,11 @@ export const DigitalLeaseOption = ({
 }: DigitalLeaseOptionProps) => {
   const { t } = useLanguage();
   const navigate = useNavigate();
+
+  const getTitleOrFormatted = (key: string) => {
+    const translation = t(key);
+    return translation === key ? formatTranslationKey(key) : translation;
+  };
 
   const handleViewTemplate = () => {
     // Navigate to agreement template page
@@ -36,7 +42,7 @@ export const DigitalLeaseOption = ({
         </div>
         <div className="flex-1 min-w-0">
           <h3 className="font-semibold text-base md:text-lg text-foreground mb-4">
-            {t('sign_lease_online')}
+            {getTitleOrFormatted('sign_lease_online')}
           </h3>
           <div className="flex flex-wrap gap-2">
             <Button
@@ -46,16 +52,16 @@ export const DigitalLeaseOption = ({
               className="flex items-center gap-2"
             >
               <Download className="w-4 h-4" />
-              {t('view_agreement_template')}
+              {getTitleOrFormatted('view_agreement_template')}
             </Button>
             {!hasActiveAgreement && (
               <Button
                 size="sm"
                 onClick={handleStartAgreement}
-                className="flex items-center gap-2 bg-secondary hover:bg-secondary/90"
+                className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white"
               >
                 <Edit className="w-4 h-4" />
-                {t('start_agreement')}
+                {getTitleOrFormatted('start_agreement')}
               </Button>
             )}
             {hasActiveAgreement && agreementUrl && (
@@ -66,7 +72,7 @@ export const DigitalLeaseOption = ({
                 className="flex items-center gap-2"
               >
                 <FileText className="w-4 h-4" />
-                {t('view_active_agreement')}
+                {getTitleOrFormatted('view_active_agreement')}
               </Button>
             )}
           </div>
