@@ -22,6 +22,11 @@ const destinations = [
 export const DestinationsToExplore = ({ onDestinationClick }: DestinationsToExploreProps) => {
   const { t } = useLanguage();
   const [showAll, setShowAll] = useState(false);
+
+  const getTitleOrFormatted = (key: string) => {
+    const translation = t(key);
+    return translation === key ? formatTranslationKey(key) : translation;
+  };
   
   const visibleDestinations = showAll ? destinations : destinations.slice(0, 8);
 
@@ -29,7 +34,7 @@ export const DestinationsToExplore = ({ onDestinationClick }: DestinationsToExpl
     <div className="w-full py-16 bg-gradient-to-b from-secondary/5 to-background">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <h2 className="text-3xl font-bold text-foreground mb-8 font-playfair">
-          {t('destinations_to_explore') || formatTranslationKey('destinations_to_explore')}
+          {getTitleOrFormatted('destinations_to_explore')}
         </h2>
         
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -48,7 +53,7 @@ export const DestinationsToExplore = ({ onDestinationClick }: DestinationsToExpl
             >
               <div className="relative z-10">
                 <h3 className="text-lg font-semibold text-foreground group-hover:text-primary transition-colors">
-                  {t(dest.labelKey) || formatTranslationKey(dest.labelKey)}
+                  {getTitleOrFormatted(dest.labelKey)}
                 </h3>
               </div>
               <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-accent/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />

@@ -28,6 +28,11 @@ export const TopRatedStays = () => {
   const [properties, setProperties] = useState<TopRatedProperty[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
+  const getTitleOrFormatted = (key: string) => {
+    const translation = t(key);
+    return translation === key ? formatTranslationKey(key) : translation;
+  };
+
   useEffect(() => {
     fetchTopRatedProperties();
   }, []);
@@ -67,7 +72,7 @@ export const TopRatedStays = () => {
       <div className="w-full py-16 bg-background">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl font-bold text-foreground mb-8 font-playfair">
-            {t('top_rated_holiday_stays') || formatTranslationKey('top_rated_holiday_stays')}
+            {getTitleOrFormatted('top_rated_holiday_stays')}
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {[...Array(4)].map((_, i) => (
@@ -94,7 +99,7 @@ export const TopRatedStays = () => {
     <div className="w-full py-16 bg-background">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <h2 className="text-3xl font-bold text-foreground mb-8 font-playfair">
-          {t('top_rated_holiday_stays') || formatTranslationKey('top_rated_holiday_stays')}
+          {getTitleOrFormatted('top_rated_holiday_stays')}
         </h2>
 
         <Carousel

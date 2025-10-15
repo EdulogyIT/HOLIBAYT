@@ -20,11 +20,16 @@ const amenities = [
 export const PopularAmenities = ({ onAmenityClick, selectedAmenity }: PopularAmenitiesProps) => {
   const { t } = useLanguage();
 
+  const getTitleOrFormatted = (key: string) => {
+    const translation = t(key);
+    return translation === key ? formatTranslationKey(key) : translation;
+  };
+
   return (
     <div className="w-full py-16 bg-gradient-to-b from-background to-secondary/5">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <h2 className="text-3xl font-bold text-foreground mb-8 font-playfair">
-          {t('popular_amenities') || formatTranslationKey('popular_amenities')}
+          {getTitleOrFormatted('popular_amenities')}
         </h2>
         
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
@@ -48,7 +53,7 @@ export const PopularAmenities = ({ onAmenityClick, selectedAmenity }: PopularAme
                 <div className="flex flex-col items-center gap-3 text-center">
                   <Icon className={`h-8 w-8 ${isActive ? 'text-primary-foreground' : 'text-primary'}`} />
                   <span className={`text-sm font-medium ${isActive ? 'text-primary-foreground' : 'text-foreground'}`}>
-                    {t(amenity.labelKey) || formatTranslationKey(amenity.labelKey)}
+                    {getTitleOrFormatted(amenity.labelKey)}
                   </span>
                 </div>
               </Card>
