@@ -482,6 +482,10 @@ const PropertyEnhanced = () => {
                   {t("chatSecurely")}
                 </Button>
 
+                {(isBuy || isRent) && (
+                  <LegalSupportButton propertyId={property.id} />
+                )}
+
                 {property.financing_available && isBuy && (
                   <Button variant="outline" className="w-full" size="sm">
                     {tKey("getPreApproved")}

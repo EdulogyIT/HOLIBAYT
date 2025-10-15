@@ -12,8 +12,10 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { buyRentTranslations } from "@/contexts/LanguageTranslations";
 import { toast } from "sonner";
-import { Scale, User, Phone, Mail } from "lucide-react";
+import { Scale, User } from "lucide-react";
 
 interface Lawyer {
   id: string;
@@ -36,11 +38,17 @@ export const LawyerRequestDialog = ({
   onOpenChange,
 }: LawyerRequestDialogProps) => {
   const { user } = useAuth();
+  const { currentLang } = useLanguage();
   const [lawyers, setLawyers] = useState<Lawyer[]>([]);
   const [loading, setLoading] = useState(false);
   const [selectedLawyer, setSelectedLawyer] = useState<string>("");
   const [requestType, setRequestType] = useState<string>("consultation");
   const [message, setMessage] = useState("");
+
+  const tKey = (key: string) => {
+    const translations = buyRentTranslations[currentLang] || buyRentTranslations.EN;
+    return translations[key] || key;
+  };
 
   useEffect(() => {
     if (open) {
@@ -89,7 +97,7 @@ export const LawyerRequestDialog = ({
 
       if (error) throw error;
 
-      toast.success("Request submitted! An admin will review it shortly.");
+      toast.success(tKey("requestSubmitted"));
       onOpenChange(false);
       setSelectedLawyer("");
       setMessage("");
@@ -109,21 +117,20 @@ export const LawyerRequestDialog = ({
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Scale className="h-6 w-6 text-primary" />
-            Request Legal Support
+            {tKey("legalSupportTitle")}
           </DialogTitle>
           <DialogDescription>
-            Connect with verified legal professionals for property-related assistance.
-            Your request will be reviewed by our admin team.
+            {tKey("requestSubmittedDesc")}
           </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-6 py-4">
           {/* Select Lawyer */}
           <div className="space-y-2">
-            <Label>Select a Lawyer *</Label>
+            <Label>{tKey("selectLawyer")} *</Label>
             <Select value={selectedLawyer} onValueChange={setSelectedLawyer}>
               <SelectTrigger>
-                <SelectValue placeholder="Choose a legal professional" />
+                <SelectValue placeholder={tKey("selectLawyerPlaceholder")} />
               </SelectTrigger>
               <SelectContent>
                 {lawyers.map((lawyer) => (
@@ -162,15 +169,15 @@ export const LawyerRequestDialog = ({
 
           {/* Request Type */}
           <div className="space-y-2">
-            <Label>Request Type *</Label>
+            <Label>{tKey("requestType")} *</Label>
             <Select value={requestType} onValueChange={setRequestType}>
               <SelectTrigger>
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="consultation">Legal Consultation</SelectItem>
-                <SelectItem value="contract_review">Contract Review</SelectItem>
-                <SelectItem value="legal_assistance">Legal Assistance</SelectItem>
+                <SelectItem value="consultation">{tKey("legalConsultation")}</SelectItem>
+                <SelectItem value="contract_review">{tKey("contractReview")}</SelectItem>
+                <SelectItem value="property_verification">{tKey("propertyVerification")}</SelectItem>
                 <SelectItem value="general">General Inquiry</SelectItem>
               </SelectContent>
             </Select>
@@ -178,11 +185,11 @@ export const LawyerRequestDialog = ({
 
           {/* Message */}
           <div className="space-y-2">
-            <Label>Your Message (Optional)</Label>
+            <Label>{tKey("additionalMessage")}</Label>
             <Textarea
               value={message}
               onChange={(e) => setMessage(e.target.value)}
-              placeholder="Describe your legal needs or questions..."
+              placeholder={tKey("messagePlaceholder")}
               rows={4}
             />
           </div>
@@ -206,7 +213,7 @@ export const LawyerRequestDialog = ({
             Cancel
           </Button>
           <Button onClick={handleSubmit} disabled={loading || !selectedLawyer}>
-            {loading ? "Submitting..." : "Submit Request"}
+            {loading ? "Submitting..." : tKey("submitRequest")}
           </Button>
         </div>
       </DialogContent>
