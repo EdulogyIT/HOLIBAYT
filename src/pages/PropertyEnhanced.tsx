@@ -212,9 +212,6 @@ const PropertyEnhanced = () => {
       <Navigation />
       
       <main className="container mx-auto px-4 py-8">
-        {/* Trust Badge Line - Responsive */}
-        <PropertyTrustBadge className="mb-6" />
-
         <div className="grid lg:grid-cols-3 gap-8">
           {/* Main Content */}
           <div className="lg:col-span-2 space-y-8">

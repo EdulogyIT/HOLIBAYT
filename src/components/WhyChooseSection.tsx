@@ -65,7 +65,7 @@ const WhyChooseSection = () => {
             
             const handleClick = () => {
               if (isLegalSupport) {
-                navigate('/lawyers');
+                navigate('/legal-process');
               } else if (isHolibaytPay) {
                 navigate('/holibayt-pay');
               }

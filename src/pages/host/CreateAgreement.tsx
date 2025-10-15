@@ -14,8 +14,9 @@ import { toast } from "sonner";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { CalendarIcon, FileText } from "lucide-react";
+import { CalendarIcon, FileText, Upload } from "lucide-react";
 import { format } from "date-fns";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const CreateAgreement = () => {
   const { propertyId } = useParams();
@@ -26,6 +27,8 @@ const CreateAgreement = () => {
   const [property, setProperty] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
+  const [uploadedFile, setUploadedFile] = useState<File | null>(null);
+  const [uploading, setUploading] = useState(false);
   
   const [formData, setFormData] = useState({
     lease_duration_months: 12,
@@ -120,6 +123,31 @@ const CreateAgreement = () => {
     }
   };
 
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploading(true);
+    try {
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${user?.id}/${propertyId}/${Date.now()}.${fileExt}`;
+      
+      const { error: uploadError } = await supabase.storage
+        .from('rental-agreements')
+        .upload(fileName, file);
+
+      if (uploadError) throw uploadError;
+
+      setUploadedFile(file);
+      toast.success('Draft uploaded successfully!');
+    } catch (error) {
+      console.error('Error uploading file:', error);
+      toast.error('Failed to upload draft');
+    } finally {
+      setUploading(false);
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-background">
@@ -154,7 +182,14 @@ const CreateAgreement = () => {
               </div>
             </CardHeader>
             <CardContent>
-              <form onSubmit={handleSubmit} className="space-y-6">
+              <Tabs defaultValue="create" className="w-full">
+                <TabsList className="grid w-full grid-cols-2 mb-6">
+                  <TabsTrigger value="create">Create from Template</TabsTrigger>
+                  <TabsTrigger value="upload">{t('uploadDraft')}</TabsTrigger>
+                </TabsList>
+
+                <TabsContent value="create">
+                  <form onSubmit={handleSubmit} className="space-y-6">
                 {/* Lease Duration */}
                 <div className="space-y-2">
                   <Label>Lease Duration (months)</Label>
@@ -306,6 +341,65 @@ const CreateAgreement = () => {
                   </Button>
                 </div>
               </form>
+            </TabsContent>
+
+            <TabsContent value="upload">
+              <div className="space-y-6">
+                <div className="text-center p-8 border-2 border-dashed border-border rounded-lg">
+                  <Upload className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
+                  <h3 className="text-lg font-semibold mb-2">{t('uploadDraft')}</h3>
+                  <p className="text-sm text-muted-foreground mb-4">
+                    {t('uploadDraftDesc')}
+                  </p>
+                  <Label htmlFor="draft-upload" className="cursor-pointer">
+                    <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90">
+                      <Upload className="w-4 h-4" />
+                      {t('chooseFile')}
+                    </div>
+                  </Label>
+                  <Input
+                    id="draft-upload"
+                    type="file"
+                    accept=".pdf,.doc,.docx"
+                    onChange={handleFileUpload}
+                    className="hidden"
+                    disabled={uploading}
+                  />
+                  {uploadedFile && (
+                    <p className="mt-4 text-sm text-green-600">
+                      ✓ {uploadedFile.name} uploaded successfully
+                    </p>
+                  )}
+                  {uploading && (
+                    <p className="mt-4 text-sm text-muted-foreground">
+                      Uploading...
+                    </p>
+                  )}
+                </div>
+                <div className="flex gap-3">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => navigate('/host/listings')}
+                    className="flex-1"
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    type="button"
+                    onClick={() => {
+                      toast.success('Draft saved! You can now send it to your tenant.');
+                      navigate('/host/agreements');
+                    }}
+                    disabled={!uploadedFile}
+                    className="flex-1"
+                  >
+                    Save Draft
+                  </Button>
+                </div>
+              </div>
+            </TabsContent>
+          </Tabs>
             </CardContent>
           </Card>
         </div>
