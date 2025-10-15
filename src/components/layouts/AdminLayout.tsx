@@ -64,8 +64,8 @@ export const AdminLayout = ({ children }: AdminLayoutProps) => {
       <div className="min-h-screen flex w-full">
         <Sidebar 
           variant="sidebar"
-          className="w-64"
-          collapsible="none"
+          className="w-64 lg:w-64"
+          collapsible="icon"
         >
           <SidebarContent>
             {/* Header */}

@@ -163,7 +163,13 @@ const PublishPropertySteps = ({ onSubmit, isSubmitting = false }: PublishPropert
     // Auto-save interval
     const interval = setInterval(() => {
       if (formData.category || formData.title) {
-        localStorage.setItem(draftKey, JSON.stringify({ formData, currentStep }));
+        const draftData = { 
+          formData, 
+          currentStep, 
+          savedAt: new Date().toISOString(),
+          title: formData.title || 'Untitled Property'
+        };
+        localStorage.setItem(draftKey, JSON.stringify(draftData));
         console.log('Property draft auto-saved');
       }
     }, 30000);
