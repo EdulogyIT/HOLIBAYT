@@ -17,17 +17,19 @@ export default function AgreementTemplate() {
 
   const fetchTemplate = async () => {
     try {
-      const { data, error } = await supabase
-        .from("document_templates")
-        .select("*")
-        .eq("template_type", "rental_agreement")
-        .eq("is_active", true)
-        .order("created_at", { ascending: false })
-        .limit(1)
-        .maybeSingle();
-
-      if (error) throw error;
-      setTemplate(data);
+      // TODO: Uncomment when document_templates table is created
+      // const { data, error } = await supabase
+      //   .from("document_templates")
+      //   .select("*")
+      //   .eq("template_type", "rental_agreement")
+      //   .eq("is_active", true)
+      //   .order("created_at", { ascending: false })
+      //   .limit(1)
+      //   .maybeSingle();
+      // if (error) throw error;
+      // setTemplate(data);
+      
+      setTemplate(null); // Temporarily disabled until migration approved
     } catch (error) {
       console.error("Error fetching template:", error);
       toast.error("Failed to load template");
