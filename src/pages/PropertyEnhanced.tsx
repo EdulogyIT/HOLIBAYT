@@ -42,6 +42,7 @@ import { PropertyTrustInfoBlocks } from "@/components/PropertyTrustInfoBlocks";
 import { RentPaymentSafetyBadge } from "@/components/RentPaymentSafetyBadge";
 import { RentVerificationStatus } from "@/components/RentVerificationStatus";
 import { DigitalLeaseOption } from "@/components/DigitalLeaseOption";
+import { LegalSupportButton } from "@/components/LegalSupportButton";
 
 interface Property {
   id: string;

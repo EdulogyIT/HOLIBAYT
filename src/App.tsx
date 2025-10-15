@@ -57,6 +57,12 @@ import PaymentCancelled from "./pages/PaymentCancelled";
 import BookingSuccess from "./pages/BookingSuccess";
 import BookingCancel from "./pages/BookingCancel";
 import HolibaytPay from "./pages/HolibaytPay";
+import Lawyers from "./pages/Lawyers";
+import SignAgreement from "./pages/SignAgreement";
+import AgreementTemplate from "./pages/AgreementTemplate";
+import AdminLawyers from "./pages/admin/AdminLawyers";
+import AdminLawyerRequests from "./pages/admin/AdminLawyerRequests";
+import AdminDocumentTemplates from "./pages/admin/AdminDocumentTemplates";
 
 const queryClient = new QueryClient();
 
@@ -81,6 +87,8 @@ const App = () => (
           <Route path="/property/:id" element={<MaintenanceMode><PropertyEnhanced /></MaintenanceMode>} />
           <Route path="/city/:cityId" element={<MaintenanceMode><City /></MaintenanceMode>} />
           <Route path="/contact-advisor" element={<MaintenanceMode><ContactAdvisor /></MaintenanceMode>} />
+          <Route path="/lawyers" element={<MaintenanceMode><Lawyers /></MaintenanceMode>} />
+          <Route path="/rental-agreement-template" element={<MaintenanceMode><AgreementTemplate /></MaintenanceMode>} />
 
           {/* ✅ Payment routes also gated */}
           <Route path="/payment-success" element={<MaintenanceMode><PaymentSuccess /></MaintenanceMode>} />
@@ -91,6 +99,7 @@ const App = () => (
           {/* Auth routes (you may want to allow login/register even in maintenance) */}
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
+          <Route path="/sign-agreement/:agreementId" element={<ProtectedRoute requireAuth><MaintenanceMode><SignAgreement /></MaintenanceMode></ProtectedRoute>} />
 
           {/* Protected routes */}
           <Route
@@ -175,6 +184,9 @@ const App = () => (
                     <Route path="create-blog" element={<MaintenanceMode><CreateBlog /></MaintenanceMode>} />
                     <Route path="settings" element={<MaintenanceMode><AdminSettings /></MaintenanceMode>} />
                     <Route path="kyc" element={<MaintenanceMode><AdminKYC /></MaintenanceMode>} />
+                    <Route path="lawyers" element={<MaintenanceMode><AdminLawyers /></MaintenanceMode>} />
+                    <Route path="lawyer-requests" element={<MaintenanceMode><AdminLawyerRequests /></MaintenanceMode>} />
+                    <Route path="document-templates" element={<MaintenanceMode><AdminDocumentTemplates /></MaintenanceMode>} />
                   </Routes>
                 </AdminLayout>
               </ProtectedRoute>
