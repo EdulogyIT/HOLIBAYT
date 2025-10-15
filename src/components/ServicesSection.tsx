@@ -1,6 +1,6 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Home, Key, Bed, Shield, Star, Clock } from "lucide-react";
+import { Home, Key, Bed, Shield, Star, Clock, CreditCard } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useNavigate } from "react-router-dom";
 import luxuryApartment from "@/assets/property-luxury-apartment.jpg";
@@ -151,7 +151,7 @@ const ServicesSection = () => {
             </p>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
             <div className="group text-center p-6 rounded-2xl bg-white/50 backdrop-blur-sm hover:bg-white/80 transition-all duration-300 hover:-translate-y-2 hover:shadow-lg">
               <div className="inline-flex items-center justify-center w-16 h-16 bg-primary text-primary-foreground rounded-2xl mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg">
                 <Shield className="h-8 w-8" />
@@ -177,6 +177,15 @@ const ServicesSection = () => {
               <h4 className="text-xl font-playfair font-bold text-foreground mb-3">{t('support247')}</h4>
               <p className="text-muted-foreground font-inter">{t('supportDesc')}</p>
               <div className="mt-4 text-foreground font-semibold font-inter text-sm">{t('responseTimeLabel')}</div>
+            </div>
+            
+            <div className="group text-center p-6 rounded-2xl bg-white/50 backdrop-blur-sm hover:bg-white/80 transition-all duration-300 hover:-translate-y-2 hover:shadow-lg">
+              <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-primary to-indigo-500 text-primary-foreground rounded-2xl mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg">
+                <CreditCard className="h-8 w-8" />
+              </div>
+              <h4 className="text-xl font-playfair font-bold text-foreground mb-3">{t('holibaytPayEscrow')}</h4>
+              <p className="text-muted-foreground font-inter">{t('escrowProtectionDesc')}</p>
+              <div className="mt-4 text-primary font-semibold font-inter text-sm">100% {t('protected')}</div>
             </div>
           </div>
         </div>

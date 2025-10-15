@@ -407,6 +407,9 @@ const allTranslations = {
     qualityDesc: 'Une sélection rigoureuse pour votre satisfaction',
     support247: 'Support 24/7',
     supportDesc: 'Une équipe dédiée à votre service',
+    holibaytPayEscrow: 'Holibayt Pay™ Escrow',
+    escrowProtectionDesc: 'Fonds détenus en dépôt fiduciaire jusqu\'à la finalisation de la transaction. Votre argent est protégé.',
+    protected: 'Protégé',
     
     // Hero placeholders and options
     cityNeighborhood: 'Ville, quartier ou adresse',
@@ -1315,6 +1318,9 @@ const allTranslations = {
     qualityDesc: 'A rigorous selection for your satisfaction',
     support247: 'Support 24/7',
     supportDesc: 'A team dedicated to your service',
+    holibaytPayEscrow: 'Holibayt Pay™ Escrow',
+    escrowProtectionDesc: 'Funds held in escrow until transaction completion. Your money is protected.',
+    protected: 'Protected',
     
     // Hero placeholders and options
     cityNeighborhood: 'City, neighborhood or address',
@@ -2209,6 +2215,9 @@ const allTranslations = {
     qualityDesc: 'اختيار دقيق لرضاك',
     support247: 'دعم 24/7',
     supportDesc: 'فريق مخصص لخدمتك',
+    holibaytPayEscrow: 'Holibayt Pay™ إيداع',
+    escrowProtectionDesc: 'الأموال محفوظة في الضمان حتى إتمام الصفقة. أموالك محمية.',
+    protected: 'محمي',
     
     // Hero placeholders and options
     cityNeighborhood: 'المدينة، الحي أو العنوان',
