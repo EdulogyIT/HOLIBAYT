@@ -74,6 +74,7 @@ const PublishProperty = () => {
         price_type: formData.priceType,
         price_currency: formData.priceCurrency,
         features: formData.features,
+        furnished: formData.features.furnishedStatus === 'furnished',
         pets_allowed: formData.features.petsAllowed || false,
         description: formData.description || null,
         contact_name: formData.fullName,

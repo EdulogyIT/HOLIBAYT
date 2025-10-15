@@ -364,7 +364,7 @@ export const BlogComments = ({ blogPostId }: BlogCommentsProps) => {
             <Textarea
               value={newComment}
               onChange={(e) => setNewComment(e.target.value)}
-              placeholder={t("writeComment")}
+              placeholder={t("write_comment")}
               className="min-h-[100px]"
             />
             <Button onClick={handleSubmitComment} disabled={loading || !newComment.trim()}>

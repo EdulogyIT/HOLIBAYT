@@ -23,6 +23,7 @@ interface FilterState {
   financingAvailable?: boolean;
   newBuild?: boolean;
   instantBooking?: boolean;
+  depositRequired?: boolean;
 }
 
 interface PropertyFiltersProps {
@@ -46,7 +47,8 @@ const PropertyFilters = ({ onFilterChange, listingType }: PropertyFiltersProps) 
     furnished: "all",
     financingAvailable: false,
     newBuild: false,
-    instantBooking: false
+    instantBooking: false,
+    depositRequired: false
   });
 
   const handleFilterChange = (key: keyof FilterState, value: any) => {
@@ -69,7 +71,8 @@ const PropertyFilters = ({ onFilterChange, listingType }: PropertyFiltersProps) 
       furnished: "all",
       financingAvailable: false,
       newBuild: false,
-      instantBooking: false
+      instantBooking: false,
+      depositRequired: false
     };
     setFilters(clearedFilters);
     onFilterChange(clearedFilters);
@@ -89,6 +92,7 @@ const PropertyFilters = ({ onFilterChange, listingType }: PropertyFiltersProps) 
     if (filters.financingAvailable) count++;
     if (filters.newBuild) count++;
     if (filters.instantBooking) count++;
+    if (filters.depositRequired) count++;
     return count;
   };
 
@@ -290,7 +294,7 @@ const PropertyFilters = ({ onFilterChange, listingType }: PropertyFiltersProps) 
                 
                 {/* Verified Only */}
                 <div className="flex items-center justify-between">
-                  <Label className="font-inter text-sm">{t('verifiedOnly')}</Label>
+                  <Label className="font-inter text-sm">{t('verified_only')}</Label>
                   <input
                     type="checkbox"
                     checked={filters.verifiedOnly || false}
@@ -321,16 +325,30 @@ const PropertyFilters = ({ onFilterChange, listingType }: PropertyFiltersProps) 
                       <SelectContent className="bg-background border border-border z-50">
                         <SelectItem value="all">{t('all') || 'All'}</SelectItem>
                         <SelectItem value="yes">{t('furnished') || 'Furnished'}</SelectItem>
+                        <SelectItem value="semi">{t('semi_furnished') || 'Semi-Furnished'}</SelectItem>
                         <SelectItem value="no">{t('unfurnished') || 'Unfurnished'}</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
                 )}
 
+                {/* Deposit Required (Rent only) */}
+                {listingType === 'rent' && (
+                  <div className="flex items-center justify-between">
+                    <Label className="font-inter text-sm">{t('deposit_required') || 'Deposit Required'}</Label>
+                    <input
+                      type="checkbox"
+                      checked={filters.depositRequired || false}
+                      onChange={(e) => handleFilterChange('depositRequired', e.target.checked)}
+                      className="h-4 w-4"
+                    />
+                  </div>
+                )}
+
                 {/* Financing Available (Buy only) */}
                 {listingType === 'buy' && (
                   <div className="flex items-center justify-between">
-                    <Label className="font-inter text-sm">{t('financingAvailable') || 'Financing Available'}</Label>
+                    <Label className="font-inter text-sm">{t('financing_available') || 'Financing Available'}</Label>
                     <input
                       type="checkbox"
                       checked={filters.financingAvailable || false}

@@ -41,7 +41,7 @@ interface FormData {
     balcony: boolean;
     elevator: boolean;
     security: boolean;
-    furnished: boolean;
+    furnishedStatus: string;
     airConditioning: boolean;
     gym: boolean;
     petsAllowed: boolean;
@@ -111,7 +111,7 @@ const PublishPropertySteps = ({ onSubmit, isSubmitting = false }: PublishPropert
       balcony: false,
       elevator: false,
       security: false,
-      furnished: false,
+      furnishedStatus: "unfurnished",
       airConditioning: false,
       gym: false,
       petsAllowed: false,
@@ -559,7 +559,6 @@ const PublishPropertySteps = ({ onSubmit, isSubmitting = false }: PublishPropert
                     balcony: t('balconyFeature'),
                     elevator: t('elevatorFeature'),
                     security: t('securityFeature'),
-                    furnished: t('furnishedFeature'),
                     airConditioning: t('airConditioningFeature'),
                     gym: t('gymFeature'),
                     petsAllowed: t('petsAllowed')
@@ -567,7 +566,7 @@ const PublishPropertySteps = ({ onSubmit, isSubmitting = false }: PublishPropert
                     <div key={key} className="flex items-center space-x-2">
                       <Checkbox
                         id={key}
-                        checked={formData.features[key as keyof typeof formData.features]}
+                        checked={formData.features[key as keyof typeof formData.features] as boolean}
                         onCheckedChange={(checked) => handleInputChange(`features.${key}`, checked)}
                       />
                       <Label htmlFor={key}>{label}</Label>
@@ -575,6 +574,23 @@ const PublishPropertySteps = ({ onSubmit, isSubmitting = false }: PublishPropert
                   ))}
                 </div>
               </div>
+
+              {/* Furnished Status (for rent and short-stay) */}
+              {(formData.category === 'rent' || formData.category === 'short-stay') && (
+                <div className="space-y-2">
+                  <Label htmlFor="furnishedStatus">{t('furnished_status') || 'Furnished Status'}</Label>
+                  <Select value={formData.features.furnishedStatus} onValueChange={(value) => handleInputChange("features.furnishedStatus", value)}>
+                    <SelectTrigger>
+                      <SelectValue placeholder={t('selectCategory')} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="furnished">{t('furnished') || 'Furnished'}</SelectItem>
+                      <SelectItem value="semi-furnished">{t('semi_furnished') || 'Semi-Furnished'}</SelectItem>
+                      <SelectItem value="unfurnished">{t('unfurnished') || 'Unfurnished'}</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
 
               {/* Description */}
               <div className="space-y-2">
