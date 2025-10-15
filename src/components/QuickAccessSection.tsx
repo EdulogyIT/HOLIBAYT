@@ -76,6 +76,7 @@ const QuickAccessSection = () => {
             return (
               <Card 
                 key={action.id} 
+                onClick={() => navigate(`/${action.id === 'stay' ? 'short-stay' : action.id}`)}
                 className={`group relative overflow-hidden border-2 ${action.borderColor} hover:shadow-elegant transition-all duration-300 hover:-translate-y-2 cursor-pointer bg-card/50 backdrop-blur-sm flex flex-col h-full min-h-[480px]`}
               >
                 <CardContent className="p-6 md:p-8 text-center flex flex-col h-full">
@@ -122,7 +123,10 @@ const QuickAccessSection = () => {
                     <Button 
                       variant="ghost" 
                       className={`group/btn font-inter font-medium text-foreground hover:text-primary-foreground ${action.hoverColor} transition-all duration-300 h-11 px-5 text-sm whitespace-nowrap w-full`}
-                      onClick={() => navigate(`/${action.id === 'stay' ? 'short-stay' : action.id}`)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        navigate(`/${action.id === 'stay' ? 'short-stay' : action.id}`);
+                      }}
                     >
                       <span className="whitespace-nowrap">{t('start')}</span>
                       <ArrowRight className="ml-2 h-4 w-4 group-hover/btn:translate-x-1 transition-transform duration-300" />

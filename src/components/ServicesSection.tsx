@@ -86,7 +86,9 @@ const ServicesSection = () => {
           {services.map((service, index) => {
             const IconComponent = service.icon;
             return (
-              <Card key={service.id} className="group relative overflow-hidden border-border/50 hover:shadow-elegant transition-all duration-300 hover:-translate-y-1 bg-card flex flex-col h-full min-h-[420px]">
+              <Card key={service.id} 
+                onClick={() => navigate(`/${service.id === 'stay' ? 'short-stay' : service.id}`)}
+                className="group relative overflow-hidden border-border/50 hover:shadow-elegant transition-all duration-300 hover:-translate-y-1 cursor-pointer bg-card flex flex-col h-full min-h-[420px]">
                 {/* Hero Image */}
                 <div className="relative h-48 overflow-hidden">
                   <img 
@@ -126,7 +128,10 @@ const ServicesSection = () => {
                   <div className="mt-auto pt-6">
                     <Button 
                       className="h-11 px-5 text-sm font-medium whitespace-nowrap w-full bg-gradient-primary font-inter group-hover:shadow-elegant transition-all duration-300"
-                      onClick={() => navigate(`/${service.id === 'stay' ? 'short-stay' : service.id}`)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        navigate(`/${service.id === 'stay' ? 'short-stay' : service.id}`);
+                      }}
                     >
                       <span className="whitespace-nowrap">{t(service.ctaKey)}</span>
                     </Button>

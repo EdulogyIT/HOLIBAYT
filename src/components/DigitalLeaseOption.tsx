@@ -2,6 +2,7 @@ import { FileText, Download, Edit } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
+import { formatTranslationKey } from "@/lib/utils";
 
 interface DigitalLeaseOptionProps {
   propertyId: string;
@@ -37,10 +38,10 @@ export const DigitalLeaseOption = ({
         </div>
         <div className="flex-1 min-w-0">
           <h3 className="font-semibold text-base md:text-lg text-gray-900 dark:text-gray-100 mb-2">
-            {t('sign_lease_online') || 'Sign your rental agreement online through Holibayt'}
+            {t('sign_lease_online') || formatTranslationKey('sign_lease_online')}
           </h3>
           <p className="text-sm md:text-base text-gray-700 dark:text-gray-300 mb-4">
-            {t('digital_lease_description') || 'Create, review, and sign your rental agreement digitally. Fast, secure, and legally binding.'}
+            {t('digital_lease_description') || formatTranslationKey('digital_lease_description')}
           </p>
           <div className="flex flex-wrap gap-2">
             <Button
@@ -50,7 +51,7 @@ export const DigitalLeaseOption = ({
               className="flex items-center gap-2"
             >
               <Download className="w-4 h-4" />
-              {t('view_agreement_template') || 'View Template'}
+              {t('view_agreement_template') || formatTranslationKey('view_agreement_template')}
             </Button>
             {!hasActiveAgreement && (
               <Button
@@ -59,7 +60,7 @@ export const DigitalLeaseOption = ({
                 className="flex items-center gap-2 bg-gradient-to-r from-purple-500 to-pink-600 hover:from-purple-600 hover:to-pink-700"
               >
                 <Edit className="w-4 h-4" />
-                {t('start_agreement') || 'Start Agreement'}
+                {t('start_agreement') || formatTranslationKey('start_agreement')}
               </Button>
             )}
             {hasActiveAgreement && agreementUrl && (
@@ -70,7 +71,7 @@ export const DigitalLeaseOption = ({
                 className="flex items-center gap-2"
               >
                 <FileText className="w-4 h-4" />
-                {t('view_active_agreement') || 'View Active Agreement'}
+                {t('view_active_agreement') || formatTranslationKey('view_active_agreement')}
               </Button>
             )}
           </div>
