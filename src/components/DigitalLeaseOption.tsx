@@ -30,9 +30,9 @@ export const DigitalLeaseOption = ({
   };
 
   return (
-    <div className={`w-full bg-gradient-to-r from-secondary/5 to-accent/10 dark:from-secondary/10 dark:to-accent/20 border border-secondary/20 dark:border-secondary/30 rounded-xl p-5 ${className}`}>
+    <div className={`w-full bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/10 dark:to-emerald-900/20 border border-green-200 dark:border-green-700/30 rounded-xl p-5 ${className}`}>
       <div className="flex items-start gap-3">
-        <div className="w-12 h-12 rounded-full bg-secondary flex items-center justify-center flex-shrink-0 shadow-lg">
+        <div className="w-12 h-12 rounded-full bg-green-600 flex items-center justify-center flex-shrink-0 shadow-lg">
           <FileText className="w-6 h-6 text-white" />
         </div>
         <div className="flex-1 min-w-0">
@@ -53,7 +53,7 @@ export const DigitalLeaseOption = ({
               <Button
                 size="sm"
                 onClick={handleStartAgreement}
-                className="flex items-center gap-2 bg-secondary hover:bg-secondary/90"
+                className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white"
               >
                 <Edit className="w-4 h-4" />
                 {t('start_agreement')}
