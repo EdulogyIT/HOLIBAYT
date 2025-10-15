@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Sparkles, Home, Calendar, Users, MapPin, Heart } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import confetti from 'canvas-confetti';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface BookingInvitationCardProps {
   bookingId: string;
@@ -12,6 +13,7 @@ interface BookingInvitationCardProps {
 }
 
 export const BookingInvitationCard = ({ bookingId, isHost, onClose }: BookingInvitationCardProps) => {
+  const { t } = useLanguage();
   const [booking, setBooking] = useState<any>(null);
   const [property, setProperty] = useState<any>(null);
   const [guestName, setGuestName] = useState<string>('');
@@ -110,10 +112,10 @@ export const BookingInvitationCard = ({ bookingId, isHost, onClose }: BookingInv
               
               <div className="space-y-2">
                 <h2 className="text-4xl font-bold bg-gradient-to-r from-amber-600 to-yellow-600 bg-clip-text text-transparent">
-                  🎉 Yay! Booking Confirmed! 🎉
+                  🎉 {t('bookingConfirmedYay')} 🎉
                 </h2>
                 <p className="text-xl text-gray-700">
-                  Get ready to welcome your guest!
+                  {t('getReadyToWelcome')}
                 </p>
               </div>
 
@@ -160,10 +162,10 @@ export const BookingInvitationCard = ({ bookingId, isHost, onClose }: BookingInv
               
               <div className="space-y-2">
                 <h2 className="text-4xl font-bold bg-gradient-to-r from-primary to-primary-dark bg-clip-text text-transparent">
-                  🏡 Welcome Home! 🏡
+                  🏡 {t('welcomeHome')} 🏡
                 </h2>
                 <p className="text-xl text-gray-700">
-                  Your booking is confirmed!
+                  {t('yourBookingConfirmed')}
                 </p>
               </div>
 
@@ -205,7 +207,7 @@ export const BookingInvitationCard = ({ bookingId, isHost, onClose }: BookingInv
             onClick={onClose}
             className="mt-6 w-full bg-gradient-to-r from-primary to-primary-dark hover:from-primary-dark hover:to-primary text-white font-bold py-3 shadow-lg hover:shadow-xl transition-all"
           >
-            Close
+            {t('close')}
           </Button>
         </CardContent>
       </Card>

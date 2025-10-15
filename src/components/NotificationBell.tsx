@@ -12,6 +12,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { toast } from "sonner";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { SuperhostCelebration } from "@/components/SuperhostCelebration";
 import { ReviewNotificationDialog } from "@/components/ReviewNotificationDialog";
 import { BookingInvitationCard } from "@/components/BookingInvitationCard";
@@ -27,6 +28,7 @@ interface Notification {
 }
 
 export const NotificationBell = () => {
+  const { t } = useLanguage();
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [showSuperhostCelebration, setShowSuperhostCelebration] = useState(false);
@@ -257,17 +259,17 @@ export const NotificationBell = () => {
         </PopoverTrigger>
         <PopoverContent className="w-80" align="end">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="font-semibold">Notifications</h3>
+            <h3 className="font-semibold">{t('notifications')}</h3>
             {unreadCount > 0 && (
               <Button variant="ghost" size="sm" onClick={markAllAsRead}>
-                Mark all as read
+                {t('markAllAsRead')}
               </Button>
             )}
           </div>
           <ScrollArea className="h-[400px]">
             {notifications.length === 0 ? (
               <p className="text-center text-muted-foreground py-8">
-                No notifications
+                {t('noNotifications')}
               </p>
             ) : (
               <div className="space-y-2">

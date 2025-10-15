@@ -98,6 +98,16 @@ export const buyRentTranslations = {
     verifiedByTeam: "Vérifié par l'équipe immobilière Holibayt — photos et données vérifiées sur place.",
     neighborhoodInsights: "Aperçus du quartier",
     viewOnGoogleMaps: "Voir sur Google Maps",
+    
+    // Notification Translations
+    notifications: "Notifications",
+    markAllAsRead: "Tout marquer comme lu",
+    noNotifications: "Aucune notification",
+    bookingConfirmedYay: "Oui ! Réservation Confirmée !",
+    getReadyToWelcome: "Préparez-vous à accueillir votre invité !",
+    welcomeHome: "Bienvenue Chez Vous !",
+    yourBookingConfirmed: "Votre réservation est confirmée !",
+    close: "Fermer",
     verifiedLocation: "Emplacement vérifié",
     whyBuyWithHolibayt: "Pourquoi acheter avec Holibayt ?",
     verifiedOwnership: "Propriété vérifiée",
@@ -476,6 +486,16 @@ export const buyRentTranslations = {
     mountainView: "Mountain View",
     cityCenter: "City Center",
     
+    // Notification Translations
+    notifications: "Notifications",
+    markAllAsRead: "Mark all as read",
+    noNotifications: "No notifications",
+    bookingConfirmedYay: "Yay! Booking Confirmed!",
+    getReadyToWelcome: "Get ready to welcome your guest!",
+    welcomeHome: "Welcome Home!",
+    yourBookingConfirmed: "Your booking is confirmed!",
+    close: "Close",
+    
     admin: {
       registeredUsers: "Registered users",
       hosts: "Hosts",
@@ -684,6 +704,16 @@ export const buyRentTranslations = {
     fireplace: "مدفأة",
     mountainView: "إطلالة جبلية",
     cityCenter: "وسط المدينة",
+    
+    // Notification Translations
+    notifications: "الإشعارات",
+    markAllAsRead: "وضع علامة مقروء على الكل",
+    noNotifications: "لا توجد إشعارات",
+    bookingConfirmedYay: "نعم! تم تأكيد الحجز!",
+    getReadyToWelcome: "استعد لاستقبال ضيفك!",
+    welcomeHome: "مرحبا بك في البيت!",
+    yourBookingConfirmed: "تم تأكيد حجزك!",
+    close: "إغلاق",
     
     admin: {
       registeredUsers: "المستخدمون المسجلون",

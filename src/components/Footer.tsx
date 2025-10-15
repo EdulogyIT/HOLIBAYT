@@ -117,24 +117,28 @@ const Footer = () => {
               </li>
               <li className="group">
                 <a 
-                  href="tel:+213211234567" 
+                  href={`tel:${generalSettings?.support_phone || '+213211234567'}`}
                   className="flex items-center space-x-3 p-2 rounded-lg hover:bg-muted/50 transition-colors duration-300"
                 >
                   <div className="p-1 rounded bg-accent/10 text-accent group-hover:bg-accent group-hover:text-accent-foreground transition-colors duration-300">
                     <Phone className="h-4 w-4" />
                   </div>
-                  <span className="text-muted-foreground group-hover:text-foreground transition-colors duration-300">+213 21 123 456</span>
+                  <span className="text-muted-foreground group-hover:text-foreground transition-colors duration-300">
+                    {generalSettings?.support_phone || '+213 21 123 456'}
+                  </span>
                 </a>
               </li>
               <li className="group">
                 <a 
-                  href="mailto:contact@holibayt.com" 
+                  href={`mailto:${generalSettings?.support_email || 'contact@holibayt.com'}`}
                   className="flex items-center space-x-3 p-2 rounded-lg hover:bg-muted/50 transition-colors duration-300"
                 >
                   <div className="p-1 rounded bg-foreground/10 text-foreground group-hover:bg-foreground group-hover:text-background transition-colors duration-300">
                     <Mail className="h-4 w-4" />
                   </div>
-                  <span className="text-muted-foreground group-hover:text-foreground transition-colors duration-300">contact@holibayt.com</span>
+                  <span className="text-muted-foreground group-hover:text-foreground transition-colors duration-300">
+                    {generalSettings?.support_email || 'contact@holibayt.com'}
+                  </span>
                 </a>
               </li>
             </ul>
