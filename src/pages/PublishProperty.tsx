@@ -56,7 +56,7 @@ const PublishProperty = () => {
         }
       }
 
-      // Create property record
+      // Create property record with all new filter fields
       const propertyData: any = {
         user_id: user.id,
         category: formData.category,
@@ -66,16 +66,35 @@ const PublishProperty = () => {
         city: formData.city,
         district: formData.district || null,
         full_address: formData.fullAddress || null,
-        bedrooms: formData.bedrooms || null,
+        bedrooms: formData.bedrooms || formData.bhkType || null,
         bathrooms: formData.bathrooms || null,
         area: formData.area,
         floor_number: formData.floor || null,
         price: formData.price,
         price_type: formData.priceType,
         price_currency: formData.priceCurrency,
-        features: formData.features,
-        furnished: formData.features.furnishedStatus === 'furnished',
-        pets_allowed: formData.features.petsAllowed || false,
+        features: {
+          ...formData.features,
+          bhkType: formData.bhkType || null,
+          furnishing: formData.furnishing || null,
+          parking2Wheeler: formData.parking2Wheeler || false,
+          parking4Wheeler: formData.parking4Wheeler || false,
+          availability: formData.availability || null,
+          preferredTenants: formData.preferredTenants || [],
+          isLeaseProperty: formData.isLeaseProperty || false,
+          propertyStatus: formData.propertyStatus || null,
+          isNewBuilderProject: formData.isNewBuilderProject || false,
+          amenities: formData.amenities || [],
+          instantBookAvailable: formData.instantBookAvailable || false,
+          selfCheckInAvailable: formData.selfCheckInAvailable || false,
+          petsAllowedShortStay: formData.petsAllowedShortStay || false,
+          isGuestFavourite: formData.isGuestFavourite || false,
+          isLuxeProperty: formData.isLuxeProperty || false,
+          accessibilityFeatures: formData.accessibilityFeatures || { entrance: [], bedroom: [], bathroom: [] },
+          hostLanguages: formData.hostLanguages || [],
+        },
+        furnished: formData.furnishing === 'full' || formData.features.furnishedStatus === 'furnished',
+        pets_allowed: formData.petsAllowedShortStay || formData.features.petsAllowed || false,
         description: formData.description || null,
         contact_name: formData.fullName,
         contact_phone: formData.phoneNumber,

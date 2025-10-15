@@ -9,8 +9,9 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { Upload, X, Check, ChevronRight } from "lucide-react";
+import { Upload, X, Check, ChevronRight, Wifi, UtensilsCrossed, WashingMachine, Wind, AirVent, Flame, Tv, Car, Dumbbell, Users, ShieldCheck, Zap, Key, PawPrint, Award, Crown } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 
 interface FormData {
   // Property Type
@@ -19,6 +20,7 @@ interface FormData {
   // Basic Information
   title: string;
   propertyCategory: string;
+  bhkType: string;
   location: string;
   city: string;
   district: string;
@@ -34,6 +36,35 @@ interface FormData {
   priceCurrency: string;
   checkInTime: string;
   checkOutTime: string;
+  
+  // Common filters
+  furnishing: string;
+  parking2Wheeler: boolean;
+  parking4Wheeler: boolean;
+  
+  // Rent specific
+  availability: string;
+  preferredTenants: string[];
+  isLeaseProperty: boolean;
+  
+  // Buy specific
+  propertyStatus: string;
+  isNewBuilderProject: boolean;
+  
+  // Short stay specific
+  amenities: string[];
+  instantBookAvailable: boolean;
+  selfCheckInAvailable: boolean;
+  petsAllowedShortStay: boolean;
+  isGuestFavourite: boolean;
+  isLuxeProperty: boolean;
+  accessibilityFeatures: {
+    entrance: string[];
+    bedroom: string[];
+    bathroom: string[];
+  };
+  hostLanguages: string[];
+  
   features: {
     parking: boolean;
     swimmingPool: boolean;
@@ -99,6 +130,7 @@ const PublishPropertySteps = ({ onSubmit, isSubmitting = false }: PublishPropert
     category: "",
     title: "",
     propertyCategory: "",
+    bhkType: "",
     location: "",
     city: "",
     district: "",
@@ -112,6 +144,26 @@ const PublishPropertySteps = ({ onSubmit, isSubmitting = false }: PublishPropert
     priceCurrency: "EUR",
     checkInTime: "15:00",
     checkOutTime: "11:00",
+    furnishing: "",
+    parking2Wheeler: false,
+    parking4Wheeler: false,
+    availability: "",
+    preferredTenants: [],
+    isLeaseProperty: false,
+    propertyStatus: "",
+    isNewBuilderProject: false,
+    amenities: [],
+    instantBookAvailable: false,
+    selfCheckInAvailable: false,
+    petsAllowedShortStay: false,
+    isGuestFavourite: false,
+    isLuxeProperty: false,
+    accessibilityFeatures: {
+      entrance: [],
+      bedroom: [],
+      bathroom: [],
+    },
+    hostLanguages: [],
     features: {
       parking: false,
       swimmingPool: false,
@@ -401,6 +453,25 @@ const PublishPropertySteps = ({ onSubmit, isSubmitting = false }: PublishPropert
                 </Select>
               </div>
 
+              {/* BHK Type */}
+              {(formData.category !== '' && ['villa', 'appartement', 'duplex'].includes(formData.propertyCategory)) && (
+                <div className="space-y-2">
+                  <Label>BHK Type</Label>
+                  <RadioGroup 
+                    value={formData.bhkType}
+                    onValueChange={(value) => handleInputChange("bhkType", value)}
+                    className="grid grid-cols-3 md:grid-cols-6 gap-3"
+                  >
+                    {['1 RK', '1 BHK', '2 BHK', '3 BHK', '4 BHK', '4+ BHK'].map((bhk) => (
+                      <div key={bhk} className="flex items-center space-x-2 p-3 border rounded-lg hover:bg-muted/50">
+                        <RadioGroupItem value={bhk} id={bhk} />
+                        <Label htmlFor={bhk} className="cursor-pointer">{bhk}</Label>
+                      </div>
+                    ))}
+                  </RadioGroup>
+                </div>
+              )}
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
                   <Label htmlFor="location">{t('locationField')} *</Label>
@@ -562,6 +633,265 @@ const PublishPropertySteps = ({ onSubmit, isSubmitting = false }: PublishPropert
                     />
                   </div>
                 </div>
+              )}
+
+              {/* Furnishing (ALL categories) */}
+              <div className="space-y-2">
+                <Label>Furnishing</Label>
+                <RadioGroup 
+                  value={formData.furnishing}
+                  onValueChange={(value) => handleInputChange("furnishing", value)}
+                  className="grid grid-cols-3 gap-3"
+                >
+                  <div className="flex items-center space-x-2 p-3 border rounded-lg hover:bg-muted/50">
+                    <RadioGroupItem value="full" id="full-furnished" />
+                    <Label htmlFor="full-furnished" className="cursor-pointer">Fully Furnished</Label>
+                  </div>
+                  <div className="flex items-center space-x-2 p-3 border rounded-lg hover:bg-muted/50">
+                    <RadioGroupItem value="semi" id="semi-furnished" />
+                    <Label htmlFor="semi-furnished" className="cursor-pointer">Semi Furnished</Label>
+                  </div>
+                  <div className="flex items-center space-x-2 p-3 border rounded-lg hover:bg-muted/50">
+                    <RadioGroupItem value="none" id="unfurnished" />
+                    <Label htmlFor="unfurnished" className="cursor-pointer">Unfurnished</Label>
+                  </div>
+                </RadioGroup>
+              </div>
+
+              {/* Parking (ALL categories) */}
+              <div className="space-y-2">
+                <Label>Parking</Label>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="flex items-center space-x-2">
+                    <Checkbox 
+                      id="parking2Wheeler"
+                      checked={formData.parking2Wheeler}
+                      onCheckedChange={(checked) => handleInputChange("parking2Wheeler", checked)}
+                    />
+                    <Label htmlFor="parking2Wheeler" className="cursor-pointer">2 Wheeler Parking</Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Checkbox 
+                      id="parking4Wheeler"
+                      checked={formData.parking4Wheeler}
+                      onCheckedChange={(checked) => handleInputChange("parking4Wheeler", checked)}
+                    />
+                    <Label htmlFor="parking4Wheeler" className="cursor-pointer">4 Wheeler Parking</Label>
+                  </div>
+                </div>
+              </div>
+
+              {/* RENT-specific fields */}
+              {formData.category === 'rent' && (
+                <>
+                  <div className="space-y-2">
+                    <Label>Availability</Label>
+                    <RadioGroup 
+                      value={formData.availability}
+                      onValueChange={(value) => handleInputChange("availability", value)}
+                      className="grid grid-cols-2 gap-3"
+                    >
+                      {['immediate', 'within15', 'within30', 'after30'].map((val, idx) => {
+                        const labels = ['Immediate', 'Within 15 Days', 'Within 30 Days', 'After 30 Days'];
+                        return (
+                          <div key={val} className="flex items-center space-x-2 p-3 border rounded-lg hover:bg-muted/50">
+                            <RadioGroupItem value={val} id={val} />
+                            <Label htmlFor={val} className="cursor-pointer">{labels[idx]}</Label>
+                          </div>
+                        );
+                      })}
+                    </RadioGroup>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label>Preferred Tenants</Label>
+                    <div className="grid grid-cols-2 gap-4">
+                      {[
+                        { value: 'family', label: 'Family' },
+                        { value: 'company', label: 'Company' },
+                        { value: 'bachelorMale', label: 'Bachelor Male' },
+                        { value: 'bachelorFemale', label: 'Bachelor Female' }
+                      ].map(({ value, label }) => (
+                        <div key={value} className="flex items-center space-x-2">
+                          <Checkbox 
+                            id={value}
+                            checked={formData.preferredTenants.includes(value)}
+                            onCheckedChange={(checked) => {
+                              const updated = checked 
+                                ? [...formData.preferredTenants, value]
+                                : formData.preferredTenants.filter(t => t !== value);
+                              setFormData(prev => ({ ...prev, preferredTenants: updated }));
+                            }}
+                          />
+                          <Label htmlFor={value} className="cursor-pointer">{label}</Label>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="flex items-center space-x-2">
+                    <Checkbox 
+                      id="isLeaseProperty"
+                      checked={formData.isLeaseProperty}
+                      onCheckedChange={(checked) => handleInputChange("isLeaseProperty", checked)}
+                    />
+                    <Label htmlFor="isLeaseProperty" className="cursor-pointer">This is a lease property</Label>
+                  </div>
+                </>
+              )}
+
+              {/* BUY-specific fields */}
+              {formData.category === 'sale' && (
+                <>
+                  <div className="space-y-2">
+                    <Label>Property Status</Label>
+                    <RadioGroup 
+                      value={formData.propertyStatus}
+                      onValueChange={(value) => handleInputChange("propertyStatus", value)}
+                      className="grid grid-cols-2 gap-3"
+                    >
+                      <div className="flex items-center space-x-2 p-3 border rounded-lg hover:bg-muted/50">
+                        <RadioGroupItem value="underConstruction" id="underConstruction" />
+                        <Label htmlFor="underConstruction" className="cursor-pointer">Under Construction</Label>
+                      </div>
+                      <div className="flex items-center space-x-2 p-3 border rounded-lg hover:bg-muted/50">
+                        <RadioGroupItem value="ready" id="ready" />
+                        <Label htmlFor="ready" className="cursor-pointer">Ready to Move</Label>
+                      </div>
+                    </RadioGroup>
+                  </div>
+
+                  <div className="flex items-center space-x-2">
+                    <Checkbox 
+                      id="isNewBuilderProject"
+                      checked={formData.isNewBuilderProject}
+                      onCheckedChange={(checked) => handleInputChange("isNewBuilderProject", checked)}
+                    />
+                    <Label htmlFor="isNewBuilderProject" className="cursor-pointer flex items-center gap-2">
+                      Part of a new builder project
+                      <Badge variant="secondary">Offer</Badge>
+                    </Label>
+                  </div>
+                </>
+              )}
+
+              {/* SHORT STAY-specific fields */}
+              {formData.category === 'short-stay' && (
+                <>
+                  <div className="space-y-2">
+                    <Label>Amenities</Label>
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                      {[
+                        { value: 'wifi', label: 'WiFi', icon: Wifi },
+                        { value: 'kitchen', label: 'Kitchen', icon: UtensilsCrossed },
+                        { value: 'washingMachine', label: 'Washing Machine', icon: WashingMachine },
+                        { value: 'dryer', label: 'Dryer', icon: Wind },
+                        { value: 'ac', label: 'AC', icon: AirVent },
+                        { value: 'heating', label: 'Heating', icon: Flame },
+                        { value: 'tv', label: 'TV', icon: Tv },
+                        { value: 'parking', label: 'Parking', icon: Car },
+                      ].map(({ value, label, icon: Icon }) => (
+                        <div key={value} className="flex items-center space-x-2 p-2 border rounded-lg hover:bg-muted/50">
+                          <Checkbox 
+                            id={`amenity-${value}`}
+                            checked={formData.amenities.includes(value)}
+                            onCheckedChange={(checked) => {
+                              const updated = checked 
+                                ? [...formData.amenities, value]
+                                : formData.amenities.filter(a => a !== value);
+                              setFormData(prev => ({ ...prev, amenities: updated }));
+                            }}
+                          />
+                          <Icon className="w-4 h-4" />
+                          <Label htmlFor={`amenity-${value}`} className="cursor-pointer text-sm">{label}</Label>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label>Booking Options</Label>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      <div className="flex items-center space-x-2">
+                        <Checkbox 
+                          id="instantBookAvailable"
+                          checked={formData.instantBookAvailable}
+                          onCheckedChange={(checked) => handleInputChange("instantBookAvailable", checked)}
+                        />
+                        <Zap className="w-4 h-4" />
+                        <Label htmlFor="instantBookAvailable" className="cursor-pointer">Instant Book</Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <Checkbox 
+                          id="selfCheckInAvailable"
+                          checked={formData.selfCheckInAvailable}
+                          onCheckedChange={(checked) => handleInputChange("selfCheckInAvailable", checked)}
+                        />
+                        <Key className="w-4 h-4" />
+                        <Label htmlFor="selfCheckInAvailable" className="cursor-pointer">Self Check-in</Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <Checkbox 
+                          id="petsAllowedShortStay"
+                          checked={formData.petsAllowedShortStay}
+                          onCheckedChange={(checked) => handleInputChange("petsAllowedShortStay", checked)}
+                        />
+                        <PawPrint className="w-4 h-4" />
+                        <Label htmlFor="petsAllowedShortStay" className="cursor-pointer">Pets Allowed</Label>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label>Property Highlights</Label>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="flex items-center space-x-2">
+                        <Checkbox 
+                          id="isGuestFavourite"
+                          checked={formData.isGuestFavourite}
+                          onCheckedChange={(checked) => handleInputChange("isGuestFavourite", checked)}
+                        />
+                        <Award className="w-4 h-4" />
+                        <Label htmlFor="isGuestFavourite" className="cursor-pointer">Guest Favourite</Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <Checkbox 
+                          id="isLuxeProperty"
+                          checked={formData.isLuxeProperty}
+                          onCheckedChange={(checked) => handleInputChange("isLuxeProperty", checked)}
+                        />
+                        <Crown className="w-4 h-4" />
+                        <Label htmlFor="isLuxeProperty" className="cursor-pointer">Luxe Property</Label>
+                      </div>
+                    </div>
+                  </div>
+
+                  <Collapsible>
+                    <CollapsibleTrigger className="flex items-center justify-between w-full p-3 border rounded-lg hover:bg-muted/50">
+                      <span className="font-medium">Host Languages</span>
+                      <ChevronRight className="w-4 h-4" />
+                    </CollapsibleTrigger>
+                    <CollapsibleContent className="mt-2">
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 p-3 border rounded-lg">
+                        {['English', 'French', 'Arabic', 'Spanish', 'German', 'Italian', 'Portuguese', 'Chinese'].map(lang => (
+                          <div key={lang} className="flex items-center space-x-2">
+                            <Checkbox 
+                              id={`lang-${lang}`}
+                              checked={formData.hostLanguages.includes(lang)}
+                              onCheckedChange={(checked) => {
+                                const updated = checked 
+                                  ? [...formData.hostLanguages, lang]
+                                  : formData.hostLanguages.filter(l => l !== lang);
+                                setFormData(prev => ({ ...prev, hostLanguages: updated }));
+                              }}
+                            />
+                            <Label htmlFor={`lang-${lang}`} className="cursor-pointer text-sm">{lang}</Label>
+                          </div>
+                        ))}
+                      </div>
+                    </CollapsibleContent>
+                  </Collapsible>
+                </>
               )}
 
               {/* Features & Amenities */}
