@@ -19,6 +19,11 @@ export default function AdminSettings() {
   // General settings
   const [platformName, setPlatformName] = useState('Holibayt');
   const [supportEmail, setSupportEmail] = useState('contact@holibayt.com');
+  const [supportPhone, setSupportPhone] = useState('+213 21 123 456');
+  const [emergencyHotline, setEmergencyHotline] = useState('+213 21 999 999');
+  const [officeStreet, setOfficeStreet] = useState('123 Boulevard des Martyrs');
+  const [officeCity, setOfficeCity] = useState('Alger Centre, 16000');
+  const [officeCountry, setOfficeCountry] = useState('Algiers, Algeria');
   const [maintenanceMode, setMaintenanceMode] = useState(false);
   
   // Commission settings
@@ -69,6 +74,11 @@ export default function AdminSettings() {
           case 'general_settings':
             setPlatformName(value?.platform_name || 'Holibayt');
             setSupportEmail(value?.support_email || 'contact@holibayt.com');
+            setSupportPhone(value?.support_phone || '+213 21 123 456');
+            setEmergencyHotline(value?.emergency_hotline || '+213 21 999 999');
+            setOfficeStreet(value?.office_address?.street || '123 Boulevard des Martyrs');
+            setOfficeCity(value?.office_address?.city || 'Alger Centre, 16000');
+            setOfficeCountry(value?.office_address?.country || 'Algiers, Algeria');
             setMaintenanceMode(typeof value?.maintenance_mode === 'boolean' ? value.maintenance_mode : false);
             break;
           case 'commission_rates':
@@ -138,6 +148,13 @@ export default function AdminSettings() {
     const success = await upsertSetting('general_settings', {
       platform_name: platformName,
       support_email: supportEmail,
+      support_phone: supportPhone,
+      emergency_hotline: emergencyHotline,
+      office_address: {
+        street: officeStreet,
+        city: officeCity,
+        country: officeCountry
+      },
       maintenance_mode: maintenanceMode
     });
     if (success) {
@@ -303,6 +320,61 @@ export default function AdminSettings() {
                   value={supportEmail}
                   onChange={(e) => setSupportEmail(e.target.value)}
                 />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="supportPhone">Support Phone</Label>
+                <Input 
+                  id="supportPhone" 
+                  type="tel"
+                  value={supportPhone}
+                  onChange={(e) => setSupportPhone(e.target.value)}
+                  placeholder="+213 21 123 456"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="emergencyHotline">Emergency Hotline</Label>
+                <Input 
+                  id="emergencyHotline" 
+                  type="tel"
+                  value={emergencyHotline}
+                  onChange={(e) => setEmergencyHotline(e.target.value)}
+                  placeholder="+213 21 999 999"
+                />
+              </div>
+
+              <Separator />
+
+              <div className="space-y-4">
+                <h4 className="font-medium">Office Address</h4>
+                <div className="space-y-2">
+                  <Label htmlFor="officeStreet">Street Address</Label>
+                  <Input 
+                    id="officeStreet" 
+                    value={officeStreet}
+                    onChange={(e) => setOfficeStreet(e.target.value)}
+                    placeholder="123 Boulevard des Martyrs"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="officeCity">City</Label>
+                  <Input 
+                    id="officeCity" 
+                    value={officeCity}
+                    onChange={(e) => setOfficeCity(e.target.value)}
+                    placeholder="Alger Centre, 16000"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="officeCountry">Country</Label>
+                  <Input 
+                    id="officeCountry" 
+                    value={officeCountry}
+                    onChange={(e) => setOfficeCountry(e.target.value)}
+                    placeholder="Algiers, Algeria"
+                  />
+                </div>
               </div>
 
               <Separator />

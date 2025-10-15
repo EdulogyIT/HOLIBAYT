@@ -18,6 +18,7 @@ import {
   Shield,
   Award
 } from "lucide-react";
+import { usePlatformSettings } from "@/contexts/PlatformSettingsContext";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -102,14 +103,14 @@ const ContactAdvisor = () => {
       icon: Phone,
       title: t('phoneSupport'),
       description: t('speakDirectly'),
-      details: "+213 (0) 21 123 456",
+      details: generalSettings.support_phone,
       available: t('available247')
     },
     {
       icon: Mail,
       title: t('emailSupport'),
       description: t('getDetailedAssistance'),
-      details: "contact@holibayt.com",
+      details: generalSettings.support_email,
       available: t('responseWithin2h')
     },
     {
@@ -161,7 +162,7 @@ const ContactAdvisor = () => {
                 className="font-inter font-semibold text-lg px-8 py-4"
                 asChild
               >
-                <a href="mailto:contact@holibayt.com">
+                <a href={`mailto:${generalSettings.support_email}`}>
                   <Mail className="h-5 w-5 mr-2" />
                   Email Us
                 </a>
@@ -395,9 +396,9 @@ const ContactAdvisor = () => {
                     <div>
                       <h3 className="font-playfair font-semibold text-foreground mb-2">{t('ourOffice')}</h3>
                       <p className="text-muted-foreground font-inter">
-                        123 Boulevard des Martyrs<br />
-                        Alger Centre, 16000<br />
-                        Algiers, Algeria
+                        {generalSettings.office_address.street}<br />
+                        {generalSettings.office_address.city}<br />
+                        {generalSettings.office_address.country}
                       </p>
                     </div>
                   </div>
@@ -426,7 +427,7 @@ const ContactAdvisor = () => {
                   <p className="mb-4 opacity-90">{t('call247Hotline')}</p>
                   <Button variant="secondary" size="lg" className="font-inter font-semibold">
                     <Phone className="h-4 w-4 mr-2" />
-                    +213 (0) 21 999 999
+                    {generalSettings.emergency_hotline}
                   </Button>
                 </CardContent>
               </Card>

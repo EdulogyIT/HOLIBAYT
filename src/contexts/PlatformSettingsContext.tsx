@@ -12,6 +12,13 @@ interface CommissionRates {
 interface GeneralSettings {
   platform_name: string;
   support_email: string;
+  support_phone: string;
+  emergency_hotline: string;
+  office_address: {
+    street: string;
+    city: string;
+    country: string;
+  };
   maintenance_mode: boolean;
 }
 
@@ -62,6 +69,13 @@ export const PlatformSettingsProvider = ({ children }: PlatformSettingsProviderP
   const [generalSettings, setGeneralSettings] = useState<GeneralSettings>({
     platform_name: 'Holibayt',
     support_email: 'contact@holibayt.com',
+    support_phone: '+213 21 123 456',
+    emergency_hotline: '+213 21 999 999',
+    office_address: {
+      street: '123 Boulevard des Martyrs',
+      city: 'Alger Centre, 16000',
+      country: 'Algiers, Algeria'
+    },
     maintenance_mode: false
   });
 
@@ -91,10 +105,16 @@ export const PlatformSettingsProvider = ({ children }: PlatformSettingsProviderP
         const value = setting.setting_value as any;
         switch (setting.setting_key) {
           case 'general_settings':
-            console.log('[PlatformSettings] Raw maintenance_mode:', value?.maintenance_mode, typeof value?.maintenance_mode);
             setGeneralSettings({
               platform_name: value?.platform_name || 'Holibayt',
               support_email: value?.support_email || 'contact@holibayt.com',
+              support_phone: value?.support_phone || '+213 21 123 456',
+              emergency_hotline: value?.emergency_hotline || '+213 21 999 999',
+              office_address: value?.office_address || {
+                street: '123 Boulevard des Martyrs',
+                city: 'Alger Centre, 16000',
+                country: 'Algiers, Algeria'
+              },
               maintenance_mode: typeof value?.maintenance_mode === 'boolean' ? value.maintenance_mode : false
             });
             break;

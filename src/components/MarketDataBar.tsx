@@ -23,8 +23,8 @@ export const MarketDataBar = ({
 
   return (
     <div className="bg-gradient-to-r from-primary/10 via-primary/5 to-background border-b border-primary/20">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-        <div className="flex flex-wrap items-center justify-center gap-4 md:gap-8 text-sm">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <div className="flex flex-wrap items-center justify-center gap-6 md:gap-10 text-sm">
           <div className="flex items-center gap-2">
             <TrendingUp className="h-4 w-4 text-primary" />
             <span className="text-muted-foreground">{t('medianPrice')} {city}:</span>

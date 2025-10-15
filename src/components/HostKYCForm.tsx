@@ -32,6 +32,7 @@ interface KYCFormData {
   swift_code: string;
   bio: string;
   hosting_experience: string;
+  languages_spoken: string[];
 }
 
 export const HostKYCForm = ({ onSubmitSuccess }: { onSubmitSuccess?: () => void }) => {
@@ -60,6 +61,7 @@ export const HostKYCForm = ({ onSubmitSuccess }: { onSubmitSuccess?: () => void 
     swift_code: '',
     bio: '',
     hosting_experience: 'beginner',
+    languages_spoken: [],
   });
 
   const totalSteps = 5;

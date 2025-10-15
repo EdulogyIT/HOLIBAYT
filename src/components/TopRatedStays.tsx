@@ -7,6 +7,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import { Star, MapPin, Loader2 } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
+import { formatTranslationKey } from "@/lib/utils";
 
 interface TopRatedProperty {
   id: string;
@@ -63,10 +64,10 @@ export const TopRatedStays = () => {
 
   if (isLoading) {
     return (
-      <div className="w-full py-12 bg-background">
+      <div className="w-full py-16 bg-background">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl font-bold text-foreground mb-8 font-playfair">
-            {t('top_rated_holiday_stays')}
+            {t('top_rated_holiday_stays') || formatTranslationKey('top_rated_holiday_stays')}
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {[...Array(4)].map((_, i) => (
@@ -90,10 +91,10 @@ export const TopRatedStays = () => {
   }
 
   return (
-    <div className="w-full py-12 bg-background">
+    <div className="w-full py-16 bg-background">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <h2 className="text-3xl font-bold text-foreground mb-8 font-playfair">
-          {t('top_rated_holiday_stays')}
+          {t('top_rated_holiday_stays') || formatTranslationKey('top_rated_holiday_stays')}
         </h2>
 
         <Carousel

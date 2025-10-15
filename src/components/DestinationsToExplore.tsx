@@ -2,21 +2,22 @@ import { useState } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Button } from "@/components/ui/button";
 import { ChevronDown, ChevronUp } from "lucide-react";
+import { formatTranslationKey } from "@/lib/utils";
 
 interface DestinationsToExploreProps {
   onDestinationClick: (destination: { type: string; value: string | boolean }) => void;
 }
 
-const destinations = [
-  { labelKey: "rentals_with_hot_tub", type: "feature", value: "hotTub" },
-  { labelKey: "beachfront_rentals", type: "keyword", value: "beach" },
-  { labelKey: "rentals_with_pools", type: "feature", value: "swimmingPool" },
-  { labelKey: "rentals_with_fireplace", type: "feature", value: "fireplace" },
-  { labelKey: "mountain_view_rentals", type: "keyword", value: "mountain" },
-  { labelKey: "city_center_rentals", type: "keyword", value: "city center" },
-  { labelKey: "pet_friendly_rentals", type: "pets", value: true },
-  { labelKey: "luxury_rentals", type: "price", value: "luxury" },
-];
+  const destinations = [
+    { labelKey: "stays_with_hot_tub", type: "feature", value: "hotTub" },
+    { labelKey: "beachfront_stays", type: "keyword", value: "beach" },
+    { labelKey: "stays_with_pools", type: "feature", value: "swimmingPool" },
+    { labelKey: "stays_with_fireplace", type: "feature", value: "fireplace" },
+    { labelKey: "mountain_view_stays", type: "keyword", value: "mountain" },
+    { labelKey: "city_center_stays", type: "keyword", value: "city center" },
+    { labelKey: "pet_friendly_stays", type: "pets", value: true },
+    { labelKey: "luxury_stays", type: "price", value: "luxury" },
+  ];
 
 export const DestinationsToExplore = ({ onDestinationClick }: DestinationsToExploreProps) => {
   const { t } = useLanguage();
@@ -25,13 +26,13 @@ export const DestinationsToExplore = ({ onDestinationClick }: DestinationsToExpl
   const visibleDestinations = showAll ? destinations : destinations.slice(0, 8);
 
   return (
-    <div className="w-full py-12 bg-gradient-to-b from-secondary/5 to-background">
+    <div className="w-full py-16 bg-gradient-to-b from-secondary/5 to-background">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <h2 className="text-3xl font-bold text-foreground mb-8 font-playfair">
-          {t('destinations_to_explore')}
+          {t('destinations_to_explore') || formatTranslationKey('destinations_to_explore')}
         </h2>
         
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {visibleDestinations.map((dest) => (
             <button
               key={dest.labelKey}
@@ -47,7 +48,7 @@ export const DestinationsToExplore = ({ onDestinationClick }: DestinationsToExpl
             >
               <div className="relative z-10">
                 <h3 className="text-lg font-semibold text-foreground group-hover:text-primary transition-colors">
-                  {t(dest.labelKey)}
+                  {t(dest.labelKey) || formatTranslationKey(dest.labelKey)}
                 </h3>
               </div>
               <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-accent/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />

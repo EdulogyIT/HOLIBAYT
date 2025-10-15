@@ -45,6 +45,14 @@ interface FormData {
     airConditioning: boolean;
     gym: boolean;
     petsAllowed: boolean;
+    kitchen: boolean;
+    wifi: boolean;
+    coffeeMaker: boolean;
+    hotTub: boolean;
+    beachAccess: boolean;
+    fireplace: boolean;
+    mountainView: boolean;
+    cityCenter: boolean;
   };
   description: string;
   
@@ -115,6 +123,14 @@ const PublishPropertySteps = ({ onSubmit, isSubmitting = false }: PublishPropert
       airConditioning: false,
       gym: false,
       petsAllowed: false,
+      kitchen: false,
+      wifi: false,
+      coffeeMaker: false,
+      hotTub: false,
+      beachAccess: false,
+      fireplace: false,
+      mountainView: false,
+      cityCenter: false,
     },
     description: "",
     fees: {

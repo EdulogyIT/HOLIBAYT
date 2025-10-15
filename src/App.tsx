@@ -8,7 +8,8 @@ import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { AdminLayout } from "@/components/layouts/AdminLayout";
 import { HostLayout } from "@/components/layouts/HostLayout";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
-import { MaintenanceMode } from "@/components/MaintenanceMode"; // ✅ imported
+import { MaintenanceMode } from "@/components/MaintenanceMode";
+import { PlatformSettingsProvider } from "@/contexts/PlatformSettingsContext";
 
 // Pages
 import Index from "./pages/Index";
@@ -69,10 +70,11 @@ const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <ErrorBoundary>
-        <Toaster />
-        <Sonner />
+    <PlatformSettingsProvider>
+      <TooltipProvider>
+        <ErrorBoundary>
+          <Toaster />
+          <Sonner />
 
         <Routes>
           {/* ✅ All public routes wrapped in MaintenanceMode */}
@@ -220,8 +222,9 @@ const App = () => (
           {/* Catch-all */}
           <Route path="*" element={<MaintenanceMode><NotFound /></MaintenanceMode>} />
         </Routes>
-      </ErrorBoundary>
-    </TooltipProvider>
+        </ErrorBoundary>
+      </TooltipProvider>
+    </PlatformSettingsProvider>
   </QueryClientProvider>
 );
 

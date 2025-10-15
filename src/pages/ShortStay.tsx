@@ -157,26 +157,11 @@ const ShortStay = () => {
   };
 
   const handleDestinationClick = (destination: { type: string; value: string | boolean }) => {
-    let filtered = [...properties];
-
-    if (destination.type === "feature") {
-      filtered = filtered.filter(p => p.features?.[destination.value as string]);
-    } else if (destination.type === "keyword") {
-      const keyword = String(destination.value).toLowerCase();
-      filtered = filtered.filter(
-        p =>
-          (p.title || "").toLowerCase().includes(keyword) ||
-          (p.description || "").toLowerCase().includes(keyword) ||
-          (p.location || "").toLowerCase().includes(keyword)
-      );
-    } else if (destination.type === "pets") {
-      filtered = filtered.filter(p => p.features?.pets_allowed);
-    } else if (destination.type === "price" && destination.value === "luxury") {
-      filtered = filtered.filter(p => num(p.price) > 20000);
-    }
-
-    setFilteredProperties(filtered);
-    setSelectedAmenity("");
+    // Navigate to filtered page with search params
+    const params = new URLSearchParams();
+    params.set('filterType', destination.type);
+    params.set('filterValue', String(destination.value));
+    navigate(`/short-stay?${params.toString()}`);
   };
 
   const getFeatureIcon = (feature: string) => {
@@ -321,14 +306,14 @@ const ShortStay = () => {
           <ShortStayHeroSearch onSearch={handleSearch} />
         </div>
 
-        {/* Top Rated Stays Section */}
-        <TopRatedStays />
-
         {/* Popular Amenities Section */}
         <PopularAmenities 
           onAmenityClick={handleAmenityClick}
           selectedAmenity={selectedAmenity}
         />
+        
+        {/* Top Rated Stays Section */}
+        <TopRatedStays />
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="flex flex-col lg:flex-row gap-8">
