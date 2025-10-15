@@ -35,6 +35,40 @@ export default function CreateBlog() {
     }
   }, [editId]);
 
+  // Auto-save draft to localStorage every 30 seconds
+  useEffect(() => {
+    if (!editId && user) {
+      const draftKey = `holibayt_blog_draft_${user.id}`;
+      
+      // Restore draft on mount
+      const savedDraft = localStorage.getItem(draftKey);
+      if (savedDraft) {
+        try {
+          const draft = JSON.parse(savedDraft);
+          setTitle(draft.title || '');
+          setContent(draft.content || '');
+          setAuthorName(draft.authorName || '');
+          setCategory(draft.category || 'general');
+          setImageUrl(draft.imageUrl || '');
+          toast.info('Draft restored from auto-save');
+        } catch (error) {
+          console.error('Error restoring draft:', error);
+        }
+      }
+
+      // Auto-save every 30 seconds
+      const autoSaveInterval = setInterval(() => {
+        if (title || content || authorName) {
+          const draft = { title, content, authorName, category, imageUrl };
+          localStorage.setItem(draftKey, JSON.stringify(draft));
+          console.log('Blog auto-saved to draft');
+        }
+      }, 30000);
+
+      return () => clearInterval(autoSaveInterval);
+    }
+  }, [title, content, authorName, category, imageUrl, user, editId]);
+
   const loadBlogData = async () => {
     setIsLoading(true);
     try {
@@ -116,6 +150,12 @@ export default function CreateBlog() {
           });
 
         if (error) throw error;
+        
+        // Clear draft from localStorage after successful submission
+        if (user) {
+          localStorage.removeItem(`holibayt_blog_draft_${user.id}`);
+        }
+        
         toast.success(`Blog post ${status === 'published' ? 'published' : 'saved as draft'} successfully`);
       }
 

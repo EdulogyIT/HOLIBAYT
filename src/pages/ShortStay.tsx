@@ -269,19 +269,19 @@ const ShortStay = () => {
     <div className="min-h-screen bg-background">
       <Navigation />
       
-      {/* Market Data Bar */}
-      <div className="pt-20">
-        <MarketDataBar 
-          city={currentCity}
-          medianPrice={45000}
-          yearOverYearChange={5}
-          currency="DZD"
-        />
-      </div>
-      
-      <main>
-        {/* Wire up search just like Rent/Buy pages */}
-        <ShortStayHeroSearch onSearch={handleSearch} />
+      <main className="pt-20">
+        <div className="space-y-0">
+          {/* Market Data Bar */}
+          <MarketDataBar 
+            city={currentCity}
+            medianPrice={45000}
+            yearOverYearChange={5}
+            currency="DZD"
+          />
+          
+          {/* Wire up search just like Rent/Buy pages */}
+          <ShortStayHeroSearch onSearch={handleSearch} />
+        </div>
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="flex flex-col lg:flex-row gap-8">

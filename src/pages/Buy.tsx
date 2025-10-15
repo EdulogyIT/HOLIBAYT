@@ -245,16 +245,18 @@ const Buy = () => {
     <div className="min-h-screen bg-background">
       <Navigation />
       <main className="pt-20">
-        {/* Market Data Bar */}
-        <MarketDataBar 
-          city="Alger"
-          medianPrice={25000000}
-          yearOverYearChange={8}
-          currency="DZD"
-        />
-        
-        {/* Hero Search */}
-        <BuyHeroSearch onSearch={handleSearch} />
+        <div className="space-y-0">
+          {/* Market Data Bar */}
+          <MarketDataBar 
+            city="Alger"
+            medianPrice={25000000}
+            yearOverYearChange={8}
+            currency="DZD"
+          />
+          
+          {/* Hero Search */}
+          <BuyHeroSearch onSearch={handleSearch} />
+        </div>
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="flex flex-col lg:flex-row gap-8">

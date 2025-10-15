@@ -988,6 +988,7 @@ export type Database = {
           availability_status: string | null
           bathrooms: string | null
           bedrooms: string | null
+          cancellation_policy: string | null
           category: string
           check_in_time: string | null
           check_out_time: string | null
@@ -1008,6 +1009,7 @@ export type Database = {
           full_address: string | null
           furnished: boolean | null
           holibayt_pay_eligible: boolean | null
+          house_rules: Json | null
           id: string
           images: string[] | null
           is_featured: boolean | null
@@ -1025,6 +1027,7 @@ export type Database = {
           price_currency: string | null
           price_type: string
           property_type: string
+          safety_features: Json | null
           status: string | null
           title: string
           updated_at: string
@@ -1038,6 +1041,7 @@ export type Database = {
           availability_status?: string | null
           bathrooms?: string | null
           bedrooms?: string | null
+          cancellation_policy?: string | null
           category: string
           check_in_time?: string | null
           check_out_time?: string | null
@@ -1058,6 +1062,7 @@ export type Database = {
           full_address?: string | null
           furnished?: boolean | null
           holibayt_pay_eligible?: boolean | null
+          house_rules?: Json | null
           id?: string
           images?: string[] | null
           is_featured?: boolean | null
@@ -1075,6 +1080,7 @@ export type Database = {
           price_currency?: string | null
           price_type: string
           property_type: string
+          safety_features?: Json | null
           status?: string | null
           title: string
           updated_at?: string
@@ -1088,6 +1094,7 @@ export type Database = {
           availability_status?: string | null
           bathrooms?: string | null
           bedrooms?: string | null
+          cancellation_policy?: string | null
           category?: string
           check_in_time?: string | null
           check_out_time?: string | null
@@ -1108,6 +1115,7 @@ export type Database = {
           full_address?: string | null
           furnished?: boolean | null
           holibayt_pay_eligible?: boolean | null
+          house_rules?: Json | null
           id?: string
           images?: string[] | null
           is_featured?: boolean | null
@@ -1125,6 +1133,7 @@ export type Database = {
           price_currency?: string | null
           price_type?: string
           property_type?: string
+          safety_features?: Json | null
           status?: string | null
           title?: string
           updated_at?: string

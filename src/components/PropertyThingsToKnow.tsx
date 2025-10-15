@@ -9,13 +9,28 @@ interface PropertyThingsToKnowProps {
   checkInTime?: string;
   checkOutTime?: string;
   cancellationPolicy?: string;
+  houseRules?: {
+    smoking?: boolean;
+    pets?: boolean;
+    events?: boolean;
+    quietHours?: string;
+  };
+  safetyFeatures?: {
+    smokeAlarm?: boolean;
+    coAlarm?: boolean;
+    firstAidKit?: boolean;
+    fireExtinguisher?: boolean;
+    securityCameras?: boolean;
+  };
 }
 
 export const PropertyThingsToKnow = ({ 
   category, 
   checkInTime = "3:00 PM",
   checkOutTime = "11:00 AM",
-  cancellationPolicy = "flexible"
+  cancellationPolicy = "flexible",
+  houseRules,
+  safetyFeatures
 }: PropertyThingsToKnowProps) => {
   const { t } = useLanguage();
   const [expandedSection, setExpandedSection] = useState<string | null>(null);
@@ -24,14 +39,16 @@ export const PropertyThingsToKnow = ({
     setExpandedSection(expandedSection === section ? null : section);
   };
 
-  const houseRules = category === "short-stay" 
+  // Build house rules from database or use defaults
+  const houseRulesList = category === "short-stay" 
     ? [
         { icon: CheckCircle2, text: "Check-in: After " + checkInTime, allowed: true },
         { icon: CheckCircle2, text: "Check-out: Before " + checkOutTime, allowed: true },
         { icon: CheckCircle2, text: "Self check-in with keypad", allowed: true },
-        { icon: XCircle, text: "No smoking", allowed: false },
-        { icon: XCircle, text: "No pets", allowed: false },
-        { icon: XCircle, text: "No parties or events", allowed: false },
+        { icon: houseRules?.smoking ? CheckCircle2 : XCircle, text: houseRules?.smoking ? "Smoking allowed" : "No smoking", allowed: houseRules?.smoking || false },
+        { icon: houseRules?.pets ? CheckCircle2 : XCircle, text: houseRules?.pets ? "Pets allowed" : "No pets", allowed: houseRules?.pets || false },
+        { icon: houseRules?.events ? CheckCircle2 : XCircle, text: houseRules?.events ? "Events allowed" : "No parties or events", allowed: houseRules?.events || false },
+        ...(houseRules?.quietHours ? [{ icon: Info, text: "Quiet hours: " + houseRules.quietHours, allowed: null }] : []),
       ]
     : category === "rent"
     ? [
@@ -39,7 +56,8 @@ export const PropertyThingsToKnow = ({
         { icon: CheckCircle2, text: "Proof of income required", allowed: true },
         { icon: CheckCircle2, text: "Security deposit required", allowed: true },
         { icon: XCircle, text: "No subletting", allowed: false },
-        { icon: Info, text: "Pets negotiable with owner", allowed: null },
+        { icon: houseRules?.pets ? CheckCircle2 : Info, text: houseRules?.pets ? "Pets allowed" : "Pets negotiable with owner", allowed: houseRules?.pets || null },
+        { icon: houseRules?.smoking ? CheckCircle2 : XCircle, text: houseRules?.smoking ? "Smoking allowed" : "No smoking", allowed: houseRules?.smoking || false },
       ]
     : [
         { icon: CheckCircle2, text: "Ownership documents verified", allowed: true },
@@ -48,13 +66,14 @@ export const PropertyThingsToKnow = ({
         { icon: Info, text: "Legal assistance recommended", allowed: null },
       ];
 
-  const safetyProperty = category === "short-stay"
+  // Build safety features from database or use defaults
+  const safetyPropertyList = category === "short-stay"
     ? [
-        "Security cameras on property exterior",
-        "Smoke alarm installed",
-        "Carbon monoxide alarm",
-        "First aid kit available",
-        "Fire extinguisher available",
+        ...(safetyFeatures?.securityCameras !== false ? ["Security cameras on property exterior"] : []),
+        ...(safetyFeatures?.smokeAlarm !== false ? ["Smoke alarm installed"] : []),
+        ...(safetyFeatures?.coAlarm !== false ? ["Carbon monoxide alarm"] : []),
+        ...(safetyFeatures?.firstAidKit !== false ? ["First aid kit available"] : []),
+        ...(safetyFeatures?.fireExtinguisher !== false ? ["Fire extinguisher available"] : []),
         "Secure lockbox for keys"
       ]
     : category === "rent"
@@ -62,7 +81,7 @@ export const PropertyThingsToKnow = ({
         "24/7 building security (if applicable)",
         "Secure entry system",
         "Well-lit common areas",
-        "Smoke detectors in all rooms",
+        ...(safetyFeatures?.smokeAlarm !== false ? ["Smoke detectors in all rooms"] : []),
         "Emergency contact provided",
         "Regular maintenance checks"
       ]
@@ -123,7 +142,7 @@ export const PropertyThingsToKnow = ({
           </div>
           
           <div className="space-y-3">
-            {houseRules.slice(0, expandedSection === "rules" ? undefined : 3).map((rule, index) => {
+            {houseRulesList.slice(0, expandedSection === "rules" ? undefined : 3).map((rule, index) => {
               const Icon = rule.icon;
               return (
                 <div key={index} className="flex items-start gap-2 text-sm">
@@ -138,7 +157,7 @@ export const PropertyThingsToKnow = ({
             })}
           </div>
 
-          {houseRules.length > 3 && (
+          {houseRulesList.length > 3 && (
             <Button
               variant="link"
               className="p-0 h-auto font-semibold"
@@ -157,7 +176,7 @@ export const PropertyThingsToKnow = ({
           </div>
           
           <div className="space-y-3">
-            {safetyProperty.slice(0, expandedSection === "safety" ? undefined : 3).map((item, index) => (
+            {safetyPropertyList.slice(0, expandedSection === "safety" ? undefined : 3).map((item, index) => (
               <div key={index} className="flex items-start gap-2 text-sm">
                 <CheckCircle2 className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
                 <span className="text-muted-foreground">{item}</span>
@@ -165,7 +184,7 @@ export const PropertyThingsToKnow = ({
             ))}
           </div>
 
-          {safetyProperty.length > 3 && (
+          {safetyPropertyList.length > 3 && (
             <Button
               variant="link"
               className="p-0 h-auto font-semibold"

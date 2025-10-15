@@ -319,13 +319,8 @@ const HeroSection = () => {
               {t('heroTrustDescription') || 'Holibayt combines verified owners, legal support, and escrow protection for every transaction.'}
             </p>
             
-            {/* Trust Indicators */}
-            <div className="mt-8 flex items-center justify-center">
-              <TrustIndicators variant="compact" />
-            </div>
-            
             {/* Holibayt Pay Badge */}
-            <div className="mt-4 flex justify-center">
+            <div className="mt-6 flex justify-center">
               <HolibaytPayBadge variant="default" showTooltip={true} />
             </div>
           </div>

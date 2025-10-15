@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -70,6 +70,37 @@ const PublishPropertySteps = ({ onSubmit, isSubmitting = false }: PublishPropert
   const { t } = useLanguage();
   const [currentStep, setCurrentStep] = useState(1);
   const [images, setImages] = useState<File[]>([]);
+  
+  // Auto-save to localStorage every 30 seconds
+  useEffect(() => {
+    const userId = localStorage.getItem('userId');
+    if (!userId) return;
+    
+    const draftKey = `holibayt_property_draft_${userId}`;
+    
+    // Restore draft on mount
+    const savedDraft = localStorage.getItem(draftKey);
+    if (savedDraft) {
+      try {
+        const draft = JSON.parse(savedDraft);
+        setFormData(draft.formData);
+        setCurrentStep(draft.currentStep || 1);
+        toast({ title: "Draft restored", description: "Your previous progress was restored" });
+      } catch (error) {
+        console.error('Error restoring draft:', error);
+      }
+    }
+
+    // Auto-save interval
+    const interval = setInterval(() => {
+      if (formData.category || formData.title) {
+        localStorage.setItem(draftKey, JSON.stringify({ formData, currentStep }));
+        console.log('Property draft auto-saved');
+      }
+    }, 30000);
+
+    return () => clearInterval(interval);
+  }, [formData, currentStep]);
   
   const [formData, setFormData] = useState<FormData>({
     category: "",
@@ -188,6 +219,11 @@ const PublishPropertySteps = ({ onSubmit, isSubmitting = false }: PublishPropert
 
   const handleSubmit = () => {
     if (isStep4Valid()) {
+      // Clear draft after successful submission
+      const userId = localStorage.getItem('userId');
+      if (userId) {
+        localStorage.removeItem(`holibayt_property_draft_${userId}`);
+      }
       onSubmit(formData, images);
     }
   };

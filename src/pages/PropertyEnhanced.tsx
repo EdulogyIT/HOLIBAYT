@@ -76,6 +76,9 @@ interface Property {
   availability_status?: string;
   minimum_rental_term?: string;
   furnished?: boolean;
+  cancellation_policy?: string;
+  house_rules?: any;
+  safety_features?: any;
 }
 
 interface Profile {
@@ -367,7 +370,9 @@ const PropertyEnhanced = () => {
               category={property.category as "buy" | "rent" | "short-stay"}
               checkInTime={property.check_in_time}
               checkOutTime={property.check_out_time}
-              cancellationPolicy="flexible"
+              cancellationPolicy={property.cancellation_policy || "flexible"}
+              houseRules={property.house_rules}
+              safetyFeatures={property.safety_features}
             />
 
             <Separator />
@@ -481,8 +486,8 @@ const PropertyEnhanced = () => {
               </div>
 
               {/* Trust Info Blocks */}
-              <div className="pt-3 border-t">
-                <PropertyTrustInfoBlocks 
+              <div className="pt-6 border-t">
+                <PropertyTrustInfoBlocks
                   isVerified={property.verified}
                   holibaytPayEligible={property.holibayt_pay_eligible}
                   category={property.category as "sale" | "rent" | "short-stay"}

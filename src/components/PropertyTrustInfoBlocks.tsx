@@ -53,21 +53,21 @@ export const PropertyTrustInfoBlocks = ({
   ];
   
   return (
-    <div className="space-y-2">
+    <div className="space-y-2 max-h-[500px] overflow-y-auto pr-1">
       {blocks.filter(block => block.show).map((block, idx) => {
         const Icon = block.icon;
         return (
           <Card key={idx} className="border shadow-sm hover:shadow-md transition-shadow">
             <CardContent className="p-2.5">
-              <div className="flex items-start gap-3">
-                <div className={`inline-flex p-2 rounded-lg ${block.color} flex-shrink-0`}>
-                  <Icon className="w-4 h-4" />
+              <div className="flex items-start gap-2">
+                <div className={`inline-flex p-1.5 rounded-lg ${block.color} flex-shrink-0`}>
+                  <Icon className="w-3.5 h-3.5" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <h4 className="font-semibold text-xs mb-1 leading-tight">{block.title}</h4>
-                  <p className="text-xs text-muted-foreground leading-snug">{block.description}</p>
+                  <h4 className="font-semibold text-xs mb-0.5 leading-tight break-words">{block.title}</h4>
+                  <p className="text-[11px] text-muted-foreground leading-snug whitespace-normal break-words">{block.description}</p>
                   {block.isAction && (
-                    <Button variant="link" size="sm" className="px-0 h-auto mt-1 text-xs text-purple-600">
+                    <Button variant="link" size="sm" className="px-0 h-auto mt-1 text-[10px] text-purple-600">
                       {t('learnMore')} →
                     </Button>
                   )}
