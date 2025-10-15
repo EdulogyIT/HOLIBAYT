@@ -50,12 +50,7 @@ export default function CreateBlog() {
           setAuthorName(draft.authorName || '');
           setCategory(draft.category || 'general');
           setImageUrl(draft.imageUrl || '');
-          toast.info('Draft restored from auto-save', {
-            action: {
-              label: 'Dismiss',
-              onClick: () => {}
-            }
-          });
+          toast.info('Draft restored from auto-save');
         } catch (error) {
           console.error('Error restoring draft:', error);
         }
@@ -64,7 +59,7 @@ export default function CreateBlog() {
       // Auto-save every 30 seconds
       const autoSaveInterval = setInterval(() => {
         if (title || content || authorName) {
-          const draft = { title, content, authorName, category, imageUrl, savedAt: new Date().toISOString() };
+          const draft = { title, content, authorName, category, imageUrl };
           localStorage.setItem(draftKey, JSON.stringify(draft));
           console.log('Blog auto-saved to draft');
         }

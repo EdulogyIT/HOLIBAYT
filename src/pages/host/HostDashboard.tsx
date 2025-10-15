@@ -10,7 +10,6 @@ import { supabase } from '@/integrations/supabase/client';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import PropertyCalendar from '@/components/PropertyCalendar';
-import { DraftManager } from '@/components/DraftManager';
 
 interface Property {
   id: string;
@@ -183,9 +182,6 @@ export default function HostDashboard() {
           </CardContent>
         </Card>
       </div>
-
-      {/* Draft Manager */}
-      <DraftManager />
 
       {/* Quick Actions */}
       <Card>

@@ -122,11 +122,6 @@ const PublishProperty = () => {
         description: t('propertySubmittedSuccess'),
       });
 
-      // Clear draft from localStorage after successful submission
-      if (user) {
-        localStorage.removeItem(`holibayt_property_draft_${user.id}`);
-      }
-
       // Navigate to the appropriate category page
       const categoryRoutes = {
         'sale': '/buy',

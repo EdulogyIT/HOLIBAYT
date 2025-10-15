@@ -59,7 +59,7 @@ const Navigation = () => {
           </div>
 
           {/* Desktop Navigation */}
-          <div className="hidden lg:flex items-center space-x-6 xl:space-x-8">
+          <div className="hidden md:flex items-center space-x-8">
             <Link to="/" className="text-foreground hover:text-primary transition-colors font-inter">
               {t('home')}
             </Link>
@@ -84,7 +84,7 @@ const Navigation = () => {
           </div>
 
           {/* Language & Currency Switchers & CTA Buttons */}
-          <div className="hidden lg:flex items-center space-x-2 xl:space-x-4">
+          <div className="hidden md:flex items-center space-x-4">
             {/* Currency Selector */}
             <CurrencySelector />
             
@@ -200,7 +200,7 @@ const Navigation = () => {
           </div>
 
           {/* Mobile menu button */}
-          <div className="lg:hidden">
+          <div className="md:hidden">
             <Button
               variant="ghost"
               size="icon"
@@ -213,7 +213,7 @@ const Navigation = () => {
 
         {/* Mobile Navigation */}
         {isMenuOpen && (
-          <div className="lg:hidden py-4 border-t border-border">
+          <div className="md:hidden py-4 border-t border-border">
             <div className="flex flex-col space-y-4">
                   <Link to="/" className="text-foreground hover:text-primary transition-colors font-inter font-medium" onClick={() => setIsMenuOpen(false)}>
                     {t('home')}

@@ -74,7 +74,7 @@ const BuyHeroSearch: React.FC<BuyHeroSearchProps> = ({ onSearch }) => {
   };
 
   return (
-    <section className="relative overflow-hidden">
+    <section className="relative pb-16 md:pb-24 overflow-hidden">
       {/* Background Image */}
       <div
         className="absolute inset-0 bg-cover bg-center bg-no-repeat"
