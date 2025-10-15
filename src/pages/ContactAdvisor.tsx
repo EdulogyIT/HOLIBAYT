@@ -27,6 +27,7 @@ import heroImage from "@/assets/advisor-consultation-hero.jpg";
 
 const ContactAdvisor = () => {
   const { t } = useLanguage();
+  const { generalSettings } = usePlatformSettings();
   useScrollToTop();
   
   const [formData, setFormData] = useState({
