@@ -14,7 +14,6 @@ import {
 import { Trophy, Star, Search } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-import { AdminLayout } from '@/components/layouts/AdminLayout';
 
 export default function AdminSuperhost() {
   const [hosts, setHosts] = useState<any[]>([]);
@@ -120,8 +119,7 @@ export default function AdminSuperhost() {
   const superhostCount = hosts.filter((h) => h.is_superhost).length;
 
   return (
-    <AdminLayout>
-      <div className="space-y-6">
+    <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold text-foreground">Superhost Management</h1>
@@ -262,7 +260,6 @@ export default function AdminSuperhost() {
           )}
         </CardContent>
       </Card>
-      </div>
-    </AdminLayout>
+    </div>
   );
 }
