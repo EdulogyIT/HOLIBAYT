@@ -10,6 +10,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import PropertyCalendar from '@/components/PropertyCalendar';
+import { HostLanguageSelector } from '@/components/HostLanguageSelector';
 
 interface Property {
   id: string;
@@ -209,6 +210,9 @@ export default function HostDashboard() {
           </div>
         </CardContent>
       </Card>
+
+      {/* Host Profile Settings */}
+      <HostLanguageSelector userId={user?.id} />
 
       {/* Recent Activity and Calendar */}
       <div className="grid gap-6 lg:grid-cols-2">

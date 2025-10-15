@@ -338,6 +338,10 @@ export default function LegalProcess() {
               <p className="text-sm text-muted-foreground">
                 Our team will connect you with qualified legal professionals who can assist with your real estate transaction.
               </p>
+              
+              <p className="text-sm text-muted-foreground mt-4 pt-4 border-t border-border">
+                <strong>For Legal Professionals:</strong> If you are a lawyer interested in joining our verified network, please contact us at <a href="mailto:contact@holibayt.com" className="text-primary hover:underline">contact@holibayt.com</a>
+              </p>
             </div>
           </div>
         </section>

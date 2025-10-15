@@ -170,6 +170,18 @@ export const buyRentTranslations = {
     view_agreement_template: "Voir le Modèle",
     start_agreement: "Démarrer le Contrat",
     view_active_agreement: "Voir le Contrat Actif",
+    uploadDraft: "Télécharger le Brouillon",
+    
+    // Notification translations
+    notif_property_approved_title: "Propriété Approuvée",
+    notif_property_approved_msg: "Votre propriété a été approuvée et est maintenant en ligne !",
+    notif_kyc_approved_title: "KYC Approuvé",
+    notif_kyc_approved_msg: "Votre KYC a été approuvé ! Vous pouvez maintenant obtenir des badges vérifiés sur vos propriétés.",
+    notif_review_created_title: "Nouvel Avis Reçu",
+    notif_new_message_title: "Nouveau Message",
+    notif_booking_confirmed_title: "Réservation Confirmée",
+    notif_review_request_title: "Comment était votre séjour ?",
+    notif_lawyer_contact_approved_title: "Contact Avocat Approuvé",
     thingsToKnow: "Choses à Savoir",
     houseRules: "Règles de la Maison",
     safetyProperty: "Sécurité et Propriété",
@@ -406,6 +418,19 @@ export const buyRentTranslations = {
     view_agreement_template: "View Agreement Template",
     start_agreement: "Start Agreement",
     view_active_agreement: "View Active Agreement",
+    uploadDraft: "Upload Draft",
+    
+    // Notification translations
+    notif_property_approved_title: "Property Approved",
+    notif_property_approved_msg: "Your property has been approved and is now live!",
+    notif_kyc_approved_title: "KYC Approved",
+    notif_kyc_approved_msg: "Your KYC has been approved! You can now get verified badges on your properties.",
+    notif_review_created_title: "New Review Received",
+    notif_new_message_title: "New Message",
+    notif_booking_confirmed_title: "Booking Confirmed",
+    notif_review_request_title: "How was your stay?",
+    notif_lawyer_contact_approved_title: "Lawyer Contact Approved",
+    
     thingsToKnow: "Things to Know",
     houseRules: "House Rules",
     safetyProperty: "Safety & Property",
@@ -657,6 +682,19 @@ export const buyRentTranslations = {
     view_agreement_template: "عرض النموذج",
     start_agreement: "بدء العقد",
     view_active_agreement: "عرض العقد النشط",
+    uploadDraft: "تحميل المسودة",
+    
+    // Notification translations
+    notif_property_approved_title: "تمت الموافقة على الملكية",
+    notif_property_approved_msg: "تمت الموافقة على الملكية الخاصة بك وهي الآن مباشرة!",
+    notif_kyc_approved_title: "تمت الموافقة على KYC",
+    notif_kyc_approved_msg: "تمت الموافقة على KYC الخاص بك! يمكنك الآن الحصول على شارات موثقة على ممتلكاتك.",
+    notif_review_created_title: "تم استلام مراجعة جديدة",
+    notif_new_message_title: "رسالة جديدة",
+    notif_booking_confirmed_title: "تم تأكيد الحجز",
+    notif_review_request_title: "كيف كانت إقامتك؟",
+    notif_lawyer_contact_approved_title: "تمت الموافقة على اتصال المحامي",
+    
     thingsToKnow: "أشياء يجب معرفتها",
     houseRules: "قواعد المنزل",
     safetyProperty: "السلامة والممتلكات",

@@ -29,7 +29,8 @@ import {
   FileText,
   ShieldCheck,
   Scale,
-  Gavel
+  Gavel,
+  Star
 } from 'lucide-react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -53,6 +54,7 @@ export const AdminLayout = ({ children }: AdminLayoutProps) => {
     { title: 'Commissions', url: '/admin/commissions', icon: Calendar },
     { title: t('admin.messages'), url: '/admin/messages', icon: MessageSquare },
     { title: 'Blogs', url: '/admin/blogs', icon: FileText },
+    { title: 'Testimonials', url: '/admin/testimonials', icon: Star },
     { title: 'Lawyers', url: '/admin/lawyers', icon: Scale },
     { title: 'Lawyer Requests', url: '/admin/lawyer-requests', icon: Gavel },
     { title: 'Document Templates', url: '/admin/document-templates', icon: FileText },

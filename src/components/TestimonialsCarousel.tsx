@@ -1,6 +1,8 @@
+import { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Star, Quote } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { supabase } from "@/integrations/supabase/client";
 import {
   Carousel,
   CarouselContent,
@@ -9,46 +11,48 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 
+interface Testimonial {
+  id: string;
+  client_name: string;
+  client_location: string;
+  review_text: string;
+  rating: number;
+  avatar_initials: string;
+}
+
 const TestimonialsCarousel = () => {
   const { t } = useLanguage();
+  const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const testimonials = [
-    {
-      name: "Amira B.",
-      location: "Alger",
-      rating: 5,
-      text: t('testimonial1') || "Holibayt made buying my first apartment stress-free. Everything was verified and the payment process was completely secure!",
-      avatar: "AB"
-    },
-    {
-      name: "Karim M.",
-      location: "Oran",
-      rating: 5,
-      text: t('testimonial2') || "As a landlord, I love that Holibayt Pay protects both me and my tenants. The verification process gave my property more credibility.",
-      avatar: "KM"
-    },
-    {
-      name: "Sarah L.",
-      location: "Constantine",
-      rating: 5,
-      text: t('testimonial3') || "Found the perfect vacation rental for my family. The host was verified, payment was secure, and we had an amazing stay!",
-      avatar: "SL"
-    },
-    {
-      name: "Yacine T.",
-      location: "Annaba",
-      rating: 5,
-      text: t('testimonial4') || "The legal support service helped me navigate the buying process with confidence. Highly recommend Holibayt!",
-      avatar: "YT"
-    },
-    {
-      name: "Malika D.",
-      location: "Setif",
-      rating: 5,
-      text: t('testimonial5') || "Best platform for finding rentals in Algeria. All listings are verified and the communication with landlords is seamless.",
-      avatar: "MD"
+  useEffect(() => {
+    fetchTestimonials();
+  }, []);
+
+  const fetchTestimonials = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('client_reviews')
+        .select('*')
+        .eq('approved', true)
+        .order('display_order', { ascending: true });
+
+      if (error) throw error;
+      setTestimonials(data || []);
+    } catch (error) {
+      console.error('Error fetching testimonials:', error);
+    } finally {
+      setLoading(false);
     }
-  ];
+  };
+
+  if (loading) {
+    return null;
+  }
+
+  if (testimonials.length === 0) {
+    return null;
+  }
 
   return (
     <section className="py-16 md:py-20 bg-background">
@@ -89,17 +93,17 @@ const TestimonialsCarousel = () => {
 
                       {/* Testimonial Text */}
                       <p className="text-sm text-muted-foreground font-inter leading-relaxed mb-6 flex-grow">
-                        "{testimonial.text}"
+                        "{testimonial.review_text}"
                       </p>
 
                       {/* Author Info */}
                       <div className="flex items-center gap-3 pt-4 border-t border-border">
                         <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-primary-foreground font-inter font-semibold">
-                          {testimonial.avatar}
+                          {testimonial.avatar_initials}
                         </div>
                         <div>
-                          <p className="font-inter font-semibold text-sm text-foreground">{testimonial.name}</p>
-                          <p className="font-inter text-xs text-muted-foreground">{testimonial.location}</p>
+                          <p className="font-inter font-semibold text-sm text-foreground">{testimonial.client_name}</p>
+                          <p className="font-inter text-xs text-muted-foreground">{testimonial.client_location}</p>
                         </div>
                       </div>
                     </CardContent>

@@ -215,7 +215,7 @@ const HostListings = () => {
                         size="sm" 
                         variant="secondary" 
                         className="flex-1"
-                        onClick={() => navigate(`/host/agreements/create/${property.id}`)}>
+                        onClick={() => navigate(`/host/create-agreement?propertyId=${property.id}`)}>
                         <FileText className="h-4 w-4 mr-1" />
                         Agreement
                       </Button>

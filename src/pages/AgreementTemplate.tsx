@@ -115,7 +115,7 @@ export default function AgreementTemplate() {
                     support for assistance.
                   </p>
                   <Button variant="outline" asChild>
-                    <a href="mailto:support@holibayt.com">Contact Support</a>
+                    <a href="mailto:contact@holibayt.com">Contact Support</a>
                   </Button>
                 </div>
               )}

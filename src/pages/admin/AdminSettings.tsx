@@ -25,6 +25,7 @@ export default function AdminSettings() {
   const [officeCity, setOfficeCity] = useState('Alger Centre, 16000');
   const [officeCountry, setOfficeCountry] = useState('Algiers, Algeria');
   const [maintenanceMode, setMaintenanceMode] = useState(false);
+  const [maxImagesPerProperty, setMaxImagesPerProperty] = useState(10);
   
   // Commission settings
   const [defaultCommission, setDefaultCommission] = useState(15);
@@ -80,6 +81,7 @@ export default function AdminSettings() {
             setOfficeCity(value?.office_address?.city || 'Alger Centre, 16000');
             setOfficeCountry(value?.office_address?.country || 'Algiers, Algeria');
             setMaintenanceMode(typeof value?.maintenance_mode === 'boolean' ? value.maintenance_mode : false);
+            setMaxImagesPerProperty(value?.max_images_per_property || 10);
             break;
           case 'commission_rates':
             setDefaultCommission(value?.default || 15);
@@ -155,7 +157,8 @@ export default function AdminSettings() {
         city: officeCity,
         country: officeCountry
       },
-      maintenance_mode: maintenanceMode
+      maintenance_mode: maintenanceMode,
+      max_images_per_property: maxImagesPerProperty
     });
     if (success) {
       toast.success('General settings saved successfully');
@@ -390,6 +393,23 @@ export default function AdminSettings() {
                   checked={maintenanceMode}
                   onCheckedChange={setMaintenanceMode}
                 />
+              </div>
+
+              <Separator />
+
+              <div className="space-y-2">
+                <Label htmlFor="maxImages">Maximum Images Per Property</Label>
+                <Input
+                  id="maxImages"
+                  type="number"
+                  min="1"
+                  max="50"
+                  value={maxImagesPerProperty}
+                  onChange={(e) => setMaxImagesPerProperty(parseInt(e.target.value))}
+                />
+                <p className="text-sm text-muted-foreground">
+                  Limit how many images users can upload per property listing (1-50)
+                </p>
               </div>
 
               <Button onClick={handleSaveGeneral}>Save General Settings</Button>
