@@ -294,7 +294,7 @@ const PropertyFilters = ({ onFilterChange, listingType }: PropertyFiltersProps) 
                 
                 {/* Verified Only */}
                 <div className="flex items-center justify-between">
-                  <Label className="font-inter text-sm">{t('verified_only')}</Label>
+                  <Label className="font-inter text-sm">{t('verified_only') || 'Verified Only'}</Label>
                   <input
                     type="checkbox"
                     checked={filters.verifiedOnly || false}
@@ -305,7 +305,7 @@ const PropertyFilters = ({ onFilterChange, listingType }: PropertyFiltersProps) 
                 
                 {/* Holibayt Pay Eligible */}
                 <div className="flex items-center justify-between">
-                  <Label className="font-inter text-sm">{t('holibaytPayEligible')}</Label>
+                  <Label className="font-inter text-sm">{t('holibaytPayEligible') || 'Holibayt Pay™ Eligible'}</Label>
                   <input
                     type="checkbox"
                     checked={filters.verifiedOnly || false}
@@ -374,7 +374,7 @@ const PropertyFilters = ({ onFilterChange, listingType }: PropertyFiltersProps) 
                 {/* Instant Booking (Short Stay only) */}
                 {listingType === 'shortStay' && (
                   <div className="flex items-center justify-between">
-                    <Label className="font-inter text-sm">{t('instantBooking')}</Label>
+                    <Label className="font-inter text-sm">{t('instantBooking') || 'Instant Booking'}</Label>
                     <input
                       type="checkbox"
                       checked={filters.instantBooking || false}
@@ -386,7 +386,7 @@ const PropertyFilters = ({ onFilterChange, listingType }: PropertyFiltersProps) 
                 
                 {/* Micro-copy */}
                 <p className="text-xs text-muted-foreground italic pt-2">
-                  💡 {t('verifiedListingsDefault')}
+                  💡 {t('verifiedListingsDefault') || 'Only verified listings appear by default'}
                 </p>
               </div>
             </div>

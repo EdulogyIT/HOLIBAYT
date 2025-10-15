@@ -39,6 +39,9 @@ import { useWishlist } from "@/hooks/useWishlist";
 import { PropertyAmenities } from "@/components/PropertyAmenities";
 import { PropertyThingsToKnow } from "@/components/PropertyThingsToKnow";
 import { PropertyTrustInfoBlocks } from "@/components/PropertyTrustInfoBlocks";
+import { RentPaymentSafetyBadge } from "@/components/RentPaymentSafetyBadge";
+import { RentVerificationStatus } from "@/components/RentVerificationStatus";
+import { DigitalLeaseOption } from "@/components/DigitalLeaseOption";
 
 interface Property {
   id: string;
@@ -493,6 +496,29 @@ const PropertyEnhanced = () => {
                   category={property.category as "sale" | "rent" | "short-stay"}
                 />
               </div>
+
+              {/* Rent-Specific Trust Components */}
+              {isRent && (
+                <div className="space-y-4 pt-6 border-t">
+                  <RentPaymentSafetyBadge 
+                    monthlyRent={parseFloat(property.price)}
+                    deposit={property.fees?.security_deposit?.amount || 0}
+                  />
+                  
+                  {(profile?.id_verified || profile?.ownership_verified) && (
+                    <RentVerificationStatus
+                      isIdVerified={profile.id_verified || false}
+                      isOwnershipVerified={profile.ownership_verified || false}
+                      verificationDate={profile.kyc_approved_at}
+                    />
+                  )}
+                  
+                  <DigitalLeaseOption
+                    propertyId={property.id}
+                    hasActiveAgreement={false}
+                  />
+                </div>
+              )}
 
               {/* Warning - Only for Short Stay */}
               {isShortStay && (
