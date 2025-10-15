@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 
 const Footer = () => {
   const { t } = useLanguage();
+  const { generalSettings } = usePlatformSettings();
 
   return (
     <footer className="relative overflow-hidden border-t border-border/50 mt-4">
