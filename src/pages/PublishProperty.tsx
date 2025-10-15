@@ -80,6 +80,20 @@ const PublishProperty = () => {
         contact_phone: formData.phoneNumber,
         contact_email: formData.email,
         images: imageUrls,
+        cancellation_policy: formData.cancellationPolicy || 'moderate',
+        house_rules: formData.houseRules || {
+          smoking: false,
+          pets: false,
+          events: false,
+          quietHours: '22:00-08:00'
+        },
+        safety_features: formData.safetyFeatures || {
+          smokeAlarm: false,
+          coAlarm: false,
+          firstAidKit: false,
+          fireExtinguisher: false,
+          securityCameras: false
+        },
         status: 'pending' // Requires admin approval
       };
 

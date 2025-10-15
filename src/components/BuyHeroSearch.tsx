@@ -74,7 +74,7 @@ const BuyHeroSearch: React.FC<BuyHeroSearchProps> = ({ onSearch }) => {
   };
 
   return (
-    <section className="relative py-16 md:py-24 overflow-hidden">
+    <section className="relative pb-16 md:pb-24 overflow-hidden">
       {/* Background Image */}
       <div
         className="absolute inset-0 bg-cover bg-center bg-no-repeat"
@@ -91,31 +91,9 @@ const BuyHeroSearch: React.FC<BuyHeroSearchProps> = ({ onSearch }) => {
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-playfair font-bold text-white mb-4 leading-tight">
             {t("buyHeroHeading")}
           </h1>
-          <p className="text-xl md:text-2xl text-white/90 font-inter font-light max-w-3xl mx-auto leading-relaxed mb-6">
+          <p className="text-xl md:text-2xl text-white/90 font-inter font-light max-w-3xl mx-auto leading-relaxed">
             {t("buyHeroSubheading")}
           </p>
-          
-          {/* Trust Indicators */}
-          <div className="flex flex-wrap items-center justify-center gap-6 mt-6">
-            <div className="flex items-center gap-2 text-sm font-medium text-white">
-              <div className="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center">
-                <span>✓</span>
-              </div>
-              <span>{t('verifiedProperties')}</span>
-            </div>
-            <div className="flex items-center gap-2 text-sm font-medium text-white">
-              <div className="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center">
-                <span>🛡</span>
-              </div>
-              <span>{t('securePayments')}</span>
-            </div>
-            <div className="flex items-center gap-2 text-sm font-medium text-white">
-              <div className="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center">
-                <span>⚖</span>
-              </div>
-              <span>{t('legalAssistance')}</span>
-            </div>
-          </div>
         </div>
 
         <Card className="max-w-5xl mx-auto p-6 md:p-8 bg-card/95 backdrop-blur-md border-border/30 shadow-elegant rounded-2xl">

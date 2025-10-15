@@ -11,7 +11,6 @@ import { DateRangePicker } from "@/components/DateRangePicker";
 import { GuestsSelector } from "@/components/GuestsSelector";
 import shortStayHeroBg from "@/assets/short-stay-hero-bg.jpg";
 import LocationAutocomplete from "@/components/LocationAutocomplete";
-import { TrustIndicators } from "./TrustIndicators";
 
 type DateRange = { from?: Date; to?: Date };
 type SearchVals = {
@@ -114,7 +113,7 @@ const ShortStayHeroSearch: React.FC<ShortStayHeroSearchProps> = ({ onSearch }) =
   };
 
   return (
-    <section className="relative py-16 md:py-24 overflow-hidden">
+    <section className="relative pb-16 md:pb-24 overflow-hidden">
       {/* Background Image */}
       <div
         className="absolute inset-0 bg-cover bg-center bg-no-repeat"
@@ -250,11 +249,6 @@ const ShortStayHeroSearch: React.FC<ShortStayHeroSearchProps> = ({ onSearch }) =
             </div>
           </form>
         </Card>
-        
-        {/* Trust Indicators */}
-        <div className="mt-8">
-          <TrustIndicators variant="compact" type="shortStay" />
-        </div>
       </div>
     </section>
   );

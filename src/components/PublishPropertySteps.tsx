@@ -58,6 +58,22 @@ interface FormData {
   fullName: string;
   phoneNumber: string;
   email: string;
+  
+  // Policies & Rules (Step 5)
+  cancellationPolicy: string;
+  houseRules: {
+    smokingAllowed: boolean;
+    petsAllowed: boolean;
+    eventsAllowed: boolean;
+    quietHours: string;
+  };
+  safetyFeatures: {
+    smokeAlarm: boolean;
+    carbonMonoxideAlarm: boolean;
+    firstAidKit: boolean;
+    fireExtinguisher: boolean;
+    securityCameras: boolean;
+  };
 }
 
 interface PublishPropertyStepsProps {
@@ -108,6 +124,20 @@ const PublishPropertySteps = ({ onSubmit, isSubmitting = false }: PublishPropert
     fullName: "",
     phoneNumber: "",
     email: "",
+    cancellationPolicy: "moderate",
+    houseRules: {
+      smokingAllowed: false,
+      petsAllowed: false,
+      eventsAllowed: false,
+      quietHours: "22:00-08:00",
+    },
+    safetyFeatures: {
+      smokeAlarm: false,
+      carbonMonoxideAlarm: false,
+      firstAidKit: false,
+      fireExtinguisher: false,
+      securityCameras: false,
+    },
   });
   
   // Auto-save to localStorage every 30 seconds
@@ -165,6 +195,24 @@ const PublishPropertySteps = ({ onSubmit, isSubmitting = false }: PublishPropert
           }
         }
       }));
+    } else if (field.startsWith('houseRules.')) {
+      const ruleKey = field.split('.')[1];
+      setFormData(prev => ({
+        ...prev,
+        houseRules: {
+          ...prev.houseRules,
+          [ruleKey]: value
+        }
+      }));
+    } else if (field.startsWith('safetyFeatures.')) {
+      const featureKey = field.split('.')[1];
+      setFormData(prev => ({
+        ...prev,
+        safetyFeatures: {
+          ...prev.safetyFeatures,
+          [featureKey]: value
+        }
+      }));
     } else {
       setFormData(prev => ({ ...prev, [field]: value }));
     }
@@ -199,9 +247,11 @@ const PublishPropertySteps = ({ onSubmit, isSubmitting = false }: PublishPropert
     formData.fullName !== "" && 
     formData.phoneNumber !== "" && 
     formData.email !== "";
+  
+  const isStep5Valid = () => true; // Step 5 has no required fields
 
   const handleNext = () => {
-    const validations = [isStep1Valid, isStep2Valid, isStep3Valid, isStep4Valid];
+    const validations = [isStep1Valid, isStep2Valid, isStep3Valid, isStep4Valid, isStep5Valid];
     if (validations[currentStep - 1]()) {
       setCurrentStep(currentStep + 1);
     } else {
@@ -218,7 +268,7 @@ const PublishPropertySteps = ({ onSubmit, isSubmitting = false }: PublishPropert
   };
 
   const handleSubmit = () => {
-    if (isStep4Valid()) {
+    if (isStep5Valid()) {
       // Clear draft after successful submission
       const userId = localStorage.getItem('userId');
       if (userId) {
@@ -233,6 +283,7 @@ const PublishPropertySteps = ({ onSubmit, isSubmitting = false }: PublishPropert
     { number: 2, title: t('basicInformation'), completed: isStep2Valid() },
     { number: 3, title: t('propertyDetailsTitle'), completed: isStep3Valid() },
     { number: 4, title: t('contactInformationTitle'), completed: isStep4Valid() },
+    { number: 5, title: 'Policies & Rules', completed: isStep5Valid() },
   ];
 
   return (
@@ -673,6 +724,116 @@ const PublishPropertySteps = ({ onSubmit, isSubmitting = false }: PublishPropert
               </div>
             </div>
           )}
+
+          {/* Step 5: Policies & Rules */}
+          {currentStep === 5 && (
+            <div className="space-y-6">
+              {/* Cancellation Policy */}
+              <div className="space-y-2">
+                <Label htmlFor="cancellationPolicy">Cancellation Policy</Label>
+                <Select 
+                  value={formData.cancellationPolicy} 
+                  onValueChange={(value) => handleInputChange("cancellationPolicy", value)}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select cancellation policy" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="flexible">Flexible - Full refund up to 24 hours before check-in</SelectItem>
+                    <SelectItem value="moderate">Moderate - Full refund up to 5 days before check-in</SelectItem>
+                    <SelectItem value="strict">Strict - Full refund up to 14 days before check-in</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* House Rules */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold font-playfair">House Rules</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="flex items-center space-x-2">
+                    <Checkbox
+                      id="smokingAllowed"
+                      checked={formData.houseRules.smokingAllowed}
+                      onCheckedChange={(checked) => handleInputChange("houseRules.smokingAllowed", checked)}
+                    />
+                    <Label htmlFor="smokingAllowed">Smoking Allowed</Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Checkbox
+                      id="petsAllowedRule"
+                      checked={formData.houseRules.petsAllowed}
+                      onCheckedChange={(checked) => handleInputChange("houseRules.petsAllowed", checked)}
+                    />
+                    <Label htmlFor="petsAllowedRule">Pets Allowed</Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Checkbox
+                      id="eventsAllowed"
+                      checked={formData.houseRules.eventsAllowed}
+                      onCheckedChange={(checked) => handleInputChange("houseRules.eventsAllowed", checked)}
+                    />
+                    <Label htmlFor="eventsAllowed">Events/Parties Allowed</Label>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="quietHours">Quiet Hours</Label>
+                    <Input
+                      id="quietHours"
+                      placeholder="e.g., 22:00-08:00"
+                      value={formData.houseRules.quietHours}
+                      onChange={(e) => handleInputChange("houseRules.quietHours", e.target.value)}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Safety Features */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold font-playfair">Safety Features</h3>
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                  <div className="flex items-center space-x-2">
+                    <Checkbox
+                      id="smokeAlarm"
+                      checked={formData.safetyFeatures.smokeAlarm}
+                      onCheckedChange={(checked) => handleInputChange("safetyFeatures.smokeAlarm", checked)}
+                    />
+                    <Label htmlFor="smokeAlarm">Smoke Alarm</Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Checkbox
+                      id="carbonMonoxideAlarm"
+                      checked={formData.safetyFeatures.carbonMonoxideAlarm}
+                      onCheckedChange={(checked) => handleInputChange("safetyFeatures.carbonMonoxideAlarm", checked)}
+                    />
+                    <Label htmlFor="carbonMonoxideAlarm">CO Alarm</Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Checkbox
+                      id="firstAidKit"
+                      checked={formData.safetyFeatures.firstAidKit}
+                      onCheckedChange={(checked) => handleInputChange("safetyFeatures.firstAidKit", checked)}
+                    />
+                    <Label htmlFor="firstAidKit">First Aid Kit</Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Checkbox
+                      id="fireExtinguisher"
+                      checked={formData.safetyFeatures.fireExtinguisher}
+                      onCheckedChange={(checked) => handleInputChange("safetyFeatures.fireExtinguisher", checked)}
+                    />
+                    <Label htmlFor="fireExtinguisher">Fire Extinguisher</Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Checkbox
+                      id="securityCameras"
+                      checked={formData.safetyFeatures.securityCameras}
+                      onCheckedChange={(checked) => handleInputChange("safetyFeatures.securityCameras", checked)}
+                    />
+                    <Label htmlFor="securityCameras">Security Cameras</Label>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
         </CardContent>
       </Card>
 
@@ -696,7 +857,7 @@ const PublishPropertySteps = ({ onSubmit, isSubmitting = false }: PublishPropert
             {t('cancel')}
           </Button>
           
-          {currentStep < 4 ? (
+          {currentStep < 5 ? (
             <Button 
               type="button" 
               onClick={handleNext}
@@ -709,7 +870,7 @@ const PublishPropertySteps = ({ onSubmit, isSubmitting = false }: PublishPropert
               type="button" 
               onClick={handleSubmit}
               className="bg-gradient-primary hover:shadow-elegant"
-              disabled={!isStep4Valid() || isSubmitting}
+              disabled={!isStep5Valid() || isSubmitting}
             >
               {isSubmitting ? t('publishing') : t('publishPropertyBtn')}
             </Button>
