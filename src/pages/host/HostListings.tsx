@@ -11,7 +11,8 @@ import {
   MapPin,
   Star,
   Calendar,
-  MessageSquare
+  MessageSquare,
+  FileText
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -34,7 +35,7 @@ interface Property {
   images: string[];
 }
 
-export default function HostListings() {
+const HostListings = () => {
   const { user } = useAuth();
   const { t } = useLanguage();
   const { formatPrice } = useCurrency();
@@ -209,6 +210,16 @@ export default function HostListings() {
                       <Edit className="h-4 w-4 mr-1" />
                       {t('host.edit')}
                     </Button>
+                    {property.category === 'rent' && (
+                      <Button 
+                        size="sm" 
+                        variant="secondary" 
+                        className="flex-1"
+                        onClick={() => navigate(`/host/agreements/create/${property.id}`)}>
+                        <FileText className="h-4 w-4 mr-1" />
+                        Agreement
+                      </Button>
+                    )}
                     <Button 
                       size="sm" 
                       variant="outline" 
@@ -256,4 +267,6 @@ export default function HostListings() {
       )}
     </div>
   );
-}
+};
+
+export default HostListings;
