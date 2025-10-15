@@ -2,6 +2,7 @@ import { Shield, Clock, Scale, CheckCircle } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useNavigate } from "react-router-dom";
 
 interface PropertyTrustInfoBlocksProps {
   isVerified?: boolean;
@@ -15,6 +16,7 @@ export const PropertyTrustInfoBlocks = ({
   category 
 }: PropertyTrustInfoBlocksProps) => {
   const { t } = useLanguage();
+  const navigate = useNavigate();
   
   const blocks = [
     {
@@ -67,7 +69,12 @@ export const PropertyTrustInfoBlocks = ({
                   <h4 className="font-semibold text-xs mb-0.5 leading-tight break-words">{block.title}</h4>
                   <p className="text-[11px] text-muted-foreground leading-snug whitespace-normal break-words">{block.description}</p>
                   {block.isAction && (
-                    <Button variant="link" size="sm" className="px-0 h-auto mt-1 text-[10px] text-purple-600">
+                    <Button 
+                      variant="link" 
+                      size="sm" 
+                      className="px-0 h-auto mt-1 text-[10px] text-purple-600"
+                      onClick={() => navigate('/legal-process')}
+                    >
                       {t('learnMore')} →
                     </Button>
                   )}

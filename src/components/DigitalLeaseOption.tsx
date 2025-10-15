@@ -26,7 +26,7 @@ export const DigitalLeaseOption = ({
 
   const handleStartAgreement = () => {
     // Navigate to agreement creation/signing page
-    navigate(`/property/${propertyId}/create-agreement`);
+    navigate(`/host/create-agreement`);
   };
 
   return (
@@ -36,12 +36,9 @@ export const DigitalLeaseOption = ({
           <FileText className="w-6 h-6 text-white" />
         </div>
         <div className="flex-1 min-w-0">
-          <h3 className="font-semibold text-base md:text-lg text-foreground mb-2">
+          <h3 className="font-semibold text-base md:text-lg text-foreground mb-4">
             {t('sign_lease_online')}
           </h3>
-          <p className="text-sm md:text-base text-muted-foreground mb-4">
-            {t('digital_lease_description')}
-          </p>
           <div className="flex flex-wrap gap-2">
             <Button
               variant="outline"

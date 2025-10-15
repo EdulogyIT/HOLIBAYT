@@ -22,13 +22,10 @@ export const RentPaymentSafetyBadge = ({
           <Shield className="w-6 h-6 text-white" />
         </div>
         <div className="flex-1 min-w-0">
-          <h3 className="font-semibold text-base md:text-lg text-foreground mb-2 flex items-center gap-2">
+          <h3 className="font-semibold text-base md:text-lg text-foreground mb-3 flex items-center gap-2">
             <Lock className="w-4 h-4 text-primary" />
             {t('rent_safety_notice_title')}
           </h3>
-          <p className="text-sm md:text-base text-muted-foreground leading-relaxed">
-            {t('rent_safety_notice')}
-          </p>
           <div className="mt-3 flex items-center gap-2 text-sm font-semibold text-primary bg-background/60 dark:bg-background/20 rounded-lg px-3 py-2 inline-flex">
             <span>{t('total_protected')}:</span>
             <span className="text-lg">{totalProtected.toLocaleString()} DZD</span>
