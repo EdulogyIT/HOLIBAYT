@@ -268,89 +268,90 @@ const Buy = () => {
                   {filteredProperties.length} {t('properties') || 'properties'} {t('found') || 'found'}
                 </h2>
                 <PropertyFilters
-              onFilterChange={(filters) => {
-                let filtered = properties;
+                  onFilterChange={(filters) => {
+                    let filtered = properties;
 
-                if (filters.location) {
-                  const loc = filters.location.toLowerCase();
-                  filtered = filtered.filter(
-                    (p) =>
-                      (p.city || "").toLowerCase().includes(loc) ||
-                      (p.location || "").toLowerCase().includes(loc)
-                  );
-                }
+                    if (filters.location) {
+                      const loc = filters.location.toLowerCase();
+                      filtered = filtered.filter(
+                        (p) =>
+                          (p.city || "").toLowerCase().includes(loc) ||
+                          (p.location || "").toLowerCase().includes(loc)
+                      );
+                    }
 
-                if (filters.propertyType !== "all") {
-                  filtered = filtered.filter((p) => p.property_type === filters.propertyType);
-                }
+                    if (filters.propertyType !== "all") {
+                      filtered = filtered.filter((p) => p.property_type === filters.propertyType);
+                    }
 
-                if (filters.bedrooms !== "all") {
-                  filtered = filtered.filter((p) => p.bedrooms === filters.bedrooms);
-                }
+                    if (filters.bedrooms !== "all") {
+                      filtered = filtered.filter((p) => p.bedrooms === filters.bedrooms);
+                    }
 
-                if (filters.bathrooms !== "all") {
-                  filtered = filtered.filter((p) => p.bathrooms === filters.bathrooms);
-                }
+                    if (filters.bathrooms !== "all") {
+                      filtered = filtered.filter((p) => p.bathrooms === filters.bathrooms);
+                    }
 
-                if (filters.minPrice[0] > 0 || filters.maxPrice[0] < 5000000000) {
-                  filtered = filtered.filter((p) => {
-                    const price = num(p.price);
-                    return price >= filters.minPrice[0] && price <= filters.maxPrice[0];
-                  });
-                }
+                    if (filters.minPrice[0] > 0 || filters.maxPrice[0] < 5000000000) {
+                      filtered = filtered.filter((p) => {
+                        const price = num(p.price);
+                        return price >= filters.minPrice[0] && price <= filters.maxPrice[0];
+                      });
+                    }
 
-                if (filters.minArea || filters.maxArea) {
-                  const minArea = filters.minArea ? num(filters.minArea) : 0;
-                  const maxArea = filters.maxArea ? num(filters.maxArea) : Infinity;
-                  filtered = filtered.filter((p) => {
-                    const area = num(p.area);
-                    return area >= minArea && area <= maxArea;
-                  });
-                }
+                    if (filters.minArea || filters.maxArea) {
+                      const minArea = filters.minArea ? num(filters.minArea) : 0;
+                      const maxArea = filters.maxArea ? num(filters.maxArea) : Infinity;
+                      filtered = filtered.filter((p) => {
+                        const area = num(p.area);
+                        return area >= minArea && area <= maxArea;
+                      });
+                    }
 
-                setFilteredProperties(filtered);
-              }}
-              listingType="buy"
-            />
-          </div>
-
-          {/* Properties Grid - Full Width */}
-          {isLoading ? (
-            <div className="flex items-center justify-center py-12">
-              <Loader2 className="h-8 w-8 animate-spin" />
-              <span className="ml-2">{t("loading")}</span>
-            </div>
-          ) : filteredProperties.length === 0 ? (
-            <div className="text-center py-12">
-              <div className="text-lg font-semibold text-foreground mb-2">
-                {t("noPropertiesFound")}
+                    setFilteredProperties(filtered);
+                  }}
+                  listingType="buy"
+                />
               </div>
-              <div className="text-muted-foreground">{t("adjustFiltersOrCheckLater")}</div>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {filteredProperties.map((property) => (
-                <PropertyCard key={property.id} property={property} />
-              ))}
-            </div>
-          )}
 
-          {/* Map Section */}
-          <div className="mt-12">
-            <PropertyMapWithZone 
-              location="Algeria"
-              onZoneSearch={(zone) => {
-                const filtered = properties.filter(p => 
-                  (p.city || "").toLowerCase().includes(zone.toLowerCase()) ||
-                  (p.location || "").toLowerCase().includes(zone.toLowerCase())
-                );
-                setFilteredProperties(filtered);
-            }}
-          />
+              {/* Properties Grid */}
+              {isLoading ? (
+                <div className="flex items-center justify-center py-12">
+                  <Loader2 className="h-8 w-8 animate-spin" />
+                  <span className="ml-2">{t("loading")}</span>
+                </div>
+              ) : filteredProperties.length === 0 ? (
+                <div className="text-center py-12">
+                  <div className="text-lg font-semibold text-foreground mb-2">
+                    {t("noPropertiesFound")}
+                  </div>
+                  <div className="text-muted-foreground">{t("adjustFiltersOrCheckLater")}</div>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {filteredProperties.map((property) => (
+                    <PropertyCard key={property.id} property={property} />
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Right: Sidebar */}
+            <div className="lg:col-span-1">
+              <div className="sticky top-20">
+                <PropertyMapWithZone 
+                  location="Algeria"
+                  onZoneSearch={(zone) => {
+                    const filtered = properties.filter(p => 
+                      (p.city || "").toLowerCase().includes(zone.toLowerCase()) ||
+                      (p.location || "").toLowerCase().includes(zone.toLowerCase())
+                    );
+                    setFilteredProperties(filtered);
+                  }}
+                />
               </div>
             </div>
           </div>
-        </div>
         </div>
 
         <div className="py-16">
