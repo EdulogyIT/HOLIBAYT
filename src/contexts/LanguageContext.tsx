@@ -51,6 +51,22 @@ const allTranslations = {
     guest: 'invité',
     guests: 'invités',
     logout: 'Se déconnecter',
+    backToSite: 'Retour au site',
+    loggedInAs: 'Connecté en tant que',
+    selectCurrency: 'Sélectionner la devise',
+    notifications: 'Notifications',
+    alreadyReviewed: 'Déjà examiné',
+    alreadyReviewedDesc: 'Vous avez déjà soumis un avis pour ce séjour. Merci !',
+    manageReservationsPastStays: 'Gérez vos réservations et séjours passés',
+    upcomingStays: 'Séjours à venir',
+    pastStays: 'Séjours passés',
+    messageHost: 'Contacter l\'hôte',
+    cancelBooking: 'Annuler la réservation',
+    confirmed: 'Confirmé',
+    paymentInEscrow: 'Paiement en séquestre',
+    fundsProtected: 'Fonds protégés',
+    bookedOn: 'Réservé le',
+    totalAmount: 'Montant total',
     
     // Hero
     heroTitle: 'Holibayt',
@@ -883,7 +899,13 @@ const allTranslations = {
       noMessages: 'Aucun message',
       noContactRequests: 'Vous n\'avez reçu aucune demande de contact pour le moment.',
       loadingMessages: 'Chargement des messages...',
-      calendar: 'Calendrier des Propriétés'
+      calendar: 'Calendrier des Propriétés',
+      title: 'Hôte',
+      hostDashboard: 'Tableau de Bord Hôte',
+      totalEarnings: 'Gains totaux des réservations complétées',
+      getVerified: 'Se faire vérifier',
+      bookings: 'Réservations',
+      payoutsSettings: 'Paiements et Paramètres'
     },
 
     // Admin translations
@@ -948,7 +970,29 @@ const allTranslations = {
       rejectionReason: 'Raison du rejet',
       approved: 'Approuvé',
       rejected: 'Rejeté',
-      requiresChanges: 'Nécessite des modifications'
+      requiresChanges: 'Nécessite des modifications',
+      title: 'Admin',
+      operationsHub: 'Hub Opérationnel Holibayt — Votre performance, croissance et activité des hôtes en un coup d\'œil.',
+      addNewProperty: 'Ajouter une propriété',
+      verifyHosts: 'Vérifier les hôtes',
+      reviewPayments: 'Examiner les paiements',
+      platformGMV: 'GMV de la plateforme',
+      avgBookingValue: 'Valeur moyenne de réservation',
+      conversionRate: 'Taux de conversion',
+      verificationPending: 'Vérification en attente',
+      actionRequired: 'Action requise',
+      avgResponseTime: 'Temps de réponse moyen',
+      loading: 'Chargement...',
+      noPropertiesYet: 'Aucune propriété encore',
+      superhosts: 'Super Hôtes',
+      commissions: 'Commissions',
+      blogs: 'Blogs',
+      testimonials: 'Témoignages',
+      lawyers: 'Avocats',
+      lawyerRequests: 'Demandes d\'avocat',
+      documentTemplates: 'Modèles de documents',
+      quickAccessCtas: 'Accès rapide',
+      newInsights: 'Nouvelles Perspectives'
     }
   },
   EN: {
@@ -988,6 +1032,22 @@ const allTranslations = {
     guest: 'guest',
     guests: 'guests',
     logout: 'Logout',
+    backToSite: 'Back to Site',
+    loggedInAs: 'Logged in as',
+    selectCurrency: 'Select Currency',
+    notifications: 'Notifications',
+    alreadyReviewed: 'Already Reviewed',
+    alreadyReviewedDesc: 'You have already submitted a review for this stay. Thank you!',
+    manageReservationsPastStays: 'Manage your reservations and past stays',
+    upcomingStays: 'Upcoming',
+    pastStays: 'Past Stays',
+    messageHost: 'Message Host',
+    cancelBooking: 'Cancel Booking',
+    confirmed: 'Confirmed',
+    paymentInEscrow: 'Payment in Escrow',
+    fundsProtected: 'Funds Protected',
+    bookedOn: 'Booked on',
+    totalAmount: 'Total Amount',
     
     // Hero
     heroTitle: 'Holibayt',
@@ -997,6 +1057,7 @@ const allTranslations = {
     heroSubheading: 'Buy. Rent. Live Algeria safely with verified listings and secure payments',
     heroTrustDescription: 'Holibayt combines verified owners, legal support, and escrow protection for every transaction.',
     searchPlaceholder: 'e.g., Algiers, Oran, Constantine…',
+    searchPlaceholderExample: 'e.g., Algiers, Oran, Constantine…',
     
     // Trust Indicators
     trustVerifiedListings: '100% Verified Listings',
@@ -2717,7 +2778,29 @@ const allTranslations = {
       rejectionReason: 'سبب الرفض',
       approved: 'موافق عليه',
       rejected: 'مرفوض',
-      requiresChanges: 'يتطلب تعديلات'
+      requiresChanges: 'يتطلب تعديلات',
+      title: 'المسؤول',
+      operationsHub: 'مركز عمليات هولي بايت — أدائك ونموك ونشاط المضيفين في لمحة واحدة.',
+      addNewProperty: 'إضافة عقار جديد',
+      verifyHosts: 'التحقق من المضيفين',
+      reviewPayments: 'مراجعة المدفوعات',
+      platformGMV: 'إجمالي قيمة البضائع للمنصة',
+      avgBookingValue: 'متوسط قيمة الحجز',
+      conversionRate: 'معدل التحويل',
+      verificationPending: 'التحقق معلق',
+      actionRequired: 'مطلوب إجراء',
+      avgResponseTime: 'متوسط وقت الاستجابة',
+      loading: 'جارٍ التحميل...',
+      noPropertiesYet: 'لا توجد عقارات بعد',
+      superhosts: 'المضيفون المميزون',
+      commissions: 'العمولات',
+      blogs: 'المدونات',
+      testimonials: 'الشهادات',
+      lawyers: 'المحامون',
+      lawyerRequests: 'طلبات المحامين',
+      documentTemplates: 'قوالب المستندات',
+      quickAccessCtas: 'وصول سريع',
+      newInsights: 'رؤى جديدة'
     },
 
     // Host dashboard translations
@@ -2767,7 +2850,61 @@ const allTranslations = {
       noMessages: 'لا توجد رسائل',
       noContactRequests: 'لم تتلق أي طلبات تواصل حتى الآن.',
       loadingMessages: 'جاري تحميل الرسائل...',
-      calendar: 'تقويم العقارات'
+      calendar: 'تقويم العقارات',
+      title: 'المضيف',
+      hostDashboard: 'لوحة تحكم المضيف',
+      totalEarnings: 'إجمالي الأرباح من الحجوزات المكتملة',
+      getVerified: 'احصل على التحقق',
+      bookings: 'الحجوزات',
+      payoutsSettings: 'المدفوعات والإعدادات'
+    },
+    
+    // Notification types
+    notificationTypes: {
+      review_created: {
+        title: 'تم استلام مراجعة جديدة',
+        message: '{reviewer} ترك مراجعة {rating} نجوم لـ "{property}"'
+      },
+      property_approved: {
+        title: 'تمت الموافقة على العقار',
+        message: 'تمت الموافقة على عقارك "{property}" وهو الآن متاح!'
+      },
+      booking_confirmed_guest: {
+        title: 'تم تأكيد الحجز',
+        message: 'تم تأكيد حجزك لـ "{property}"!'
+      },
+      booking_confirmed_host: {
+        title: 'حجز جديد',
+        message: 'لديك حجز جديد لـ "{property}"'
+      },
+      kyc_approved: {
+        title: 'تمت الموافقة على التحقق من الهوية',
+        message: 'تمت الموافقة على التحقق من هويتك! يمكنك الآن الحصول على شارات التحقق على عقاراتك.'
+      },
+      kyc_rejected: {
+        title: 'تم رفض التحقق من الهوية',
+        message: 'تم رفض طلب التحقق من هويتك. {reason}'
+      },
+      lawyer_contact_approved: {
+        title: 'تمت الموافقة على التواصل مع المحامي',
+        message: 'تمت الموافقة على طلبك للتواصل مع {lawyer}.'
+      },
+      rental_agreement: {
+        title: 'تحديث اتفاقية الإيجار',
+        message: 'تم تحديث حالة اتفاقية الإيجار الخاصة بك.'
+      },
+      review_request: {
+        title: 'كيف كانت إقامتك؟',
+        message: 'يرجى مشاركة تجربتك في "{property}" من خلال ترك مراجعة!'
+      },
+      superhost_promotion: {
+        title: 'تهانينا!',
+        message: 'لقد تمت ترقيتك إلى حالة المضيف المميز!'
+      },
+      message: {
+        title: 'رسالة جديدة',
+        message: '{sender} أرسل لك رسالة'
+      }
     }
   }
 };
