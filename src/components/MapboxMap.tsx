@@ -1,11 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { MapPin } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { supabase } from "@/integrations/supabase/client";
 
 interface MapboxMapProps {
   location: string;
@@ -17,7 +16,31 @@ const MapboxMap = ({ location, address }: MapboxMapProps) => {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
   const [mapboxToken, setMapboxToken] = useState('');
-  const [showTokenInput, setShowTokenInput] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState('');
+
+  // Fetch Mapbox token from edge function
+  useEffect(() => {
+    const fetchToken = async () => {
+      try {
+        const { data, error } = await supabase.functions.invoke('get-mapbox-token');
+        
+        if (error) throw error;
+        if (data?.token) {
+          setMapboxToken(data.token);
+        } else {
+          throw new Error('No token received');
+        }
+      } catch (err) {
+        console.error('Failed to fetch Mapbox token:', err);
+        setError('Failed to load map');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchToken();
+  }, []);
 
   useEffect(() => {
     if (mapboxToken && mapContainer.current && !map.current) {
@@ -49,13 +72,6 @@ const MapboxMap = ({ location, address }: MapboxMapProps) => {
     };
   }, [mapboxToken]);
 
-  const handleTokenSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (mapboxToken.trim()) {
-      setShowTokenInput(false);
-    }
-  };
-
   return (
     <Card>
       <CardHeader>
@@ -65,31 +81,13 @@ const MapboxMap = ({ location, address }: MapboxMapProps) => {
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
-        {showTokenInput ? (
-          <div className="space-y-4">
-            <p className="text-sm text-muted-foreground font-inter">
-              {t('mapboxHint')}{' '}
-              <a 
-                href="https://mapbox.com/" 
-                target="_blank" 
-                rel="noopener noreferrer" 
-                className="text-primary underline hover:text-primary/80"
-              >
-                mapbox.com
-              </a>
-            </p>
-            <form onSubmit={handleTokenSubmit} className="space-y-3">
-              <Input
-                type="text"
-                placeholder={t('mapboxTokenPlaceholder')}
-                value={mapboxToken}
-                onChange={(e) => setMapboxToken(e.target.value)}
-                className="font-mono text-sm"
-              />
-              <Button type="submit" className="w-full">
-                {t('loadMap')}
-              </Button>
-            </form>
+        {isLoading ? (
+          <div className="w-full h-64 bg-muted rounded-lg flex items-center justify-center">
+            <p className="text-sm text-muted-foreground font-inter">Loading map...</p>
+          </div>
+        ) : error ? (
+          <div className="w-full h-64 bg-muted rounded-lg flex items-center justify-center">
+            <p className="text-sm text-destructive font-inter">{error}</p>
           </div>
         ) : (
           <div className="w-full h-64 bg-muted rounded-lg overflow-hidden">

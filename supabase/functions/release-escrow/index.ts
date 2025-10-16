@@ -33,10 +33,16 @@ serve(async (req) => {
       { auth: { persistSession: false } }
     );
 
+    // Parse request body first (only once!)
+    const requestBody = await req.json();
+    const { bookingId, reason } = requestBody;
+    
+    if (!bookingId) throw new Error("Booking ID is required");
+    
     // Authenticate user (skip for system auto-release calls)
     const authHeader = req.headers.get("Authorization");
     let user = null;
-    let isSystemCall = false;
+    const isSystemCall = reason === 'auto_release_24h_post_checkout';
     
     if (authHeader) {
       const token = authHeader.replace("Bearer ", "");
@@ -47,19 +53,11 @@ serve(async (req) => {
       }
     }
     
-    // Check if this is a system call (from auto-release cron)
-    const { reason } = await req.json();
-    isSystemCall = reason === 'auto_release_24h_post_checkout';
-    
     if (!user && !isSystemCall) {
       throw new Error("User not authenticated");
     }
 
-    // Parse request body (already parsed above, just get bookingId)
-    const requestBody = await req.json();
-    const bookingId = requestBody.bookingId;
-    if (!bookingId) throw new Error("Booking ID is required");
-    logStep("Request parsed", { bookingId, reason: requestBody.reason });
+    logStep("Request parsed", { bookingId, reason });
 
     // Fetch booking with related data
     const { data: booking, error: bookingError } = await dbClient
