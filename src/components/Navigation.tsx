@@ -81,7 +81,7 @@ const Navigation = () => {
               {t('shortStay')}
             </Link>
             <Link to="/holibayt-pay" className="text-foreground hover:text-primary transition-colors font-inter">
-              Holibayt Pay
+              {t('holibaytPayBrand')}
             </Link>
             <Link to="/about" className="text-foreground hover:text-primary transition-colors font-inter">
               {t('about')}
@@ -240,7 +240,7 @@ const Navigation = () => {
                     {t('shortStay')}
                   </Link>
                   <Link to="/holibayt-pay" className="text-foreground hover:text-primary transition-colors font-inter font-medium" onClick={() => setIsMenuOpen(false)}>
-                    Holibayt Pay
+                    {t('holibaytPayBrand')}
                   </Link>
                   <Link to="/about" className="text-foreground hover:text-primary transition-colors font-inter font-medium" onClick={() => setIsMenuOpen(false)}>
                     {t('about')}

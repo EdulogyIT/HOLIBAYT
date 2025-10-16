@@ -132,8 +132,9 @@ const ShortStayHeroSearch: React.FC<ShortStayHeroSearchProps> = ({ onSearch }) =
           </h1>
         </div>
 
-        <Card className="max-w-6xl mx-auto p-6 md:p-8 bg-card/95 backdrop-blur-md border-border/30 shadow-elegant rounded-2xl sticky top-16 z-40">
-          <form onSubmit={onSubmit} className="flex flex-col gap-4">
+        <div className="sticky top-16 z-40 w-full max-w-6xl mx-auto">
+          <Card className="w-full p-6 md:p-8 bg-card/95 backdrop-blur-md border-border/30 shadow-elegant rounded-2xl">
+            <form onSubmit={onSubmit} className="flex flex-col gap-4">
             <div className="flex flex-col lg:flex-row gap-4">
               {/* Location Input with Autocomplete */}
               <LocationAutocomplete
@@ -245,7 +246,8 @@ const ShortStayHeroSearch: React.FC<ShortStayHeroSearchProps> = ({ onSearch }) =
               </Button>
             </div>
           </form>
-        </Card>
+          </Card>
+        </div>
       </div>
     </section>
   );

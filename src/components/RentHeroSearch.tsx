@@ -93,8 +93,9 @@ const RentHeroSearch: React.FC<RentHeroSearchProps> = ({ onSearch }) => {
           </h1>
         </div>
 
-        <Card className="max-w-5xl mx-auto p-6 md:p-8 bg-card/95 backdrop-blur-md border-border/30 shadow-elegant rounded-2xl sticky top-16 z-40">
-          <form onSubmit={onSubmit} className="flex flex-col lg:flex-row gap-4">
+        <div className="sticky top-16 z-40 w-full max-w-5xl mx-auto">
+          <Card className="w-full p-6 md:p-8 bg-card/95 backdrop-blur-md border-border/30 shadow-elegant rounded-2xl">
+            <form onSubmit={onSubmit} className="flex flex-col lg:flex-row gap-4">
             {/* Location Input with Autocomplete */}
             <LocationAutocomplete
               value={formData.location}
@@ -144,8 +145,9 @@ const RentHeroSearch: React.FC<RentHeroSearchProps> = ({ onSearch }) => {
               <Search className="mr-2 h-5 w-5" />
               {t("search")}
             </Button>
-          </form>
-        </Card>
+            </form>
+          </Card>
+        </div>
       </div>
     </section>
   );
