@@ -24,16 +24,16 @@ export const HostLayout = ({ children }: HostLayoutProps) => {
   const navigate = useNavigate();
 
   const hostMenuItems = [
-    { title: 'Dashboard', url: '/host', icon: Home },
-    { title: 'Bookings', url: '/host/bookings', icon: Calendar },
-    { title: 'Calendar', url: '/host/calendar', icon: CalendarDays },
-    { title: 'Listings', url: '/host/listings', icon: Building2 },
-    { title: 'Messages', url: '/host/messages', icon: MessageSquare },
-    { title: 'Payouts & Settings', url: '/host/payouts', icon: CreditCard },
+    { title: t('host.dashboard'), url: '/host', icon: Home },
+    { title: t('host.bookings'), url: '/host/bookings', icon: Calendar },
+    { title: t('host.calendar'), url: '/host/calendar', icon: CalendarDays },
+    { title: t('host.listings'), url: '/host/listings', icon: Building2 },
+    { title: t('host.messages'), url: '/host/messages', icon: MessageSquare },
+    { title: t('host.payoutsSettings'), url: '/host/payouts', icon: CreditCard },
   ];
 
   const quickActions = [
-    { title: 'Publish Property', url: '/publish-property', icon: Plus },
+    { title: t('host.publishProperty'), url: '/publish-property', icon: Plus },
   ];
 
   const handleLogout = () => {
@@ -53,7 +53,7 @@ export const HostLayout = ({ children }: HostLayoutProps) => {
               alt="Holibayt" 
               className="h-8 w-auto"
             />
-            <span className="font-semibold text-lg text-foreground">Host</span>
+            <span className="font-semibold text-lg text-foreground">{t('host.title')}</span>
           </div>
         </div>
 
@@ -63,7 +63,7 @@ export const HostLayout = ({ children }: HostLayoutProps) => {
             {/* Quick Actions */}
             <div className="space-y-1">
               <div className="px-3 py-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                Quick Actions
+                {t('host.quickActions')}
               </div>
               {quickActions.map((item) => (
                 <NavLink
@@ -80,7 +80,7 @@ export const HostLayout = ({ children }: HostLayoutProps) => {
             {/* Main Navigation */}
             <div className="space-y-1">
               <div className="px-3 py-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                Host Dashboard
+                {t('host.hostDashboard')}
               </div>
               {hostMenuItems.map((item) => (
                 <NavLink
@@ -108,15 +108,15 @@ export const HostLayout = ({ children }: HostLayoutProps) => {
           <div className="flex flex-col gap-2">
             <Button variant="ghost" className="justify-start" onClick={() => navigate('/')}>
               <Home className="mr-2 h-4 w-4" />
-              Back to Site
+              {t('backToSite')}
             </Button>
             <Button variant="ghost" className="justify-start" onClick={handleLogout}>
               <LogOut className="mr-2 h-4 w-4" />
-              Logout
+              {t('logout')}
             </Button>
           </div>
           <div className="mt-2 text-xs text-muted-foreground">
-            Logged in as {user?.name}
+            {t('loggedInAs')} {user?.name}
           </div>
         </div>
       </div>
@@ -125,7 +125,7 @@ export const HostLayout = ({ children }: HostLayoutProps) => {
       <main className="flex-1 flex flex-col min-w-0">
         {/* Top bar */}
         <header className="h-16 border-b border-border bg-background flex items-center px-4 md:px-6">
-          <h1 className="text-lg md:text-xl font-semibold text-foreground">Host Dashboard</h1>
+          <h1 className="text-lg md:text-xl font-semibold text-foreground">{t('host.hostDashboard')}</h1>
         </header>
         
         {/* Content */}

@@ -179,7 +179,7 @@ export default function HostDashboard() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{formatPrice(monthlyRevenue, undefined, 'EUR')}</div>
-            <p className="text-xs text-muted-foreground">Total earnings from completed bookings</p>
+            <p className="text-xs text-muted-foreground">{t('host.totalEarnings')}</p>
           </CardContent>
         </Card>
       </div>
@@ -205,7 +205,7 @@ export default function HostDashboard() {
             </Button>
             <Button variant="outline" onClick={() => navigate('/host/kyc')}>
               <CheckCircle className="h-4 w-4 mr-2" />
-              Get Verified
+              {t('host.getVerified')}
             </Button>
           </div>
         </CardContent>

@@ -50,14 +50,14 @@ export const AdminLayout = ({ children }: AdminLayoutProps) => {
     { title: t('admin.properties'), url: '/admin/properties', icon: Building2 },
     { title: t('admin.hostsGuests'), url: '/admin/users', icon: Users },
     { title: t('admin.kycVerification'), url: '/admin/kyc', icon: ShieldCheck },
-    { title: 'Superhosts', url: '/admin/superhosts', icon: Users },
-    { title: 'Commissions', url: '/admin/commissions', icon: Calendar },
+    { title: t('admin.superhosts'), url: '/admin/superhosts', icon: Users },
+    { title: t('admin.commissions'), url: '/admin/commissions', icon: Calendar },
     { title: t('admin.messages'), url: '/admin/messages', icon: MessageSquare },
-    { title: 'Blogs', url: '/admin/blogs', icon: FileText },
-    { title: 'Testimonials', url: '/admin/testimonials', icon: Star },
-    { title: 'Lawyers', url: '/admin/lawyers', icon: Scale },
-    { title: 'Lawyer Requests', url: '/admin/lawyer-requests', icon: Gavel },
-    { title: 'Document Templates', url: '/admin/document-templates', icon: FileText },
+    { title: t('admin.blogs'), url: '/admin/blogs', icon: FileText },
+    { title: t('admin.testimonials'), url: '/admin/testimonials', icon: Star },
+    { title: t('admin.lawyers'), url: '/admin/lawyers', icon: Scale },
+    { title: t('admin.lawyerRequests'), url: '/admin/lawyer-requests', icon: Gavel },
+    { title: t('admin.documentTemplates'), url: '/admin/document-templates', icon: FileText },
     { title: t('admin.settings'), url: '/admin/settings', icon: Settings },
   ];
 
@@ -83,7 +83,7 @@ export const AdminLayout = ({ children }: AdminLayoutProps) => {
                   alt="Holibayt" 
                   className="h-8 w-auto"
                 />
-                <span className="font-semibold text-lg">Admin</span>
+                <span className="font-semibold text-lg">{t('admin.title')}</span>
               </div>
             </div>
 
