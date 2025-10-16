@@ -287,7 +287,7 @@ export default function AdminUsers() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{pendingUsers}</div>
-            <p className="text-xs text-muted-foreground">{t('KYCV Verifications')}</p>
+            <p className="text-xs text-muted-foreground">{t('KYC Verifications')}</p>
           </CardContent>
         </Card>
       </div>
@@ -402,20 +402,20 @@ export default function AdminUsers() {
                       <div className="space-y-1 text-sm">
                       <div className="flex items-center">
                         <Calendar className="h-3 w-3 mr-1 text-muted-foreground" />
-                        {t('admin.joined')}: {user.joinDate}
+                        {t('Joined')}: {user.joinDate}
                       </div>
                       <div className="text-muted-foreground">
-                        {t('admin.lastActivity')}: {user.lastActive}
+                        {t('Last Activity')}: {user.lastActive}
                       </div>
                     </div>
                   </TableCell>
                   <TableCell className="hidden lg:table-cell">
                     <div className="space-y-1 text-sm">
                       {user.propertyCount && (
-                        <div>{user.propertyCount} {t('admin.properties')}</div>
+                        <div>{user.propertyCount} {t('Properties')}</div>
                       )}
                       {user.bookingCount !== undefined && (
-                        <div>{user.bookingCount} {t('admin.bookings')}</div>
+                        <div>{user.bookingCount} {t('Bookings')}</div>
                       )}
                     </div>
                   </TableCell>
