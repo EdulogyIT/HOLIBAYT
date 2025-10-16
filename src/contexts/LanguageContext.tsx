@@ -1208,7 +1208,7 @@ const allTranslations = {
     gdprCompliant: 'GDPR Compliant',
     
     // Rent Page Trust
-    rentHeroHeading: 'Find verified rentals across Algeria - pay securely with Holibayt Pay™ and avoid scams',
+    rentHeroHeading: 'Find verified rentals across Algeria',
     rentHeroSubheading: 'All listings verified by our local team.',
     rentNewDescription: 'Long-term rentals with verified landlords and guaranteed payments.',
     verifiedLandlords: '100% Verified Landlords',

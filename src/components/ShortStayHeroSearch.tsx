@@ -113,7 +113,7 @@ const ShortStayHeroSearch: React.FC<ShortStayHeroSearchProps> = ({ onSearch }) =
   };
 
   return (
-    <section className="py-12 md:py-16 overflow-hidden">
+    <section className="relative py-12 md:py-16 overflow-hidden">
       {/* Background Image */}
       <div
         className="absolute inset-0 bg-cover bg-center bg-no-repeat"
@@ -132,7 +132,7 @@ const ShortStayHeroSearch: React.FC<ShortStayHeroSearchProps> = ({ onSearch }) =
           </h1>
         </div>
 
-        <div className="sticky top-16 z-40 w-full max-w-6xl mx-auto">
+        <div className="sticky top-0 z-50 w-full max-w-6xl mx-auto">
           <Card className="w-full p-6 md:p-8 bg-card/95 backdrop-blur-md border-border/30 shadow-elegant rounded-2xl">
             <form onSubmit={onSubmit} className="flex flex-col gap-4">
             <div className="flex flex-col lg:flex-row gap-4">

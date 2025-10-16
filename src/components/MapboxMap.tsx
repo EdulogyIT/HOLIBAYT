@@ -48,18 +48,26 @@ const MapboxMap = ({ location, address }: MapboxMapProps) => {
       
       map.current = new mapboxgl.Map({
         container: mapContainer.current,
-        style: 'mapbox://styles/mapbox/streets-v11',
+        style: 'mapbox://styles/mapbox/light-v11',
         center: [3.0588, 36.7538], // Default to Algiers
-        zoom: 13,
+        zoom: 14,
+        attributionControl: false,
       });
 
       // Add navigation controls
       map.current.addControl(new mapboxgl.NavigationControl(), 'top-right');
 
-      // Add a marker for the property location
-      new mapboxgl.Marker({
-        color: '#0ea5e9'
-      })
+      // Add a custom marker for the property location
+      const markerElement = document.createElement('div');
+      markerElement.className = 'custom-marker';
+      markerElement.style.width = '32px';
+      markerElement.style.height = '32px';
+      markerElement.style.backgroundColor = '#0ea5e9';
+      markerElement.style.borderRadius = '50%';
+      markerElement.style.border = '3px solid white';
+      markerElement.style.boxShadow = '0 2px 4px rgba(0,0,0,0.3)';
+      
+      new mapboxgl.Marker({ element: markerElement })
         .setLngLat([3.0588, 36.7538])
         .addTo(map.current);
     }
