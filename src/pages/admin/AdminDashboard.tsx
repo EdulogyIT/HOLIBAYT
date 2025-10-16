@@ -48,14 +48,14 @@ export default function AdminDashboard() {
 
   const kpiData = [
     {
-      title: t('admin.totalProperties'),
+      title: t('Total Properties'),
       value: loading ? '...' : properties.length.toString(),
       change: '+' + Math.floor(Math.random() * 20 + 5) + '%',
       icon: Building2,
       onClick: () => navigate('/admin/properties')
     },
     {
-      title: t('admin.activeProperties'),
+      title: t('Active Properties'),
       value: loading ? '...' : activeProperties.toString(),
       change: '+' + Math.floor(Math.random() * 15 + 3) + '%',
       icon: CalendarDays,
@@ -65,14 +65,14 @@ export default function AdminDashboard() {
       }
     },
     {
-      title: t('admin.totalUsers'),
+      title: t('Total Users'),
       value: loading ? '...' : profiles.length.toString(),
       change: '+' + Math.floor(Math.random() * 25 + 8) + '%',
       icon: Users,
       onClick: () => navigate('/admin/users')
     },
     {
-      title: t('admin.messages'),
+      title: t('Messages'),
       value: loading ? '...' : messagesCount.toString(),
       change: '+' + Math.floor(Math.random() * 30 + 10) + '%',
       icon: MessageSquare,
@@ -188,7 +188,7 @@ export default function AdminDashboard() {
       <div className="grid gap-6 md:grid-cols-2">
         <Card>
           <CardHeader>
-            <CardTitle>{t('admin.recentProperties')}</CardTitle>
+            <CardTitle>{t('Recent Properties')}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
@@ -218,7 +218,7 @@ export default function AdminDashboard() {
 
         <Card>
           <CardHeader>
-            <CardTitle>{t('admin.propertyDistribution')}</CardTitle>
+            <CardTitle>{t('Property Distribution')}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
