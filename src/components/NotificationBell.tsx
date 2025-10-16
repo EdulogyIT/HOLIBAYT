@@ -16,6 +16,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { SuperhostCelebration } from "@/components/SuperhostCelebration";
 import { ReviewNotificationDialog } from "@/components/ReviewNotificationDialog";
 import { BookingInvitationCard } from "@/components/BookingInvitationCard";
+import { translateNotification } from "@/utils/notificationTranslator";
 
 interface Notification {
   id: string;
@@ -28,7 +29,7 @@ interface Notification {
 }
 
 export const NotificationBell = () => {
-  const { t } = useLanguage();
+  const { t, currentLang } = useLanguage();
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [showSuperhostCelebration, setShowSuperhostCelebration] = useState(false);
@@ -66,8 +67,12 @@ export const NotificationBell = () => {
         
         // Show immediate toast popup for non-superhost notifications
         if (newNotification.type !== 'superhost_promotion') {
-          toast.success(newNotification.title, {
-            description: newNotification.message,
+          const { translatedTitle, translatedMessage } = translateNotification(
+            newNotification,
+            { t, currentLang }
+          );
+          toast.success(translatedTitle, {
+            description: translatedMessage,
             duration: 5000,
           });
         } else {
@@ -188,8 +193,8 @@ export const NotificationBell = () => {
         .single();
 
       if (existingReview) {
-        toast.success("Already Reviewed", {
-          description: "You have already submitted a review for this stay. Thank you!"
+        toast.success(t('alreadyReviewed'), {
+          description: t('alreadyReviewedDesc')
         });
       } else {
         // Navigate to bookings page past tab where they can review
@@ -285,10 +290,20 @@ export const NotificationBell = () => {
                   >
                     <div className="flex items-start justify-between gap-2">
                       <div className="flex-1">
-                        <p className="font-medium text-sm">{notification.title}</p>
-                        <p className="text-xs text-muted-foreground mt-1">
-                          {notification.message}
-                        </p>
+                        {(() => {
+                          const { translatedTitle, translatedMessage } = translateNotification(
+                            notification,
+                            { t, currentLang }
+                          );
+                          return (
+                            <>
+                              <p className="font-medium text-sm">{translatedTitle}</p>
+                              <p className="text-xs text-muted-foreground mt-1">
+                                {translatedMessage}
+                              </p>
+                            </>
+                          );
+                        })()}
                         <p className="text-xs text-muted-foreground mt-2">
                           {new Date(notification.created_at).toLocaleString()}
                         </p>

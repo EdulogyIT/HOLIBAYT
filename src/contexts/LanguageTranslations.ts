@@ -291,11 +291,132 @@ export const buyRentTranslations = {
     mountainView: "Vue Montagne",
     cityCenter: "Centre-Ville",
     
+    // Host Dashboard Translations
+    host: {
+      dashboard: "Tableau de Bord",
+      title: "Hôte",
+      hostDashboard: "Tableau de Bord Hôte",
+      welcomeMessage: "Bienvenue ! Gérez vos propriétés et réservations.",
+      loadingProperties: "Chargement des propriétés...",
+      activeProperties: "Propriétés Actives",
+      messagesReceived: "Messages Reçus",
+      checkMessages: "Vérifier les messages",
+      monthlyRevenue: "Revenu Mensuel",
+      totalEarnings: "Gains Totaux des Réservations Complétées",
+      quickActions: "Actions Rapides",
+      publishProperty: "Publier une Propriété",
+      viewListings: "Voir les Annonces",
+      messages: "Messages",
+      getVerified: "Se Faire Vérifier",
+      recentProperties: "Propriétés Récentes",
+      publishedOn: "Publié le",
+      active: "Actif",
+      inactive: "Inactif",
+      bookings: "Réservations",
+      calendar: "Calendrier",
+      listings: "Annonces",
+      payoutsSettings: "Paiements et Paramètres",
+    },
+
+    // Admin Dashboard Translations
     admin: {
+      dashboard: "Tableau de Bord",
+      title: "Admin",
+      adminPanel: "Panneau Admin",
+      adminConsole: "Console Admin",
+      administration: "Administration",
+      operationsHub: "Hub Opérationnel Holibayt — Votre Performance, Croissance et Activité des Hôtes en un Coup d'Œil",
+      totalProperties: "Total des Propriétés",
+      activeProperties: "Propriétés Actives",
+      totalUsers: "Total des Utilisateurs",
+      messages: "Messages",
+      fromLastWeek: "De la Semaine Dernière",
+      addNewProperty: "Ajouter une Propriété",
+      verifyHosts: "Vérifier les Hôtes",
+      reviewPayments: "Examiner les Paiements",
+      platformGMV: "GMV de la Plateforme",
+      avgBookingValue: "Valeur Moyenne de Réservation",
+      conversionRate: "Taux de Conversion",
+      verificationPending: "Vérification en Attente",
+      actionRequired: "Action Requise",
+      avgResponseTime: "Temps de Réponse Moyen",
+      recentProperties: "Propriétés Récentes",
+      propertyDistribution: "Distribution des Propriétés",
+      loading: "Chargement...",
+      noPropertiesYet: "Aucune Propriété Encore",
+      properties: "Propriétés",
+      hostsGuests: "Hôtes et Invités",
+      kycVerification: "Vérification KYC",
+      superhosts: "Super Hôtes",
+      commissions: "Commissions",
+      blogs: "Blogs",
+      testimonials: "Témoignages",
+      lawyers: "Avocats",
+      lawyerRequests: "Demandes d'Avocat",
+      documentTemplates: "Modèles de Documents",
+      settings: "Paramètres",
+      backToSite: "Retour au Site",
+      logout: "Déconnexion",
       registeredUsers: "Utilisateurs inscrits",
       hosts: "Hôtes",
       kycVerifications: "Vérifications KYC"
-    }
+    },
+
+    // Notification Type Translations
+    notificationTypes: {
+      review_created: {
+        title: "Nouvel Avis Reçu",
+        message: "{reviewer} a laissé un avis {rating} étoiles pour \"{property}\""
+      },
+      property_approved: {
+        title: "Propriété Approuvée",
+        message: "Votre propriété \"{property}\" a été approuvée et est maintenant en ligne !"
+      },
+      booking_confirmed_guest: {
+        title: "Réservation Confirmée",
+        message: "Votre réservation pour \"{property}\" a été confirmée !"
+      },
+      booking_confirmed_host: {
+        title: "Nouvelle Réservation",
+        message: "Vous avez une nouvelle réservation pour \"{property}\""
+      },
+      kyc_approved: {
+        title: "KYC Approuvé",
+        message: "Votre KYC a été approuvé ! Vous pouvez maintenant obtenir des badges vérifiés sur vos propriétés."
+      },
+      kyc_rejected: {
+        title: "KYC Rejeté",
+        message: "Votre soumission KYC a été rejetée. {reason}"
+      },
+      lawyer_contact_approved: {
+        title: "Contact Avocat Approuvé",
+        message: "Votre demande de contact avec {lawyer} a été approuvée."
+      },
+      rental_agreement: {
+        title: "Mise à Jour du Contrat de Location",
+        message: "Le statut de votre contrat de location a été mis à jour."
+      },
+      review_request: {
+        title: "Comment S'est Passé Votre Séjour ?",
+        message: "Veuillez partager votre expérience à \"{property}\" en laissant un avis !"
+      },
+      superhost_promotion: {
+        title: "Félicitations !",
+        message: "Vous avez été promu au statut de Super Hôte !"
+      },
+      message: {
+        title: "Nouveau Message",
+        message: "{sender} vous a envoyé un message"
+      }
+    },
+
+    // Global Translations
+    alreadyReviewed: "Déjà Examiné",
+    alreadyReviewedDesc: "Vous Avez Déjà Soumis un Avis pour Ce Séjour. Merci !",
+    backToSite: "Retour au Site",
+    logout: "Déconnexion",
+    loggedInAs: "Connecté en Tant Que",
+    holibaytPayTooltip: "Fonds Conservés en Séquestre Jusqu'à la Confirmation de la Transaction. Votre Paiement Est Protégé."
   },
   EN: {
     protectedByHolibaytPay: "Protected by Holibayt Pay™ – verified escrow payments for property purchases",
@@ -582,11 +703,132 @@ export const buyRentTranslations = {
     semiFurnished: "Semi Furnished",
     unfurnishedLabel: "Unfurnished",
     
+    // Host Dashboard Translations
+    host: {
+      dashboard: "Dashboard",
+      title: "Host",
+      hostDashboard: "Host Dashboard",
+      welcomeMessage: "Welcome back! Manage your properties and bookings.",
+      loadingProperties: "Loading properties...",
+      activeProperties: "Active Properties",
+      messagesReceived: "Messages Received",
+      checkMessages: "Check messages",
+      monthlyRevenue: "Monthly Revenue",
+      totalEarnings: "Total Earnings from Completed Bookings",
+      quickActions: "Quick Actions",
+      publishProperty: "Publish Property",
+      viewListings: "View Listings",
+      messages: "Messages",
+      getVerified: "Get Verified",
+      recentProperties: "Recent Properties",
+      publishedOn: "Published On",
+      active: "Active",
+      inactive: "Inactive",
+      bookings: "Bookings",
+      calendar: "Calendar",
+      listings: "Listings",
+      payoutsSettings: "Payouts & Settings",
+    },
+
+    // Admin Dashboard Translations
     admin: {
+      dashboard: "Dashboard",
+      title: "Admin",
+      adminPanel: "Admin Panel",
+      adminConsole: "Admin Console",
+      administration: "Administration",
+      operationsHub: "Holibayt Operations Hub — Your Performance, Growth, and Host Activity in One View",
+      totalProperties: "Total Properties",
+      activeProperties: "Active Properties",
+      totalUsers: "Total Users",
+      messages: "Messages",
+      fromLastWeek: "From Last Week",
+      addNewProperty: "Add New Property",
+      verifyHosts: "Verify Hosts",
+      reviewPayments: "Review Payments",
+      platformGMV: "Platform GMV",
+      avgBookingValue: "Avg. Booking Value",
+      conversionRate: "Conversion Rate",
+      verificationPending: "Verification Pending",
+      actionRequired: "Action Required",
+      avgResponseTime: "Avg. Response Time",
+      recentProperties: "Recent Properties",
+      propertyDistribution: "Property Distribution",
+      loading: "Loading...",
+      noPropertiesYet: "No Properties Yet",
+      properties: "Properties",
+      hostsGuests: "Hosts & Guests",
+      kycVerification: "KYC Verification",
+      superhosts: "Superhosts",
+      commissions: "Commissions",
+      blogs: "Blogs",
+      testimonials: "Testimonials",
+      lawyers: "Lawyers",
+      lawyerRequests: "Lawyer Requests",
+      documentTemplates: "Document Templates",
+      settings: "Settings",
+      backToSite: "Back to Site",
+      logout: "Logout",
       registeredUsers: "Registered users",
       hosts: "Hosts",
       kycVerifications: "KYC verifications"
-    }
+    },
+
+    // Notification Type Translations
+    notificationTypes: {
+      review_created: {
+        title: "New Review Received",
+        message: "{reviewer} left a {rating}-star review for \"{property}\""
+      },
+      property_approved: {
+        title: "Property Approved",
+        message: "Your property \"{property}\" has been approved and is now live!"
+      },
+      booking_confirmed_guest: {
+        title: "Booking Confirmed",
+        message: "Your booking for \"{property}\" has been confirmed!"
+      },
+      booking_confirmed_host: {
+        title: "New Booking",
+        message: "You have a new booking for \"{property}\""
+      },
+      kyc_approved: {
+        title: "KYC Approved",
+        message: "Your KYC has been approved! You can now get verified badges on your properties."
+      },
+      kyc_rejected: {
+        title: "KYC Rejected",
+        message: "Your KYC submission was rejected. {reason}"
+      },
+      lawyer_contact_approved: {
+        title: "Lawyer Contact Approved",
+        message: "Your request to contact {lawyer} has been approved."
+      },
+      rental_agreement: {
+        title: "Rental Agreement Update",
+        message: "Your rental agreement status has been updated."
+      },
+      review_request: {
+        title: "How Was Your Stay?",
+        message: "Please share your experience at \"{property}\" by leaving a review!"
+      },
+      superhost_promotion: {
+        title: "Congratulations!",
+        message: "You've been promoted to Superhost status!"
+      },
+      message: {
+        title: "New Message",
+        message: "{sender} sent you a message"
+      }
+    },
+
+    // Global Translations
+    alreadyReviewed: "Already Reviewed",
+    alreadyReviewedDesc: "You Have Already Submitted a Review for This Stay. Thank You!",
+    backToSite: "Back to Site",
+    logout: "Logout",
+    loggedInAs: "Logged In As",
+    holibaytPayTooltip: "Funds Held in Escrow Until Transaction Confirmation. Your Payment Is Protected."
   },
   AR: {
     protectedByHolibaytPay: "محمي بواسطة Holibayt Pay™ – مدفوعات ضمان موثقة لشراء العقارات",
@@ -850,10 +1092,131 @@ export const buyRentTranslations = {
     semiFurnished: "شبه مفروش",
     unfurnishedLabel: "غير مفروش",
     
+    // Host Dashboard Translations
+    host: {
+      dashboard: "لوحة التحكم",
+      title: "المضيف",
+      hostDashboard: "لوحة تحكم المضيف",
+      welcomeMessage: "مرحبًا بعودتك! إدارة عقاراتك وحجوزاتك.",
+      loadingProperties: "جاري تحميل العقارات...",
+      activeProperties: "العقارات النشطة",
+      messagesReceived: "الرسائل المستلمة",
+      checkMessages: "تحقق من الرسائل",
+      monthlyRevenue: "الإيرادات الشهرية",
+      totalEarnings: "إجمالي الأرباح من الحجوزات المكتملة",
+      quickActions: "إجراءات سريعة",
+      publishProperty: "نشر عقار",
+      viewListings: "عرض القوائم",
+      messages: "الرسائل",
+      getVerified: "احصل على التحقق",
+      recentProperties: "العقارات الحديثة",
+      publishedOn: "نُشر في",
+      active: "نشط",
+      inactive: "غير نشط",
+      bookings: "الحجوزات",
+      calendar: "التقويم",
+      listings: "القوائم",
+      payoutsSettings: "المدفوعات والإعدادات",
+    },
+
+    // Admin Dashboard Translations
     admin: {
+      dashboard: "لوحة التحكم",
+      title: "المسؤول",
+      adminPanel: "لوحة المسؤول",
+      adminConsole: "وحدة تحكم المسؤول",
+      administration: "الإدارة",
+      operationsHub: "مركز عمليات Holibayt — أدائك ونموك ونشاط المضيف في لمحة واحدة",
+      totalProperties: "إجمالي العقارات",
+      activeProperties: "العقارات النشطة",
+      totalUsers: "إجمالي المستخدمين",
+      messages: "الرسائل",
+      fromLastWeek: "من الأسبوع الماضي",
+      addNewProperty: "إضافة عقار جديد",
+      verifyHosts: "التحقق من المضيفين",
+      reviewPayments: "مراجعة المدفوعات",
+      platformGMV: "إجمالي قيمة البضائع",
+      avgBookingValue: "متوسط قيمة الحجز",
+      conversionRate: "معدل التحويل",
+      verificationPending: "التحقق قيد الانتظار",
+      actionRequired: "مطلوب إجراء",
+      avgResponseTime: "متوسط وقت الاستجابة",
+      recentProperties: "العقارات الحديثة",
+      propertyDistribution: "توزيع العقارات",
+      loading: "جاري التحميل...",
+      noPropertiesYet: "لا توجد عقارات بعد",
+      properties: "العقارات",
+      hostsGuests: "المضيفون والضيوف",
+      kycVerification: "التحقق من الهوية",
+      superhosts: "المضيفون المميزون",
+      commissions: "العمولات",
+      blogs: "المدونات",
+      testimonials: "الشهادات",
+      lawyers: "المحامون",
+      lawyerRequests: "طلبات المحامي",
+      documentTemplates: "قوالب المستندات",
+      settings: "الإعدادات",
+      backToSite: "العودة إلى الموقع",
+      logout: "تسجيل الخروج",
       registeredUsers: "المستخدمون المسجلون",
       hosts: "المضيفون",
       kycVerifications: "عمليات التحقق من الهوية"
-    }
+    },
+
+    // Notification Type Translations
+    notificationTypes: {
+      review_created: {
+        title: "تم استلام مراجعة جديدة",
+        message: "{reviewer} ترك مراجعة {rating} نجوم لـ \"{property}\""
+      },
+      property_approved: {
+        title: "تمت الموافقة على العقار",
+        message: "تمت الموافقة على عقارك \"{property}\" وهو الآن مباشر!"
+      },
+      booking_confirmed_guest: {
+        title: "تم تأكيد الحجز",
+        message: "تم تأكيد حجزك لـ \"{property}\"!"
+      },
+      booking_confirmed_host: {
+        title: "حجز جديد",
+        message: "لديك حجز جديد لـ \"{property}\""
+      },
+      kyc_approved: {
+        title: "تمت الموافقة على التحقق من الهوية",
+        message: "تمت الموافقة على التحقق من هويتك! يمكنك الآن الحصول على شارات موثقة على عقاراتك."
+      },
+      kyc_rejected: {
+        title: "تم رفض التحقق من الهوية",
+        message: "تم رفض طلب التحقق من هويتك. {reason}"
+      },
+      lawyer_contact_approved: {
+        title: "تمت الموافقة على الاتصال بالمحامي",
+        message: "تمت الموافقة على طلبك للاتصال بـ {lawyer}."
+      },
+      rental_agreement: {
+        title: "تحديث عقد الإيجار",
+        message: "تم تحديث حالة عقد الإيجار الخاص بك."
+      },
+      review_request: {
+        title: "كيف كانت إقامتك؟",
+        message: "يرجى مشاركة تجربتك في \"{property}\" عن طريق ترك مراجعة!"
+      },
+      superhost_promotion: {
+        title: "تهانينا!",
+        message: "لقد تمت ترقيتك إلى حالة المضيف المميز!"
+      },
+      message: {
+        title: "رسالة جديدة",
+        message: "{sender} أرسل لك رسالة"
+      }
+    },
+    
+    // Global Translations
+    alreadyReviewed: "تمت المراجعة بالفعل",
+    alreadyReviewedDesc: "لقد قمت بالفعل بإرسال مراجعة لهذه الإقامة. شكرا لك!",
+    backToSite: "العودة إلى الموقع",
+    logout: "تسجيل الخروج",
+    loggedInAs: "مسجل الدخول كـ",
+    holibaytPayTooltip: "الأموال محفوظة في الضمان حتى تأكيد المعاملة. دفعتك محمية."
   }
 };
