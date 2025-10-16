@@ -350,7 +350,7 @@ const CreateAgreement = () => {
               <div className="space-y-6">
                 <div className="text-center p-8 border-2 border-dashed border-border rounded-lg">
                   <Upload className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
-                  <h3 className="text-lg font-semibold mb-2">{t('uploadDraft')}</h3>
+                  <h3 className="text-lg font-semibold mb-2">{t('Upload Draft')}</h3>
                   <p className="text-sm text-muted-foreground mb-4">
                     {t('Upload Draft')}
                   </p>
