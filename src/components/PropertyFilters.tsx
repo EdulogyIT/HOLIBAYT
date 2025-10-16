@@ -721,10 +721,10 @@ const PropertyFilters = ({ onFilterChange, listingType }: PropertyFiltersProps) 
 
         <DialogFooter className="flex-row justify-between items-center border-t pt-4">
           <Button variant="ghost" onClick={clearFilters} className="text-sm underline">
-            {t('clearAll') || 'Clear all'}
+            {t('clearAll') || 'Clear All'}
           </Button>
           <Button onClick={() => setIsOpen(false)} className="px-8">
-            {t('showResults') || 'Show results'}
+            {t('showResults') || 'Show Results'}
           </Button>
         </DialogFooter>
       </DialogContent>

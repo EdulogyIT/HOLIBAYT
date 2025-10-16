@@ -8,22 +8,22 @@ export const WhyBuyWithHolibayt = () => {
     {
       icon: Shield,
       title: t("verifiedOwnership"),
-      description: "All property documents are verified before listing"
+      description: t("verifiedOwnershipDesc")
     },
     {
       icon: DollarSign,
       title: t("escrowPayment"),
-      description: "Your payment is secured until ownership transfer is complete"
+      description: t("escrowPaymentDesc")
     },
     {
       icon: Scale,
       title: t("legalSupport"),
-      description: "Legal assistance throughout the purchase process"
+      description: t("legalSupportDesc")
     },
     {
       icon: AlertCircle,
       title: t("noHiddenFees"),
-      description: "Transparent pricing with no surprise charges"
+      description: t("noHiddenFeesDesc")
     }
   ];
 

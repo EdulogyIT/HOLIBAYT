@@ -44,7 +44,7 @@ export const PropertyThingsToKnow = ({
     ? [
         { icon: CheckCircle2, text: "Check-in: After " + checkInTime, allowed: true },
         { icon: CheckCircle2, text: "Check-out: Before " + checkOutTime, allowed: true },
-        { icon: CheckCircle2, text: "Self check-in with keypad", allowed: true },
+        { icon: CheckCircle2, text: t("selfCheckInKeypad"), allowed: true },
         { icon: houseRules?.smoking ? CheckCircle2 : XCircle, text: houseRules?.smoking ? "Smoking allowed" : "No smoking", allowed: houseRules?.smoking || false },
         { icon: houseRules?.pets ? CheckCircle2 : XCircle, text: houseRules?.pets ? "Pets allowed" : "No pets", allowed: houseRules?.pets || false },
         { icon: houseRules?.events ? CheckCircle2 : XCircle, text: houseRules?.events ? "Events allowed" : "No parties or events", allowed: houseRules?.events || false },
@@ -60,10 +60,10 @@ export const PropertyThingsToKnow = ({
         { icon: houseRules?.smoking ? CheckCircle2 : XCircle, text: houseRules?.smoking ? "Smoking allowed" : "No smoking", allowed: houseRules?.smoking || false },
       ]
     : [
-        { icon: CheckCircle2, text: "Ownership documents verified", allowed: true },
-        { icon: CheckCircle2, text: "Property inspection recommended", allowed: true },
-        { icon: Info, text: "Financing options available", allowed: null },
-        { icon: Info, text: "Legal assistance recommended", allowed: null },
+        { icon: CheckCircle2, text: t("ownershipDocsVerified"), allowed: true },
+        { icon: CheckCircle2, text: t("propertyInspectionRecommended"), allowed: true },
+        { icon: Info, text: t("financingOptionsAvailable"), allowed: null },
+        { icon: Info, text: t("legalAssistanceRecommended"), allowed: null },
       ];
 
   // Build safety features from database or use defaults

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -47,6 +48,7 @@ export default function HostOnboarding() {
   const [images, setImages] = useState<File[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { assignHostRole, user } = useAuth();
+  const { t } = useLanguage();
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -394,7 +396,7 @@ export default function HostOnboarding() {
                   variant="outline"
                   onClick={() => document.getElementById('image-upload')?.click()}
                 >
-                  Choose Files
+                  {t('chooseFiles')}
                 </Button>
               </div>
               

@@ -108,6 +108,34 @@ export const buyRentTranslations = {
     welcomeHome: "Bienvenue Chez Vous !",
     yourBookingConfirmed: "Votre réservation est confirmée !",
     close: "Fermer",
+    
+    // WhyBuyWithHolibayt Descriptions
+    verifiedOwnershipDesc: "Tous les Documents de Propriété Sont Vérifiés Avant la Mise en Vente",
+    escrowPaymentDesc: "Votre Paiement Est Sécurisé Jusqu'à la Finalisation du Transfert de Propriété",
+    legalSupportDesc: "Assistance Juridique Tout au Long du Processus d'Achat",
+    noHiddenFeesDesc: "Tarification Transparente Sans Frais Cachés",
+    
+    // HolibaytPayExplainer Features
+    escrowProtectionFeature: "Protection par Séquestre Jusqu'au Transfert de Propriété",
+    verifiedDocumentsFeature: "Aucun Paiement Sans Documents Vérifiés",
+    transactionTransparencyFeature: "Transparence Totale de la Transaction",
+    securePaymentProcessingFeature: "Traitement Sécurisé des Paiements",
+    
+    // PropertyThingsToKnow Rules
+    selfCheckInKeypad: "Enregistrement Autonome avec Clavier",
+    ownershipDocsVerified: "Documents de Propriété Vérifiés",
+    propertyInspectionRecommended: "Inspection de la Propriété Recommandée",
+    financingOptionsAvailable: "Options de Financement Disponibles",
+    legalAssistanceRecommended: "Assistance Juridique Recommandée",
+    
+    // Blog & Forms
+    postComment: "Publier un Commentaire",
+    
+    // Additional Missing Keys
+    chooseFiles: "Choisir des Fichiers",
+    fullyFurnished: "Entièrement Meublé",
+    semiFurnished: "Semi-Meublé",
+    unfurnishedLabel: "Non Meublé",
     verifiedLocation: "Emplacement vérifié",
     whyBuyWithHolibayt: "Pourquoi acheter avec Holibayt ?",
     verifiedOwnership: "Propriété vérifiée",
@@ -236,7 +264,6 @@ export const buyRentTranslations = {
     readyForLegalSupport: "Prêt à Obtenir un Support Juridique?",
     legalSupportCTA: "Parcourez les propriétés et demandez une assistance juridique sur n'importe quelle annonce, ou contactez directement nos avocats vérifiés.",
     viewLawyers: "Voir les Avocats Disponibles",
-    legalSupportDesc: "Obtenez une assistance juridique experte tout au long du processus",
     
     // Short Stay Page - New Components
     popular_amenities: "Équipements Populaires",
@@ -490,7 +517,6 @@ export const buyRentTranslations = {
     readyForLegalSupport: "Ready to Get Legal Support?",
     legalSupportCTA: "Browse properties and request legal assistance on any listing, or contact our verified lawyers directly.",
     viewLawyers: "View Available Lawyers",
-    legalSupportDesc: "Get expert legal assistance throughout the process",
     
     // Short Stay Page - New Components
     popular_amenities: "Popular Amenities",
@@ -527,6 +553,34 @@ export const buyRentTranslations = {
     welcomeHome: "Welcome Home!",
     yourBookingConfirmed: "Your booking is confirmed!",
     close: "Close",
+    
+    // WhyBuyWithHolibayt Descriptions
+    verifiedOwnershipDesc: "All Property Documents Are Verified Before Listing",
+    escrowPaymentDesc: "Your Payment Is Secured Until Ownership Transfer Is Complete",
+    legalSupportDesc: "Legal Assistance Throughout the Purchase Process",
+    noHiddenFeesDesc: "Transparent Pricing with No Surprise Charges",
+    
+    // HolibaytPayExplainer Features
+    escrowProtectionFeature: "Escrow Protection Until Ownership Transfer",
+    verifiedDocumentsFeature: "No Payment Without Verified Documents",
+    transactionTransparencyFeature: "Full Transaction Transparency",
+    securePaymentProcessingFeature: "Secure Payment Processing",
+    
+    // PropertyThingsToKnow Rules
+    selfCheckInKeypad: "Self Check-In with Keypad",
+    ownershipDocsVerified: "Ownership Documents Verified",
+    propertyInspectionRecommended: "Property Inspection Recommended",
+    financingOptionsAvailable: "Financing Options Available",
+    legalAssistanceRecommended: "Legal Assistance Recommended",
+    
+    // Blog & Forms
+    postComment: "Post Comment",
+    
+    // Additional Missing Keys
+    chooseFiles: "Choose Files",
+    fullyFurnished: "Fully Furnished",
+    semiFurnished: "Semi Furnished",
+    unfurnishedLabel: "Unfurnished",
     
     admin: {
       registeredUsers: "Registered users",
@@ -767,6 +821,34 @@ export const buyRentTranslations = {
     welcomeHome: "مرحبا بك في البيت!",
     yourBookingConfirmed: "تم تأكيد حجزك!",
     close: "إغلاق",
+    
+    // WhyBuyWithHolibayt Descriptions
+    verifiedOwnershipDesc: "يتم التحقق من جميع وثائق الملكية قبل الإدراج",
+    escrowPaymentDesc: "يتم تأمين دفعتك حتى يتم نقل الملكية بالكامل",
+    legalSupportDesc: "المساعدة القانونية طوال عملية الشراء",
+    noHiddenFeesDesc: "تسعير شفاف بدون رسوم مخفية",
+    
+    // HolibaytPayExplainer Features
+    escrowProtectionFeature: "حماية الضمان حتى نقل الملكية",
+    verifiedDocumentsFeature: "لا دفع بدون مستندات موثقة",
+    transactionTransparencyFeature: "شفافية كاملة للمعاملات",
+    securePaymentProcessingFeature: "معالجة دفع آمنة",
+    
+    // PropertyThingsToKnow Rules
+    selfCheckInKeypad: "تسجيل دخول ذاتي بلوحة المفاتيح",
+    ownershipDocsVerified: "وثائق الملكية موثقة",
+    propertyInspectionRecommended: "يوصى بفحص العقار",
+    financingOptionsAvailable: "خيارات التمويل متاحة",
+    legalAssistanceRecommended: "يوصى بالمساعدة القانونية",
+    
+    // Blog & Forms
+    postComment: "نشر تعليق",
+    
+    // Additional Missing Keys
+    chooseFiles: "اختر الملفات",
+    fullyFurnished: "مفروش بالكامل",
+    semiFurnished: "شبه مفروش",
+    unfurnishedLabel: "غير مفروش",
     
     admin: {
       registeredUsers: "المستخدمون المسجلون",

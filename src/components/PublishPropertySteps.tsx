@@ -645,15 +645,15 @@ const PublishPropertySteps = ({ onSubmit, isSubmitting = false }: PublishPropert
                 >
                   <div className="flex items-center space-x-2 p-3 border rounded-lg hover:bg-muted/50">
                     <RadioGroupItem value="full" id="full-furnished" />
-                    <Label htmlFor="full-furnished" className="cursor-pointer">Fully Furnished</Label>
+                    <Label htmlFor="full-furnished" className="cursor-pointer">{t('fullyFurnished')}</Label>
                   </div>
                   <div className="flex items-center space-x-2 p-3 border rounded-lg hover:bg-muted/50">
                     <RadioGroupItem value="semi" id="semi-furnished" />
-                    <Label htmlFor="semi-furnished" className="cursor-pointer">Semi Furnished</Label>
+                    <Label htmlFor="semi-furnished" className="cursor-pointer">{t('semiFurnished')}</Label>
                   </div>
                   <div className="flex items-center space-x-2 p-3 border rounded-lg hover:bg-muted/50">
                     <RadioGroupItem value="none" id="unfurnished" />
-                    <Label htmlFor="unfurnished" className="cursor-pointer">Unfurnished</Label>
+                    <Label htmlFor="unfurnished" className="cursor-pointer">{t('unfurnishedLabel')}</Label>
                   </div>
                 </RadioGroup>
               </div>

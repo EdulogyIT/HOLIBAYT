@@ -15,9 +15,9 @@ export const HolibaytPayExplainer = ({ category }: HolibaytPayExplainerProps) =>
     title: t("holibaytPayExplainer"),
     description: t("fundsHeldSafely"),
     features: [
-      "Escrow protection until ownership transfer",
-      "No payment without verified documents",
-      "Full transaction transparency"
+      t("escrowProtectionFeature"),
+      t("verifiedDocumentsFeature"),
+      t("transactionTransparencyFeature")
     ]
   };
 
@@ -27,7 +27,7 @@ export const HolibaytPayExplainer = ({ category }: HolibaytPayExplainerProps) =>
     features: [
       t("refundsAvailable"),
       t("noHiddenFees"),
-      "Secure payment processing"
+      t("securePaymentProcessingFeature")
     ]
   };
 
@@ -57,7 +57,7 @@ export const HolibaytPayExplainer = ({ category }: HolibaytPayExplainerProps) =>
             onClick={() => navigate("/holibayt-pay")}
             className="mt-4 hover:-translate-y-0.5 transition-transform"
           >
-            Learn More about Holibayt Pay™
+            {t('learnMore')} about Holibayt Pay™
             <ArrowRight className="w-4 h-4 ml-2" />
           </Button>
         </div>
