@@ -74,7 +74,7 @@ const RentHeroSearch: React.FC<RentHeroSearchProps> = ({ onSearch }) => {
   };
 
   return (
-    <section className="relative py-12 md:py-16 overflow-hidden">
+    <section className="py-12 md:py-16 overflow-hidden">
       {/* Background Image */}
       <div
         className="absolute inset-0 bg-cover bg-center bg-no-repeat"
