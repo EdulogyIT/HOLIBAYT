@@ -73,7 +73,7 @@ const allTranslations = {
     heroSubtitle: 'Achetez. Louez. Vivez l\'Algérie autrement.',
     heroDescription: 'La première plateforme immobilière digitale nouvelle génération pour l\'Algérie.',
     heroTrustTagline: 'Holibayt',
-    heroSubheading: 'Achetez. Louez. Vivez l\'Algérie en toute sécurité avec des annonces vérifiées et des paiements sécurisés',
+    heroSubheading: 'Acheter. Louer. Vivre l\'Algérie différemment',
     heroTrustDescription: 'Holibayt combine propriétaires vérifiés, support juridique et protection escrow pour chaque transaction.',
     searchPlaceholder: 'ex : Alger, Oran, Constantine…',
     searchPlaceholderExample: 'par ex., Alger, Oran, Constantine…',
@@ -1054,7 +1054,7 @@ const allTranslations = {
     heroSubtitle: 'Buy. Rent. Live Algeria differently.',
     heroDescription: 'The first next-generation digital real estate platform for Algeria.',
     heroTrustTagline: 'Holibayt',
-    heroSubheading: 'Buy. Rent. Live Algeria safely with verified listings and secure payments',
+    heroSubheading: 'Buy. Rent. Live Algeria differently',
     heroTrustDescription: 'Holibayt combines verified owners, legal support, and escrow protection for every transaction.',
     searchPlaceholder: 'e.g., Algiers, Oran, Constantine…',
     searchPlaceholderExample: 'e.g., Algiers, Oran, Constantine…',
@@ -1961,8 +1961,8 @@ const allTranslations = {
     heroTitle: 'هولي بايت',
     heroSubtitle: 'اشتري. استأجر. عش الجزائر بشكل مختلف.',
     heroDescription: 'أول منصة عقارية رقمية من الجيل الجديد للجزائر.',
-    heroTrustTagline: 'اشتري. استأجر. عش الجزائر بأمان',
-    heroSubheading: 'مع إعلانات موثقة ومدفوعات آمنة',
+    heroTrustTagline: 'هولي بايت',
+    heroSubheading: 'اشتري. استأجر. عش الجزائر بشكل مختلف',
     heroTrustDescription: 'تجمع هولي بايت بين الملاك الموثقين والدعم القانوني وحماية الضمان لكل معاملة.',
     
     // Trust Indicators

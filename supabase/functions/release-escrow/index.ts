@@ -33,19 +33,33 @@ serve(async (req) => {
       { auth: { persistSession: false } }
     );
 
-    // Authenticate user
+    // Authenticate user (skip for system auto-release calls)
     const authHeader = req.headers.get("Authorization");
-    if (!authHeader) throw new Error("No authorization header");
+    let user = null;
+    let isSystemCall = false;
     
-    const token = authHeader.replace("Bearer ", "");
-    const { data: { user }, error: userError } = await authClient.auth.getUser(token);
-    if (userError || !user) throw new Error("User not authenticated");
-    logStep("User authenticated", { userId: user.id });
+    if (authHeader) {
+      const token = authHeader.replace("Bearer ", "");
+      const { data: { user: authUser }, error: userError } = await authClient.auth.getUser(token);
+      if (!userError && authUser) {
+        user = authUser;
+        logStep("User authenticated", { userId: user.id });
+      }
+    }
+    
+    // Check if this is a system call (from auto-release cron)
+    const { reason } = await req.json();
+    isSystemCall = reason === 'auto_release_24h_post_checkout';
+    
+    if (!user && !isSystemCall) {
+      throw new Error("User not authenticated");
+    }
 
-    // Parse request body
-    const { bookingId, reason } = await req.json();
+    // Parse request body (already parsed above, just get bookingId)
+    const requestBody = await req.json();
+    const bookingId = requestBody.bookingId;
     if (!bookingId) throw new Error("Booking ID is required");
-    logStep("Request parsed", { bookingId, reason });
+    logStep("Request parsed", { bookingId, reason: requestBody.reason });
 
     // Fetch booking with related data
     const { data: booking, error: bookingError } = await dbClient
@@ -77,11 +91,10 @@ serve(async (req) => {
     logStep("Booking fetched", { bookingId, status: booking.status });
 
     // Verify user is guest or system (for auto-release)
-    const isGuest = booking.user_id === user.id;
-    const isSystem = reason === 'auto_release_24h_post_checkout';
+    const isGuest = user ? booking.user_id === user.id : false;
     const isAdmin = false; // TODO: Check admin role if needed
 
-    if (!isGuest && !isSystem && !isAdmin) {
+    if (!isGuest && !isSystemCall && !isAdmin) {
       throw new Error("Unauthorized: Only guest or system can release escrow");
     }
 

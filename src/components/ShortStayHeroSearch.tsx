@@ -130,12 +130,9 @@ const ShortStayHeroSearch: React.FC<ShortStayHeroSearchProps> = ({ onSearch }) =
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-playfair font-bold text-white mb-4 leading-tight">
             {t("shortStayHeroHeading") || "Book trusted short stays across Algeria"}
           </h1>
-          <p className="text-xl md:text-2xl text-white/90 font-inter font-light max-w-3xl mx-auto leading-relaxed">
-            {t("shortStayHeroSubtitle") || "Enjoy your trip with confidence, not uncertainty."}
-          </p>
         </div>
 
-        <Card className="max-w-6xl mx-auto p-6 md:p-8 bg-card/95 backdrop-blur-md border-border/30 shadow-elegant rounded-2xl">
+        <Card className="max-w-6xl mx-auto p-6 md:p-8 bg-card/95 backdrop-blur-md border-border/30 shadow-elegant rounded-2xl sticky top-16 z-40">
           <form onSubmit={onSubmit} className="flex flex-col gap-4">
             <div className="flex flex-col lg:flex-row gap-4">
               {/* Location Input with Autocomplete */}

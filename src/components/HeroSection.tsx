@@ -318,11 +318,6 @@ const HeroSection = () => {
             <p className="text-lg md:text-xl text-muted-foreground font-inter font-light max-w-3xl mx-auto leading-relaxed">
               {t('heroTrustDescription') || 'Holibayt combines verified owners, legal support, and escrow protection for every transaction.'}
             </p>
-            
-            {/* Holibayt Pay Badge */}
-            <div className="mt-6 flex justify-center">
-              <HolibaytPayBadge variant="default" showTooltip={true} />
-            </div>
           </div>
           
           {/* Mode Selector */}

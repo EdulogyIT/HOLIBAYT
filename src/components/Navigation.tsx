@@ -48,11 +48,19 @@ const Navigation = () => {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <div className="flex items-center space-x-2">
-            <Link to="/">
+            <Link 
+              to="/"
+              onClick={(e) => {
+                if (window.location.pathname === '/') {
+                  e.preventDefault();
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }
+              }}
+            >
               <img 
                 src="/lovable-uploads/bd206675-bfd0-4aee-936b-479f6c1240ca.png" 
                 alt="Holibayt Logo" 
-                className="h-16 w-auto cursor-pointer mt-2 drop-shadow-lg hover:scale-105 transition-transform duration-300"
+                className="h-14 w-auto cursor-pointer mt-2 drop-shadow-lg hover:scale-105 transition-transform duration-300"
                 style={{ filter: 'drop-shadow(0 2px 8px rgba(0, 103, 105, 0.3))' }}
               />
             </Link>

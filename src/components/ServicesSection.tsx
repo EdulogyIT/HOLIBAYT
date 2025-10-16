@@ -43,18 +43,6 @@ const ServicesSection = () => {
       ctaKey: 'exploreBuy'
     },
     {
-      id: "rent",
-      icon: Key,
-      title: t('rentTitle'),
-      subtitle: t('rentSubtitle'),
-      description: t('rentDescription'),
-      features: [t('rent_feat_paymentGuarantee'), t('rent_feat_secureContracts'), t('rent_feat_dedicatedTeam'), t('rent_feat_digitalInspection')],
-      color: "bg-accent",
-      gradient: "from-accent to-accent/80",
-      image: modernApartment,
-      ctaKey: 'exploreRent'
-    },
-    {
       id: "stay",
       icon: Bed,
       title: t('stayTitle'),
@@ -65,6 +53,18 @@ const ServicesSection = () => {
       gradient: "from-foreground to-foreground/80",
       image: shortStay,
       ctaKey: 'exploreShortStay'
+    },
+    {
+      id: "rent",
+      icon: Key,
+      title: t('rentTitle'),
+      subtitle: t('rentSubtitle'),
+      description: t('rentDescription'),
+      features: [t('rent_feat_paymentGuarantee'), t('rent_feat_secureContracts'), t('rent_feat_dedicatedTeam'), t('rent_feat_digitalInspection')],
+      color: "bg-accent",
+      gradient: "from-accent to-accent/80",
+      image: modernApartment,
+      ctaKey: 'exploreRent'
     }
   ];
 
