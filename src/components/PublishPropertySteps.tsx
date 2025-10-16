@@ -819,7 +819,7 @@ const PublishPropertySteps = ({ onSubmit, isSubmitting = false }: PublishPropert
                           onCheckedChange={(checked) => handleInputChange("instantBookAvailable", checked)}
                         />
                         <Zap className="w-4 h-4" />
-                        <Label htmlFor="instantBookAvailable" className="cursor-pointer">Instant Book</Label>
+                        <Label htmlFor="instantBookAvailable" className="cursor-pointer">{t('instantBooking')}</Label>
                       </div>
                       <div className="flex items-center space-x-2">
                         <Checkbox 
@@ -828,7 +828,7 @@ const PublishPropertySteps = ({ onSubmit, isSubmitting = false }: PublishPropert
                           onCheckedChange={(checked) => handleInputChange("selfCheckInAvailable", checked)}
                         />
                         <Key className="w-4 h-4" />
-                        <Label htmlFor="selfCheckInAvailable" className="cursor-pointer">Self Check-in</Label>
+                        <Label htmlFor="selfCheckInAvailable" className="cursor-pointer">{t('selfCheckIn')}</Label>
                       </div>
                       <div className="flex items-center space-x-2">
                         <Checkbox 

@@ -579,7 +579,7 @@ const PropertyFilters = ({ onFilterChange, listingType }: PropertyFiltersProps) 
                   id="instantBook"
                 />
                 <Zap className="h-4 w-4" />
-                <Label htmlFor="instantBook" className="font-normal cursor-pointer">Instant Book</Label>
+                <Label htmlFor="instantBook" className="font-normal cursor-pointer">{t('instantBooking')}</Label>
               </div>
               <div className="flex items-center space-x-2">
                 <Checkbox
@@ -588,7 +588,7 @@ const PropertyFilters = ({ onFilterChange, listingType }: PropertyFiltersProps) 
                   id="selfCheckIn"
                 />
                 <Key className="h-4 w-4" />
-                <Label htmlFor="selfCheckIn" className="font-normal cursor-pointer">Self check-in</Label>
+                <Label htmlFor="selfCheckIn" className="font-normal cursor-pointer">{t('selfCheckIn')}</Label>
               </div>
               <div className="flex items-center space-x-2">
                 <Checkbox
@@ -615,7 +615,7 @@ const PropertyFilters = ({ onFilterChange, listingType }: PropertyFiltersProps) 
                   id="guestFavourite"
                 />
                 <Award className="h-4 w-4" />
-                <Label htmlFor="guestFavourite" className="font-normal cursor-pointer">Guest favourite</Label>
+                <Label htmlFor="guestFavourite" className="font-normal cursor-pointer">{t('guestFavourite')}</Label>
               </div>
               <div className="flex items-center space-x-2">
                 <Checkbox

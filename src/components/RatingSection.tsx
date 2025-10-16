@@ -32,7 +32,7 @@ export const RatingSection = ({ reviews, categoryRatings }: RatingSectionProps) 
   const categories = [
     { key: "cleanliness", label: "Cleanliness", icon: Sparkles, rating: categoryRatings?.cleanliness || 0 },
     { key: "accuracy", label: "Accuracy", icon: CheckCircle, rating: categoryRatings?.accuracy || 0 },
-    { key: "checkin", label: "Check-in", icon: Key, rating: categoryRatings?.checkin || 0 },
+    { key: "checkin", label: "Check In", icon: Key, rating: categoryRatings?.checkin || 0 },
     { key: "communication", label: "Communication", icon: MessageCircle, rating: categoryRatings?.communication || 0 },
     { key: "location", label: "Location", icon: MapPin, rating: categoryRatings?.location || 0 },
     { key: "value", label: "Value", icon: Tag, rating: categoryRatings?.value || 0 },
