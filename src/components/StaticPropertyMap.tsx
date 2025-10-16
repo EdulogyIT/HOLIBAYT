@@ -84,7 +84,7 @@ const StaticPropertyMap = ({ location, address }: StaticPropertyMapProps) => {
           className="w-full bg-gradient-primary hover:shadow-elegant"
         >
           <Navigation2 className="w-4 h-4 mr-2" />
-          {t('getDirections') || 'Get Directions'}
+          {t('Get Directions') || 'Get Directions'}
         </Button>
 
         {/* Nearby Amenities */}
