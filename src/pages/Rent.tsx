@@ -227,7 +227,7 @@ const Rent = () => {
     <div className="min-h-screen bg-background">
       <Navigation />
       <main className="pt-20">
-        <div className="space-y-8">
+        <div className="space-y-0">
           {/* Market Data Bar */}
           <MarketDataBar 
             city="Alger"
@@ -240,7 +240,7 @@ const Rent = () => {
           <RentHeroSearch onSearch={handleSearch} />
         </div>
 
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pt-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {/* Left: Map & Zones */}
             <div className="lg:col-span-1">

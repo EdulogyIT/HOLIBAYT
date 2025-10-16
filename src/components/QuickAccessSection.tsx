@@ -1,6 +1,6 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Home, Key, Bed, ArrowRight, Shield, DollarSign, Scale } from "lucide-react";
+import { Home, Key, Bed, ArrowRight, Shield, DollarSign, Scale, ShieldCheck, FileCheck, Lock, Clock, UserCheck, FileText, Calendar } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useLanguage } from "@/contexts/LanguageContext";
 
@@ -13,26 +13,11 @@ const QuickAccessSection = () => {
       id: 'buy',
       icon: Home,
       title: t('buyPropertyTitle'),
-      description: t('buyNewDescription') || 'Find your future home with verified sellers and full legal support.',
+      description: t('buyNewDescription') || 'Properties for sale with verified sellers and legal support.',
       subtitle: t('buyPropertySubtitle'),
       color: 'bg-primary',
       hoverColor: 'group-hover:bg-primary',
       borderColor: 'border-primary/20 group-hover:border-primary/40',
-      trustIndicators: [
-        { icon: Shield, text: t('verifiedProperties') || 'Verified Properties' },
-        { icon: DollarSign, text: t('securePayments') || 'Secure Payments' },
-        { icon: Scale, text: t('legalAssistance') || 'Legal Support' }
-      ]
-    },
-    {
-      id: 'rent',
-      icon: Key,
-      title: t('rentPropertyTitle'),
-      description: t('rentNewDescription') || 'Long-term rentals with verified landlords and guaranteed payments.',
-      subtitle: t('rentPropertySubtitle'),
-      color: 'bg-accent',
-      hoverColor: 'group-hover:bg-accent',
-      borderColor: 'border-accent/20 group-hover:border-accent/40',
       trustIndicators: [
         { icon: Shield, text: t('verifiedProperties') || 'Verified Properties' },
         { icon: DollarSign, text: t('securePayments') || 'Secure Payments' },
@@ -52,6 +37,21 @@ const QuickAccessSection = () => {
         { icon: Shield, text: t('verifiedHosts') || 'Verified Hosts' },
         { icon: DollarSign, text: t('securedPaymentsEscrow') || 'Secured Payments' },
         { icon: Scale, text: t('localSupport247') || '24/7 Support' }
+      ]
+    },
+    {
+      id: 'rent',
+      icon: Key,
+      title: t('rentPropertyTitle'),
+      description: t('rentNewDescription') || 'Long-term rentals with verified landlords and guaranteed payments.',
+      subtitle: t('rentPropertySubtitle'),
+      color: 'bg-accent',
+      hoverColor: 'group-hover:bg-accent',
+      borderColor: 'border-accent/20 group-hover:border-accent/40',
+      trustIndicators: [
+        { icon: Shield, text: t('verifiedProperties') || 'Verified Properties' },
+        { icon: DollarSign, text: t('securePayments') || 'Secure Payments' },
+        { icon: Scale, text: t('legalAssistance') || 'Legal Support' }
       ]
     }
   ];
