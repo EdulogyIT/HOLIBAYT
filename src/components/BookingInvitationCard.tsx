@@ -112,10 +112,10 @@ export const BookingInvitationCard = ({ bookingId, isHost, onClose }: BookingInv
               
               <div className="space-y-2">
                 <h2 className="text-4xl font-bold bg-gradient-to-r from-amber-600 to-yellow-600 bg-clip-text text-transparent">
-                  🎉 {t('bookingConfirmedYay')} 🎉
+                  🎉 {t('Booking Confirmed Yay')} 🎉
                 </h2>
                 <p className="text-xl text-gray-700">
-                  {t('getReadyToWelcome')}
+                  {t('Get Ready To Welcome')}
                 </p>
               </div>
 
@@ -162,10 +162,10 @@ export const BookingInvitationCard = ({ bookingId, isHost, onClose }: BookingInv
               
               <div className="space-y-2">
                 <h2 className="text-4xl font-bold bg-gradient-to-r from-primary to-primary-dark bg-clip-text text-transparent">
-                  🏡 {t('welcomeHome')} 🏡
+                  🏡 {t('Welcome Home')} 🏡
                 </h2>
                 <p className="text-xl text-gray-700">
-                  {t('yourBookingConfirmed')}
+                  {t('Your Booking Confirmed')}
                 </p>
               </div>
 
@@ -207,7 +207,7 @@ export const BookingInvitationCard = ({ bookingId, isHost, onClose }: BookingInv
             onClick={onClose}
             className="mt-6 w-full bg-gradient-to-r from-primary to-primary-dark hover:from-primary-dark hover:to-primary text-white font-bold py-3 shadow-lg hover:shadow-xl transition-all"
           >
-            {t('close')}
+            {t('Close')}
           </Button>
         </CardContent>
       </Card>
