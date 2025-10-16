@@ -188,7 +188,7 @@ const CreateAgreement = () => {
               <Tabs defaultValue="create" className="w-full">
                 <TabsList className="grid w-full grid-cols-2 mb-6">
                   <TabsTrigger value="create">Create from Template</TabsTrigger>
-                  <TabsTrigger value="upload">{t('uploadDraft')}</TabsTrigger>
+                  <TabsTrigger value="upload">{t('Upload Draft')}</TabsTrigger>
                 </TabsList>
 
                 <TabsContent value="create">
@@ -352,12 +352,12 @@ const CreateAgreement = () => {
                   <Upload className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
                   <h3 className="text-lg font-semibold mb-2">{t('uploadDraft')}</h3>
                   <p className="text-sm text-muted-foreground mb-4">
-                    {t('uploadDraftDesc')}
+                    {t('Upload Draft')}
                   </p>
                   <Label htmlFor="draft-upload" className="cursor-pointer">
                     <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90">
                       <Upload className="w-4 h-4" />
-                      {t('chooseFile')}
+                      {t('Choose File')}
                     </div>
                   </Label>
                   <Input
