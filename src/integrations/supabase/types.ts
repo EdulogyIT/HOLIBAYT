@@ -1179,7 +1179,9 @@ export type Database = {
           is_new: boolean | null
           is_verified: boolean | null
           last_verified_at: string | null
+          latitude: number | null
           location: string
+          longitude: number | null
           minimum_rental_term: string | null
           new_build: boolean | null
           occupancy_available_from: string | null
@@ -1232,7 +1234,9 @@ export type Database = {
           is_new?: boolean | null
           is_verified?: boolean | null
           last_verified_at?: string | null
+          latitude?: number | null
           location: string
+          longitude?: number | null
           minimum_rental_term?: string | null
           new_build?: boolean | null
           occupancy_available_from?: string | null
@@ -1285,7 +1289,9 @@ export type Database = {
           is_new?: boolean | null
           is_verified?: boolean | null
           last_verified_at?: string | null
+          latitude?: number | null
           location?: string
+          longitude?: number | null
           minimum_rental_term?: string | null
           new_build?: boolean | null
           occupancy_available_from?: string | null

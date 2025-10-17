@@ -10,7 +10,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { useCurrency } from "@/contexts/CurrencyContext";
 import { useScrollToTop } from "@/hooks/useScrollToTop";
 import { useEffect, useState } from "react";
-import StaticPropertyMap from "@/components/StaticPropertyMap";
+import MapboxMap from "@/components/MapboxMap";
 import PropertyDatePicker from "@/components/PropertyDatePicker";
 import { BookingModal } from "@/components/BookingModal";
 import { supabase } from "@/integrations/supabase/client";
@@ -465,7 +465,13 @@ const Property = () => {
                   </p>
                 </CardHeader>
                 <CardContent>
-                  <StaticPropertyMap location={`${property.city}, ${property.location}`} />
+                  <div className="h-[300px] rounded-lg overflow-hidden">
+                    <MapboxMap 
+                      location={property.city}
+                      address={property.full_address || property.location}
+                      compact={true}
+                    />
+                  </div>
                 </CardContent>
               </Card>
             </div>

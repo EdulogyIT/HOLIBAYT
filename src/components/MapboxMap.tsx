@@ -9,9 +9,12 @@ import { supabase } from "@/integrations/supabase/client";
 interface MapboxMapProps {
   location: string;
   address?: string;
+  compact?: boolean; // For smaller version on property pages
+  latitude?: number;
+  longitude?: number;
 }
 
-const MapboxMap = ({ location, address }: MapboxMapProps) => {
+const MapboxMap = ({ location, address, compact = false, latitude, longitude }: MapboxMapProps) => {
   const { t } = useLanguage();
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
@@ -101,6 +104,26 @@ const MapboxMap = ({ location, address }: MapboxMapProps) => {
     };
   }, [mapboxToken]);
 
+  // Compact mode: just the map without card wrapper
+  if (compact) {
+    return (
+      <>
+        {isLoading ? (
+          <div className="w-full h-full bg-muted rounded-lg flex items-center justify-center">
+            <p className="text-sm text-muted-foreground font-inter">Loading map...</p>
+          </div>
+        ) : error ? (
+          <div className="w-full h-full bg-muted rounded-lg flex items-center justify-center">
+            <p className="text-sm text-destructive font-inter">{error}</p>
+          </div>
+        ) : (
+          <div ref={mapContainer} className="w-full h-full rounded-lg" />
+        )}
+      </>
+    );
+  }
+
+  // Full mode: map with card wrapper and details
   return (
     <Card>
       <CardHeader>

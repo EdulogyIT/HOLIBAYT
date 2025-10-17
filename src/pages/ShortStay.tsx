@@ -307,18 +307,7 @@ const ShortStay = () => {
       <Navigation />
       
       <main className="pt-20">
-        <div className="space-y-0">
-          {/* Market Data Bar */}
-          <MarketDataBar 
-            city={currentCity}
-            medianPrice={45000}
-            yearOverYearChange={5}
-            currency="DZD"
-          />
-          
-          {/* Wire up search just like Rent/Buy pages */}
-          <ShortStayHeroSearch onSearch={handleSearch} />
-        </div>
+        <ShortStayHeroSearch onSearch={handleSearch} />
 
         {/* Popular Amenities Section */}
         <PopularAmenities 
