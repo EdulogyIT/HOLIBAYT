@@ -33,6 +33,8 @@ interface Property {
   city: string;
   district?: string;
   full_address?: string;
+  latitude?: number;
+  longitude?: number;
   price: string;
   price_type: string;
   price_currency?: string;
@@ -456,20 +458,24 @@ const Property = () => {
               {/* Reviews */}
               <PropertyReviews propertyId={property.id} hostUserId={property.user_id || ''} />
 
-              {/* Location Map - Moved after reviews */}
+              {/* Location Map - Enhanced "Where you'll be" section */}
               <Card className="shadow-lg">
                 <CardHeader>
-                  <CardTitle className="text-2xl">{t('location')}</CardTitle>
-                  <p className="text-sm text-muted-foreground">
-                    {property.full_address || `${property.city}, ${property.location}`}
+                  <CardTitle className="text-2xl font-playfair">{t('whereYoullBe') || 'Where you\'ll be'}</CardTitle>
+                  <p className="text-base text-muted-foreground">
+                    {property.location}, {property.city}
                   </p>
                 </CardHeader>
-                <CardContent>
-                  <div className="h-[300px] rounded-lg overflow-hidden">
+                <CardContent className="p-0">
+                  <div className="h-[500px] w-full">
                     <MapboxMap 
                       location={property.city}
                       address={property.full_address || property.location}
-                      compact={true}
+                      latitude={property.latitude}
+                      longitude={property.longitude}
+                      showPropertyMarker={true}
+                      interactive={true}
+                      zoom={14}
                     />
                   </div>
                 </CardContent>

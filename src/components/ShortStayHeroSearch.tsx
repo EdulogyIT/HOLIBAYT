@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { format } from "date-fns";
-import { Search, Calendar as CalendarIcon, Bed } from "lucide-react";
+import { Search, Calendar, Bed, Home } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useNavigate, useLocation as useRouterLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
@@ -25,7 +25,6 @@ type SearchVals = {
 };
 
 type ShortStayHeroSearchProps = {
-  /** Optional: parent-controlled search handler. If omitted, this component updates the URL. */
   onSearch?: (vals: SearchVals) => void;
 };
 
@@ -39,6 +38,7 @@ const ShortStayHeroSearch: React.FC<ShortStayHeroSearchProps> = ({ onSearch }) =
   const { t } = useLanguage();
   const navigate = useNavigate();
   const routerLocation = useRouterLocation();
+  const [isScrolled, setIsScrolled] = useState(false);
 
   const [formData, setFormData] = useState<{
     location: string;
@@ -52,7 +52,15 @@ const ShortStayHeroSearch: React.FC<ShortStayHeroSearchProps> = ({ onSearch }) =
     guests: { adults: 1, children: 0, infants: 0, pets: 0 },
   });
 
-  // Populate from URL whenever it changes
+  // Scroll detection for sticky bar
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 400);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   useEffect(() => {
     const urlParams = new URLSearchParams(routerLocation.search);
     const location = urlParams.get("location") || "";
@@ -112,31 +120,62 @@ const ShortStayHeroSearch: React.FC<ShortStayHeroSearchProps> = ({ onSearch }) =
     handleSearch();
   };
 
-  return (
-    <section className="relative py-12 md:py-16 overflow-hidden">
-      {/* Background Image */}
-      <div
-        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-        style={{ backgroundImage: `url(${shortStayHeroBg})` }}
-      />
-      <div className="absolute inset-0 bg-gradient-to-br from-accent/70 via-background/75 to-primary/65" />
+  const SearchForm = ({ compact = false }: { compact?: boolean }) => {
+    const totalGuests = formData.guests.adults + formData.guests.children;
 
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 z-10">
-        <div className="text-center mb-6 md:mb-8">
-          <div className="inline-flex items-center gap-3 bg-white/20 backdrop-blur-sm rounded-full px-6 py-3 mb-6">
-            <Bed className="h-6 w-6 text-white" />
-            <span className="text-white font-semibold font-inter">{t("shortStay")}</span>
-          </div>
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-playfair font-bold text-white mb-4 leading-tight">
-            {t("shortStayHeroHeading") || "Book trusted short stays across Algeria"}
-          </h1>
-        </div>
+    return (
+      <form onSubmit={onSubmit} className={cn(
+        "flex gap-4",
+        compact ? "flex-row items-center" : "flex-col gap-4"
+      )}>
+        {compact ? (
+          <>
+            <LocationAutocomplete
+              value={formData.location}
+              onChange={(value) => updateFormField("location", value)}
+              placeholder={t("stayDestination")}
+              className="h-11 text-sm flex-1 font-inter"
+            />
+            
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="outline"
+                  className={cn(
+                    "justify-start text-left font-normal h-11 w-[180px]",
+                    !formData.dateRange?.from && "text-muted-foreground"
+                  )}
+                >
+                  <Calendar className="mr-2 h-4 w-4" />
+                  {formData.dateRange?.from && formData.dateRange?.to ? (
+                    <span className="text-sm truncate">
+                      {format(formData.dateRange.from, "MMM d")} - {format(formData.dateRange.to, "MMM d")}
+                    </span>
+                  ) : (
+                    <span className="text-sm">{t("dates")}</span>
+                  )}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="start">
+                <DateRangePicker
+                  value={formData.dateRange}
+                  onChange={(range) => updateFormField("dateRange", range)}
+                  allowPast={false}
+                />
+              </PopoverContent>
+            </Popover>
 
-        <div className="sticky top-0 z-50 w-full max-w-6xl mx-auto">
-          <Card className="w-full p-6 md:p-8 bg-card/95 backdrop-blur-md border-border/30 shadow-elegant rounded-2xl">
-            <form onSubmit={onSubmit} className="flex flex-col gap-4">
+            <Button
+              variant="outline"
+              className="h-11 w-[120px]"
+              type="button"
+            >
+              {totalGuests} {t("guests")}
+            </Button>
+          </>
+        ) : (
+          <>
             <div className="flex flex-col lg:flex-row gap-4">
-              {/* Location Input with Autocomplete */}
               <LocationAutocomplete
                 value={formData.location}
                 onChange={(value) => updateFormField("location", value)}
@@ -144,7 +183,6 @@ const ShortStayHeroSearch: React.FC<ShortStayHeroSearchProps> = ({ onSearch }) =
                 className="h-14 text-base font-inter"
               />
 
-              {/* Guests Selector */}
               <div className="flex-1">
                 <GuestsSelector
                   value={formData.guests}
@@ -152,7 +190,6 @@ const ShortStayHeroSearch: React.FC<ShortStayHeroSearchProps> = ({ onSearch }) =
                 />
               </div>
 
-              {/* Property Type */}
               <div className="flex-1">
                 <select
                   className="w-full h-14 px-4 py-3 bg-background border border-input rounded-md text-base font-inter text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent ring-offset-background"
@@ -169,7 +206,6 @@ const ShortStayHeroSearch: React.FC<ShortStayHeroSearchProps> = ({ onSearch }) =
             </div>
 
             <div className="flex flex-col sm:flex-row gap-4">
-              {/* Check In */}
               <div className="flex-1">
                 <Popover>
                   <PopoverTrigger asChild>
@@ -181,7 +217,7 @@ const ShortStayHeroSearch: React.FC<ShortStayHeroSearchProps> = ({ onSearch }) =
                         !formData.dateRange?.from && "text-muted-foreground"
                       )}
                     >
-                      <CalendarIcon className="mr-3 h-5 w-5" />
+                      <Calendar className="mr-3 h-5 w-5" />
                       <span>
                         {formData.dateRange?.from
                           ? format(formData.dateRange.from, "dd/MM/yyyy")
@@ -199,7 +235,6 @@ const ShortStayHeroSearch: React.FC<ShortStayHeroSearchProps> = ({ onSearch }) =
                 </Popover>
               </div>
 
-              {/* Check Out */}
               <div className="flex-1">
                 <Popover>
                   <PopoverTrigger asChild>
@@ -212,7 +247,7 @@ const ShortStayHeroSearch: React.FC<ShortStayHeroSearchProps> = ({ onSearch }) =
                       )}
                       disabled={!formData.dateRange?.from}
                     >
-                      <CalendarIcon className="mr-3 h-5 w-5" />
+                      <Calendar className="mr-3 h-5 w-5" />
                       <span>
                         {formData.dateRange?.to
                           ? format(formData.dateRange.to, "dd/MM/yyyy")
@@ -229,27 +264,75 @@ const ShortStayHeroSearch: React.FC<ShortStayHeroSearchProps> = ({ onSearch }) =
                   </PopoverContent>
                 </Popover>
               </div>
-
-              {/* Search Button */}
-              <Button
-                type="submit"
-                disabled={!isFormValid()}
-                className={cn(
-                  "h-14 px-8 font-inter font-semibold text-base transition-all duration-300 min-w-[140px]",
-                  isFormValid()
-                    ? "bg-gradient-primary hover:shadow-elegant text-white"
-                    : "bg-gray-300 text-gray-500 cursor-not-allowed"
-                )}
-              >
-                <Search className="mr-2 h-5 w-5" />
-                {t("search")}
-              </Button>
             </div>
-          </form>
-          </Card>
+          </>
+        )}
+
+        <Button
+          type="submit"
+          disabled={!isFormValid()}
+          className={cn(
+            "font-inter font-semibold transition-all duration-300",
+            compact ? "h-11 px-6 text-sm" : "h-14 px-8 text-base min-w-[140px]",
+            isFormValid()
+              ? "bg-gradient-primary hover:shadow-elegant text-white"
+              : "bg-gray-300 text-gray-500 cursor-not-allowed"
+          )}
+        >
+          <Search className={cn("mr-2", compact ? "h-4 w-4" : "h-5 w-5")} />
+          {t("search")}
+        </Button>
+      </form>
+    );
+  };
+
+  return (
+    <>
+      {/* Sticky Search Bar */}
+      <div className={cn(
+        "fixed top-20 left-0 right-0 z-50 transition-all duration-300 bg-white/95 backdrop-blur-md shadow-lg border-b border-border/50",
+        isScrolled ? "translate-y-0 opacity-100" : "-translate-y-full opacity-0"
+      )}>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2 text-primary">
+              <Home className="h-5 w-5" />
+              <span className="font-semibold text-sm">{t("shortStay")}</span>
+            </div>
+            <div className="flex-1">
+              <SearchForm compact />
+            </div>
+          </div>
         </div>
       </div>
-    </section>
+
+      {/* Hero Section */}
+      <section className="relative py-12 md:py-16 overflow-hidden">
+        <div
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          style={{ backgroundImage: `url(${shortStayHeroBg})` }}
+        />
+        <div className="absolute inset-0 bg-gradient-to-br from-accent/70 via-background/75 to-primary/65" />
+
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 z-10">
+          <div className="text-center mb-6 md:mb-8">
+            <div className="inline-flex items-center gap-3 bg-white/20 backdrop-blur-sm rounded-full px-6 py-3 mb-6">
+              <Bed className="h-6 w-6 text-white" />
+              <span className="text-white font-semibold font-inter">{t("shortStay")}</span>
+            </div>
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-playfair font-bold text-white mb-4 leading-tight">
+              {t("shortStayHeroHeading") || "Book trusted short stays across Algeria"}
+            </h1>
+          </div>
+
+          <div className="w-full max-w-6xl mx-auto">
+            <Card className="w-full p-6 md:p-8 bg-card/95 backdrop-blur-md border-border/30 shadow-elegant rounded-2xl">
+              <SearchForm />
+            </Card>
+          </div>
+        </div>
+      </section>
+    </>
   );
 };
 

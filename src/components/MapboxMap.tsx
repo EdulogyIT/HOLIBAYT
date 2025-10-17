@@ -9,12 +9,24 @@ import { supabase } from "@/integrations/supabase/client";
 interface MapboxMapProps {
   location: string;
   address?: string;
-  compact?: boolean; // For smaller version on property pages
+  compact?: boolean;
   latitude?: number;
   longitude?: number;
+  showPropertyMarker?: boolean;
+  interactive?: boolean;
+  zoom?: number;
 }
 
-const MapboxMap = ({ location, address, compact = false, latitude, longitude }: MapboxMapProps) => {
+const MapboxMap = ({ 
+  location, 
+  address, 
+  compact = false, 
+  latitude, 
+  longitude,
+  showPropertyMarker = false,
+  interactive = true,
+  zoom = 12
+}: MapboxMapProps) => {
   const { t } = useLanguage();
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
@@ -22,24 +34,17 @@ const MapboxMap = ({ location, address, compact = false, latitude, longitude }: 
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
 
-  // Fetch Mapbox token from edge function
   useEffect(() => {
     const fetchToken = async () => {
       try {
-        console.log('Fetching Mapbox token...');
         const { data, error } = await supabase.functions.invoke('get-mapbox-token');
         
-        console.log('Mapbox token response:', { data, error });
-        
         if (error) {
-          console.error('Mapbox token fetch error:', error);
           throw error;
         }
         if (data?.token) {
-          console.log('Mapbox token received successfully');
           setMapboxToken(data.token);
         } else {
-          console.error('No token in response:', data);
           throw new Error('No token received from edge function');
         }
       } catch (err) {
@@ -56,38 +61,55 @@ const MapboxMap = ({ location, address, compact = false, latitude, longitude }: 
   useEffect(() => {
     if (mapboxToken && mapContainer.current && !map.current) {
       try {
-        console.log('Initializing Mapbox with token:', mapboxToken.substring(0, 20) + '...');
         mapboxgl.accessToken = mapboxToken;
         
-        console.log('Creating map instance...');
+        const useWebGL = mapboxgl.supported();
+        
         map.current = new mapboxgl.Map({
           container: mapContainer.current,
-          style: 'mapbox://styles/mapbox/light-v11',
-          center: [3.0588, 36.7538], // Default to Algiers
-          zoom: 14,
-          attributionControl: false,
+          style: useWebGL ? 'mapbox://styles/mapbox/streets-v12' : 'mapbox://styles/mapbox/light-v11',
+          center: [longitude || 3.0588, latitude || 36.7538],
+          zoom: zoom,
+          interactive: interactive,
         });
 
-        console.log('Map instance created successfully');
+        if (interactive) {
+          map.current.addControl(new mapboxgl.NavigationControl(), 'top-right');
+        }
 
-        // Add navigation controls
-        map.current.addControl(new mapboxgl.NavigationControl(), 'top-right');
+        // Add custom property marker
+        if (showPropertyMarker) {
+          const el = document.createElement('div');
+          el.className = 'property-marker';
+          el.style.width = '40px';
+          el.style.height = '40px';
+          el.style.borderRadius = '50%';
+          el.style.backgroundColor = 'hsl(var(--primary))';
+          el.style.border = '3px solid white';
+          el.style.boxShadow = '0 2px 8px rgba(0,0,0,0.3)';
+          el.style.cursor = 'pointer';
+          el.innerHTML = `
+            <div style="
+              width: 100%;
+              height: 100%;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              color: white;
+              font-size: 18px;
+            ">
+              📍
+            </div>
+          `;
 
-        // Add a custom marker for the property location
-        const markerElement = document.createElement('div');
-        markerElement.className = 'custom-marker';
-        markerElement.style.width = '32px';
-        markerElement.style.height = '32px';
-        markerElement.style.backgroundColor = '#0ea5e9';
-        markerElement.style.borderRadius = '50%';
-        markerElement.style.border = '3px solid white';
-        markerElement.style.boxShadow = '0 2px 4px rgba(0,0,0,0.3)';
-        
-        new mapboxgl.Marker({ element: markerElement })
-          .setLngLat([3.0588, 36.7538])
-          .addTo(map.current);
-
-        console.log('Map marker added successfully');
+          new mapboxgl.Marker({ element: el })
+            .setLngLat([longitude || 3.0588, latitude || 36.7538])
+            .addTo(map.current);
+        } else {
+          new mapboxgl.Marker({ color: '#FF6B6B' })
+            .setLngLat([longitude || 3.0588, latitude || 36.7538])
+            .addTo(map.current);
+        }
       } catch (err) {
         console.error('Map initialization failed:', err);
         const errorMessage = err instanceof Error ? err.message : 'Unknown error';
@@ -102,9 +124,8 @@ const MapboxMap = ({ location, address, compact = false, latitude, longitude }: 
         map.current = null;
       }
     };
-  }, [mapboxToken]);
+  }, [mapboxToken, latitude, longitude, showPropertyMarker, interactive, zoom]);
 
-  // Compact mode: just the map without card wrapper
   if (compact) {
     return (
       <>
@@ -123,7 +144,6 @@ const MapboxMap = ({ location, address, compact = false, latitude, longitude }: 
     );
   }
 
-  // Full mode: map with card wrapper and details
   return (
     <Card>
       <CardHeader>
