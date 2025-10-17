@@ -23,17 +23,25 @@ const MapboxMap = ({ location, address }: MapboxMapProps) => {
   useEffect(() => {
     const fetchToken = async () => {
       try {
+        console.log('Fetching Mapbox token...');
         const { data, error } = await supabase.functions.invoke('get-mapbox-token');
         
-        if (error) throw error;
+        console.log('Mapbox token response:', { data, error });
+        
+        if (error) {
+          console.error('Mapbox token fetch error:', error);
+          throw error;
+        }
         if (data?.token) {
+          console.log('Mapbox token received successfully');
           setMapboxToken(data.token);
         } else {
-          throw new Error('No token received');
+          console.error('No token in response:', data);
+          throw new Error('No token received from edge function');
         }
       } catch (err) {
         console.error('Failed to fetch Mapbox token:', err);
-        setError('Failed to load map');
+        setError(`Failed to load map: ${err instanceof Error ? err.message : 'Unknown error'}`);
       } finally {
         setIsLoading(false);
       }
@@ -45,8 +53,10 @@ const MapboxMap = ({ location, address }: MapboxMapProps) => {
   useEffect(() => {
     if (mapboxToken && mapContainer.current && !map.current) {
       try {
+        console.log('Initializing Mapbox with token:', mapboxToken.substring(0, 20) + '...');
         mapboxgl.accessToken = mapboxToken;
         
+        console.log('Creating map instance...');
         map.current = new mapboxgl.Map({
           container: mapContainer.current,
           style: 'mapbox://styles/mapbox/light-v11',
@@ -54,6 +64,8 @@ const MapboxMap = ({ location, address }: MapboxMapProps) => {
           zoom: 14,
           attributionControl: false,
         });
+
+        console.log('Map instance created successfully');
 
         // Add navigation controls
         map.current.addControl(new mapboxgl.NavigationControl(), 'top-right');
@@ -71,9 +83,12 @@ const MapboxMap = ({ location, address }: MapboxMapProps) => {
         new mapboxgl.Marker({ element: markerElement })
           .setLngLat([3.0588, 36.7538])
           .addTo(map.current);
+
+        console.log('Map marker added successfully');
       } catch (err) {
         console.error('Map initialization failed:', err);
-        setError('Map not available (WebGL required)');
+        const errorMessage = err instanceof Error ? err.message : 'Unknown error';
+        setError(`Map initialization failed: ${errorMessage}`);
         setIsLoading(false);
       }
     }
