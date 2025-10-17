@@ -214,7 +214,7 @@ const allTranslations = {
     hotDeal: 'Offre spéciale',
     
     // Buy Page Trust
-    buyHeroHeading: 'Trouvez des propriétés vérifiées à vendre en Algérie - sécurisées par Holibayt Pay™ et support juridique',
+    buyHeroHeading: 'Trouvez des propriétés vérifiées à vendre en Algérie',
     buyHeroSubheading: 'Chaque annonce est vérifiée, chaque paiement protégé.',
     buyNewDescription: 'Trouvez votre futur logement avec vendeurs vérifiés et support juridique complet.',
     verifiedProperties: '100% Propriétés vérifiées',
@@ -261,7 +261,7 @@ const allTranslations = {
     
     // Short Stay Trust
     shortStayNewDescription: 'Votre Airbnb algérien — sûr, vérifié et pratique.',
-    shortStayHeroHeading: 'Réservez des séjours de confiance en Algérie - tous les hôtes vérifiés, tous les paiements sécurisés par Holibayt Pay™',
+    shortStayHeroHeading: 'Réservez des séjours de confiance en Algérie',
     shortStayHeroSubtitle: 'Profitez de votre voyage avec confiance, pas avec incertitude.',
     
     // CTA Buttons
@@ -1192,7 +1192,7 @@ const allTranslations = {
     hotDeal: 'Hot Deal',
     
     // Buy Page Trust
-    buyHeroHeading: 'Find verified properties for sale across Algeria - secured by Holibayt Pay™ and legal support',
+    buyHeroHeading: 'Find verified properties for sale across Algeria',
     buyHeroSubheading: 'Every listing is verified, every payment protected.',
     buyNewDescription: 'Find your future home with verified sellers and full legal support.',
     verifiedProperties: '100% Verified Properties',
@@ -1216,7 +1216,7 @@ const allTranslations = {
     
     // Short Stay Trust
     shortStayNewDescription: 'Your Algerian Airbnb — safe, verified, and convenient.',
-    shortStayHeroHeading: 'Book trusted short stays across Algeria - all hosts verified, all payments secured by Holibayt Pay™',
+    shortStayHeroHeading: 'Book trusted short stays across Algeria',
     shortStayHeroSubtitle: 'Enjoy your trip with confidence, not uncertainty.',
     
     // CTA Buttons
@@ -2098,7 +2098,7 @@ const allTranslations = {
     hotDeal: 'عرض ساخن',
     
     // Buy Page Trust
-    buyHeroHeading: 'ابحث عن عقارات موثقة للبيع في الجزائر - محمية بواسطة هولي بايت باي™ ودعم قانوني',
+    buyHeroHeading: 'ابحث عن عقارات موثقة للبيع في الجزائر',
     buyHeroSubheading: 'كل إعلان موثق، كل دفعة محمية.',
     buyNewDescription: 'ابحث عن منزل المستقبل مع بائعين موثقين ودعم قانوني كامل.',
     verifiedProperties: '100٪ عقارات موثقة',
@@ -2113,7 +2113,7 @@ const allTranslations = {
     
     // Short Stay Trust
     shortStayNewDescription: 'Airbnb الجزائري الخاص بك — آمن، موثق، ومريح.',
-    shortStayHeroHeading: 'احجز إقامات موثوقة في جميع أنحاء الجزائر - جميع المضيفين موثقون، جميع المدفوعات مؤمنة بواسطة Holibayt Pay™',
+    shortStayHeroHeading: 'احجز إقامات موثوقة في جميع أنحاء الجزائر',
     shortStayHeroSubtitle: 'استمتع برحلتك بثقة، وليس بعدم يقين.',
     
     // CTA Buttons
