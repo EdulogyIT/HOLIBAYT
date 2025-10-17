@@ -2970,14 +2970,30 @@ export const LanguageProvider = ({ children }: { children: ReactNode }) => {
   // Translator with safe fallback: current -> EN -> key
   const t = useMemo(() => {
     return (key: string): string | any => {
-      const cur = getPath(allTranslations[currentLang], key);
-      if (cur !== undefined) return cur;
-
-      const en = getPath(allTranslations.EN, key);
-      if (en !== undefined) return en;
-
-      // Show the key so UI never goes blank (better DX and safer UX)
-      return key;
+      // For nested keys like 'admin.dashboard', split and traverse
+      const keys = key.split('.');
+      let value: any = allTranslations[currentLang];
+      
+      // Traverse the nested structure
+      for (const k of keys) {
+        if (value && typeof value === 'object' && k in value) {
+          value = value[k];
+        } else {
+          // Try English fallback
+          let enValue: any = allTranslations.EN;
+          for (const k2 of keys) {
+            if (enValue && typeof enValue === 'object' && k2 in enValue) {
+              enValue = enValue[k2];
+            } else {
+              // Return the key if not found in either language
+              return key;
+            }
+          }
+          return enValue;
+        }
+      }
+      
+      return value || key;
     };
   }, [currentLang]);
 
