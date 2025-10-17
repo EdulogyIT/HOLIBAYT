@@ -85,7 +85,7 @@ export default function AdminDashboard() {
       <div>
         <h1 className="text-3xl font-bold">{t('admin.dashboard')}</h1>
         <p className="text-muted-foreground">
-          {t('Aperations Hub')}
+          {t('Operations Hub')}
         </p>
       </div>
 
