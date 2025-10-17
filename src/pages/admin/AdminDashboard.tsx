@@ -48,14 +48,14 @@ export default function AdminDashboard() {
 
   const kpiData = [
     {
-      title: t('admin.totalProperties'),
+      title: t('Total Properties'),
       value: loading ? '...' : properties.length.toString(),
       change: '+' + Math.floor(Math.random() * 20 + 5) + '%',
       icon: Building2,
       onClick: () => navigate('/admin/properties')
     },
     {
-      title: t('admin.activeProperties'),
+      title: t('Active Properties'),
       value: loading ? '...' : activeProperties.toString(),
       change: '+' + Math.floor(Math.random() * 15 + 3) + '%',
       icon: CalendarDays,
@@ -65,14 +65,14 @@ export default function AdminDashboard() {
       }
     },
     {
-      title: t('admin.totalUsers'),
+      title: t('Total Users'),
       value: loading ? '...' : profiles.length.toString(),
       change: '+' + Math.floor(Math.random() * 25 + 8) + '%',
       icon: Users,
       onClick: () => navigate('/admin/users')
     },
     {
-      title: t('admin.messages'),
+      title: t('Messages'),
       value: loading ? '...' : messagesCount.toString(),
       change: '+' + Math.floor(Math.random() * 30 + 10) + '%',
       icon: MessageSquare,
@@ -85,7 +85,7 @@ export default function AdminDashboard() {
       <div>
         <h1 className="text-3xl font-bold">{t('admin.dashboard')}</h1>
         <p className="text-muted-foreground">
-          {t('admin.operationsHub')}
+          {t('Aperations Hub')}
         </p>
       </div>
 
@@ -96,7 +96,7 @@ export default function AdminDashboard() {
           className="gap-2"
         >
           <Plus className="h-4 w-4" />
-          {t('admin.addNewProperty')}
+          {t('Add New Property')}
         </Button>
         <Button 
           onClick={() => navigate('/admin/kyc')}
@@ -104,7 +104,7 @@ export default function AdminDashboard() {
           variant="outline"
         >
           <ShieldCheck className="h-4 w-4" />
-          {t('admin.verifyHosts')}
+          {t('Verify Hosts')}
           {metrics.verificationPending > 0 && (
             <span className="ml-1 px-2 py-0.5 text-xs bg-warning text-warning-foreground rounded-full">
               {metrics.verificationPending}
@@ -117,44 +117,44 @@ export default function AdminDashboard() {
           variant="outline"
         >
           <Receipt className="h-4 w-4" />
-          {t('admin.reviewPayments')}
+          {t('Review Payments')}
         </Button>
       </div>
 
       {/* New Insights Section */}
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-5">
         <DashboardMetricCard
-          title={t('admin.platformGMV')}
+          title={t('Platform GMV')}
           value={formatPrice(metrics.platformGMV)}
           icon={TrendingUp}
           sparklineData={metrics.gmvTrend}
           change="+12.5%"
         />
         <DashboardMetricCard
-          title={t('admin.avgBookingValue')}
+          title={t('Avg Booking Value')}
           value={formatPrice(metrics.avgBookingValue)}
           icon={DollarSign}
           change="+8.2%"
         />
         <DashboardMetricCard
-          title={t('admin.conversionRate')}
+          title={t('Conversion Rate')}
           value={`${metrics.conversionRate}%`}
           icon={TrendingUp}
           change="+3.1%"
         />
         <DashboardMetricCard
-          title={t('admin.verificationPending')}
+          title={t('Verification Pending')}
           value={metrics.verificationPending.toString()}
           icon={AlertCircle}
           onClick={() => navigate('/admin/kyc')}
           badge={
             metrics.verificationPending > 5
-              ? { text: t('admin.actionRequired'), variant: 'destructive' }
+              ? { text: t('Action Required'), variant: 'destructive' }
               : undefined
           }
         />
         <DashboardMetricCard
-          title={t('admin.avgResponseTime')}
+          title={t('Avg Response Time')}
           value={metrics.avgResponseTime}
           icon={Clock}
         />
@@ -218,12 +218,12 @@ export default function AdminDashboard() {
 
         <Card>
           <CardHeader>
-            <CardTitle>{t('admin.propertyDistribution')}</CardTitle>
+            <CardTitle>{t('Property Distribution')}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
               {loading ? (
-                <p className="text-muted-foreground">{t('admin.loading')}</p>
+                <p className="text-muted-foreground">{t('Loading')}</p>
               ) : (
                 <>
                   {['Sale', 'Rent', 'Short Stay'].map((category) => {
