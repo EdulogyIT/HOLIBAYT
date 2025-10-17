@@ -44,32 +44,38 @@ const MapboxMap = ({ location, address }: MapboxMapProps) => {
 
   useEffect(() => {
     if (mapboxToken && mapContainer.current && !map.current) {
-      mapboxgl.accessToken = mapboxToken;
-      
-      map.current = new mapboxgl.Map({
-        container: mapContainer.current,
-        style: 'mapbox://styles/mapbox/light-v11',
-        center: [3.0588, 36.7538], // Default to Algiers
-        zoom: 14,
-        attributionControl: false,
-      });
+      try {
+        mapboxgl.accessToken = mapboxToken;
+        
+        map.current = new mapboxgl.Map({
+          container: mapContainer.current,
+          style: 'mapbox://styles/mapbox/light-v11',
+          center: [3.0588, 36.7538], // Default to Algiers
+          zoom: 14,
+          attributionControl: false,
+        });
 
-      // Add navigation controls
-      map.current.addControl(new mapboxgl.NavigationControl(), 'top-right');
+        // Add navigation controls
+        map.current.addControl(new mapboxgl.NavigationControl(), 'top-right');
 
-      // Add a custom marker for the property location
-      const markerElement = document.createElement('div');
-      markerElement.className = 'custom-marker';
-      markerElement.style.width = '32px';
-      markerElement.style.height = '32px';
-      markerElement.style.backgroundColor = '#0ea5e9';
-      markerElement.style.borderRadius = '50%';
-      markerElement.style.border = '3px solid white';
-      markerElement.style.boxShadow = '0 2px 4px rgba(0,0,0,0.3)';
-      
-      new mapboxgl.Marker({ element: markerElement })
-        .setLngLat([3.0588, 36.7538])
-        .addTo(map.current);
+        // Add a custom marker for the property location
+        const markerElement = document.createElement('div');
+        markerElement.className = 'custom-marker';
+        markerElement.style.width = '32px';
+        markerElement.style.height = '32px';
+        markerElement.style.backgroundColor = '#0ea5e9';
+        markerElement.style.borderRadius = '50%';
+        markerElement.style.border = '3px solid white';
+        markerElement.style.boxShadow = '0 2px 4px rgba(0,0,0,0.3)';
+        
+        new mapboxgl.Marker({ element: markerElement })
+          .setLngLat([3.0588, 36.7538])
+          .addTo(map.current);
+      } catch (err) {
+        console.error('Map initialization failed:', err);
+        setError('Map not available (WebGL required)');
+        setIsLoading(false);
+      }
     }
 
     return () => {
