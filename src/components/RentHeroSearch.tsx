@@ -84,8 +84,8 @@ const RentHeroSearch: React.FC<RentHeroSearchProps> = ({ onSearch }) => {
 
   const SearchForm = ({ compact = false }: { compact?: boolean }) => (
     <form onSubmit={onSubmit} className={cn(
-      "flex gap-4",
-      compact ? "flex-row items-center" : "flex-col lg:flex-row"
+      "flex gap-3",
+      compact ? "flex-col sm:flex-row flex-wrap" : "flex-col lg:flex-row"
     )}>
       <LocationAutocomplete
         value={formData.location}
@@ -93,15 +93,17 @@ const RentHeroSearch: React.FC<RentHeroSearchProps> = ({ onSearch }) => {
         placeholder={t("whereToRent")}
         className={cn(
           "font-inter",
-          compact ? "h-11 text-sm flex-1 min-w-[180px]" : "h-14 text-base"
+          compact ? "h-12 text-sm w-full sm:flex-1 sm:min-w-[180px]" : "h-14 text-base"
         )}
       />
 
-            <Select value={formData.housingType} onValueChange={(value) => updateFormField("housingType", value)}>
-              <SelectTrigger className={cn("text-sm", compact ? "h-11 w-[140px]" : "h-14 w-[200px] text-base")}>
-                <SelectValue placeholder={t("housingType")} />
-              </SelectTrigger>
-        <SelectContent>
+      <Select value={formData.housingType} onValueChange={(value) => updateFormField("housingType", value)}>
+        <SelectTrigger className={cn(
+          compact ? "h-12 text-sm w-full sm:w-auto sm:min-w-[140px]" : "h-14 w-[200px] text-base"
+        )}>
+          <SelectValue placeholder={t("housingType")} />
+        </SelectTrigger>
+        <SelectContent className="z-[100] bg-background">
           <SelectItem value="apartment">{t("apartment")}</SelectItem>
           <SelectItem value="house">{t("house")}</SelectItem>
           <SelectItem value="studio">{t("studio")}</SelectItem>
@@ -109,7 +111,7 @@ const RentHeroSearch: React.FC<RentHeroSearchProps> = ({ onSearch }) => {
         </SelectContent>
       </Select>
 
-      <div className={cn("relative", compact ? "w-[200px]" : "w-[260px]")}>
+      <div className={cn("relative", compact ? "w-full sm:w-auto sm:min-w-[180px]" : "w-[260px]")}>
         <DollarSign className={cn(
           "absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground",
           compact ? "h-4 w-4" : "h-5 w-5"
@@ -119,7 +121,7 @@ const RentHeroSearch: React.FC<RentHeroSearchProps> = ({ onSearch }) => {
           placeholder={t("maxRentMonth")}
           className={cn(
             "pl-10 font-inter",
-            compact ? "h-11 text-sm" : "h-14 text-base"
+            compact ? "h-12 text-sm" : "h-14 text-base"
           )}
           value={formData.maxRent}
           onChange={(e) => updateFormField("maxRent", e.target.value)}
@@ -131,7 +133,7 @@ const RentHeroSearch: React.FC<RentHeroSearchProps> = ({ onSearch }) => {
         disabled={!isFormValid()}
         className={cn(
           "font-inter font-semibold transition-all duration-300 flex items-center justify-center",
-          compact ? "h-11 px-6 text-sm" : "h-14 px-8 text-base min-w-[140px]",
+          compact ? "h-12 px-6 text-sm w-full sm:w-auto" : "h-14 px-8 text-base min-w-[140px]",
           isFormValid()
             ? "bg-gradient-primary hover:shadow-elegant text-white"
             : "bg-gray-300 text-gray-500 cursor-not-allowed"
@@ -147,12 +149,12 @@ const RentHeroSearch: React.FC<RentHeroSearchProps> = ({ onSearch }) => {
     <>
       {/* Sticky Search Bar */}
       <div className={cn(
-        "fixed top-16 left-0 right-0 z-40 transition-all duration-300 bg-white/95 backdrop-blur-md shadow-lg border-b border-border/50",
+        "hidden sm:block fixed top-16 left-0 right-0 z-40 transition-all duration-300 bg-white/95 backdrop-blur-md shadow-lg border-b border-border/50",
         isScrolled ? "translate-y-0 opacity-100" : "-translate-y-full opacity-0"
       )}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
           <div className="flex items-center justify-center gap-4">
-            <div className="flex items-center gap-2 text-primary">
+            <div className="hidden md:flex items-center gap-2 text-primary">
               <Home className="h-5 w-5" />
               <span className="font-semibold text-sm">{t("rent")}</span>
             </div>

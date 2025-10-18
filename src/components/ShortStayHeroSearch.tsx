@@ -125,14 +125,17 @@ const ShortStayHeroSearch: React.FC<ShortStayHeroSearchProps> = ({ onSearch }) =
 
     return (
       <form onSubmit={onSubmit} className={cn(
-        "flex gap-4",
-        compact ? "flex-row items-center" : "flex-col gap-4"
+        "flex gap-3",
+        compact ? "flex-col sm:flex-row flex-wrap" : "flex-col gap-4"
       )}>
         <LocationAutocomplete
           value={formData.location}
           onChange={(value) => updateFormField("location", value)}
           placeholder={t("stayDestination")}
-          className={cn("font-inter", compact ? "h-11 text-sm flex-1" : "h-14 text-base")}
+          className={cn(
+            "font-inter",
+            compact ? "h-12 text-sm w-full sm:flex-1 sm:min-w-[180px]" : "h-14 text-base"
+          )}
         />
         
         {compact ? (
@@ -143,7 +146,7 @@ const ShortStayHeroSearch: React.FC<ShortStayHeroSearchProps> = ({ onSearch }) =
                   type="button"
                   variant="outline"
                   className={cn(
-                    "justify-start text-left font-inter h-11 text-sm w-[200px] bg-background border border-input",
+                    "justify-start text-left font-inter h-12 text-sm w-full sm:w-auto sm:min-w-[160px] bg-background border border-input",
                     !formData.dateRange?.from && "text-muted-foreground"
                   )}
                 >
@@ -155,7 +158,7 @@ const ShortStayHeroSearch: React.FC<ShortStayHeroSearchProps> = ({ onSearch }) =
                   </span>
                 </Button>
               </PopoverTrigger>
-              <PopoverContent className="w-auto p-0" align="start">
+              <PopoverContent className="w-auto p-0 z-[100]" align="center" collisionPadding={10}>
                 <DateRangePicker
                   value={formData.dateRange}
                   onChange={(range) => updateFormField("dateRange", range)}
@@ -164,10 +167,12 @@ const ShortStayHeroSearch: React.FC<ShortStayHeroSearchProps> = ({ onSearch }) =
               </PopoverContent>
             </Popover>
 
-            <GuestsSelector
-              value={formData.guests}
-              onChange={(guests) => updateFormField("guests", guests)}
-            />
+            <div className="w-full sm:w-auto sm:flex-1 sm:min-w-[140px]">
+              <GuestsSelector
+                value={formData.guests}
+                onChange={(guests) => updateFormField("guests", guests)}
+              />
+            </div>
           </>
         ) : (
           <>
@@ -221,7 +226,7 @@ const ShortStayHeroSearch: React.FC<ShortStayHeroSearchProps> = ({ onSearch }) =
                       </span>
                     </Button>
                   </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0" align="start">
+                  <PopoverContent className="w-auto p-0 z-[100]" align="center" collisionPadding={10}>
                     <DateRangePicker
                       value={formData.dateRange}
                       onChange={(range) => updateFormField("dateRange", range)}
@@ -251,7 +256,7 @@ const ShortStayHeroSearch: React.FC<ShortStayHeroSearchProps> = ({ onSearch }) =
                       </span>
                     </Button>
                   </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0" align="start">
+                  <PopoverContent className="w-auto p-0 z-[100]" align="center" collisionPadding={10}>
                     <DateRangePicker
                       value={formData.dateRange}
                       onChange={(range) => updateFormField("dateRange", range)}
@@ -269,7 +274,7 @@ const ShortStayHeroSearch: React.FC<ShortStayHeroSearchProps> = ({ onSearch }) =
           disabled={!isFormValid()}
           className={cn(
             "font-inter font-semibold transition-all duration-300",
-            compact ? "h-11 px-6 text-sm" : "h-14 px-8 text-base min-w-[140px]",
+            compact ? "h-12 px-6 text-sm w-full sm:w-auto" : "h-14 px-8 text-base min-w-[140px]",
             isFormValid()
               ? "bg-gradient-primary hover:shadow-elegant text-white"
               : "bg-gray-300 text-gray-500 cursor-not-allowed"
@@ -286,12 +291,12 @@ const ShortStayHeroSearch: React.FC<ShortStayHeroSearchProps> = ({ onSearch }) =
     <>
       {/* Sticky Search Bar */}
       <div className={cn(
-        "fixed top-16 left-0 right-0 z-40 transition-all duration-300 bg-white/95 backdrop-blur-md shadow-lg border-b border-border/50",
+        "hidden sm:block fixed top-16 left-0 right-0 z-40 transition-all duration-300 bg-white/95 backdrop-blur-md shadow-lg border-b border-border/50",
         isScrolled ? "translate-y-0 opacity-100" : "-translate-y-full opacity-0"
       )}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
           <div className="flex items-center justify-center gap-4">
-            <div className="flex items-center gap-2 text-primary">
+            <div className="hidden md:flex items-center gap-2 text-primary">
               <Home className="h-5 w-5" />
               <span className="font-semibold text-sm">{t("shortStay")}</span>
             </div>

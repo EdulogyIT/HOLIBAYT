@@ -40,7 +40,7 @@ export function DateRangeInputs({
             {value?.from ? format(value.from, "dd/MM/yyyy") : t('from')}
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-auto p-0" align="start">
+        <PopoverContent className="w-auto p-0 z-[100]" align="center" collisionPadding={10}>
           <DateRangePicker
             value={value}
             onChange={(range) => {
@@ -69,7 +69,7 @@ export function DateRangeInputs({
             {value?.to ? format(value.to, "dd/MM/yyyy") : t('to')}
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-auto p-0" align="start">
+        <PopoverContent className="w-auto p-0 z-[100]" align="center" collisionPadding={10}>
           <DateRangePicker
             value={value}
             onChange={(range) => {

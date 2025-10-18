@@ -60,7 +60,7 @@ export const GuestsSelector = ({ value, onChange }: GuestsSelectorProps) => {
       <PopoverTrigger asChild>
         <Button 
           variant="outline" 
-          className="w-full justify-between text-left font-normal h-12 bg-white"
+          className="w-full justify-between text-left font-normal h-12 bg-white min-h-[48px]"
         >
           <div className="flex items-center gap-2">
             <Users className="h-4 w-4 text-muted-foreground" />
@@ -76,7 +76,7 @@ export const GuestsSelector = ({ value, onChange }: GuestsSelectorProps) => {
           </div>
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-80 p-4 bg-white" align="start">
+      <PopoverContent className="w-80 p-4 bg-background z-[100]" align="center" collisionPadding={10}>
         <div className="space-y-4">
           {guestTypes.map((type) => (
             <div key={type.key} className="flex items-center justify-between">
