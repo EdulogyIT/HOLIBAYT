@@ -300,6 +300,88 @@ export const buyRentTranslations = {
     mountainView: "Vue Montagne",
     cityCenter: "Centre-Ville",
     
+    // Workflow Translations
+    workflow: {
+      buy: {
+        tab: "Acheter",
+        title: "Acheter - Achat de Propriété Sécurisé, Simplifié",
+        subtitle: "Protégez votre investissement avec notre processus en 4 étapes",
+        layer1: {
+          title: "Trouver une Propriété Vérifiée",
+          detail1: "Annonces, vendeurs et acheteurs vérifiés",
+          detail2: "Vérification d'ID (KYC) et vérification de propriété via Holibayt Verify™"
+        },
+        layer2: {
+          title: "Payer et Sécuriser avec Holibayt Pay™ (Séquestre)",
+          detail1: "L'acheteur paie le prix d'achat dans le compte séquestre Holibayt Pay™",
+          detail2: "Engagement de propriété du vendeur sécurisé (titre de propriété garanti)"
+        },
+        layer3: {
+          title: "Finaliser la Vente Protégée avec Holibayt Protect™",
+          detail1: "Transfert de titre et documents sécurisés par Holibayt Protect™",
+          detail2: "Couverture juridique ou litige avec Holibayt Insurance™",
+          detail3: "Médiation et assistance 24/7 pour les deux parties"
+        },
+        layer4: {
+          title: "Le Vendeur Reçoit le Paiement",
+          detail1: "Le vendeur reçoit le paiement automatiquement après vérification du transfert de titre",
+          detail2: "Holibayt Pay™ gère toutes les transactions en toute sécurité"
+        }
+      },
+      rent: {
+        tab: "Louer",
+        title: "Louer - Locations Long Terme Sécurisées, Simplifiées",
+        subtitle: "Protégez votre location avec notre processus en 4 étapes",
+        layer1: {
+          title: "Trouver une Propriété Vérifiée",
+          detail1: "Annonces, propriétaires et locataires vérifiés",
+          detail2: "Vérification d'ID (KYC) et vérification de propriété via Holibayt Verify™"
+        },
+        layer2: {
+          title: "Signer et Sécuriser avec Holibayt Pay™ (Séquestre)",
+          detail1: "Le locataire paie le premier mois de loyer + caution dans le compte séquestre Holibayt Pay™",
+          detail2: "Engagement de l'annonce du propriétaire sécurisé (disponibilité de la propriété garantie)"
+        },
+        layer3: {
+          title: "Emménager Protégé avec Holibayt Protect™",
+          detail1: "Dépôt et contrat sécurisés par Holibayt Protect™",
+          detail2: "Couverture des dommages ou litiges avec Holibayt Insurance™",
+          detail3: "Médiation et assistance 24/7 pour les deux parties"
+        },
+        layer4: {
+          title: "Paiements Mensuels Libérés",
+          detail1: "Le propriétaire reçoit le paiement chaque mois automatiquement après vérification",
+          detail2: "Holibayt Pay™ gère toutes les transactions en toute sécurité"
+        }
+      },
+      shortStay: {
+        tab: "Séjour Court",
+        title: "Locations Court Terme Réinventées",
+        subtitle: "Réservez en toute confiance avec notre protection complète",
+        step1: {
+          title: "Trouver un Séjour Vérifié",
+          detail: "Propriétés listées, hôte et invité vérifiés"
+        },
+        step2: {
+          title: "Réserver en Toute Sécurité",
+          detail1: "Paiements verrouillés de l'invité avec politique d'annulation",
+          detail2: "Caution verrouillée du propriétaire avec politique d'annulation"
+        },
+        step3: {
+          title: "Paiement Libéré",
+          detail: "Paiements libérés"
+        },
+        protect1: {
+          title: "Holibayt Protect™",
+          detail: "Dépôt de l'invité + Assurance"
+        },
+        protect2: {
+          title: "Holibayt Insurance™",
+          detail: "Assistance pour les deux parties"
+        }
+      }
+    },
+    
     // Host Dashboard Translations
     host: {
       dashboard: "Tableau de Bord",
@@ -676,6 +758,88 @@ export const buyRentTranslations = {
     fireplace: "Fireplace",
     mountainView: "Mountain View",
     cityCenter: "City Center",
+    
+    // Workflow Translations
+    workflow: {
+      buy: {
+        tab: "Buy",
+        title: "Buy - Secure Property Purchase, Simplified",
+        subtitle: "Protect your investment with our 4-layer process",
+        layer1: {
+          title: "Find a Verified Property",
+          detail1: "Verified listings, sellers & buyers",
+          detail2: "ID (KYC) and property verification via Holibayt Verify™"
+        },
+        layer2: {
+          title: "Pay & Secure with Holibayt Pay™ (Escrow)",
+          detail1: "Buyer pays purchase price into Holibayt Pay™ escrow account",
+          detail2: "Seller's ownership commitment secured (property title guaranteed)"
+        },
+        layer3: {
+          title: "Complete Sale Protected with Holibayt Protect™",
+          detail1: "Title transfer and documents secured by Holibayt Protect™",
+          detail2: "Legal or dispute coverage with Holibayt Insurance™",
+          detail3: "24/7 mediation and assistance for both parties"
+        },
+        layer4: {
+          title: "Seller Receives Payment",
+          detail1: "Seller receives payment automatically after title transfer verification",
+          detail2: "Holibayt Pay™ manages all transactions securely"
+        }
+      },
+      rent: {
+        tab: "Rent",
+        title: "Rent - Secure Long-Term Rentals, Simplified",
+        subtitle: "Protect your rental with our 4-layer process",
+        layer1: {
+          title: "Find a Verified Property",
+          detail1: "Verified listings, landlords & tenants",
+          detail2: "ID (KYC) and property verification via Holibayt Verify™"
+        },
+        layer2: {
+          title: "Sign & Secure with Holibayt Pay™ (Escrow)",
+          detail1: "Tenant pays first month's rent + deposit into Holibayt Pay™ escrow account",
+          detail2: "Owner's listing commitment secured (property availability guaranteed)"
+        },
+        layer3: {
+          title: "Move in Protected with Holibayt Protect™",
+          detail1: "Deposit and contract secured by Holibayt Protect™",
+          detail2: "Damage or dispute coverage with Holibayt Insurance™",
+          detail3: "24/7 mediation and assistance for both parties"
+        },
+        layer4: {
+          title: "Monthly Payouts Released",
+          detail1: "Owner receives payment each month automatically after verification",
+          detail2: "Holibayt Pay™ manages all transactions securely"
+        }
+      },
+      shortStay: {
+        tab: "Short Stay",
+        title: "Short-Term Rentals Reinvented",
+        subtitle: "Book with confidence using our complete protection",
+        step1: {
+          title: "Find a Verified Stay",
+          detail: "Listed properties, host, and guest verified"
+        },
+        step2: {
+          title: "Book Safely",
+          detail1: "Payments locked from guest with cancellation policy",
+          detail2: "Caution locked from owner with cancellation policy"
+        },
+        step3: {
+          title: "Payout Released",
+          detail: "Payments released"
+        },
+        protect1: {
+          title: "Holibayt Protect™",
+          detail: "Deposit from guest + Insurance"
+        },
+        protect2: {
+          title: "Holibayt Insurance™",
+          detail: "Assistance for both sides"
+        }
+      }
+    },
     
     // Notification Translations
     notifications: "Notifications",
@@ -1068,6 +1232,88 @@ export const buyRentTranslations = {
     fireplace: "مدفأة",
     mountainView: "إطلالة جبلية",
     cityCenter: "وسط المدينة",
+    
+    // Workflow Translations
+    workflow: {
+      buy: {
+        tab: "شراء",
+        title: "شراء - شراء عقار آمن، مبسط",
+        subtitle: "احمِ استثمارك بعمليتنا المكونة من 4 طبقات",
+        layer1: {
+          title: "ابحث عن عقار موثق",
+          detail1: "قوائم وبائعون ومشترون موثقون",
+          detail2: "تحقق من الهوية (KYC) والتحقق من الملكية عبر Holibayt Verify™"
+        },
+        layer2: {
+          title: "ادفع وأمّن باستخدام Holibayt Pay™ (الضمان)",
+          detail1: "يدفع المشتري سعر الشراء في حساب الضمان Holibayt Pay™",
+          detail2: "التزام ملكية البائع مضمون (سند الملكية مضمون)"
+        },
+        layer3: {
+          title: "إكمال البيع المحمي باستخدام Holibayt Protect™",
+          detail1: "نقل السند والمستندات مؤمنة بواسطة Holibayt Protect™",
+          detail2: "تغطية قانونية أو نزاع مع Holibayt Insurance™",
+          detail3: "وساطة ومساعدة 24/7 لكلا الطرفين"
+        },
+        layer4: {
+          title: "البائع يستلم الدفع",
+          detail1: "يستلم البائع الدفع تلقائيًا بعد التحقق من نقل السند",
+          detail2: "Holibayt Pay™ يدير جميع المعاملات بأمان"
+        }
+      },
+      rent: {
+        tab: "إيجار",
+        title: "إيجار - إيجارات طويلة الأجل آمنة، مبسطة",
+        subtitle: "احمِ إيجارك بعمليتنا المكونة من 4 طبقات",
+        layer1: {
+          title: "ابحث عن عقار موثق",
+          detail1: "قوائم ومالكون ومستأجرون موثقون",
+          detail2: "تحقق من الهوية (KYC) والتحقق من الملكية عبر Holibayt Verify™"
+        },
+        layer2: {
+          title: "وقّع وأمّن باستخدام Holibayt Pay™ (الضمان)",
+          detail1: "يدفع المستأجر إيجار الشهر الأول + الإيداع في حساب الضمان Holibayt Pay™",
+          detail2: "التزام قائمة المالك مضمون (توفر العقار مضمون)"
+        },
+        layer3: {
+          title: "انتقل محميًا باستخدام Holibayt Protect™",
+          detail1: "الإيداع والعقد مؤمنان بواسطة Holibayt Protect™",
+          detail2: "تغطية الأضرار أو النزاع مع Holibayt Insurance™",
+          detail3: "وساطة ومساعدة 24/7 لكلا الطرفين"
+        },
+        layer4: {
+          title: "الدفعات الشهرية تُطلق",
+          detail1: "يستلم المالك الدفع كل شهر تلقائيًا بعد التحقق",
+          detail2: "Holibayt Pay™ يدير جميع المعاملات بأمان"
+        }
+      },
+      shortStay: {
+        tab: "إقامة قصيرة",
+        title: "إيجارات قصيرة الأجل أعيد اختراعها",
+        subtitle: "احجز بثقة باستخدام حمايتنا الكاملة",
+        step1: {
+          title: "ابحث عن إقامة موثقة",
+          detail: "العقارات المدرجة والمضيف والضيف موثقون"
+        },
+        step2: {
+          title: "احجز بأمان",
+          detail1: "المدفوعات مقفلة من الضيف مع سياسة الإلغاء",
+          detail2: "التحذير مقفل من المالك مع سياسة الإلغاء"
+        },
+        step3: {
+          title: "إطلاق الدفع",
+          detail: "تم إطلاق المدفوعات"
+        },
+        protect1: {
+          title: "Holibayt Protect™",
+          detail: "إيداع من الضيف + التأمين"
+        },
+        protect2: {
+          title: "Holibayt Insurance™",
+          detail: "مساعدة لكلا الجانبين"
+        }
+      }
+    },
     
     // Notification Translations
     notifications: "الإشعارات",

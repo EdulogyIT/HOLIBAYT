@@ -48,14 +48,14 @@ export default function AdminDashboard() {
 
   const kpiData = [
     {
-      title: t('Total Properties'),
+      title: t('admin.totalProperties'),
       value: loading ? '...' : properties.length.toString(),
       change: properties.length > 0 ? `+${Math.round((activeProperties / properties.length) * 100)}%` : '0%',
       icon: Building2,
       onClick: () => navigate('/admin/properties')
     },
     {
-      title: t('Active Properties'),
+      title: t('admin.activeProperties'),
       value: loading ? '...' : activeProperties.toString(),
       change: properties.length > 0 ? `${Math.round((activeProperties / properties.length) * 100)}%` : '0%',
       icon: CalendarDays,
@@ -65,14 +65,14 @@ export default function AdminDashboard() {
       }
     },
     {
-      title: t('Total Users'),
+      title: t('admin.totalUsers'),
       value: loading ? '...' : profiles.length.toString(),
       change: profiles.length > 0 ? `+${Math.min(Math.round((profiles.length / 10) * 5), 100)}%` : '0%',
       icon: Users,
       onClick: () => navigate('/admin/users')
     },
     {
-      title: t('Messages'),
+      title: t('admin.messages'),
       value: loading ? '...' : messagesCount.toString(),
       change: messagesCount > 0 ? `+${Math.min(Math.round((messagesCount / 5) * 10), 100)}%` : '0%',
       icon: MessageSquare,
@@ -85,7 +85,7 @@ export default function AdminDashboard() {
       <div>
         <h1 className="text-3xl font-bold">{t('admin.dashboard')}</h1>
         <p className="text-muted-foreground">
-          {t('Operations Hub')}
+          {t('admin.operationsHub')}
         </p>
       </div>
 
@@ -96,7 +96,7 @@ export default function AdminDashboard() {
           className="gap-2"
         >
           <Plus className="h-4 w-4" />
-          {t('Add New Property')}
+          {t('admin.addNewProperty')}
         </Button>
         <Button 
           onClick={() => navigate('/admin/kyc')}
@@ -104,7 +104,7 @@ export default function AdminDashboard() {
           variant="outline"
         >
           <ShieldCheck className="h-4 w-4" />
-          {t('Verify Hosts')}
+          {t('admin.verifyHosts')}
           {metrics.verificationPending > 0 && (
             <span className="ml-1 px-2 py-0.5 text-xs bg-warning text-warning-foreground rounded-full">
               {metrics.verificationPending}
@@ -117,44 +117,44 @@ export default function AdminDashboard() {
           variant="outline"
         >
           <Receipt className="h-4 w-4" />
-          {t('Review Payments')}
+          {t('admin.reviewPayments')}
         </Button>
       </div>
 
       {/* New Insights Section */}
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-5">
         <DashboardMetricCard
-          title={t('Platform GMV')}
+          title={t('admin.platformGMV')}
           value={formatPrice(metrics.platformGMV)}
           icon={TrendingUp}
           sparklineData={metrics.gmvTrend}
           change="+12.5%"
         />
         <DashboardMetricCard
-          title={t('Avg Booking Value')}
+          title={t('admin.avgBookingValue')}
           value={formatPrice(metrics.avgBookingValue)}
           icon={DollarSign}
           change="+8.2%"
         />
         <DashboardMetricCard
-          title={t('Conversion Rate')}
+          title={t('admin.conversionRate')}
           value={`${metrics.conversionRate}%`}
           icon={TrendingUp}
           change="+3.1%"
         />
         <DashboardMetricCard
-          title={t('Verification Pending')}
+          title={t('admin.verificationPending')}
           value={metrics.verificationPending.toString()}
           icon={AlertCircle}
           onClick={() => navigate('/admin/kyc')}
           badge={
             metrics.verificationPending > 5
-              ? { text: t('Action Required'), variant: 'destructive' }
+              ? { text: t('admin.actionRequired'), variant: 'destructive' }
               : undefined
           }
         />
         <DashboardMetricCard
-          title={t('Avg Response Time')}
+          title={t('admin.avgResponseTime')}
           value={metrics.avgResponseTime}
           icon={Clock}
         />
@@ -218,12 +218,12 @@ export default function AdminDashboard() {
 
         <Card>
           <CardHeader>
-            <CardTitle>{t('Property Distribution')}</CardTitle>
+            <CardTitle>{t('admin.propertyDistribution')}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
               {loading ? (
-                <p className="text-muted-foreground">{t('Loading')}</p>
+                <p className="text-muted-foreground">{t('admin.loading')}</p>
               ) : (
                 <>
                   {['Sale', 'Rent', 'Short Stay'].map((category) => {

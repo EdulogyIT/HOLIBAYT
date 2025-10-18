@@ -1,129 +1,214 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Home, Key, Bed, ArrowRight, ShieldCheck, CreditCard, Shield, Search, Calendar, CheckCircle } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Home, Key, Bed, ArrowRight, ShieldCheck, CreditCard, Shield, DollarSign, Search, Calendar, HandCoins, Plus, FileCheck } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useLanguage } from "@/contexts/LanguageContext";
 
-// Workflow Diagram Components
-const BuyWorkflowDiagram = () => (
-  <div className="flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-2 p-4 bg-primary/5 rounded-lg">
-    <div className="flex flex-col items-center text-center flex-1">
-      <ShieldCheck className="h-8 w-8 sm:h-10 sm:w-10 text-primary mb-2" />
-      <p className="font-semibold text-xs sm:text-sm text-foreground">Verify</p>
-      <p className="text-[10px] sm:text-xs text-muted-foreground">Holibayt Verify™</p>
-    </div>
-    <ArrowRight className="h-4 w-4 sm:h-5 sm:w-5 text-primary rotate-90 sm:rotate-0 flex-shrink-0" />
-    <div className="flex flex-col items-center text-center flex-1">
-      <CreditCard className="h-8 w-8 sm:h-10 sm:w-10 text-primary mb-2" />
-      <p className="font-semibold text-xs sm:text-sm text-foreground">Pay</p>
-      <p className="text-[10px] sm:text-xs text-muted-foreground">Escrow Protection</p>
-    </div>
-    <ArrowRight className="h-4 w-4 sm:h-5 sm:w-5 text-primary rotate-90 sm:rotate-0 flex-shrink-0" />
-    <div className="flex flex-col items-center text-center flex-1">
-      <Shield className="h-8 w-8 sm:h-10 sm:w-10 text-primary mb-2" />
-      <p className="font-semibold text-xs sm:text-sm text-foreground">Protect</p>
-      <p className="text-[10px] sm:text-xs text-muted-foreground">Holibayt Protect™</p>
-    </div>
-  </div>
-);
+// Buy Workflow - 4 Horizontal Layers
+const BuyWorkflowDiagram = () => {
+  const { t } = useLanguage();
+  
+  return (
+    <div className="space-y-3">
+      {/* Layer 1: Trust */}
+      <div className="relative bg-[#1a5f5f] text-white p-4 rounded-lg">
+        <div className="flex items-start gap-3">
+          <ShieldCheck className="h-8 w-8 flex-shrink-0 mt-1" />
+          <div className="flex-1">
+            <h4 className="font-semibold text-sm mb-2">{t('workflow.buy.layer1.title')}</h4>
+            <ul className="space-y-1 text-xs opacity-90">
+              <li>• {t('workflow.buy.layer1.detail1')}</li>
+              <li>• {t('workflow.buy.layer1.detail2')}</li>
+            </ul>
+          </div>
+        </div>
+        <ArrowRight className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 h-6 w-6 text-[#1a5f5f] rotate-90" />
+      </div>
 
-const RentWorkflowDiagram = () => (
-  <div className="flex flex-col gap-2 p-4 bg-accent/5 rounded-lg">
-    <div className="flex items-center gap-2 p-2 bg-accent/10 rounded">
-      <CheckCircle className="h-5 w-5 sm:h-6 sm:w-6 text-accent flex-shrink-0" />
-      <div className="flex-1">
-        <p className="font-semibold text-xs sm:text-sm text-foreground">Trust</p>
-        <p className="text-[10px] sm:text-xs text-muted-foreground">Verified landlords</p>
+      {/* Layer 2: Security */}
+      <div className="relative bg-[#1a5f5f] text-white p-4 rounded-lg">
+        <div className="flex items-start gap-3">
+          <CreditCard className="h-8 w-8 flex-shrink-0 mt-1" />
+          <div className="flex-1">
+            <h4 className="font-semibold text-sm mb-2">{t('workflow.buy.layer2.title')}</h4>
+            <ul className="space-y-1 text-xs opacity-90">
+              <li>• {t('workflow.buy.layer2.detail1')}</li>
+              <li>• {t('workflow.buy.layer2.detail2')}</li>
+            </ul>
+          </div>
+        </div>
+        <ArrowRight className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 h-6 w-6 text-[#1a5f5f] rotate-90" />
       </div>
-    </div>
-    <div className="flex items-center gap-2 p-2 bg-accent/10 rounded">
-      <Shield className="h-5 w-5 sm:h-6 sm:w-6 text-accent flex-shrink-0" />
-      <div className="flex-1">
-        <p className="font-semibold text-xs sm:text-sm text-foreground">Security</p>
-        <p className="text-[10px] sm:text-xs text-muted-foreground">Holibayt Pay™</p>
-      </div>
-    </div>
-    <div className="flex items-center gap-2 p-2 bg-accent/10 rounded">
-      <ShieldCheck className="h-5 w-5 sm:h-6 sm:w-6 text-accent flex-shrink-0" />
-      <div className="flex-1">
-        <p className="font-semibold text-xs sm:text-sm text-foreground">Protection</p>
-        <p className="text-[10px] sm:text-xs text-muted-foreground">Holibayt Insurance™</p>
-      </div>
-    </div>
-    <div className="flex items-center gap-2 p-2 bg-accent/10 rounded">
-      <Search className="h-5 w-5 sm:h-6 sm:w-6 text-accent flex-shrink-0" />
-      <div className="flex-1">
-        <p className="font-semibold text-xs sm:text-sm text-foreground">Transparency</p>
-        <p className="text-[10px] sm:text-xs text-muted-foreground">Digital contracts</p>
-      </div>
-    </div>
-  </div>
-);
 
-const ShortStayWorkflowDiagram = () => (
-  <div className="relative p-4 bg-foreground/5 rounded-lg">
-    <div className="flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-2">
-      <div className="flex flex-col items-center text-center flex-1">
-        <Search className="h-8 w-8 sm:h-10 sm:w-10 text-foreground mb-2" />
-        <p className="font-semibold text-xs sm:text-sm text-foreground">Find & Verify</p>
-        <p className="text-[10px] sm:text-xs text-muted-foreground">Guest screening</p>
+      {/* Layer 3: Protection */}
+      <div className="relative bg-[#f5b942] text-gray-900 p-4 rounded-lg">
+        <div className="flex items-start gap-3">
+          <Shield className="h-8 w-8 flex-shrink-0 mt-1" />
+          <div className="flex-1">
+            <h4 className="font-semibold text-sm mb-2">{t('workflow.buy.layer3.title')}</h4>
+            <ul className="space-y-1 text-xs">
+              <li>• {t('workflow.buy.layer3.detail1')}</li>
+              <li>• {t('workflow.buy.layer3.detail2')}</li>
+              <li>• {t('workflow.buy.layer3.detail3')}</li>
+            </ul>
+          </div>
+        </div>
+        <ArrowRight className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 h-6 w-6 text-[#f5b942] rotate-90" />
       </div>
-      <ArrowRight className="h-4 w-4 sm:h-5 sm:w-5 text-foreground rotate-90 sm:rotate-0 flex-shrink-0" />
-      <div className="flex flex-col items-center text-center flex-1">
-        <CreditCard className="h-8 w-8 sm:h-10 sm:w-10 text-foreground mb-2" />
-        <p className="font-semibold text-xs sm:text-sm text-foreground">Book & Pay</p>
-        <p className="text-[10px] sm:text-xs text-muted-foreground">Holibayt Pay™</p>
-      </div>
-      <ArrowRight className="h-4 w-4 sm:h-5 sm:w-5 text-foreground rotate-90 sm:rotate-0 flex-shrink-0" />
-      <div className="flex flex-col items-center text-center flex-1">
-        <Shield className="h-8 w-8 sm:h-10 sm:w-10 text-foreground mb-2" />
-        <p className="font-semibold text-xs sm:text-sm text-foreground">Stay Protected</p>
-        <p className="text-[10px] sm:text-xs text-muted-foreground">Holibayt Insurance™</p>
+
+      {/* Layer 4: Transparency */}
+      <div className="bg-gray-400 text-gray-900 p-4 rounded-lg">
+        <div className="flex items-start gap-3">
+          <DollarSign className="h-8 w-8 flex-shrink-0 mt-1" />
+          <div className="flex-1">
+            <h4 className="font-semibold text-sm mb-2">{t('workflow.buy.layer4.title')}</h4>
+            <ul className="space-y-1 text-xs">
+              <li>• {t('workflow.buy.layer4.detail1')}</li>
+              <li>• {t('workflow.buy.layer4.detail2')}</li>
+            </ul>
+          </div>
+        </div>
       </div>
     </div>
-  </div>
-);
+  );
+};
+
+// Rent Workflow - 4 Horizontal Layers
+const RentWorkflowDiagram = () => {
+  const { t } = useLanguage();
+  
+  return (
+    <div className="space-y-3">
+      {/* Layer 1: Trust */}
+      <div className="relative bg-[#1a5f5f] text-white p-4 rounded-lg">
+        <div className="flex items-start gap-3">
+          <ShieldCheck className="h-8 w-8 flex-shrink-0 mt-1" />
+          <div className="flex-1">
+            <h4 className="font-semibold text-sm mb-2">{t('workflow.rent.layer1.title')}</h4>
+            <ul className="space-y-1 text-xs opacity-90">
+              <li>• {t('workflow.rent.layer1.detail1')}</li>
+              <li>• {t('workflow.rent.layer1.detail2')}</li>
+            </ul>
+          </div>
+        </div>
+        <ArrowRight className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 h-6 w-6 text-[#1a5f5f] rotate-90" />
+      </div>
+
+      {/* Layer 2: Security */}
+      <div className="relative bg-[#1a5f5f] text-white p-4 rounded-lg">
+        <div className="flex items-start gap-3">
+          <CreditCard className="h-8 w-8 flex-shrink-0 mt-1" />
+          <div className="flex-1">
+            <h4 className="font-semibold text-sm mb-2">{t('workflow.rent.layer2.title')}</h4>
+            <ul className="space-y-1 text-xs opacity-90">
+              <li>• {t('workflow.rent.layer2.detail1')}</li>
+              <li>• {t('workflow.rent.layer2.detail2')}</li>
+            </ul>
+          </div>
+        </div>
+        <ArrowRight className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 h-6 w-6 text-[#1a5f5f] rotate-90" />
+      </div>
+
+      {/* Layer 3: Protection */}
+      <div className="relative bg-[#f5b942] text-gray-900 p-4 rounded-lg">
+        <div className="flex items-start gap-3">
+          <Shield className="h-8 w-8 flex-shrink-0 mt-1" />
+          <div className="flex-1">
+            <h4 className="font-semibold text-sm mb-2">{t('workflow.rent.layer3.title')}</h4>
+            <ul className="space-y-1 text-xs">
+              <li>• {t('workflow.rent.layer3.detail1')}</li>
+              <li>• {t('workflow.rent.layer3.detail2')}</li>
+              <li>• {t('workflow.rent.layer3.detail3')}</li>
+            </ul>
+          </div>
+        </div>
+        <ArrowRight className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 h-6 w-6 text-[#f5b942] rotate-90" />
+      </div>
+
+      {/* Layer 4: Transparency */}
+      <div className="bg-gray-400 text-gray-900 p-4 rounded-lg">
+        <div className="flex items-start gap-3">
+          <DollarSign className="h-8 w-8 flex-shrink-0 mt-1" />
+          <div className="flex-1">
+            <h4 className="font-semibold text-sm mb-2">{t('workflow.rent.layer4.title')}</h4>
+            <ul className="space-y-1 text-xs">
+              <li>• {t('workflow.rent.layer4.detail1')}</li>
+              <li>• {t('workflow.rent.layer4.detail2')}</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// Short Stay Workflow - Circular Flow
+const ShortStayWorkflowDiagram = () => {
+  const { t } = useLanguage();
+  
+  return (
+    <div className="space-y-4">
+      {/* Top Row - 3 Main Steps */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        {/* Step 1: Find */}
+        <div className="bg-card border border-border p-4 rounded-lg text-center">
+          <Search className="h-10 w-10 text-primary mx-auto mb-2" />
+          <h4 className="font-semibold text-sm mb-1">{t('workflow.shortStay.step1.title')}</h4>
+          <p className="text-xs text-muted-foreground">{t('workflow.shortStay.step1.detail')}</p>
+        </div>
+
+        {/* Step 2: Book Safely - Central with emphasis */}
+        <div className="bg-[#1a5f5f] text-white p-4 rounded-lg text-center border-2 border-[#1a5f5f]">
+          <CreditCard className="h-10 w-10 mx-auto mb-2" />
+          <h4 className="font-semibold text-sm mb-2">{t('workflow.shortStay.step2.title')}</h4>
+          <div className="space-y-2 text-xs">
+            <p>{t('workflow.shortStay.step2.detail1')}</p>
+            <Plus className="h-4 w-4 mx-auto" />
+            <p>{t('workflow.shortStay.step2.detail2')}</p>
+          </div>
+        </div>
+
+        {/* Step 3: Payout */}
+        <div className="bg-card border border-border p-4 rounded-lg text-center">
+          <HandCoins className="h-10 w-10 text-primary mx-auto mb-2" />
+          <h4 className="font-semibold text-sm mb-1">{t('workflow.shortStay.step3.title')}</h4>
+          <p className="text-xs text-muted-foreground">{t('workflow.shortStay.step3.detail')}</p>
+        </div>
+      </div>
+
+      {/* Bottom Row - Protection Loop */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+        {/* Left Protection */}
+        <div className="bg-accent/10 border border-accent p-4 rounded-lg">
+          <div className="flex items-start gap-3">
+            <Shield className="h-8 w-8 text-accent flex-shrink-0 mt-1" />
+            <div>
+              <h4 className="font-semibold text-sm mb-1">{t('workflow.shortStay.protect1.title')}</h4>
+              <p className="text-xs text-muted-foreground">{t('workflow.shortStay.protect1.detail')}</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Right Protection */}
+        <div className="bg-accent/10 border border-accent p-4 rounded-lg">
+          <div className="flex items-start gap-3">
+            <Shield className="h-8 w-8 text-accent flex-shrink-0 mt-1" />
+            <div>
+              <h4 className="font-semibold text-sm mb-1">{t('workflow.shortStay.protect2.title')}</h4>
+              <p className="text-xs text-muted-foreground">{t('workflow.shortStay.protect2.detail')}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 const QuickAccessSection = () => {
   const navigate = useNavigate();
   const { t } = useLanguage();
   
-  const quickActions = [
-    {
-      id: 'buy',
-      icon: Home,
-      title: t('buyPropertyTitle'),
-      description: t('buyNewDescription') || 'Properties for sale with verified sellers and legal support.',
-      subtitle: t('buyPropertySubtitle'),
-      DiagramComponent: BuyWorkflowDiagram,
-      color: 'bg-primary',
-      hoverColor: 'group-hover:bg-primary',
-      borderColor: 'border-primary/20 group-hover:border-primary/40',
-    },
-    {
-      id: 'rent',
-      icon: Key,
-      title: t('rentPropertyTitle'),
-      description: t('rentNewDescription') || 'Long-term rentals with verified landlords and guaranteed payments.',
-      subtitle: t('rentPropertySubtitle'),
-      DiagramComponent: RentWorkflowDiagram,
-      color: 'bg-accent',
-      hoverColor: 'group-hover:bg-accent',
-      borderColor: 'border-accent/20 group-hover:border-accent/40',
-    },
-    {
-      id: 'stay',
-      icon: Bed,
-      title: t('shortStayTitle2'),
-      description: t('shortStayNewDescription') || 'Your Algerian Airbnb — safe, verified, and convenient.',
-      subtitle: t('shortStaySubtitle'),
-      DiagramComponent: ShortStayWorkflowDiagram,
-      color: 'bg-foreground',
-      hoverColor: 'group-hover:bg-foreground',
-      borderColor: 'border-foreground/20 group-hover:border-foreground/40',
-    }
-  ];
-
   return (
     <section className="py-12 sm:py-16 md:py-20 bg-background">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -137,69 +222,93 @@ const QuickAccessSection = () => {
           </p>
         </div>
 
-        {/* Quick Access Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 items-stretch gap-4 sm:gap-6 lg:gap-8">
-          {quickActions.map((action) => {
-            const IconComponent = action.icon;
-            return (
-              <Card 
-                key={action.id} 
-                onClick={() => navigate(`/${action.id === 'stay' ? 'short-stay' : action.id}`)}
-                className={`group relative overflow-hidden border-2 ${action.borderColor} hover:shadow-elegant transition-all duration-300 hover:-translate-y-2 cursor-pointer bg-card/50 backdrop-blur-sm flex flex-col h-full`}
-              >
-                <CardContent className="p-4 sm:p-6 md:p-8 text-center flex flex-col h-full">
-                  {/* Watermark Icon */}
-                  <div className="absolute top-4 right-4 opacity-5 pointer-events-none">
-                    <IconComponent className="h-24 w-24 sm:h-32 sm:w-32 md:h-40 md:w-40" />
-                  </div>
-                  
-                  {/* Icon Container */}
-                  <div className="relative mb-4 sm:mb-6 z-10">
-                    <div className={`inline-flex items-center justify-center w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20 ${action.color} text-primary-foreground rounded-2xl group-hover:scale-110 transition-transform duration-300 shadow-lg`}>
-                      <IconComponent className="h-6 w-6 sm:h-8 sm:w-8 md:h-10 md:w-10" />
-                    </div>
-                  </div>
+        {/* Tabbed Workflow Card */}
+        <Card className="border-2 border-primary/20 shadow-elegant">
+          <CardContent className="p-6 sm:p-8">
+            <Tabs defaultValue="buy" className="w-full">
+              <TabsList className="grid w-full grid-cols-3 mb-8">
+                <TabsTrigger value="buy" className="flex items-center gap-2">
+                  <Home className="h-4 w-4" />
+                  <span className="hidden sm:inline">{t('workflow.buy.tab')}</span>
+                  <span className="sm:hidden">{t('Buy')}</span>
+                </TabsTrigger>
+                <TabsTrigger value="rent" className="flex items-center gap-2">
+                  <Key className="h-4 w-4" />
+                  <span className="hidden sm:inline">{t('workflow.rent.tab')}</span>
+                  <span className="sm:hidden">{t('Rent')}</span>
+                </TabsTrigger>
+                <TabsTrigger value="short-stay" className="flex items-center gap-2">
+                  <Bed className="h-4 w-4" />
+                  <span className="hidden sm:inline">{t('workflow.shortStay.tab')}</span>
+                  <span className="sm:hidden">{t('Stay')}</span>
+                </TabsTrigger>
+              </TabsList>
 
-                  {/* Content */}
-                  <div className="mb-4 sm:mb-6 flex-grow">
-                    <h3 className="text-lg sm:text-xl md:text-2xl font-playfair font-semibold text-foreground mb-2">
-                      {action.title}
-                    </h3>
-                    <p className="text-xs sm:text-sm text-primary font-inter font-medium mb-2 sm:mb-3">
-                      {action.subtitle}
-                    </p>
-                    <p className="text-muted-foreground font-inter text-xs sm:text-sm md:text-base leading-relaxed mb-3 sm:mb-4 px-2">
-                      {action.description}
-                    </p>
+              {/* Buy Tab Content */}
+              <TabsContent value="buy" className="space-y-6">
+                <div className="text-center mb-6">
+                  <h3 className="text-xl sm:text-2xl font-playfair font-bold text-foreground mb-2">
+                    {t('workflow.buy.title')}
+                  </h3>
+                  <p className="text-sm text-muted-foreground">{t('workflow.buy.subtitle')}</p>
+                </div>
+                <BuyWorkflowDiagram />
+                <div className="flex justify-center pt-4">
+                  <Button 
+                    onClick={() => navigate('/buy')}
+                    className="gap-2"
+                    size="lg"
+                  >
+                    {t('start')}
+                    <ArrowRight className="h-4 w-4" />
+                  </Button>
+                </div>
+              </TabsContent>
 
-                    {/* Workflow Diagram Component */}
-                    <div className="mt-4 sm:mt-6">
-                      <action.DiagramComponent />
-                    </div>
-                  </div>
+              {/* Rent Tab Content */}
+              <TabsContent value="rent" className="space-y-6">
+                <div className="text-center mb-6">
+                  <h3 className="text-xl sm:text-2xl font-playfair font-bold text-foreground mb-2">
+                    {t('workflow.rent.title')}
+                  </h3>
+                  <p className="text-sm text-muted-foreground">{t('workflow.rent.subtitle')}</p>
+                </div>
+                <RentWorkflowDiagram />
+                <div className="flex justify-center pt-4">
+                  <Button 
+                    onClick={() => navigate('/rent')}
+                    className="gap-2"
+                    size="lg"
+                  >
+                    {t('start')}
+                    <ArrowRight className="h-4 w-4" />
+                  </Button>
+                </div>
+              </TabsContent>
 
-                  {/* CTA Button - Footer */}
-                  <div className="mt-auto pt-4 sm:pt-6">
-                    <Button 
-                      variant="ghost" 
-                      className={`group/btn font-inter font-medium text-foreground hover:text-primary-foreground ${action.hoverColor} transition-all duration-300 h-10 sm:h-11 px-4 sm:px-5 text-xs sm:text-sm whitespace-nowrap w-full`}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        navigate(`/${action.id === 'stay' ? 'short-stay' : action.id}`);
-                      }}
-                    >
-                      <span className="whitespace-nowrap">{t('start')}</span>
-                      <ArrowRight className="ml-2 h-3 w-3 sm:h-4 sm:w-4 group-hover/btn:translate-x-1 transition-transform duration-300" />
-                    </Button>
-                  </div>
-                </CardContent>
-
-                {/* Hover Effect Overlay */}
-                <div className="absolute inset-0 bg-gradient-to-br from-transparent via-transparent to-black/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
-              </Card>
-            );
-          })}
-        </div>
+              {/* Short Stay Tab Content */}
+              <TabsContent value="short-stay" className="space-y-6">
+                <div className="text-center mb-6">
+                  <h3 className="text-xl sm:text-2xl font-playfair font-bold text-foreground mb-2">
+                    {t('workflow.shortStay.title')}
+                  </h3>
+                  <p className="text-sm text-muted-foreground">{t('workflow.shortStay.subtitle')}</p>
+                </div>
+                <ShortStayWorkflowDiagram />
+                <div className="flex justify-center pt-4">
+                  <Button 
+                    onClick={() => navigate('/short-stay')}
+                    className="gap-2"
+                    size="lg"
+                  >
+                    {t('start')}
+                    <ArrowRight className="h-4 w-4" />
+                  </Button>
+                </div>
+              </TabsContent>
+            </Tabs>
+          </CardContent>
+        </Card>
 
         {/* Bottom CTA */}
         <div className="text-center mt-8 sm:mt-12">
