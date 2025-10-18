@@ -81,7 +81,7 @@ export default function LocationAutocomplete({
       />
       
       {showSuggestions && suggestions.length > 0 && (
-        <div className="absolute top-[calc(100%+0.5rem)] left-0 right-auto min-w-[400px] w-max max-w-[600px] bg-card border border-border rounded-lg shadow-2xl z-[9999] max-h-80 overflow-y-auto">
+        <div className="absolute top-[calc(100%+0.5rem)] left-0 min-w-[400px] w-max max-w-[600px] bg-card border border-border rounded-lg shadow-2xl z-[9999] max-h-80 overflow-y-auto">
           {value.trim().length === 0 && (
             <div className="px-5 py-3 text-sm font-medium text-muted-foreground bg-muted/50 border-b border-border sticky top-0 z-10">
               Popular destinations in Algeria

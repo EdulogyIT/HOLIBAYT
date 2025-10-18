@@ -29,3 +29,6 @@ verify_jwt = false
 
 [functions.get-mapbox-token]
 verify_jwt = false
+
+[functions.sign-rental-agreement]
+verify_jwt = true
