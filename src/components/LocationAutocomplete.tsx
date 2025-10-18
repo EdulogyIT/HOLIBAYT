@@ -51,7 +51,6 @@ export default function LocationAutocomplete({
   const handleFocus = () => {
     if (value.trim().length === 0) {
       // Show popular destinations when empty
-      const popularLocations = searchLocations('alg'); // Show Algiers related
       setSuggestions([
         { name: "Algiers Centre", type: "district", region: "Alger" },
         { name: "Oran", type: "city", region: "Oran" },
@@ -59,6 +58,15 @@ export default function LocationAutocomplete({
         { name: "Annaba", type: "city", region: "Annaba" },
         { name: "Tlemcen", type: "city", region: "Tlemcen" },
         { name: "Béjaïa", type: "city", region: "Béjaïa" },
+        { name: "Sétif", type: "city", region: "Sétif" },
+        { name: "Blida", type: "city", region: "Blida" },
+        { name: "Batna", type: "city", region: "Batna" },
+        { name: "Tizi Ouzou", type: "city", region: "Tizi Ouzou" },
+        { name: "Skikda", type: "city", region: "Skikda" },
+        { name: "Mostaganem", type: "city", region: "Mostaganem" },
+        { name: "Tipaza", type: "city", region: "Tipaza" },
+        { name: "Boumerdès", type: "city", region: "Boumerdès" },
+        { name: "Ghardaïa", type: "city", region: "Ghardaïa" },
       ]);
       setShowSuggestions(true);
     } else if (value.trim().length >= 2) {
@@ -81,7 +89,7 @@ export default function LocationAutocomplete({
       />
       
       {showSuggestions && suggestions.length > 0 && (
-        <div className="absolute top-[calc(100%+0.5rem)] left-0 min-w-[400px] w-max max-w-[600px] bg-card border border-border rounded-lg shadow-2xl z-[9999] max-h-80 overflow-y-auto">
+        <div className="fixed top-auto left-0 min-w-[400px] w-max max-w-[600px] bg-card border border-border rounded-lg shadow-2xl z-[99999] max-h-80 overflow-y-auto" style={{ top: wrapperRef.current ? `${wrapperRef.current.getBoundingClientRect().bottom + 8}px` : 'auto', left: wrapperRef.current ? `${wrapperRef.current.getBoundingClientRect().left}px` : '0' }}>
           {value.trim().length === 0 && (
             <div className="px-5 py-3 text-sm font-medium text-muted-foreground bg-muted/50 border-b border-border sticky top-0 z-10">
               Popular destinations in Algeria
@@ -103,7 +111,7 @@ export default function LocationAutocomplete({
       )}
       
       {showSuggestions && value.trim().length >= 2 && suggestions.length === 0 && (
-        <div className="absolute top-[calc(100%+0.5rem)] left-0 right-0 bg-card border border-border rounded-lg shadow-2xl z-[9999] p-4 text-center text-muted-foreground">
+        <div className="fixed top-auto left-0 right-0 bg-card border border-border rounded-lg shadow-2xl z-[99999] p-4 text-center text-muted-foreground" style={{ top: wrapperRef.current ? `${wrapperRef.current.getBoundingClientRect().bottom + 8}px` : 'auto', left: wrapperRef.current ? `${wrapperRef.current.getBoundingClientRect().left}px` : '0', width: wrapperRef.current ? `${wrapperRef.current.getBoundingClientRect().width}px` : 'auto' }}>
           No locations found for "{value}"
         </div>
       )}

@@ -940,6 +940,8 @@ export const buyRentTranslations = {
     verifiedByTeam: "موثق من قبل فريق عقارات Holibayt - الصور والبيانات تم التحقق منها في الموقع.",
     neighborhoodInsights: "رؤى الحي",
     viewOnGoogleMaps: "عرض على خرائط جوجل",
+    whereYoullBe: "أين ستكون",
+    addDates: "أضف التواريخ",
     verifiedLocation: "الموقع موثق",
     whyBuyWithHolibayt: "لماذا تشتري مع Holibayt؟",
     verifiedOwnership: "ملكية موثقة",

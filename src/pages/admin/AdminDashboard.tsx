@@ -50,14 +50,14 @@ export default function AdminDashboard() {
     {
       title: t('Total Properties'),
       value: loading ? '...' : properties.length.toString(),
-      change: '+' + Math.floor(Math.random() * 20 + 5) + '%',
+      change: properties.length > 0 ? `+${Math.round((activeProperties / properties.length) * 100)}%` : '0%',
       icon: Building2,
       onClick: () => navigate('/admin/properties')
     },
     {
       title: t('Active Properties'),
       value: loading ? '...' : activeProperties.toString(),
-      change: '+' + Math.floor(Math.random() * 15 + 3) + '%',
+      change: properties.length > 0 ? `${Math.round((activeProperties / properties.length) * 100)}%` : '0%',
       icon: CalendarDays,
       onClick: () => {
         navigate('/admin/properties');
@@ -67,14 +67,14 @@ export default function AdminDashboard() {
     {
       title: t('Total Users'),
       value: loading ? '...' : profiles.length.toString(),
-      change: '+' + Math.floor(Math.random() * 25 + 8) + '%',
+      change: profiles.length > 0 ? `+${Math.min(Math.round((profiles.length / 10) * 5), 100)}%` : '0%',
       icon: Users,
       onClick: () => navigate('/admin/users')
     },
     {
       title: t('Messages'),
       value: loading ? '...' : messagesCount.toString(),
-      change: '+' + Math.floor(Math.random() * 30 + 10) + '%',
+      change: messagesCount > 0 ? `+${Math.min(Math.round((messagesCount / 5) * 10), 100)}%` : '0%',
       icon: MessageSquare,
       onClick: () => navigate('/admin/messages')
     },
@@ -204,7 +204,7 @@ export default function AdminDashboard() {
                       </p>
                     </div>
                     <div className="text-right">
-                      <p className="font-medium">DA {parseInt(property.price).toLocaleString()}</p>
+                      <p className="font-medium">{property.price_currency || 'DZD'} {parseInt(property.price).toLocaleString()}</p>
                       <p className="text-sm text-green-600">{property.status}</p>
                     </div>
                   </div>
