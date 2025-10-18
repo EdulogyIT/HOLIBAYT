@@ -26,7 +26,7 @@ import { ReviewTags } from "@/components/ReviewTags";
 import { PropertyShareButton } from "@/components/PropertyShareButton";
 import { HostDetailsSection } from "@/components/HostDetailsSection";
 import { NeighborhoodInsights } from "@/components/NeighborhoodInsights";
-import StaticPropertyMap from "@/components/StaticPropertyMap";
+import MapboxMap from "@/components/MapboxMap";
 
 interface Property {
   id: string;
@@ -461,9 +461,12 @@ const Property = () => {
               <PropertyReviews propertyId={property.id} hostUserId={property.user_id || ''} />
 
               {/* Location Map - Enhanced "Where you'll be" section */}
-              <StaticPropertyMap 
+              <MapboxMap 
                 location={`${property.location}, ${property.city}, Algeria`}
                 address={property.full_address}
+                latitude={property.latitude}
+                longitude={property.longitude}
+                showPropertyMarker={true}
               />
 
               {/* Neighborhood Insights */}

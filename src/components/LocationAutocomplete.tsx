@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { Input } from '@/components/ui/input';
 import { MapPin, Navigation } from 'lucide-react';
 import { searchLocations } from '@/data/algerianLocations';
@@ -19,6 +20,7 @@ export default function LocationAutocomplete({
 }: LocationAutocompleteProps) {
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [suggestions, setSuggestions] = useState<ReturnType<typeof searchLocations>>([]);
+  const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0, width: 0 });
   const wrapperRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -30,6 +32,32 @@ export default function LocationAutocomplete({
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
+
+  // Update dropdown position when it opens or input moves
+  useEffect(() => {
+    if (showSuggestions && wrapperRef.current) {
+      const updatePosition = () => {
+        if (wrapperRef.current) {
+          const rect = wrapperRef.current.getBoundingClientRect();
+          setDropdownPosition({
+            top: rect.bottom + window.scrollY + 8,
+            left: rect.left + window.scrollX,
+            width: rect.width
+          });
+        }
+      };
+      
+      updatePosition();
+      
+      window.addEventListener('scroll', updatePosition, true);
+      window.addEventListener('resize', updatePosition);
+      
+      return () => {
+        window.removeEventListener('scroll', updatePosition, true);
+        window.removeEventListener('resize', updatePosition);
+      };
+    }
+  }, [showSuggestions]);
 
   const handleInputChange = (newValue: string) => {
     onChange(newValue);
@@ -88,8 +116,15 @@ export default function LocationAutocomplete({
         className={cn("pl-10 bg-background border border-input", className)}
       />
       
-      {showSuggestions && suggestions.length > 0 && (
-        <div className="absolute left-0 top-full mt-2 min-w-[400px] w-max max-w-[600px] bg-card border border-border rounded-lg shadow-2xl z-[99999] max-h-80 overflow-y-auto">
+      {showSuggestions && suggestions.length > 0 && createPortal(
+        <div 
+          className="fixed min-w-[400px] w-max max-w-[600px] bg-card border border-border rounded-lg shadow-2xl z-[99999] max-h-80 overflow-y-auto"
+          style={{
+            top: `${dropdownPosition.top}px`,
+            left: `${dropdownPosition.left}px`,
+            minWidth: `${Math.max(400, dropdownPosition.width)}px`
+          }}
+        >
           {value.trim().length === 0 && (
             <div className="px-5 py-3 text-sm font-medium text-muted-foreground bg-muted/50 border-b border-border sticky top-0 z-10">
               Popular destinations in Algeria
@@ -107,13 +142,22 @@ export default function LocationAutocomplete({
               </div>
             </button>
           ))}
-        </div>
+        </div>,
+        document.body
       )}
       
-      {showSuggestions && value.trim().length >= 2 && suggestions.length === 0 && (
-        <div className="absolute left-0 top-full mt-2 right-0 bg-card border border-border rounded-lg shadow-2xl z-[99999] p-4 text-center text-muted-foreground">
+      {showSuggestions && value.trim().length >= 2 && suggestions.length === 0 && createPortal(
+        <div 
+          className="fixed bg-card border border-border rounded-lg shadow-2xl z-[99999] p-4 text-center text-muted-foreground"
+          style={{
+            top: `${dropdownPosition.top}px`,
+            left: `${dropdownPosition.left}px`,
+            width: `${dropdownPosition.width}px`
+          }}
+        >
           No locations found for "{value}"
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );
