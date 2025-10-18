@@ -162,7 +162,7 @@ const AlgiersDistrictMap: React.FC<AlgiersDistrictMapProps> = ({
     });
   };
 
-  // Update property markers
+  // Update property markers with geocoding fallback
   useEffect(() => {
     if (!map.current || !mapboxToken) return;
 
@@ -170,71 +170,100 @@ const AlgiersDistrictMap: React.FC<AlgiersDistrictMapProps> = ({
     markersRef.current.forEach(marker => marker.remove());
     markersRef.current = [];
 
-    // Add markers for properties with coordinates
-    const validProperties = properties.filter(p => p.latitude && p.longitude);
+    const addMarkersForProperties = async () => {
+      const validCoords: Array<{ lng: number; lat: number }> = [];
 
-    validProperties.forEach(property => {
-      const el = document.createElement('div');
-      el.className = 'property-marker';
-      
-      const pricePerUnit = property.category === 'short_stay' ? '/night' : 
-                           property.category === 'rent' ? '/month' : '';
-      
-      el.innerHTML = `
-        <div style="
-          background: white;
-          padding: 6px 12px;
-          border-radius: 20px;
-          border: 2px solid hsl(var(--primary));
-          box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-          font-weight: 600;
-          font-size: 13px;
-          color: hsl(var(--foreground));
-          cursor: pointer;
-          transition: all 0.2s;
-          white-space: nowrap;
-        " class="property-marker-content">
-          ${formatPrice(Number(property.price), property.price_currency)}${pricePerUnit}
-        </div>
-      `;
+      for (const property of properties) {
+        let lat = property.latitude;
+        let lng = property.longitude;
 
-      el.addEventListener('mouseenter', () => {
-        const content = el.querySelector('.property-marker-content') as HTMLElement;
-        if (content) {
-          content.style.transform = 'scale(1.1)';
-          content.style.zIndex = '1000';
+        // If no coordinates, try to geocode
+        if (!lat || !lng) {
+          const location = property.location;
+          if (location) {
+            try {
+              const { geocodeAddressWithCache } = await import('@/utils/geocoding');
+              const coords = await geocodeAddressWithCache(location, mapboxToken);
+              if (coords) {
+                lat = coords.latitude;
+                lng = coords.longitude;
+              }
+            } catch (error) {
+              console.error('Failed to geocode property:', property.id, error);
+              continue;
+            }
+          } else {
+            continue;
+          }
         }
-      });
 
-      el.addEventListener('mouseleave', () => {
-        const content = el.querySelector('.property-marker-content') as HTMLElement;
-        if (content) {
-          content.style.transform = 'scale(1)';
-          content.style.zIndex = 'auto';
-        }
-      });
+        if (!lat || !lng) continue;
 
-      el.addEventListener('click', () => {
-        if (onPropertyClick) {
-          onPropertyClick(property.id);
-        }
-      });
+        validCoords.push({ lng, lat });
 
-      const marker = new mapboxgl.Marker(el)
-        .setLngLat([property.longitude!, property.latitude!])
-        .addTo(map.current!);
+        // Create custom marker with price badge
+        const el = document.createElement('div');
+        el.className = 'property-marker';
+        
+        const pricePerUnit = property.category === 'short_stay' ? '/night' : 
+                             property.category === 'rent' ? '/month' : '';
+        
+        el.innerHTML = `
+          <div style="
+            background: white;
+            padding: 6px 12px;
+            border-radius: 20px;
+            border: 2px solid hsl(var(--primary));
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            font-weight: 600;
+            font-size: 13px;
+            color: hsl(var(--foreground));
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+          " class="property-marker-content">
+            ${formatPrice(Number(property.price), property.price_currency)}${pricePerUnit}
+          </div>
+        `;
 
-      markersRef.current.push(marker);
-    });
+        el.addEventListener('mouseenter', () => {
+          const content = el.querySelector('.property-marker-content') as HTMLElement;
+          if (content) {
+            content.style.transform = 'scale(1.1)';
+            content.style.zIndex = '1000';
+          }
+        });
 
-    // Fit bounds to show all properties
-    if (validProperties.length > 0) {
-      const bounds = new mapboxgl.LngLatBounds();
-      validProperties.forEach(p => {
-        bounds.extend([p.longitude!, p.latitude!]);
-      });
-      map.current.fitBounds(bounds, { padding: 50, maxZoom: 13 });
-    }
+        el.addEventListener('mouseleave', () => {
+          const content = el.querySelector('.property-marker-content') as HTMLElement;
+          if (content) {
+            content.style.transform = 'scale(1)';
+            content.style.zIndex = 'auto';
+          }
+        });
+
+        el.addEventListener('click', () => {
+          if (onPropertyClick) {
+            onPropertyClick(property.id);
+          }
+        });
+
+        const marker = new mapboxgl.Marker(el)
+          .setLngLat([lng, lat])
+          .addTo(map.current!);
+
+        markersRef.current.push(marker);
+      }
+
+      // Fit bounds to show all properties
+      if (validCoords.length > 0 && map.current) {
+        const bounds = new mapboxgl.LngLatBounds();
+        validCoords.forEach(coord => bounds.extend([coord.lng, coord.lat]));
+        map.current.fitBounds(bounds, { padding: 50, maxZoom: 13 });
+      }
+    };
+
+    addMarkersForProperties();
   }, [properties, mapboxToken, formatPrice, onPropertyClick]);
 
   // Update district highlight when selection changes

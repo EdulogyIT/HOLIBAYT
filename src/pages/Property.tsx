@@ -466,8 +466,8 @@ const Property = () => {
                     {property.location}, {property.city}
                   </p>
                 </CardHeader>
-                <CardContent className="p-0">
-                  <div className="h-[500px] w-full">
+                <CardContent>
+                  <div className="h-[400px] w-full">
                     <MapboxMap 
                       location={property.city}
                       address={property.full_address || property.location}
@@ -476,6 +476,7 @@ const Property = () => {
                       showPropertyMarker={true}
                       interactive={true}
                       zoom={14}
+                      compact={true}
                     />
                   </div>
                 </CardContent>

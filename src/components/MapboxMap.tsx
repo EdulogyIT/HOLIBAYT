@@ -74,13 +74,30 @@ const MapboxMap = ({
       if (hasValidCoordinates || !location || !mapboxToken || isGeocoding) return;
 
       setIsGeocoding(true);
+      
+      // Set timeout for geocoding (10 seconds)
+      const timeoutId = setTimeout(() => {
+        console.warn('Geocoding timeout, using default Algiers center');
+        setGeocodedCoords({ lat: 36.7538, lng: 3.0588 });
+        setIsGeocoding(false);
+      }, 10000);
+
       try {
         const coords = await geocodeAddressWithCache(location, mapboxToken);
+        
+        clearTimeout(timeoutId);
+        
         if (coords) {
           setGeocodedCoords({ lat: coords.latitude, lng: coords.longitude });
+        } else {
+          // Fallback to Algiers center if geocoding returns null
+          setGeocodedCoords({ lat: 36.7538, lng: 3.0588 });
         }
       } catch (error) {
+        clearTimeout(timeoutId);
         console.error('Geocoding failed:', error);
+        // Fallback to Algiers center on error
+        setGeocodedCoords({ lat: 36.7538, lng: 3.0588 });
       } finally {
         setIsGeocoding(false);
       }
