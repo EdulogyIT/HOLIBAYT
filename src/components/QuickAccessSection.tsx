@@ -99,64 +99,149 @@ const BuyWorkflowDiagram = () => {
 // Rent Workflow - 4 Horizontal Layers
 const RentWorkflowDiagram = () => {
   const { t } = useLanguage();
-  
+
   return (
-    <div className="space-y-3">
-      {/* Layer 1: Trust */}
-      <div className="relative bg-[#1a5f5f] text-white p-4 rounded-lg">
-        <div className="flex items-start gap-3">
-          <ShieldCheck className="h-8 w-8 flex-shrink-0 mt-1" />
-          <div className="flex-1">
-            <h4 className="font-semibold text-sm mb-2">{t('workflow.rent.layer1.title')}</h4>
-            <ul className="space-y-1 text-xs opacity-90">
-              <li>• {t('workflow.rent.layer1.detail1')}</li>
-              <li>• {t('workflow.rent.layer1.detail2')}</li>
-            </ul>
-          </div>
+    <div className="space-y-6">
+      {/* Layer Labels - Desktop Only */}
+      <div className="hidden lg:grid lg:grid-cols-4 gap-4 text-center">
+        <div className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">
+          {t("workflow.rent.layer1.label")}
         </div>
-        <ArrowRight className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 h-6 w-6 text-[#1a5f5f] rotate-90" />
+        <div className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">
+          {t("workflow.rent.layer2.label")}
+        </div>
+        <div className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">
+          {t("workflow.rent.layer3.label")}
+        </div>
+        <div className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">
+          {t("workflow.rent.layer4.label")}
+        </div>
       </div>
 
-      {/* Layer 2: Security */}
-      <div className="relative bg-[#1a5f5f] text-white p-4 rounded-lg">
-        <div className="flex items-start gap-3">
-          <CreditCard className="h-8 w-8 flex-shrink-0 mt-1" />
-          <div className="flex-1">
-            <h4 className="font-semibold text-sm mb-2">{t('workflow.rent.layer2.title')}</h4>
-            <ul className="space-y-1 text-xs opacity-90">
-              <li>• {t('workflow.rent.layer2.detail1')}</li>
-              <li>• {t('workflow.rent.layer2.detail2')}</li>
+      {/* Workflow Columns */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 relative">
+        {/* Layer 1: Trust & Verification */}
+        <div className="bg-[#1a5f5f] text-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-shadow relative">
+          <div className="lg:hidden mb-4">
+            <span className="text-xs font-semibold uppercase tracking-wide opacity-80">
+              {t("workflow.rent.layer1.label")}
+            </span>
+          </div>
+          <div className="flex flex-col items-center text-center space-y-4">
+            <ShieldCheck className="h-12 w-12" />
+            <h4 className="font-semibold text-lg">{t("workflow.rent.layer1.title")}</h4>
+            <ul className="text-sm space-y-2 text-left w-full">
+              <li className="flex items-start gap-2">
+                <span className="mt-1">•</span>
+                <span>{t("workflow.rent.layer1.detail1")}</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="mt-1">•</span>
+                <span>{t("workflow.rent.layer1.detail2")}</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="mt-1">•</span>
+                <span>{t("workflow.rent.layer1.detail3")}</span>
+              </li>
             </ul>
           </div>
-        </div>
-        <ArrowRight className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 h-6 w-6 text-[#1a5f5f] rotate-90" />
-      </div>
-
-      {/* Layer 3: Protection */}
-      <div className="relative bg-[#f5b942] text-gray-900 p-4 rounded-lg">
-        <div className="flex items-start gap-3">
-          <Shield className="h-8 w-8 flex-shrink-0 mt-1" />
-          <div className="flex-1">
-            <h4 className="font-semibold text-sm mb-2">{t('workflow.rent.layer3.title')}</h4>
-            <ul className="space-y-1 text-xs">
-              <li>• {t('workflow.rent.layer3.detail1')}</li>
-              <li>• {t('workflow.rent.layer3.detail2')}</li>
-              <li>• {t('workflow.rent.layer3.detail3')}</li>
-            </ul>
+          {/* Arrow - Desktop Only */}
+          <ArrowRight className="hidden lg:block absolute -right-3 top-1/2 -translate-y-1/2 h-6 w-6 text-muted-foreground z-10" />
+          {/* Arrow - Mobile Only */}
+          <div className="lg:hidden flex justify-center mt-4">
+            <ArrowRight className="h-6 w-6 text-muted-foreground rotate-90" />
           </div>
         </div>
-        <ArrowRight className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 h-6 w-6 text-[#f5b942] rotate-90" />
-      </div>
 
-      {/* Layer 4: Transparency */}
-      <div className="bg-gray-400 text-gray-900 p-4 rounded-lg">
-        <div className="flex items-start gap-3">
-          <DollarSign className="h-8 w-8 flex-shrink-0 mt-1" />
-          <div className="flex-1">
-            <h4 className="font-semibold text-sm mb-2">{t('workflow.rent.layer4.title')}</h4>
-            <ul className="space-y-1 text-xs">
-              <li>• {t('workflow.rent.layer4.detail1')}</li>
-              <li>• {t('workflow.rent.layer4.detail2')}</li>
+        {/* Layer 2: Secure Booking */}
+        <div className="bg-[#1a5f5f] text-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-shadow relative">
+          <div className="lg:hidden mb-4">
+            <span className="text-xs font-semibold uppercase tracking-wide opacity-80">
+              {t("workflow.rent.layer2.label")}
+            </span>
+          </div>
+          <div className="flex flex-col items-center text-center space-y-4">
+            <CreditCard className="h-12 w-12" />
+            <h4 className="font-semibold text-lg">{t("workflow.rent.layer2.title")}</h4>
+            <ul className="text-sm space-y-2 text-left w-full">
+              <li className="flex items-start gap-2">
+                <span className="mt-1">•</span>
+                <span>{t("workflow.rent.layer2.detail1")}</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="mt-1">•</span>
+                <span>{t("workflow.rent.layer2.detail2")}</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="mt-1">•</span>
+                <span>{t("workflow.rent.layer2.detail3")}</span>
+              </li>
+            </ul>
+          </div>
+          {/* Arrow - Desktop Only */}
+          <ArrowRight className="hidden lg:block absolute -right-3 top-1/2 -translate-y-1/2 h-6 w-6 text-muted-foreground z-10" />
+          {/* Arrow - Mobile Only */}
+          <div className="lg:hidden flex justify-center mt-4">
+            <ArrowRight className="h-6 w-6 text-muted-foreground rotate-90" />
+          </div>
+        </div>
+
+        {/* Layer 3: Protection & Insurance */}
+        <div className="bg-[#f5b942] text-gray-900 rounded-xl p-6 shadow-lg hover:shadow-xl transition-shadow relative">
+          <div className="lg:hidden mb-4">
+            <span className="text-xs font-semibold uppercase tracking-wide opacity-70">
+              {t("workflow.rent.layer3.label")}
+            </span>
+          </div>
+          <div className="flex flex-col items-center text-center space-y-4">
+            <Shield className="h-12 w-12" />
+            <h4 className="font-semibold text-lg">{t("workflow.rent.layer3.title")}</h4>
+            <ul className="text-sm space-y-2 text-left w-full">
+              <li className="flex items-start gap-2">
+                <span className="mt-1">•</span>
+                <span>{t("workflow.rent.layer3.detail1")}</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="mt-1">•</span>
+                <span>{t("workflow.rent.layer3.detail2")}</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="mt-1">•</span>
+                <span>{t("workflow.rent.layer3.detail3")}</span>
+              </li>
+            </ul>
+          </div>
+          {/* Arrow - Desktop Only */}
+          <ArrowRight className="hidden lg:block absolute -right-3 top-1/2 -translate-y-1/2 h-6 w-6 text-muted-foreground z-10" />
+          {/* Arrow - Mobile Only */}
+          <div className="lg:hidden flex justify-center mt-4">
+            <ArrowRight className="h-6 w-6 text-muted-foreground rotate-90" />
+          </div>
+        </div>
+
+        {/* Layer 4: Monthly Payout */}
+        <div className="bg-gray-400 text-gray-900 rounded-xl p-6 shadow-lg hover:shadow-xl transition-shadow relative">
+          <div className="lg:hidden mb-4">
+            <span className="text-xs font-semibold uppercase tracking-wide opacity-70">
+              {t("workflow.rent.layer4.label")}
+            </span>
+          </div>
+          <div className="flex flex-col items-center text-center space-y-4">
+            <DollarSign className="h-12 w-12" />
+            <h4 className="font-semibold text-lg">{t("workflow.rent.layer4.title")}</h4>
+            <ul className="text-sm space-y-2 text-left w-full">
+              <li className="flex items-start gap-2">
+                <span className="mt-1">•</span>
+                <span>{t("workflow.rent.layer4.detail1")}</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="mt-1">•</span>
+                <span>{t("workflow.rent.layer4.detail2")}</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="mt-1">•</span>
+                <span>{t("workflow.rent.layer4.detail3")}</span>
+              </li>
             </ul>
           </div>
         </div>

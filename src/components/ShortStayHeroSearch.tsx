@@ -134,7 +134,7 @@ const ShortStayHeroSearch: React.FC<ShortStayHeroSearchProps> = ({ onSearch }) =
           placeholder={t("stayDestination")}
           className={cn(
             "font-inter",
-            compact ? "h-12 text-sm w-full sm:flex-1 sm:min-w-[180px]" : "h-14 text-base"
+            compact ? "h-12 text-sm w-full sm:flex-1 sm:min-w-[180px]" : "h-14 text-base flex-1 lg:min-w-[300px]"
           )}
         />
         
@@ -191,7 +191,7 @@ const ShortStayHeroSearch: React.FC<ShortStayHeroSearchProps> = ({ onSearch }) =
                 />
               </div>
 
-              <div className="flex-1">
+              <div className="w-full lg:w-[220px]">
                 <select
                   className="w-full h-14 px-4 py-3 bg-background border border-input rounded-md text-base font-inter text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent ring-offset-background"
                   value={formData.propertyType}

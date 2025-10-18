@@ -21,6 +21,7 @@ import { PropertyBadges } from "@/components/PropertyBadges";
 import { InteractivePropertyMarkerMap } from "@/components/InteractivePropertyMarkerMap";
 import { usePropertyTranslation } from "@/hooks/usePropertyTranslation";
 import { ConversionBanner } from "@/components/ConversionBanner";
+import CitiesSection from "@/components/CitiesSection";
 
 interface Property {
   id: string;
@@ -318,6 +319,8 @@ const Rent = () => {
             </div>
           </div>
         </div>
+
+        <CitiesSection />
 
         <ConversionBanner type="rent" />
 

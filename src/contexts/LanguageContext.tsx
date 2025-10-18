@@ -1035,25 +1035,32 @@ const allTranslations = {
         title: 'Louer - Locations Longue Durée Sécurisées, Simplifiées',
         subtitle: 'Protégé du premier paiement à l\'emménagement et au-delà',
         layer1: {
-          title: 'Trouvez une Propriété Vérifiée',
-          detail1: 'Annonces, propriétaires et locataires vérifiés',
-          detail2: 'Vérification d\'identité (KYC) et de propriété via Holibayt Verify™'
+          label: "Couche de Confiance",
+          title: 'Trouvez Votre Location Parfaite',
+          detail1: 'Tous les propriétaires sont vérifiés et de confiance',
+          detail2: 'Descriptions détaillées et photos de la propriété',
+          detail3: 'Vérification complète des antécédents via Holibayt Verify™'
         },
         layer2: {
-          title: 'Signez et Sécurisez avec Holibayt Pay™ (Escrow)',
-          detail1: 'Le locataire paie le premier mois de loyer + caution sur le compte escrow Holibayt Pay™',
-          detail2: 'Engagement de l\'annonce du propriétaire sécurisé (disponibilité garantie)'
+          label: "Couche de Sécurité",
+          title: 'Réservez en Toute Sécurité',
+          detail1: 'Votre paiement est protégé via Holibayt Pay*',
+          detail2: 'Signature de bail numérique disponible',
+          detail3: 'Propriété montrée exactement comme annoncée'
         },
         layer3: {
-          title: 'Emménagement Protégé avec Holibayt Protect™',
-          detail1: 'Caution et contrat sécurisés par Holibayt Protect™',
-          detail2: 'Couverture des dommages ou litiges avec Holibayt Insurance™',
-          detail3: 'Médiation et assistance 24/7 pour les deux parties'
+          label: "Couche de Protection",
+          title: 'Protection pour les Deux Parties',
+          detail1: 'Dépôts détenus en sécurité en séquestre',
+          detail2: 'Couvre les dommages à la propriété ou les litiges locatifs',
+          detail3: 'Services de médiation disponibles pour les conflits'
         },
         layer4: {
-          title: 'Versements Mensuels Libérés',
-          detail1: 'Le propriétaire reçoit le paiement chaque mois automatiquement après vérification',
-          detail2: 'Holibayt Pay™ gère toutes les transactions en toute sécurité'
+          label: "Couche de Transparence",
+          title: 'Paiement Mensuel au Propriétaire',
+          detail1: 'Le propriétaire reçoit le loyer à temps chaque mois',
+          detail2: 'Transparence totale avec l\'historique des paiements',
+          detail3: 'Collecte automatique des loyers et reçus'
         }
       },
       shortStay: {

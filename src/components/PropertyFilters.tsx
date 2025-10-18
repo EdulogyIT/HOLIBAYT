@@ -694,10 +694,10 @@ const PropertyFilters = ({ onFilterChange, listingType }: PropertyFiltersProps) 
           )}
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-[95vw] sm:max-w-2xl max-h-[85vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="text-xl font-semibold">
-            {t('filters') || 'Filters'}
+          <DialogTitle className="text-2xl font-bold">
+            {t("filters")}
           </DialogTitle>
         </DialogHeader>
 

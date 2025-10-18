@@ -82,68 +82,69 @@ const RentHeroSearch: React.FC<RentHeroSearchProps> = ({ onSearch }) => {
     handleSearch();
   };
 
-  const SearchForm = ({ compact = false }: { compact?: boolean }) => (
-    <form onSubmit={onSubmit} className={cn(
-      "flex gap-3",
-      compact ? "flex-col sm:flex-row flex-wrap" : "flex-col lg:flex-row"
-    )}>
-      <LocationAutocomplete
-        value={formData.location}
-        onChange={(value) => updateFormField("location", value)}
-        placeholder={t("whereToRent")}
-        className={cn(
-          "font-inter",
-          compact ? "h-12 text-sm w-full sm:flex-1 sm:min-w-[180px]" : "h-14 text-base"
-        )}
-      />
-
-      <Select value={formData.housingType} onValueChange={(value) => updateFormField("housingType", value)}>
-        <SelectTrigger className={cn(
-          compact ? "h-12 text-sm w-full sm:w-auto sm:min-w-[140px]" : "h-14 w-[200px] text-base"
-        )}>
-          <SelectValue placeholder={t("housingType")} />
-        </SelectTrigger>
-        <SelectContent className="z-[100] bg-background">
-          <SelectItem value="apartment">{t("apartment")}</SelectItem>
-          <SelectItem value="house">{t("house")}</SelectItem>
-          <SelectItem value="studio">{t("studio")}</SelectItem>
-          <SelectItem value="room">{t("room")}</SelectItem>
-        </SelectContent>
-      </Select>
-
-      <div className={cn("relative", compact ? "w-full sm:w-auto sm:min-w-[180px]" : "w-[260px]")}>
-        <DollarSign className={cn(
-          "absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground",
-          compact ? "h-4 w-4" : "h-5 w-5"
-        )} />
-        <Input
-          type="text"
-          placeholder={t("maxRentMonth")}
+  const SearchForm = ({ compact = false }: { compact?: boolean }) => {
+    return (
+      <form onSubmit={onSubmit} className={cn(
+        "flex gap-3",
+        compact ? "flex-col sm:flex-row flex-wrap" : "flex-col lg:flex-row gap-4"
+      )}>
+        <LocationAutocomplete
+          value={formData.location}
+          onChange={(value) => updateFormField("location", value)}
+          placeholder={t("whereToRent")}
           className={cn(
-            "pl-10 font-inter",
-            compact ? "h-12 text-sm" : "h-14 text-base"
+            "font-inter",
+            compact ? "h-12 text-sm w-full sm:flex-1 sm:min-w-[180px]" : "h-14 text-base flex-1 lg:min-w-[300px]"
           )}
+        />
+        
+        <Select
+          value={formData.housingType}
+          onValueChange={(value) => updateFormField("housingType", value)}
+        >
+          <SelectTrigger className={cn(
+            "font-inter bg-background border border-input",
+            compact ? "h-12 text-sm w-full sm:w-auto sm:min-w-[140px]" : "h-14 text-base w-full lg:w-[220px]"
+          )}>
+            <SelectValue placeholder={t("housingType")} />
+          </SelectTrigger>
+          <SelectContent className="z-[100] bg-background">
+            <SelectItem value="all">{t("allTypes")}</SelectItem>
+            <SelectItem value="apartment">{t("apartment")}</SelectItem>
+            <SelectItem value="villa">{t("villa")}</SelectItem>
+            <SelectItem value="house">{t("house")}</SelectItem>
+            <SelectItem value="studio">{t("studio")}</SelectItem>
+          </SelectContent>
+        </Select>
+
+        <Input
+          type="number"
+          placeholder={t("maxRentPerMonth")}
           value={formData.maxRent}
           onChange={(e) => updateFormField("maxRent", e.target.value)}
+          className={cn(
+            "font-inter bg-background border border-input",
+            compact ? "h-12 text-sm w-full sm:w-auto sm:min-w-[140px]" : "h-14 text-base w-full lg:w-[220px]"
+          )}
         />
-      </div>
 
-      <Button
-        type="submit"
-        disabled={!isFormValid()}
-        className={cn(
-          "font-inter font-semibold transition-all duration-300 flex items-center justify-center",
-          compact ? "h-12 px-6 text-sm w-full sm:w-auto" : "h-14 px-8 text-base min-w-[140px]",
-          isFormValid()
-            ? "bg-gradient-primary hover:shadow-elegant text-white"
-            : "bg-gray-300 text-gray-500 cursor-not-allowed"
-        )}
-      >
-        <Search className={cn("mr-2", compact ? "h-4 w-4" : "h-5 w-5")} />
-        {t("search")}
-      </Button>
-    </form>
-  );
+        <Button
+          type="submit"
+          disabled={!isFormValid()}
+          className={cn(
+            "font-inter font-semibold transition-all duration-300",
+            compact ? "h-12 px-6 text-sm w-full sm:w-auto" : "h-14 px-8 text-base w-full lg:w-auto",
+            isFormValid()
+              ? "bg-gradient-primary hover:shadow-elegant text-white"
+              : "bg-gray-300 text-gray-500 cursor-not-allowed"
+          )}
+        >
+          <Search className={cn("mr-2", compact ? "h-4 w-4" : "h-5 w-5")} />
+          {t("search")}
+        </Button>
+      </form>
+    );
+  };
 
   return (
     <>
