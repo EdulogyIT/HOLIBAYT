@@ -525,6 +525,8 @@ export const buyRentTranslations = {
     verifiedByTeam: "Verified by Holibayt Property Team — photos and data checked on-site.",
     neighborhoodInsights: "Neighborhood Insights",
     viewOnGoogleMaps: "View on Google Maps",
+    whereYoullBe: "Where you'll be",
+    addDates: "Add Dates",
     verifiedLocation: "Verified Location",
     whyBuyWithHolibayt: "Why Buy with Holibayt?",
     verifiedOwnership: "Verified Ownership",

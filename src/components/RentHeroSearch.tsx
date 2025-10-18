@@ -98,7 +98,7 @@ const RentHeroSearch: React.FC<RentHeroSearchProps> = ({ onSearch }) => {
       />
 
             <Select value={formData.housingType} onValueChange={(value) => updateFormField("housingType", value)}>
-              <SelectTrigger className={cn("text-sm", compact ? "h-11 w-[140px]" : "h-14 w-full text-base")}>
+              <SelectTrigger className={cn("text-sm", compact ? "h-11 w-[140px]" : "h-14 w-[200px] text-base")}>
                 <SelectValue placeholder={t("housingType")} />
               </SelectTrigger>
         <SelectContent>
@@ -109,7 +109,7 @@ const RentHeroSearch: React.FC<RentHeroSearchProps> = ({ onSearch }) => {
         </SelectContent>
       </Select>
 
-      <div className={cn("relative", compact ? "w-[200px]" : "flex-1")}>
+      <div className={cn("relative", compact ? "w-[200px]" : "w-[260px]")}>
         <DollarSign className={cn(
           "absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground",
           compact ? "h-4 w-4" : "h-5 w-5"
@@ -156,7 +156,7 @@ const RentHeroSearch: React.FC<RentHeroSearchProps> = ({ onSearch }) => {
               <Home className="h-5 w-5" />
               <span className="font-semibold text-sm">{t("rent")}</span>
             </div>
-            <div className="flex-1 max-w-4xl">
+            <div className="flex-1 max-w-5xl">
               <SearchForm compact />
             </div>
           </div>

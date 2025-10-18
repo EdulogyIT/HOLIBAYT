@@ -30,7 +30,7 @@ export const WhyBuyWithHolibayt = () => {
   return (
     <div className="bg-gradient-to-br from-primary/5 via-background to-background border border-border rounded-xl p-8">
       <h2 className="text-2xl md:text-3xl font-bold mb-8 text-center">
-        {t("Why Buy With Holibayt")}
+        {t("whyBuyWithHolibayt")}
       </h2>
       
       <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
