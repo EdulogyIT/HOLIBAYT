@@ -3,6 +3,7 @@ import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { MapPin } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -33,6 +34,12 @@ const MapboxMap = ({
   const [mapboxToken, setMapboxToken] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
+
+  // Validate coordinates
+  const hasValidCoordinates = latitude && longitude && 
+    !isNaN(latitude) && !isNaN(longitude) &&
+    latitude >= -90 && latitude <= 90 &&
+    longitude >= -180 && longitude <= 180;
 
   useEffect(() => {
     const fetchToken = async () => {
@@ -127,6 +134,14 @@ const MapboxMap = ({
   }, [mapboxToken, latitude, longitude, showPropertyMarker, interactive, zoom]);
 
   if (compact) {
+    if (!hasValidCoordinates) {
+      return (
+        <div className="w-full h-full bg-muted rounded-lg flex flex-col items-center justify-center p-4">
+          <MapPin className="w-8 h-8 text-muted-foreground mb-2" />
+          <p className="text-xs text-muted-foreground font-inter text-center">Map not available</p>
+        </div>
+      );
+    }
     return (
       <>
         {isLoading ? (
@@ -141,6 +156,50 @@ const MapboxMap = ({
           <div ref={mapContainer} className="w-full h-full rounded-lg" />
         )}
       </>
+    );
+  }
+
+  if (!hasValidCoordinates) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center font-playfair">
+            <MapPin className="w-5 h-5 mr-2" />
+            {t('locationTitle')}
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="w-full h-64 bg-muted rounded-lg flex flex-col items-center justify-center p-6">
+            <MapPin className="w-12 h-12 text-muted-foreground mb-4" />
+            <p className="text-muted-foreground mb-4 font-inter text-center">
+              Map not available for this location
+            </p>
+            <Button asChild variant="outline" size="sm">
+              <a 
+                href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(location)}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-inter"
+              >
+                View on Google Maps
+              </a>
+            </Button>
+          </div>
+          
+          <div className="space-y-2">
+            <div className="flex items-center text-sm font-inter">
+              <span className="font-medium text-foreground mr-2">{t('addressLabel')}:</span>
+              <span className="text-muted-foreground">{location}</span>
+            </div>
+            {address && (
+              <div className="flex items-center text-sm font-inter">
+                <span className="font-medium text-foreground mr-2">{t('detailsLabel')}:</span>
+                <span className="text-muted-foreground">{address}</span>
+              </div>
+            )}
+          </div>
+        </CardContent>
+      </Card>
     );
   }
 

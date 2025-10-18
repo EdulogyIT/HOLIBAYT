@@ -129,50 +129,12 @@ const ShortStayHeroSearch: React.FC<ShortStayHeroSearchProps> = ({ onSearch }) =
         compact ? "flex-row items-center" : "flex-col gap-4"
       )}>
         {compact ? (
-          <>
-            <LocationAutocomplete
-              value={formData.location}
-              onChange={(value) => updateFormField("location", value)}
-              placeholder={t("stayDestination")}
-              className="h-11 text-sm flex-1 font-inter"
-            />
-            
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button
-                  variant="outline"
-                  className={cn(
-                    "justify-start text-left font-normal h-11 w-[180px]",
-                    !formData.dateRange?.from && "text-muted-foreground"
-                  )}
-                >
-                  <Calendar className="mr-2 h-4 w-4" />
-                  {formData.dateRange?.from && formData.dateRange?.to ? (
-                    <span className="text-sm truncate">
-                      {format(formData.dateRange.from, "MMM d")} - {format(formData.dateRange.to, "MMM d")}
-                    </span>
-                  ) : (
-                    <span className="text-sm">{t("dates")}</span>
-                  )}
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-0" align="start">
-                <DateRangePicker
-                  value={formData.dateRange}
-                  onChange={(range) => updateFormField("dateRange", range)}
-                  allowPast={false}
-                />
-              </PopoverContent>
-            </Popover>
-
-            <Button
-              variant="outline"
-              className="h-11 w-[120px]"
-              type="button"
-            >
-              {totalGuests} {t("guests")}
-            </Button>
-          </>
+          <LocationAutocomplete
+            value={formData.location}
+            onChange={(value) => updateFormField("location", value)}
+            placeholder={t("stayDestination")}
+            className="h-11 text-sm flex-1 font-inter"
+          />
         ) : (
           <>
             <div className="flex flex-col lg:flex-row gap-4">
@@ -290,7 +252,7 @@ const ShortStayHeroSearch: React.FC<ShortStayHeroSearchProps> = ({ onSearch }) =
     <>
       {/* Sticky Search Bar */}
       <div className={cn(
-        "fixed top-20 left-0 right-0 z-50 transition-all duration-300 bg-white/95 backdrop-blur-md shadow-lg border-b border-border/50",
+        "fixed top-16 left-0 right-0 z-40 transition-all duration-300 bg-white/95 backdrop-blur-md shadow-lg border-b border-border/50",
         isScrolled ? "translate-y-0 opacity-100" : "-translate-y-full opacity-0"
       )}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">

@@ -165,7 +165,7 @@ const BuyHeroSearch: React.FC<BuyHeroSearchProps> = ({ onSearch }) => {
     <>
       {/* Sticky Search Bar */}
       <div className={cn(
-        "fixed top-20 left-0 right-0 z-50 transition-all duration-300 bg-white/95 backdrop-blur-md shadow-lg border-b border-border/50",
+        "fixed top-16 left-0 right-0 z-40 transition-all duration-300 bg-white/95 backdrop-blur-md shadow-lg border-b border-border/50",
         isScrolled ? "translate-y-0 opacity-100" : "-translate-y-full opacity-0"
       )}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">

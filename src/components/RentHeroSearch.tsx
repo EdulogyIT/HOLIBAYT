@@ -97,19 +97,7 @@ const RentHeroSearch: React.FC<RentHeroSearchProps> = ({ onSearch }) => {
         )}
       />
 
-      {compact ? (
-        <Select value={formData.housingType} onValueChange={(value) => updateFormField("housingType", value)}>
-          <SelectTrigger className="h-11 w-[140px] text-sm">
-            <SelectValue placeholder={t("housingType")} />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="apartment">{t("apartment")}</SelectItem>
-            <SelectItem value="house">{t("house")}</SelectItem>
-            <SelectItem value="studio">{t("studio")}</SelectItem>
-            <SelectItem value="room">{t("room")}</SelectItem>
-          </SelectContent>
-        </Select>
-      ) : (
+      {!compact && (
         <div className="flex-1">
           <select
             className="w-full h-14 px-4 py-3 bg-background border border-input rounded-md text-base font-inter text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent ring-offset-background"
@@ -125,7 +113,7 @@ const RentHeroSearch: React.FC<RentHeroSearchProps> = ({ onSearch }) => {
         </div>
       )}
 
-      <div className={cn("relative", compact ? "w-[140px]" : "flex-1")}>
+      {!compact && (<div className="flex-1 relative">
         <DollarSign className={cn(
           "absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground",
           compact ? "h-4 w-4" : "h-5 w-5"
@@ -140,7 +128,7 @@ const RentHeroSearch: React.FC<RentHeroSearchProps> = ({ onSearch }) => {
           value={formData.maxRent}
           onChange={(e) => updateFormField("maxRent", e.target.value)}
         />
-      </div>
+      </div>)}
 
       <Button
         type="submit"
@@ -163,7 +151,7 @@ const RentHeroSearch: React.FC<RentHeroSearchProps> = ({ onSearch }) => {
     <>
       {/* Sticky Search Bar */}
       <div className={cn(
-        "fixed top-20 left-0 right-0 z-50 transition-all duration-300 bg-white/95 backdrop-blur-md shadow-lg border-b border-border/50",
+        "fixed top-16 left-0 right-0 z-40 transition-all duration-300 bg-white/95 backdrop-blur-md shadow-lg border-b border-border/50",
         isScrolled ? "translate-y-0 opacity-100" : "-translate-y-full opacity-0"
       )}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
