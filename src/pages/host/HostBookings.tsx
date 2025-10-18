@@ -172,8 +172,8 @@ export default function HostBookings() {
 
   const BookingCard = ({ booking }: { booking: Booking }) => (
     <Card className="hover:shadow-md transition-shadow">
-      <CardContent className="p-6">
-        <div className="flex flex-col md:flex-row gap-6">
+      <CardContent className="p-4 sm:p-6">
+        <div className="flex flex-col md:flex-row gap-4 sm:gap-6">
           {/* Property Image */}
           <div className="w-full md:w-48 h-40 flex-shrink-0">
             <img 
@@ -184,11 +184,11 @@ export default function HostBookings() {
           </div>
 
           {/* Booking Details */}
-          <div className="flex-1 space-y-4">
+          <div className="flex-1 space-y-3 sm:space-y-4">
             {/* Header */}
-            <div className="flex items-start justify-between">
+            <div className="flex flex-col sm:flex-row items-start justify-between gap-2">
               <div>
-                <h3 className="text-lg font-semibold">{booking.properties.title}</h3>
+                <h3 className="text-base sm:text-lg font-semibold">{booking.properties.title}</h3>
                 <div className="flex items-center gap-1 text-sm text-muted-foreground mt-1">
                   <MapPin className="h-4 w-4" />
                   <span>{booking.properties.city}{booking.properties.district && `, ${booking.properties.district}`}</span>
@@ -251,25 +251,27 @@ export default function HostBookings() {
             )}
 
             {/* Footer */}
-            <div className="flex items-center justify-between pt-4 border-t">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-0 pt-4 border-t">
               <div className="flex items-center gap-2">
                 <DollarSign className="h-4 w-4 text-muted-foreground" />
-                <span className="text-lg font-semibold">
+                <span className="text-base sm:text-lg font-semibold">
                   {formatPrice(Number(booking.total_amount), undefined, booking.payments?.currency || 'EUR')}
                 </span>
               </div>
-              <div className="flex gap-2">
+              <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
                 <Button 
                   variant="outline" 
                   size="sm"
                   onClick={() => navigate(`/property/${booking.properties.id}`)}
+                  className="w-full sm:w-auto"
                 >
-                  View Property
+                  <span className="text-xs sm:text-sm">View Property</span>
                 </Button>
                 <Button 
                   variant="default" 
                   size="sm"
                   disabled={contactingGuest === booking.id}
+                  className="w-full sm:w-auto"
                   onClick={async () => {
                     setContactingGuest(booking.id);
                     try {
@@ -310,7 +312,7 @@ export default function HostBookings() {
                     }
                   }}
                 >
-                  {contactingGuest === booking.id ? 'Loading...' : 'Contact Guest'}
+                  <span className="text-xs sm:text-sm">{contactingGuest === booking.id ? 'Loading...' : 'Contact Guest'}</span>
                 </Button>
               </div>
             </div>
@@ -332,10 +334,10 @@ export default function HostBookings() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       <div>
-        <h1 className="text-3xl font-bold">Bookings</h1>
-        <p className="text-muted-foreground">
+        <h1 className="text-2xl sm:text-3xl font-bold">Bookings</h1>
+        <p className="text-sm sm:text-base text-muted-foreground">
           Manage all your property bookings
         </p>
       </div>

@@ -96,7 +96,11 @@ const Footer = () => {
                 </Link>
               </li>
               <li className="text-muted-foreground hover:text-foreground transition-colors py-1 cursor-pointer">{t('propertyValuation')}</li>
-              <li className="text-muted-foreground hover:text-foreground transition-colors py-1 cursor-pointer">{t('legalSupport')}</li>
+              <li>
+                <Link to="/legal-process" className="text-muted-foreground hover:text-primary transition-colors hover:translate-x-1 inline-block duration-300 py-1">
+                  {t('legalSupport')}
+                </Link>
+              </li>
               <li className="text-muted-foreground hover:text-foreground transition-colors py-1 cursor-pointer">{t('mortgageAdvice')}</li>
               <li className="text-muted-foreground hover:text-foreground transition-colors py-1 cursor-pointer">{t('partners')}</li>
               <li className="text-muted-foreground hover:text-foreground transition-colors py-1 cursor-pointer">{t('press')}</li>

@@ -114,7 +114,7 @@ export default function LocationAutocomplete({
         value={value}
         onChange={(e) => handleInputChange(e.target.value)}
         onFocus={handleFocus}
-        className={cn("pl-10 bg-background border border-input", className)}
+        className={cn("pl-10 pr-3 bg-background border border-input truncate", className)}
       />
       
       {showSuggestions && suggestions.length > 0 && createPortal(

@@ -81,30 +81,30 @@ export default function AdminDashboard() {
   ];
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       <div>
-        <h1 className="text-3xl font-bold">{t('admin.dashboard')}</h1>
-        <p className="text-muted-foreground">
+        <h1 className="text-2xl sm:text-3xl font-bold">{t('admin.dashboard')}</h1>
+        <p className="text-sm sm:text-base text-muted-foreground">
           {t('admin.operationsHub')}
         </p>
       </div>
 
       {/* Quick Access CTAs */}
-      <div className="flex flex-wrap gap-3">
+      <div className="flex flex-col sm:flex-row flex-wrap gap-3">
         <Button 
           onClick={() => navigate('/publish-property')}
-          className="gap-2"
+          className="gap-2 w-full sm:w-auto"
         >
           <Plus className="h-4 w-4" />
-          {t('admin.addNewProperty')}
+          <span className="text-sm sm:text-base">{t('admin.addNewProperty')}</span>
         </Button>
         <Button 
           onClick={() => navigate('/admin/kyc')}
-          className="gap-2"
+          className="gap-2 w-full sm:w-auto"
           variant="outline"
         >
           <ShieldCheck className="h-4 w-4" />
-          {t('admin.verifyHosts')}
+          <span className="text-sm sm:text-base">{t('admin.verifyHosts')}</span>
           {metrics.verificationPending > 0 && (
             <span className="ml-1 px-2 py-0.5 text-xs bg-warning text-warning-foreground rounded-full">
               {metrics.verificationPending}
@@ -113,11 +113,11 @@ export default function AdminDashboard() {
         </Button>
         <Button 
           onClick={() => navigate('/admin/commissions')}
-          className="gap-2"
+          className="gap-2 w-full sm:w-auto"
           variant="outline"
         >
           <Receipt className="h-4 w-4" />
-          {t('admin.reviewPayments')}
+          <span className="text-sm sm:text-base">{t('admin.reviewPayments')}</span>
         </Button>
       </div>
 

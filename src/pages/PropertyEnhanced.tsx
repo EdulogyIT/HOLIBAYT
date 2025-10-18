@@ -13,6 +13,7 @@ import { useEffect, useState } from "react";
 import { BookingModal } from "@/components/BookingModal";
 import { supabase } from "@/integrations/supabase/client";
 import { Loader2 } from "lucide-react";
+import { PaymentButton } from "@/components/PaymentButton";
 import ScheduleVisitModal from "@/components/ScheduleVisitModal";
 import MessageOwnerModal from "@/components/MessageOwnerModal";
 import { PropertyReviews } from "@/components/PropertyReviews";
@@ -230,7 +231,7 @@ const PropertyEnhanced = () => {
             <div>
               <div className="flex items-start justify-between mb-4">
                 <div className="flex-1">
-                  <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-3 leading-tight">
+                  <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-3 leading-tight">
                     {translatedTitle}
                   </h1>
                   <div className="flex items-center gap-2 text-muted-foreground mb-3">
@@ -292,7 +293,7 @@ const PropertyEnhanced = () => {
 
             {/* About This Property */}
             <div className="space-y-4">
-              <h2 className="text-2xl md:text-3xl font-bold">
+              <h2 className="text-xl sm:text-2xl md:text-3xl font-bold">
                 {isBuy || isRent ? tKey(isBuy ? "aboutThisProperty" : "aboutThisRental") : t("propertyDetails")}
               </h2>
               <p className="text-muted-foreground leading-relaxed text-base">
@@ -319,7 +320,7 @@ const PropertyEnhanced = () => {
 
             {/* Property Highlights */}
             <div className="space-y-6">
-              <h3 className="text-xl md:text-2xl font-bold">{tKey("propertyHighlights")}</h3>
+              <h3 className="text-lg sm:text-xl md:text-2xl font-bold">{tKey("propertyHighlights")}</h3>
               <PropertyHighlights
                 bedrooms={property.bedrooms}
                 bathrooms={property.bathrooms}
@@ -338,7 +339,7 @@ const PropertyEnhanced = () => {
 
             {/* Key Details Table */}
             <div className="space-y-4">
-              <h3 className="text-xl md:text-2xl font-bold">Key Details</h3>
+              <h3 className="text-lg sm:text-xl md:text-2xl font-bold">Key Details</h3>
               <KeyDetailsTable
                 propertyType={property.property_type}
                 condition={property.condition}
@@ -359,7 +360,7 @@ const PropertyEnhanced = () => {
 
             {/* Where You'll Be - Location & Neighborhood */}
             <div className="space-y-4">
-              <h2 className="text-2xl md:text-3xl font-bold">Where you'll be</h2>
+              <h2 className="text-xl sm:text-2xl md:text-3xl font-bold">Where you'll be</h2>
               
               {/* Google Maps */}
               <GooglePropertyMap
@@ -394,7 +395,7 @@ const PropertyEnhanced = () => {
             {profile && (
               <>
                 <div className="space-y-4">
-                  <h2 className="text-2xl md:text-3xl font-bold">
+                  <h2 className="text-xl sm:text-2xl md:text-3xl font-bold">
                     {isBuy ? "About the seller" : isRent ? "About your landlord" : "Meet your host"}
                   </h2>
                   <HostDetailsSection 
@@ -435,7 +436,7 @@ const PropertyEnhanced = () => {
 
           {/* Sticky Sidebar */}
           <div className="lg:col-span-1">
-            <Card className="sticky top-20 p-6 shadow-lg hover:shadow-2xl transition-shadow space-y-6 max-h-[calc(100vh-6rem)] overflow-y-auto">
+            <Card className="sticky top-20 p-4 sm:p-6 shadow-lg hover:shadow-2xl transition-shadow space-y-4 sm:space-y-6 max-h-[calc(100vh-6rem)] overflow-y-auto">
               {/* Price */}
               <div>
                 <div className="flex items-baseline justify-between mb-2">
@@ -476,8 +477,8 @@ const PropertyEnhanced = () => {
                     className="w-full hover:-translate-y-0.5 transition-transform shadow-md"
                     size="lg"
                   >
-                    <Calendar className="w-4 h-4 mr-2" />
-                    {isBuy ? t("requestVisit") : t("scheduleVisit")}
+                    <Calendar className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
+                    <span className="text-sm sm:text-base">{isBuy ? t("requestVisit") : t("scheduleVisit")}</span>
                   </Button>
                 )}
                 
@@ -487,8 +488,8 @@ const PropertyEnhanced = () => {
                   className="w-full"
                   size="lg"
                 >
-                  <MessageCircle className="w-4 h-4 mr-2" />
-                  {t("chatSecurely")}
+                  <MessageCircle className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
+                  <span className="text-sm sm:text-base">{t("chatSecurely")}</span>
                 </Button>
 
                 {(isBuy || isRent) && (
@@ -557,6 +558,16 @@ const PropertyEnhanced = () => {
                         <p className="text-xs text-muted-foreground">
                           This deposit will be held securely via Holibayt Pay™ escrow and refunded at the end of your tenancy.
                         </p>
+                        <PaymentButton
+                          propertyId={property.id}
+                          paymentType="security_deposit"
+                          amount={property.fees.security_deposit.amount}
+                          currency={property.price_currency || "DZD"}
+                          description={`Security deposit for ${property.title}`}
+                          className="w-full"
+                        >
+                          Pay Security Deposit
+                        </PaymentButton>
                       </CardContent>
                     </Card>
                   )}

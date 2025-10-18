@@ -141,10 +141,10 @@ export default function HostDashboard() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       <div>
-        <h1 className="text-3xl font-bold">{t('host.dashboard')}</h1>
-        <p className="text-muted-foreground">
+        <h1 className="text-2xl sm:text-3xl font-bold">{t('host.dashboard')}</h1>
+        <p className="text-sm sm:text-base text-muted-foreground">
           {t('host.welcomeMessage')}
         </p>
       </div>
@@ -187,25 +187,25 @@ export default function HostDashboard() {
       {/* Quick Actions */}
       <Card>
         <CardHeader>
-          <CardTitle>{t('host.quickActions')}</CardTitle>
+          <CardTitle className="text-base sm:text-lg">{t('host.quickActions')}</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="flex flex-wrap gap-4">
-            <Button onClick={() => navigate('/publish-property')}>
+          <div className="flex flex-col sm:flex-row flex-wrap gap-3 sm:gap-4">
+            <Button onClick={() => navigate('/publish-property')} className="w-full sm:w-auto">
               <Plus className="h-4 w-4 mr-2" />
-              {t('host.publishProperty')}
+              <span className="text-sm sm:text-base">{t('host.publishProperty')}</span>
             </Button>
-            <Button variant="outline" onClick={() => navigate('/host/listings')}>
+            <Button variant="outline" onClick={() => navigate('/host/listings')} className="w-full sm:w-auto">
               <Building2 className="h-4 w-4 mr-2" />
-              {t('host.viewListings')}
+              <span className="text-sm sm:text-base">{t('host.viewListings')}</span>
             </Button>
-            <Button variant="outline" onClick={() => navigate('/host/messages')}>
+            <Button variant="outline" onClick={() => navigate('/host/messages')} className="w-full sm:w-auto">
               <MessageSquare className="h-4 w-4 mr-2" />
-              {t('host.messages')}
+              <span className="text-sm sm:text-base">{t('host.messages')}</span>
             </Button>
-            <Button variant="outline" onClick={() => navigate('/host/kyc')}>
+            <Button variant="outline" onClick={() => navigate('/host/kyc')} className="w-full sm:w-auto">
               <CheckCircle className="h-4 w-4 mr-2" />
-              {t('host.getVerified')}
+              <span className="text-sm sm:text-base">{t('host.getVerified')}</span>
             </Button>
           </div>
         </CardContent>

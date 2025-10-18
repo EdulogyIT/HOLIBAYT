@@ -100,17 +100,17 @@ const HostListings = () => {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
+    <div className="space-y-4 sm:space-y-6">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-foreground">{t('host.listings')}</h1>
-          <p className="text-muted-foreground mt-2">
+          <h1 className="text-2xl sm:text-3xl font-bold text-foreground">{t('host.listings')}</h1>
+          <p className="text-sm sm:text-base text-muted-foreground mt-2">
             {t('host.manageProperties')}
           </p>
         </div>
-        <Button onClick={() => navigate('/publish-property')}>
+        <Button onClick={() => navigate('/publish-property')} className="w-full sm:w-auto">
           <Plus className="h-4 w-4 mr-2" />
-          {t('host.newListing')}
+          <span className="text-sm sm:text-base">{t('host.newListing')}</span>
         </Button>
       </div>
 
@@ -199,16 +199,16 @@ const HostListings = () => {
                     <div>{t('host.createdOn')} {formatDate(property.created_at)}</div>
                   </div>
 
-                  <div className="flex space-x-2 pt-2">
-                    <Button size="sm" variant="outline" className="flex-1"
+                  <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2 pt-2">
+                    <Button size="sm" variant="outline" className="w-full sm:flex-1"
                       onClick={() => navigate(`/property/${property.id}`)}>
                       <Eye className="h-4 w-4 mr-1" />
-                      {t('host.view')}
+                      <span className="text-xs sm:text-sm">{t('host.view')}</span>
                     </Button>
-                    <Button size="sm" variant="outline" className="flex-1"
+                    <Button size="sm" variant="outline" className="w-full sm:flex-1"
                       onClick={() => navigate(`/edit-property/${property.id}`)}>
                       <Edit className="h-4 w-4 mr-1" />
-                      {t('host.edit')}
+                      <span className="text-xs sm:text-sm">{t('host.edit')}</span>
                     </Button>
                     {property.category === 'rent' && (
                       <Button 
