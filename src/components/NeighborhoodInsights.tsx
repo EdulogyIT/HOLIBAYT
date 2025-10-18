@@ -1,6 +1,5 @@
-import { School, Bus, ShoppingCart, MapPin, ExternalLink, CheckCircle2 } from "lucide-react";
+import { School, Bus, ShoppingCart, CheckCircle2 } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { Button } from "./ui/button";
 import { Badge } from "./ui/badge";
 
 interface NeighborhoodInsightsProps {
@@ -23,11 +22,6 @@ export const NeighborhoodInsights = ({
   ];
 
   const neighborhoodDescription = `Located in ${district || city} — a vibrant residential area with excellent connectivity and growing demand. This neighborhood offers easy access to amenities, schools, and transportation hubs, making it ideal for families and professionals alike.`;
-
-  const handleViewOnMaps = () => {
-    const searchQuery = encodeURIComponent(`${location}, ${city}, Algeria`);
-    window.open(`https://www.google.com/maps/search/?api=1&query=${searchQuery}`, "_blank");
-  };
 
   return (
     <div className="space-y-6">
@@ -63,17 +57,6 @@ export const NeighborhoodInsights = ({
           );
         })}
       </div>
-
-      {/* Google Maps Button */}
-      <Button
-        variant="outline"
-        onClick={handleViewOnMaps}
-        className="w-full md:w-auto"
-      >
-        <MapPin className="w-4 h-4 mr-2" />
-        {t("viewOnGoogleMaps")}
-        <ExternalLink className="w-4 h-4 ml-2" />
-      </Button>
     </div>
   );
 };

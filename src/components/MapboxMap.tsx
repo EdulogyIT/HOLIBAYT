@@ -84,32 +84,61 @@ const MapboxMap = ({
           map.current.addControl(new mapboxgl.NavigationControl(), 'top-right');
         }
 
-        // Add custom property marker
+        // Add custom property marker with "You are here" text
         if (showPropertyMarker) {
           const el = document.createElement('div');
-          el.className = 'property-marker';
-          el.style.width = '40px';
-          el.style.height = '40px';
-          el.style.borderRadius = '50%';
-          el.style.backgroundColor = 'hsl(var(--primary))';
-          el.style.border = '3px solid white';
-          el.style.boxShadow = '0 2px 8px rgba(0,0,0,0.3)';
-          el.style.cursor = 'pointer';
+          el.className = 'you-are-here-marker';
+          el.style.display = 'flex';
+          el.style.flexDirection = 'column';
+          el.style.alignItems = 'center';
+          el.style.gap = '8px';
           el.innerHTML = `
-            <div style="
-              width: 100%;
-              height: 100%;
+            <style>
+              @keyframes mapPulse {
+                0%, 100% { transform: scale(1); }
+                50% { transform: scale(1.1); }
+              }
+              .marker-pin {
+                animation: mapPulse 2s ease-in-out infinite;
+              }
+            </style>
+            <div class="marker-pin" style="
+              position: relative;
               display: flex;
+              flex-direction: column;
               align-items: center;
-              justify-content: center;
-              color: white;
-              font-size: 18px;
+              gap: 4px;
             ">
-              📍
+              <div style="
+                width: 50px;
+                height: 50px;
+                background: hsl(var(--primary));
+                border: 4px solid white;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+              ">
+                <span style="font-size: 24px;">📍</span>
+              </div>
+              <div style="
+                background: white;
+                padding: 6px 14px;
+                border-radius: 12px;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+                font-size: 13px;
+                font-weight: 600;
+                white-space: nowrap;
+                border: 1px solid #e5e7eb;
+                color: #1f2937;
+              ">
+                ${t('youAreHere') || 'You are here'}
+              </div>
             </div>
           `;
 
-          new mapboxgl.Marker({ element: el })
+          new mapboxgl.Marker({ element: el, anchor: 'bottom' })
             .setLngLat([longitude || 3.0588, latitude || 36.7538])
             .addTo(map.current);
         } else {
