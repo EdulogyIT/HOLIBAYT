@@ -18,7 +18,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useWishlist } from "@/hooks/useWishlist";
 import { WishlistButton } from "@/components/WishlistButton";
 import { PropertyBadges } from "@/components/PropertyBadges";
-import PropertyMapWithZone from "@/components/PropertyMapWithZone";
+import InteractivePropertyMap from "@/components/InteractivePropertyMap";
 import { usePropertyTranslation } from "@/hooks/usePropertyTranslation";
 import { ConversionBanner } from "@/components/ConversionBanner";
 
@@ -233,15 +233,10 @@ const Rent = () => {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {/* Left: Map & Zones */}
             <div className="lg:col-span-1">
-              <PropertyMapWithZone 
-                location="Algeria"
-                onZoneSearch={(zone) => {
-                  const filtered = properties.filter(p => 
-                    (p.city || "").toLowerCase().includes(zone.toLowerCase()) ||
-                    (p.location || "").toLowerCase().includes(zone.toLowerCase())
-                  );
-                  setFilteredProperties(filtered);
-                }}
+              <InteractivePropertyMap 
+                properties={filteredProperties}
+                selectedPropertyId={undefined}
+                height="500px"
               />
             </div>
 

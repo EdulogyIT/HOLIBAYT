@@ -128,13 +128,47 @@ const ShortStayHeroSearch: React.FC<ShortStayHeroSearchProps> = ({ onSearch }) =
         "flex gap-4",
         compact ? "flex-row items-center" : "flex-col gap-4"
       )}>
+        <LocationAutocomplete
+          value={formData.location}
+          onChange={(value) => updateFormField("location", value)}
+          placeholder={t("stayDestination")}
+          className={cn("font-inter", compact ? "h-11 text-sm flex-1" : "h-14 text-base")}
+        />
+        
         {compact ? (
-          <LocationAutocomplete
-            value={formData.location}
-            onChange={(value) => updateFormField("location", value)}
-            placeholder={t("stayDestination")}
-            className="h-11 text-sm flex-1 font-inter"
-          />
+          <>
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  type="button"
+                  variant="outline"
+                  className={cn(
+                    "justify-start text-left font-inter h-11 text-sm w-[200px] bg-background border border-input",
+                    !formData.dateRange?.from && "text-muted-foreground"
+                  )}
+                >
+                  <Calendar className="mr-2 h-4 w-4" />
+                  <span className="truncate">
+                    {formData.dateRange?.from && formData.dateRange?.to
+                      ? `${format(formData.dateRange.from, "MMM dd")} - ${format(formData.dateRange.to, "MMM dd")}`
+                      : t("addDates") || "Add dates"}
+                  </span>
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="start">
+                <DateRangePicker
+                  value={formData.dateRange}
+                  onChange={(range) => updateFormField("dateRange", range)}
+                  allowPast={false}
+                />
+              </PopoverContent>
+            </Popover>
+
+            <GuestsSelector
+              value={formData.guests}
+              onChange={(guests) => updateFormField("guests", guests)}
+            />
+          </>
         ) : (
           <>
             <div className="flex flex-col lg:flex-row gap-4">

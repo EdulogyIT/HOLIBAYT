@@ -14,16 +14,15 @@ import { useState, useEffect } from "react";
 import AIChatBox from "@/components/AIChatBox";
 import { useScrollToTop } from "@/hooks/useScrollToTop";
 import { supabase } from "@/integrations/supabase/client";
-import PropertyMapWithZone from "@/components/PropertyMapWithZone";
 import { useWishlist } from "@/hooks/useWishlist";
 import { WishlistButton } from "@/components/WishlistButton";
 import { PropertyBadges } from "@/components/PropertyBadges";
 import { usePropertyTranslation } from "@/hooks/usePropertyTranslation";
 import { LocationInsights } from "@/components/LocationInsights";
-import { MarketDataBar } from "@/components/MarketDataBar";
 import { TopRatedStays } from "@/components/TopRatedStays";
 import { PopularAmenities } from "@/components/PopularAmenities";
 import { DestinationsToExplore } from "@/components/DestinationsToExplore";
+import InteractivePropertyMap from "@/components/InteractivePropertyMap";
 
 interface Property {
   id: string;
@@ -319,15 +318,10 @@ const ShortStay = () => {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {/* Left: Map & Zones */}
             <div className="lg:col-span-1">
-              <PropertyMapWithZone 
-                location="Algeria"
-                onZoneSearch={(zone) => {
-                  const filtered = properties.filter(p => 
-                    (p.city || "").toLowerCase().includes(zone.toLowerCase()) ||
-                    (p.location || "").toLowerCase().includes(zone.toLowerCase())
-                  );
-                  setFilteredProperties(filtered);
-                }}
+              <InteractivePropertyMap 
+                properties={filteredProperties}
+                selectedPropertyId={undefined}
+                height="500px"
               />
               <LocationInsights 
                 zoneName="Algeria"

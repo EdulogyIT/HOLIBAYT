@@ -99,33 +99,17 @@ const BuyHeroSearch: React.FC<BuyHeroSearchProps> = ({ onSearch }) => {
         )}
       />
 
-      {compact ? (
-        <Select value={formData.propertyType} onValueChange={(value) => updateFormField("propertyType", value)}>
-          <SelectTrigger className="h-11 w-[140px] text-sm">
-            <SelectValue placeholder={t("propertyType")} />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="apartment">{t("apartment")}</SelectItem>
-            <SelectItem value="house">{t("house")}</SelectItem>
-            <SelectItem value="villa">{t("villa")}</SelectItem>
-            <SelectItem value="terrain">{t("land")}</SelectItem>
-          </SelectContent>
-        </Select>
-      ) : (
-        <div className="flex-1">
-          <select
-            className="w-full h-14 px-4 py-3 bg-background border border-input rounded-md text-base font-inter text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent ring-offset-background"
-            value={formData.propertyType}
-            onChange={(e) => updateFormField("propertyType", e.target.value)}
-          >
-            <option value="">{t("propertyType")}</option>
-            <option value="apartment">{t("apartment")}</option>
-            <option value="house">{t("house")}</option>
-            <option value="villa">{t("villa")}</option>
-            <option value="terrain">{t("land")}</option>
-          </select>
-        </div>
-      )}
+      <Select value={formData.propertyType} onValueChange={(value) => updateFormField("propertyType", value)}>
+        <SelectTrigger className={cn("text-sm", compact ? "h-11 w-[140px]" : "h-14 w-full text-base")}>
+          <SelectValue placeholder={t("propertyType")} />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="apartment">{t("apartment")}</SelectItem>
+          <SelectItem value="house">{t("house")}</SelectItem>
+          <SelectItem value="villa">{t("villa")}</SelectItem>
+          <SelectItem value="terrain">{t("land")}</SelectItem>
+        </SelectContent>
+      </Select>
 
       <div className={cn("relative", compact ? "w-[140px]" : "flex-1")}>
         <DollarSign className={cn(

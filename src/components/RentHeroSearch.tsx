@@ -97,23 +97,19 @@ const RentHeroSearch: React.FC<RentHeroSearchProps> = ({ onSearch }) => {
         )}
       />
 
-      {!compact && (
-        <div className="flex-1">
-          <select
-            className="w-full h-14 px-4 py-3 bg-background border border-input rounded-md text-base font-inter text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent ring-offset-background"
-            value={formData.housingType}
-            onChange={(e) => updateFormField("housingType", e.target.value)}
-          >
-            <option value="">{t("housingType")}</option>
-            <option value="apartment">{t("apartment")}</option>
-            <option value="house">{t("house")}</option>
-            <option value="studio">{t("studio")}</option>
-            <option value="room">{t("room")}</option>
-          </select>
-        </div>
-      )}
+      <Select value={formData.housingType} onValueChange={(value) => updateFormField("housingType", value)}>
+        <SelectTrigger className={cn("text-sm", compact ? "h-11 w-[140px]" : "h-14 w-full text-base")}>
+          <SelectValue placeholder={t("housingType")} />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="apartment">{t("apartment")}</SelectItem>
+          <SelectItem value="house">{t("house")}</SelectItem>
+          <SelectItem value="studio">{t("studio")}</SelectItem>
+          <SelectItem value="room">{t("room")}</SelectItem>
+        </SelectContent>
+      </Select>
 
-      {!compact && (<div className="flex-1 relative">
+      <div className={cn("relative", compact ? "w-[140px]" : "flex-1")}>
         <DollarSign className={cn(
           "absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground",
           compact ? "h-4 w-4" : "h-5 w-5"
@@ -128,7 +124,7 @@ const RentHeroSearch: React.FC<RentHeroSearchProps> = ({ onSearch }) => {
           value={formData.maxRent}
           onChange={(e) => updateFormField("maxRent", e.target.value)}
         />
-      </div>)}
+      </div>
 
       <Button
         type="submit"

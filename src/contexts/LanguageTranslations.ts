@@ -99,6 +99,14 @@ export const buyRentTranslations = {
     neighborhoodInsights: "Aperçus du quartier",
     viewOnGoogleMaps: "Voir sur Google Maps",
     
+    // Navigation & Profile Dropdown Translations  
+    myRentals: "Mes Locations",
+    becomeHost: "Devenir Hôte",
+    myBookings: "Mes Réservations",
+    myWishlist: "Ma Liste de Souhaits",
+    whereYoullBe: "Où vous serez",
+    addDates: "Ajouter des dates",
+    
     // Notification Translations
     notifications: "Notifications",
     markAllAsRead: "Tout marquer comme lu",
