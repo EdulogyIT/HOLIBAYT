@@ -151,7 +151,7 @@ const ShortStayHeroSearch: React.FC<ShortStayHeroSearchProps> = ({ onSearch }) =
                   <span className="truncate">
                     {formData.dateRange?.from && formData.dateRange?.to
                       ? `${format(formData.dateRange.from, "MMM dd")} - ${format(formData.dateRange.to, "MMM dd")}`
-                      : t("addDates") || "Add Dates"}
+                      : "Add Dates"}
                   </span>
                 </Button>
               </PopoverTrigger>
