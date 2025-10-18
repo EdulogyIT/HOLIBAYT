@@ -97,10 +97,10 @@ const RentHeroSearch: React.FC<RentHeroSearchProps> = ({ onSearch }) => {
         )}
       />
 
-      <Select value={formData.housingType} onValueChange={(value) => updateFormField("housingType", value)}>
-        <SelectTrigger className={cn("text-sm", compact ? "h-11 w-[140px]" : "h-14 w-full text-base")}>
-          <SelectValue placeholder={t("housingType")} />
-        </SelectTrigger>
+            <Select value={formData.housingType} onValueChange={(value) => updateFormField("housingType", value)}>
+              <SelectTrigger className={cn("text-sm", compact ? "h-11 w-[160px]" : "h-14 w-full text-base")}>
+                <SelectValue placeholder={t("housingType")} />
+              </SelectTrigger>
         <SelectContent>
           <SelectItem value="apartment">{t("apartment")}</SelectItem>
           <SelectItem value="house">{t("house")}</SelectItem>
@@ -109,7 +109,7 @@ const RentHeroSearch: React.FC<RentHeroSearchProps> = ({ onSearch }) => {
         </SelectContent>
       </Select>
 
-      <div className={cn("relative", compact ? "w-[140px]" : "flex-1")}>
+      <div className={cn("relative", compact ? "w-[160px]" : "flex-1")}>
         <DollarSign className={cn(
           "absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground",
           compact ? "h-4 w-4" : "h-5 w-5"
@@ -118,7 +118,7 @@ const RentHeroSearch: React.FC<RentHeroSearchProps> = ({ onSearch }) => {
           type="text"
           placeholder={t("maxRentMonth")}
           className={cn(
-            "pl-12 font-inter",
+            "pl-10 font-inter",
             compact ? "h-11 text-sm" : "h-14 text-base"
           )}
           value={formData.maxRent}

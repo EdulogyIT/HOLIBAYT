@@ -89,20 +89,20 @@ const BuyHeroSearch: React.FC<BuyHeroSearchProps> = ({ onSearch }) => {
       "flex gap-4",
       compact ? "flex-row items-center" : "flex-col lg:flex-row"
     )}>
-      <LocationAutocomplete
-        value={formData.location}
-        onChange={(value) => updateFormField("location", value)}
-        placeholder={t("cityNeighborhood")}
-        className={cn(
-          "font-inter",
-          compact ? "h-11 text-sm flex-1" : "h-14 text-base"
-        )}
-      />
+            <LocationAutocomplete
+              value={formData.location}
+              onChange={(value) => updateFormField("location", value)}
+              placeholder={t("cityNeighborhood")}
+              className={cn(
+                "font-inter",
+                compact ? "h-11 text-sm flex-1 min-w-[180px]" : "h-14 text-base"
+              )}
+            />
 
-      <Select value={formData.propertyType} onValueChange={(value) => updateFormField("propertyType", value)}>
-        <SelectTrigger className={cn("text-sm", compact ? "h-11 w-[140px]" : "h-14 w-full text-base")}>
-          <SelectValue placeholder={t("propertyType")} />
-        </SelectTrigger>
+            <Select value={formData.propertyType} onValueChange={(value) => updateFormField("propertyType", value)}>
+              <SelectTrigger className={cn("text-sm", compact ? "h-11 w-[160px]" : "h-14 w-full text-base")}>
+                <SelectValue placeholder={t("propertyType")} />
+              </SelectTrigger>
         <SelectContent>
           <SelectItem value="apartment">{t("apartment")}</SelectItem>
           <SelectItem value="house">{t("house")}</SelectItem>
@@ -111,22 +111,22 @@ const BuyHeroSearch: React.FC<BuyHeroSearchProps> = ({ onSearch }) => {
         </SelectContent>
       </Select>
 
-      <div className={cn("relative", compact ? "w-[140px]" : "flex-1")}>
-        <DollarSign className={cn(
-          "absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground",
-          compact ? "h-4 w-4" : "h-5 w-5"
-        )} />
-        <Input
-          type="text"
-          placeholder={t("maxBudget")}
-          className={cn(
-            "pl-12 font-inter",
-            compact ? "h-11 text-sm" : "h-14 text-base"
-          )}
-          value={formData.budget}
-          onChange={(e) => updateFormField("budget", e.target.value)}
-        />
-      </div>
+            <div className={cn("relative", compact ? "w-[160px]" : "flex-1")}>
+              <DollarSign className={cn(
+                "absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground",
+                compact ? "h-4 w-4" : "h-5 w-5"
+              )} />
+              <Input
+                type="text"
+                placeholder={t("maxBudget")}
+                className={cn(
+                  "pl-10 font-inter",
+                  compact ? "h-11 text-sm" : "h-14 text-base"
+                )}
+                value={formData.budget}
+                onChange={(e) => updateFormField("budget", e.target.value)}
+              />
+            </div>
 
       <Button
         type="submit"

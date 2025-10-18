@@ -82,32 +82,52 @@ export const InteractivePropertyMarkerMap = ({
   return (
     <div className="relative w-full">
       <Card className="overflow-hidden">
-        <div className="relative w-full h-[500px] bg-gradient-to-br from-blue-50 to-green-50 dark:from-blue-950/20 dark:to-green-950/20">
+        <div className="relative w-full h-[500px] bg-gradient-to-br from-blue-100 via-white to-green-50 dark:from-blue-950/30 dark:via-slate-900 dark:to-green-950/30">
           {/* Algeria map background */}
           <svg 
             className="absolute inset-0 w-full h-full" 
             viewBox="0 0 100 100" 
             preserveAspectRatio="xMidYMid meet"
           >
-            {/* Simplified Algeria outline */}
+            {/* Algeria country outline */}
             <path
               d="M 15,35 L 25,25 L 35,22 L 45,20 L 55,20 L 65,22 L 75,25 L 85,30 L 90,40 L 88,50 L 85,55 L 80,58 L 70,60 L 60,62 L 50,63 L 40,62 L 30,60 L 20,55 L 15,45 Z"
-              fill="hsl(var(--muted))"
-              stroke="hsl(var(--border))"
-              strokeWidth="0.5"
-              opacity="0.3"
+              fill="rgba(200, 220, 240, 0.4)"
+              stroke="rgba(100, 116, 139, 0.6)"
+              strokeWidth="0.8"
+              opacity="0.8"
             />
             
-            {/* Major cities dots */}
+            {/* Coastal line for more detail */}
+            <path
+              d="M 15,35 L 25,30 L 40,28 L 60,28 L 75,30 L 85,32"
+              stroke="rgba(59, 130, 246, 0.4)"
+              strokeWidth="0.5"
+              fill="none"
+            />
+            
+            {/* Major cities dots with labels */}
             {Object.entries(cityCoordinates).slice(0, 5).map(([city, coords]) => (
-              <circle
-                key={city}
-                cx={coords.x}
-                cy={coords.y}
-                r="0.8"
-                fill="hsl(var(--muted-foreground))"
-                opacity="0.3"
-              />
+              <g key={city}>
+                <circle
+                  cx={coords.x}
+                  cy={coords.y}
+                  r="1"
+                  fill="rgba(100, 116, 139, 0.5)"
+                  stroke="white"
+                  strokeWidth="0.3"
+                />
+                <text
+                  x={coords.x}
+                  y={coords.y + 3}
+                  fontSize="2.5"
+                  fill="rgba(100, 116, 139, 0.7)"
+                  textAnchor="middle"
+                  fontWeight="600"
+                >
+                  {city}
+                </text>
+              </g>
             ))}
           </svg>
 
@@ -135,7 +155,11 @@ export const InteractivePropertyMarkerMap = ({
                   }}
                   className={`${colorClass} text-white px-3 py-1.5 rounded-full shadow-lg hover:scale-110 transition-all duration-200 font-semibold text-xs whitespace-nowrap z-10 border-2 border-white dark:border-gray-800`}
                 >
-                  {formatPrice(typeof property.price === 'number' ? property.price : parseFloat(property.price))}
+                  {formatPrice(
+                    typeof property.price === 'number' ? property.price : parseFloat(property.price),
+                    property.price_type,
+                    property.price_currency || 'DZD'
+                  )}
                 </button>
               );
             })}
@@ -160,7 +184,11 @@ export const InteractivePropertyMarkerMap = ({
               <p className="font-semibold text-sm line-clamp-1">{hoveredProperty.title}</p>
               <p className="text-xs text-muted-foreground">{hoveredProperty.location}</p>
               <p className="text-sm font-bold text-primary mt-1">
-                {formatPrice(typeof hoveredProperty.price === 'number' ? hoveredProperty.price : parseFloat(hoveredProperty.price))}
+                {formatPrice(
+                  typeof hoveredProperty.price === 'number' ? hoveredProperty.price : parseFloat(hoveredProperty.price),
+                  hoveredProperty.price_type,
+                  hoveredProperty.price_currency || 'DZD'
+                )}
                 {hoveredProperty.price_type !== 'total' && ` / ${hoveredProperty.price_type}`}
               </p>
             </div>
