@@ -21,8 +21,8 @@ import { usePropertyTranslation } from "@/hooks/usePropertyTranslation";
 import { LocationInsights } from "@/components/LocationInsights";
 import { TopRatedStays } from "@/components/TopRatedStays";
 import { PopularAmenities } from "@/components/PopularAmenities";
+import { InteractivePropertyMarkerMap } from "@/components/InteractivePropertyMarkerMap";
 import { DestinationsToExplore } from "@/components/DestinationsToExplore";
-import PropertyMapWithZone from "@/components/PropertyMapWithZone";
 
 interface Property {
   id: string;
@@ -318,18 +318,10 @@ const ShortStay = () => {
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {/* Left: Map & Zones */}
+            {/* Left: Interactive Map */}
             <div className="lg:col-span-1">
-              <PropertyMapWithZone
-                location={filteredProperties[0]?.city || "Algiers"}
-                address={filteredProperties[0]?.location}
-                onZoneSearch={(zone) => {
-                  const filtered = properties.filter(p => 
-                    p.location?.toLowerCase().includes(zone.toLowerCase()) ||
-                    p.city?.toLowerCase().includes(zone.toLowerCase())
-                  );
-                  setFilteredProperties(filtered);
-                }}
+              <InteractivePropertyMarkerMap 
+                properties={filteredProperties}
               />
             </div>
 

@@ -25,6 +25,7 @@ import { RatingShowcase } from "@/components/RatingShowcase";
 import { ReviewTags } from "@/components/ReviewTags";
 import { PropertyShareButton } from "@/components/PropertyShareButton";
 import { HostDetailsSection } from "@/components/HostDetailsSection";
+import { NeighborhoodInsights } from "@/components/NeighborhoodInsights";
 
 interface Property {
   id: string;
@@ -492,6 +493,17 @@ const Property = () => {
                       </div>
                     </div>
                   </div>
+                </CardContent>
+              </Card>
+
+              {/* Neighborhood Insights */}
+              <Card className="shadow-lg">
+                <CardContent className="pt-6">
+                  <NeighborhoodInsights 
+                    city={property.city}
+                    location={property.location}
+                    district={property.district}
+                  />
                 </CardContent>
               </Card>
             </div>
