@@ -210,10 +210,10 @@ const ShortStay = () => {
 
     return (
       <Card 
-        className="overflow-hidden hover:shadow-lg transition-shadow duration-300 cursor-pointer group"
+        className="overflow-hidden hover:shadow-lg transition-shadow duration-300 cursor-pointer group w-full"
         onClick={handleCardClick}
       >
-        <div className="relative h-48 overflow-hidden">
+        <div className="relative h-48 sm:h-56 md:h-64 overflow-hidden">
           <img
             src={property.images?.[0] || "/placeholder-property.jpg"}
             alt={property.title}
@@ -234,7 +234,7 @@ const ShortStay = () => {
             />
           </div>
           <div className="absolute bottom-3 right-3">
-            <Badge variant="secondary" className="bg-background/80 text-foreground">
+            <Badge variant="secondary" className="bg-background/80 text-foreground text-xs">
               {property.price_type === "daily"
                 ? t("perNight")
                 : property.price_type === "weekly"
@@ -244,12 +244,12 @@ const ShortStay = () => {
           </div>
         </div>
         <CardHeader className="pb-2">
-          <CardTitle className="text-lg font-semibold text-foreground line-clamp-2">
+          <CardTitle className="text-base sm:text-lg font-semibold text-foreground line-clamp-2">
             {translatedTitle || property.title}
           </CardTitle>
         <div className="flex items-center text-muted-foreground">
-          <MapPin className="h-4 w-4 mr-1" />
-          <span className="text-sm">
+          <MapPin className="h-4 w-4 mr-1 flex-shrink-0" />
+          <span className="text-sm line-clamp-1">
             {(property.city || "").trim()}
             {property.city && property.location ? ", " : ""}
             {(property.location || "").trim()}
@@ -257,52 +257,51 @@ const ShortStay = () => {
         </div>
       </CardHeader>
       <CardContent className="pt-0">
-        <div className="flex items-center justify-between mb-3">
-          <div className="text-2xl font-bold text-primary">
+        <div className="flex items-center justify-between mb-3 flex-wrap gap-2">
+          <div className="text-xl sm:text-2xl font-bold text-primary">
             {formatPrice(num(property.price), property.price_type, property.price_currency)}
           </div>
         </div>
 
-        <div className="flex items-center gap-4 text-muted-foreground text-sm mb-4">
+        <div className="flex items-center gap-3 sm:gap-4 text-muted-foreground text-xs sm:text-sm mb-4 flex-wrap">
           {property.bedrooms && (
-            <div className="flex items-center">
+            <div className="flex items-center whitespace-nowrap">
               <Bed className="h-4 w-4 mr-1" />
               <span>{property.bedrooms}</span>
             </div>
           )}
           {property.bathrooms && (
-            <div className="flex items-center">
+            <div className="flex items-center whitespace-nowrap">
               <Bath className="h-4 w-4 mr-1" />
               <span>{property.bathrooms}</span>
             </div>
           )}
-          <div className="flex items-center">
+          <div className="flex items-center whitespace-nowrap">
             <Square className="h-4 w-4 mr-1" />
             <span>{num(property.area)} {t("areaUnit")}</span>
           </div>
         </div>
 
         {property.features && (
-          <div className="flex items-center gap-2 mb-4">
+          <div className="flex items-center gap-2 mb-4 overflow-x-auto">
             {Object.entries(property.features)
               .filter(([_, value]) => value)
               .slice(0, 3)
               .map(([key]) => (
-                <div key={key} className="flex items-center text-muted-foreground text-xs">
+                <div key={key} className="flex items-center text-muted-foreground text-xs flex-shrink-0">
                   {getFeatureIcon(key)}
                 </div>
               ))}
           </div>
         )}
 
-        <Button className="w-full" onClick={(e) => { e.stopPropagation(); handleCardClick(); }}>
+        <Button className="w-full h-12 sm:h-10 text-sm sm:text-base" onClick={(e) => { e.stopPropagation(); handleCardClick(); }}>
           {t("secureYourStay") || t("bookNow")}
         </Button>
       </CardContent>
     </Card>
   );
 };
-
   return (
     <div className="min-h-screen bg-background">
       <Navigation />
@@ -395,7 +394,7 @@ const ShortStay = () => {
                   <div className="text-muted-foreground">{t("adjustFiltersOrCheckLater")}</div>
                 </div>
               ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
                   {filteredProperties.map((property) => (
                     <PropertyCard key={property.id} property={property} />
                   ))}

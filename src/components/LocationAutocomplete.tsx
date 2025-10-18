@@ -114,20 +114,20 @@ export default function LocationAutocomplete({
         value={value}
         onChange={(e) => handleInputChange(e.target.value)}
         onFocus={handleFocus}
-        className={cn("pl-10 bg-background border border-input", className)}
+        className={cn("pl-10 bg-background border border-input h-12 sm:h-auto", className)}
       />
       
       {showSuggestions && suggestions.length > 0 && createPortal(
         <div 
-          className="fixed min-w-[400px] w-max max-w-[600px] bg-card border border-border rounded-lg shadow-2xl z-[99999] max-h-80 overflow-y-auto"
+          className="fixed w-[calc(100vw-32px)] sm:min-w-[400px] sm:w-max sm:max-w-[600px] bg-card border border-border rounded-lg shadow-2xl z-[100000] max-h-[60vh] sm:max-h-80 overflow-y-auto touch-action-manipulation"
           style={{
             top: `${dropdownPosition.top}px`,
-            left: `${dropdownPosition.left}px`,
-            minWidth: `${Math.max(400, dropdownPosition.width)}px`
+            left: `${Math.max(16, dropdownPosition.left)}px`,
+            maxWidth: 'calc(100vw - 32px)',
           }}
         >
           {value.trim().length === 0 && (
-            <div className="px-5 py-3 text-sm font-medium text-muted-foreground bg-muted/50 border-b border-border sticky top-0 z-10">
+            <div className="px-4 sm:px-5 py-3 text-sm font-medium text-muted-foreground bg-muted/50 border-b border-border sticky top-0 z-10 backdrop-blur-sm">
               Popular destinations in Algeria
             </div>
           )}
@@ -135,11 +135,15 @@ export default function LocationAutocomplete({
             <button
               key={`${location.name}-${index}`}
               onClick={() => handleSuggestionClick(location.name)}
-              className="w-full px-5 py-4 text-left hover:bg-accent transition-colors border-b border-border/50 last:border-b-0"
+              onTouchEnd={(e) => {
+                e.preventDefault();
+                handleSuggestionClick(location.name);
+              }}
+              className="w-full px-4 sm:px-5 py-4 text-left hover:bg-accent active:bg-accent transition-colors border-b border-border/50 last:border-b-0 min-h-[48px] cursor-pointer"
             >
               <div className="flex-1">
-                <div className="font-medium text-foreground text-base">{location.name}</div>
-                <div className="text-sm text-muted-foreground capitalize mt-1">{location.type} • {location.region}</div>
+                <div className="font-medium text-foreground text-sm sm:text-base">{location.name}</div>
+                <div className="text-xs sm:text-sm text-muted-foreground capitalize mt-1">{location.type} • {location.region}</div>
               </div>
             </button>
           ))}
@@ -149,11 +153,11 @@ export default function LocationAutocomplete({
       
       {showSuggestions && value.trim().length >= 2 && suggestions.length === 0 && createPortal(
         <div 
-          className="fixed bg-card border border-border rounded-lg shadow-2xl z-[99999] p-4 text-center text-muted-foreground"
+          className="fixed bg-card border border-border rounded-lg shadow-2xl z-[100000] p-4 text-center text-muted-foreground w-[calc(100vw-32px)] sm:w-auto"
           style={{
             top: `${dropdownPosition.top}px`,
-            left: `${dropdownPosition.left}px`,
-            width: `${dropdownPosition.width}px`
+            left: `${Math.max(16, dropdownPosition.left)}px`,
+            maxWidth: 'calc(100vw - 32px)',
           }}
         >
           No locations found for "{value}"

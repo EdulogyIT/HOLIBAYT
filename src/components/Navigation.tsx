@@ -67,48 +67,48 @@ const Navigation = () => {
           </div>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-8">
-            <Link to="/" className="text-foreground hover:text-primary transition-colors font-inter">
+          <div className="hidden md:flex items-center space-x-4 lg:space-x-8">
+            <Link to="/" className="text-foreground hover:text-primary transition-colors font-inter text-sm lg:text-base">
               {t('home')}
             </Link>
-            <Link to="/buy" className="text-foreground hover:text-primary transition-colors font-inter">
+            <Link to="/buy" className="text-foreground hover:text-primary transition-colors font-inter text-sm lg:text-base">
               {t('buy')}
             </Link>
-            <Link to="/short-stay" className="text-foreground hover:text-primary transition-colors font-inter">
+            <Link to="/short-stay" className="text-foreground hover:text-primary transition-colors font-inter text-sm lg:text-base">
               {t('shortStay')}
             </Link>
-            <Link to="/rent" className="text-foreground hover:text-primary transition-colors font-inter">
+            <Link to="/rent" className="text-foreground hover:text-primary transition-colors font-inter text-sm lg:text-base">
               {t('rent')}
             </Link>
-            <Link to="/holibayt-pay" className="text-foreground hover:text-primary transition-colors font-inter">
+            <Link to="/holibayt-pay" className="text-foreground hover:text-primary transition-colors font-inter text-sm lg:text-base">
               {t('holibaytPayBrand')}
             </Link>
-            <Link to="/about" className="text-foreground hover:text-primary transition-colors font-inter">
+            <Link to="/about" className="text-foreground hover:text-primary transition-colors font-inter text-sm lg:text-base">
               {t('about')}
             </Link>
-            <Link to="/blog" className="text-foreground hover:text-primary transition-colors font-inter">
+            <Link to="/blog" className="text-foreground hover:text-primary transition-colors font-inter text-sm lg:text-base">
               {t('blog')}
             </Link>
           </div>
 
           {/* Language & Currency Switchers & CTA Buttons */}
-          <div className="hidden md:flex items-center space-x-4">
+          <div className="hidden md:flex items-center space-x-2 lg:space-x-4">
             {/* Currency Selector */}
             <CurrencySelector />
             
             {/* Language Switcher */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" className="font-inter">
-                  <Globe className="h-5 w-5" />
+                <Button variant="ghost" size="icon" className="font-inter h-9 w-9 lg:h-10 lg:w-10">
+                  <Globe className="h-4 w-4 lg:h-5 lg:w-5" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="bg-background border border-border">
+              <DropdownMenuContent align="end" className="bg-background border border-border z-[100000]">
                 {languages.map((lang) => (
                   <DropdownMenuItem 
                     key={lang.code}
                     onClick={() => handleLanguageChange(lang.code as any)}
-                    className="flex items-center space-x-2"
+                    className="flex items-center space-x-2 min-h-[44px]"
                   >
                     <span>{lang.flag}</span>
                     <span>{lang.name}</span>
@@ -120,10 +120,10 @@ const Navigation = () => {
 
             {!isAuthenticated ? (
               <>
-                <Button variant="ghost" className="font-inter font-medium" onClick={() => setIsLoginModalOpen(true)}>
+                <Button variant="ghost" className="font-inter font-medium text-sm lg:text-base px-3 lg:px-4" onClick={() => setIsLoginModalOpen(true)}>
                   {t('login')}
                 </Button>
-                <Button className="bg-gradient-primary font-inter font-medium hover:shadow-elegant" onClick={() => setIsLoginModalOpen(true)}>
+                <Button className="bg-gradient-primary font-inter font-medium hover:shadow-elegant text-sm lg:text-base px-3 lg:px-4" onClick={() => setIsLoginModalOpen(true)}>
                   {t('publishProperty')}
                 </Button>
               </>
@@ -144,18 +144,18 @@ const Navigation = () => {
 
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" className="flex items-center space-x-2 font-inter font-medium">
-                      <Avatar className="w-8 h-8">
+                    <Button variant="ghost" className="flex items-center space-x-1 lg:space-x-2 font-inter font-medium text-sm lg:text-base px-2 lg:px-3">
+                      <Avatar className="w-7 h-7 lg:w-8 lg:h-8">
                         <AvatarImage src={user?.avatar_url} alt={user?.name || 'User'} />
                         <AvatarFallback>
                           {user?.name?.split(' ').map(n => n[0]).join('').toUpperCase() || 'U'}
                         </AvatarFallback>
                       </Avatar>
-                      <span>{user?.name}</span>
+                      <span className="hidden lg:inline">{user?.name}</span>
                     </Button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="w-56">
-                    <DropdownMenuItem onClick={() => navigate('/profile')}>
+                  <DropdownMenuContent align="end" className="w-56 z-[100000]">
+                    <DropdownMenuItem onClick={() => navigate('/profile')} className="min-h-[44px]">
                       <User className="h-4 w-4 mr-2" />
                       {t('myProfile')}
                     </DropdownMenuItem>
@@ -225,43 +225,43 @@ const Navigation = () => {
 
         {/* Mobile Navigation */}
         {isMenuOpen && (
-          <div className="md:hidden py-4 border-t border-border">
-            <div className="flex flex-col space-y-4">
-                  <Link to="/" className="text-foreground hover:text-primary transition-colors font-inter font-medium" onClick={() => setIsMenuOpen(false)}>
+          <div className="md:hidden py-4 border-t border-border max-h-[calc(100vh-80px)] overflow-y-auto">
+            <div className="flex flex-col space-y-3">
+                  <Link to="/" className="text-foreground hover:text-primary transition-colors font-inter font-medium py-2 min-h-[44px] flex items-center" onClick={() => setIsMenuOpen(false)}>
                     {t('home')}
                   </Link>
-                  <Link to="/buy" className="text-foreground hover:text-primary transition-colors font-inter font-medium" onClick={() => setIsMenuOpen(false)}>
+                  <Link to="/buy" className="text-foreground hover:text-primary transition-colors font-inter font-medium py-2 min-h-[44px] flex items-center" onClick={() => setIsMenuOpen(false)}>
                     {t('buy')}
                   </Link>
-                  <Link to="/short-stay" className="text-foreground hover:text-primary transition-colors font-inter font-medium" onClick={() => setIsMenuOpen(false)}>
+                  <Link to="/short-stay" className="text-foreground hover:text-primary transition-colors font-inter font-medium py-2 min-h-[44px] flex items-center" onClick={() => setIsMenuOpen(false)}>
                     {t('shortStay')}
                   </Link>
-                  <Link to="/rent" className="text-foreground hover:text-primary transition-colors font-inter font-medium" onClick={() => setIsMenuOpen(false)}>
+                  <Link to="/rent" className="text-foreground hover:text-primary transition-colors font-inter font-medium py-2 min-h-[44px] flex items-center" onClick={() => setIsMenuOpen(false)}>
                     {t('rent')}
                   </Link>
-                  <Link to="/holibayt-pay" className="text-foreground hover:text-primary transition-colors font-inter font-medium" onClick={() => setIsMenuOpen(false)}>
+                  <Link to="/holibayt-pay" className="text-foreground hover:text-primary transition-colors font-inter font-medium py-2 min-h-[44px] flex items-center" onClick={() => setIsMenuOpen(false)}>
                     {t('holibaytPayBrand')}
                   </Link>
-                  <Link to="/about" className="text-foreground hover:text-primary transition-colors font-inter font-medium" onClick={() => setIsMenuOpen(false)}>
+                  <Link to="/about" className="text-foreground hover:text-primary transition-colors font-inter font-medium py-2 min-h-[44px] flex items-center" onClick={() => setIsMenuOpen(false)}>
                     {t('about')}
                   </Link>
-                  <Link to="/blog" className="text-foreground hover:text-primary transition-colors font-inter font-medium" onClick={() => setIsMenuOpen(false)}>
+                  <Link to="/blog" className="text-foreground hover:text-primary transition-colors font-inter font-medium py-2 min-h-[44px] flex items-center" onClick={() => setIsMenuOpen(false)}>
                     {t('blog')}
                   </Link>
               <div className="flex flex-col space-y-2 pt-4 border-t border-border">
                 {/* Currency Selector Mobile */}
-                <div className="flex items-center">
+                <div className="flex items-center min-h-[44px]">
                   <CurrencySelector />
                 </div>
                 
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" className="font-inter font-medium justify-start">
+                    <Button variant="ghost" className="font-inter font-medium justify-start min-h-[44px]">
                       <Globe className="h-4 w-4 mr-2" />
                       {languages.find(l => l.code === currentLang)?.name}
                     </Button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent className="bg-background border border-border">
+                  <DropdownMenuContent className="bg-background border border-border z-[100000]">
                     {languages.map((lang) => (
                       <DropdownMenuItem 
                         key={lang.code}
@@ -269,7 +269,7 @@ const Navigation = () => {
                           handleLanguageChange(lang.code as any);
                           setIsMenuOpen(false);
                         }}
-                        className="flex items-center space-x-2"
+                        className="flex items-center space-x-2 min-h-[44px]"
                       >
                         <span>{lang.flag}</span>
                         <span>{lang.name}</span>
