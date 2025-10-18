@@ -23,6 +23,7 @@ import { TopRatedStays } from "@/components/TopRatedStays";
 import { PopularAmenities } from "@/components/PopularAmenities";
 import { InteractivePropertyMarkerMap } from "@/components/InteractivePropertyMarkerMap";
 import { DestinationsToExplore } from "@/components/DestinationsToExplore";
+import CitiesSection from "@/components/CitiesSection";
 
 interface Property {
   id: string;
@@ -409,6 +410,9 @@ const ShortStay = () => {
 
         {/* Destinations to Explore */}
         <DestinationsToExplore onDestinationClick={handleDestinationClick} />
+
+        {/* Nearby Cities Section */}
+        <CitiesSection />
 
         <AIChatBox />
       </main>

@@ -317,53 +317,53 @@ const QuickAccessSection = () => {
   const { t } = useLanguage();
   
   return (
-    <section className="py-12 sm:py-16 md:py-20 bg-background">
+    <section className="py-8 sm:py-12 md:py-16 bg-background">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
-        <div className="text-center mb-8 sm:mb-12">
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-playfair font-bold text-foreground mb-3 sm:mb-4">
+        <div className="text-center mb-6 sm:mb-8 md:mb-12">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-playfair font-bold text-foreground mb-2 sm:mb-3 md:mb-4 px-2">
             {t('howCanWeHelp')}
           </h2>
-          <p className="text-base sm:text-lg text-muted-foreground font-inter font-light max-w-2xl mx-auto px-4">
+          <p className="text-sm sm:text-base md:text-lg text-muted-foreground font-inter font-light max-w-2xl mx-auto px-4">
             {t('quickEntriesDesc')}
           </p>
         </div>
 
         {/* Tabbed Workflow Card */}
         <Card className="border-2 border-primary/20 shadow-elegant">
-          <CardContent className="p-6 sm:p-8">
+          <CardContent className="p-4 sm:p-6 md:p-8">
             <Tabs defaultValue="buy" className="w-full">
-              <TabsList className="grid w-full grid-cols-3 mb-8">
-                <TabsTrigger value="buy" className="flex items-center gap-2">
-                  <Home className="h-4 w-4" />
+              <TabsList className="grid w-full grid-cols-3 mb-6 sm:mb-8 h-auto">
+                <TabsTrigger value="buy" className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm md:text-base py-2 sm:py-3">
+                  <Home className="h-3 w-3 sm:h-4 sm:w-4" />
                   <span className="hidden sm:inline">{t('workflow.buy.tab')}</span>
                   <span className="sm:hidden">{t('Buy')}</span>
                 </TabsTrigger>
-                <TabsTrigger value="rent" className="flex items-center gap-2">
-                  <Key className="h-4 w-4" />
+                <TabsTrigger value="rent" className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm md:text-base py-2 sm:py-3">
+                  <Key className="h-3 w-3 sm:h-4 sm:w-4" />
                   <span className="hidden sm:inline">{t('workflow.rent.tab')}</span>
                   <span className="sm:hidden">{t('Rent')}</span>
                 </TabsTrigger>
-                <TabsTrigger value="short-stay" className="flex items-center gap-2">
-                  <Bed className="h-4 w-4" />
+                <TabsTrigger value="short-stay" className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm md:text-base py-2 sm:py-3">
+                  <Bed className="h-3 w-3 sm:h-4 sm:w-4" />
                   <span className="hidden sm:inline">{t('workflow.shortStay.tab')}</span>
                   <span className="sm:hidden">{t('Stay')}</span>
                 </TabsTrigger>
               </TabsList>
 
               {/* Buy Tab Content */}
-              <TabsContent value="buy" className="space-y-6">
-                <div className="text-center mb-6">
-                  <h3 className="text-xl sm:text-2xl font-playfair font-bold text-foreground mb-2">
+              <TabsContent value="buy" className="space-y-4 sm:space-y-6">
+                <div className="text-center mb-4 sm:mb-6 px-2">
+                  <h3 className="text-lg sm:text-xl md:text-2xl font-playfair font-bold text-foreground mb-2">
                     {t('workflow.buy.title')}
                   </h3>
-                  <p className="text-sm text-muted-foreground">{t('workflow.buy.subtitle')}</p>
+                  <p className="text-xs sm:text-sm text-muted-foreground">{t('workflow.buy.subtitle')}</p>
                 </div>
                 <BuyWorkflowDiagram />
-                <div className="flex justify-center pt-4">
+                <div className="flex justify-center pt-2 sm:pt-4">
                   <Button 
                     onClick={() => navigate('/buy')}
-                    className="gap-2"
+                    className="gap-2 w-full sm:w-auto"
                     size="lg"
                   >
                     {t('start')}
@@ -373,18 +373,18 @@ const QuickAccessSection = () => {
               </TabsContent>
 
               {/* Rent Tab Content */}
-              <TabsContent value="rent" className="space-y-6">
-                <div className="text-center mb-6">
-                  <h3 className="text-xl sm:text-2xl font-playfair font-bold text-foreground mb-2">
+              <TabsContent value="rent" className="space-y-4 sm:space-y-6">
+                <div className="text-center mb-4 sm:mb-6 px-2">
+                  <h3 className="text-lg sm:text-xl md:text-2xl font-playfair font-bold text-foreground mb-2">
                     {t('workflow.rent.title')}
                   </h3>
-                  <p className="text-sm text-muted-foreground">{t('workflow.rent.subtitle')}</p>
+                  <p className="text-xs sm:text-sm text-muted-foreground">{t('workflow.rent.subtitle')}</p>
                 </div>
                 <RentWorkflowDiagram />
-                <div className="flex justify-center pt-4">
+                <div className="flex justify-center pt-2 sm:pt-4">
                   <Button 
                     onClick={() => navigate('/rent')}
-                    className="gap-2"
+                    className="gap-2 w-full sm:w-auto"
                     size="lg"
                   >
                     {t('start')}
@@ -394,18 +394,18 @@ const QuickAccessSection = () => {
               </TabsContent>
 
               {/* Short Stay Tab Content */}
-              <TabsContent value="short-stay" className="space-y-6">
-                <div className="text-center mb-6">
-                  <h3 className="text-xl sm:text-2xl font-playfair font-bold text-foreground mb-2">
+              <TabsContent value="short-stay" className="space-y-4 sm:space-y-6">
+                <div className="text-center mb-4 sm:mb-6 px-2">
+                  <h3 className="text-lg sm:text-xl md:text-2xl font-playfair font-bold text-foreground mb-2">
                     {t('workflow.shortStay.title')}
                   </h3>
-                  <p className="text-sm text-muted-foreground">{t('workflow.shortStay.subtitle')}</p>
+                  <p className="text-xs sm:text-sm text-muted-foreground">{t('workflow.shortStay.subtitle')}</p>
                 </div>
                 <ShortStayWorkflowDiagram />
-                <div className="flex justify-center pt-4">
+                <div className="flex justify-center pt-2 sm:pt-4">
                   <Button 
                     onClick={() => navigate('/short-stay')}
-                    className="gap-2"
+                    className="gap-2 w-full sm:w-auto"
                     size="lg"
                   >
                     {t('start')}
@@ -418,14 +418,14 @@ const QuickAccessSection = () => {
         </Card>
 
         {/* Bottom CTA */}
-        <div className="text-center mt-8 sm:mt-12">
-          <p className="text-muted-foreground font-inter text-xl sm:text-2xl md:text-3xl mb-4 sm:mb-6 font-semibold animate-pulse px-4">
+        <div className="text-center mt-6 sm:mt-8 md:mt-12">
+          <p className="text-muted-foreground font-inter text-lg sm:text-xl md:text-2xl lg:text-3xl mb-3 sm:mb-4 md:mb-6 font-semibold animate-pulse px-4">
             {t('needHelp')}
           </p>
           <Button 
             variant="outline" 
             size="lg" 
-            className="font-inter font-medium text-base sm:text-lg px-6 sm:px-8 py-2 sm:py-3 hover:shadow-elegant hover:scale-105 transition-all duration-300 border-2 border-primary hover:bg-primary hover:text-primary-foreground w-full sm:w-auto"
+            className="font-inter font-medium text-sm sm:text-base md:text-lg px-6 sm:px-8 py-2 sm:py-3 hover:shadow-elegant hover:scale-105 transition-all duration-300 border-2 border-primary hover:bg-primary hover:text-primary-foreground w-full sm:w-auto"
             onClick={() => navigate('/contact-advisor')}
           >
             {t('speakToAdvisor')}

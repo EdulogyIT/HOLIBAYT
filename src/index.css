@@ -150,22 +150,12 @@ All colors MUST be HSL.
     font-size: 16px !important;
   }
   
-  /* Ensure dropdowns are visible on mobile */
-  .radix-popover-content,
-  .radix-select-content,
-  [data-radix-popper-content-wrapper],
-  [role="menu"],
-  [role="listbox"],
-  [role="dialog"] {
-    max-width: calc(100vw - 32px) !important;
-    max-height: calc(100vh - 100px) !important;
-  }
-  
   /* Minimum touch target size for accessibility */
   button,
   a,
   input[type="button"],
-  input[type="submit"] {
+  input[type="submit"],
+  [role="button"] {
     min-height: 44px !important;
     min-width: 44px !important;
   }

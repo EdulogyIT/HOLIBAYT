@@ -95,7 +95,7 @@ const BuyHeroSearch: React.FC<BuyHeroSearchProps> = ({ onSearch }) => {
           onChange={(value) => updateFormField("location", value)}
           placeholder={t("cityNeighborhood")}
           className={cn(
-            "font-inter",
+            "font-inter px-4",
             compact ? "h-12 text-sm w-full sm:flex-1 sm:min-w-[180px]" : "h-14 text-base flex-1 lg:min-w-[300px]"
           )}
         />
@@ -105,7 +105,7 @@ const BuyHeroSearch: React.FC<BuyHeroSearchProps> = ({ onSearch }) => {
           onValueChange={(value) => updateFormField("propertyType", value)}
         >
           <SelectTrigger className={cn(
-            "font-inter bg-background border border-input",
+            "font-inter bg-background border border-input px-4",
             compact ? "h-12 text-sm w-full sm:w-auto sm:min-w-[140px]" : "h-14 text-base w-full lg:w-[220px]"
           )}>
             <SelectValue placeholder={t("propertyType")} />
@@ -126,7 +126,7 @@ const BuyHeroSearch: React.FC<BuyHeroSearchProps> = ({ onSearch }) => {
           value={formData.budget}
           onChange={(e) => updateFormField("budget", e.target.value)}
           className={cn(
-            "font-inter bg-background border border-input",
+            "font-inter bg-background border border-input px-4",
             compact ? "h-12 text-sm w-full sm:w-auto sm:min-w-[140px]" : "h-14 text-base w-full lg:w-[220px]"
           )}
         />

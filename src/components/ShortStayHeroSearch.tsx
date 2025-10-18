@@ -133,7 +133,7 @@ const ShortStayHeroSearch: React.FC<ShortStayHeroSearchProps> = ({ onSearch }) =
           onChange={(value) => updateFormField("location", value)}
           placeholder={t("stayDestination")}
           className={cn(
-            "font-inter",
+            "font-inter px-4",
             compact ? "h-12 text-sm w-full sm:flex-1 sm:min-w-[180px]" : "h-14 text-base flex-1 lg:min-w-[300px]"
           )}
         />
