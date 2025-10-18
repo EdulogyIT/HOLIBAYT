@@ -82,7 +82,7 @@ export default function LocationAutocomplete({
   };
 
   return (
-    <div ref={wrapperRef} className="relative flex-2">
+    <div ref={wrapperRef} className="relative flex-2 min-w-0">
       <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4 z-10" />
       <Input
         type="text"
@@ -94,7 +94,7 @@ export default function LocationAutocomplete({
       />
       
       {showSuggestions && suggestions.length > 0 && (
-        <div className="absolute top-full left-0 right-0 mt-2 bg-card border border-border rounded-lg shadow-lg z-50 max-h-80 overflow-y-auto">
+        <div className="absolute top-[calc(100%+0.5rem)] left-0 right-0 bg-card border border-border rounded-lg shadow-2xl z-[9999] max-h-80 overflow-y-auto">
           {value.trim().length === 0 && (
             <div className="px-4 py-2 text-xs font-medium text-muted-foreground bg-muted/50 border-b border-border">
               Popular destinations in Algeria
@@ -117,7 +117,7 @@ export default function LocationAutocomplete({
       )}
       
       {showSuggestions && value.trim().length >= 2 && suggestions.length === 0 && (
-        <div className="absolute top-full left-0 right-0 mt-2 bg-card border border-border rounded-lg shadow-lg z-50 p-4 text-center text-muted-foreground">
+        <div className="absolute top-[calc(100%+0.5rem)] left-0 right-0 bg-card border border-border rounded-lg shadow-2xl z-[9999] p-4 text-center text-muted-foreground">
           No locations found for "{value}"
         </div>
       )}

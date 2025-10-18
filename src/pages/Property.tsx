@@ -10,7 +10,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { useCurrency } from "@/contexts/CurrencyContext";
 import { useScrollToTop } from "@/hooks/useScrollToTop";
 import { useEffect, useState } from "react";
-import MapboxMap from "@/components/MapboxMap";
+import { Navigation as NavigationIcon } from "lucide-react";
 import PropertyDatePicker from "@/components/PropertyDatePicker";
 import { BookingModal } from "@/components/BookingModal";
 import { supabase } from "@/integrations/supabase/client";
@@ -467,17 +467,30 @@ const Property = () => {
                   </p>
                 </CardHeader>
                 <CardContent>
-                  <div className="h-[400px] w-full">
-                    <MapboxMap 
-                      location={property.city}
-                      address={property.full_address || property.location}
-                      latitude={property.latitude}
-                      longitude={property.longitude}
-                      showPropertyMarker={true}
-                      interactive={true}
-                      zoom={14}
-                      compact={true}
-                    />
+                  <div className="relative h-[400px] w-full bg-gradient-to-br from-primary/5 to-secondary/5 rounded-lg overflow-hidden border-2 border-border">
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <div className="text-center space-y-4 p-8">
+                        <div className="w-20 h-20 mx-auto rounded-full bg-primary/10 flex items-center justify-center">
+                          <MapPin className="w-10 h-10 text-primary" />
+                        </div>
+                        <div>
+                          <h3 className="text-xl font-semibold mb-2">{t('youAreHere') || 'You are here'}</h3>
+                          <p className="text-muted-foreground">
+                            {property.location}, {property.city}
+                          </p>
+                        </div>
+                        <Button 
+                          variant="outline" 
+                          onClick={() => {
+                            const address = encodeURIComponent(`${property.location}, ${property.city}, Algeria`);
+                            window.open(`https://www.google.com/maps/search/?api=1&query=${address}`, '_blank');
+                          }}
+                        >
+                          <NavigationIcon className="w-4 h-4 mr-2" />
+                          {t('openInGoogleMaps') || 'Open in Google Maps'}
+                        </Button>
+                      </div>
+                    </div>
                   </div>
                 </CardContent>
               </Card>

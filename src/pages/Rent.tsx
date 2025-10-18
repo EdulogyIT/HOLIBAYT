@@ -18,7 +18,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useWishlist } from "@/hooks/useWishlist";
 import { WishlistButton } from "@/components/WishlistButton";
 import { PropertyBadges } from "@/components/PropertyBadges";
-import AlgiersDistrictMap from "@/components/AlgiersDistrictMap";
+import PropertyMapWithZone from "@/components/PropertyMapWithZone";
 import { usePropertyTranslation } from "@/hooks/usePropertyTranslation";
 import { ConversionBanner } from "@/components/ConversionBanner";
 
@@ -236,10 +236,16 @@ const Rent = () => {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {/* Left: Map & Zones */}
             <div className="lg:col-span-1">
-              <AlgiersDistrictMap 
-                properties={filteredProperties}
-                onPropertyClick={(id) => navigate(`/property/${id}`)}
-                height="500px"
+              <PropertyMapWithZone
+                location={filteredProperties[0]?.city || "Algiers"}
+                address={filteredProperties[0]?.location}
+                onZoneSearch={(zone) => {
+                  const filtered = properties.filter(p => 
+                    p.location?.toLowerCase().includes(zone.toLowerCase()) ||
+                    p.city?.toLowerCase().includes(zone.toLowerCase())
+                  );
+                  setFilteredProperties(filtered);
+                }}
               />
             </div>
 
