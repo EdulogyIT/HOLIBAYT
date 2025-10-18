@@ -32,3 +32,6 @@ verify_jwt = false
 
 [functions.sign-rental-agreement]
 verify_jwt = true
+
+[functions.send-rent-reminders]
+verify_jwt = false

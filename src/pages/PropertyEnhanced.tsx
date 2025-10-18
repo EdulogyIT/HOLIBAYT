@@ -1,6 +1,6 @@
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
-import { Card } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
@@ -532,6 +532,34 @@ const PropertyEnhanced = () => {
                     propertyId={property.id}
                     hasActiveAgreement={false}
                   />
+                  
+                  {/* Security Deposit Payment */}
+                  {property.fees?.security_deposit?.enabled && (
+                    <Card className="border-2 border-primary/20">
+                      <CardHeader>
+                        <CardTitle className="flex items-center gap-2 text-lg">
+                          <Shield className="w-5 h-5 text-primary" />
+                          Security Deposit Required
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent className="space-y-3">
+                        <p className="text-sm text-muted-foreground">
+                          A refundable security deposit of{" "}
+                          <span className="font-bold text-foreground">
+                            {formatPrice(
+                              property.fees.security_deposit.amount,
+                              property.price_type,
+                              property.price_currency || "DZD"
+                            )}
+                          </span>{" "}
+                          is required before moving in.
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          This deposit will be held securely via Holibayt Pay™ escrow and refunded at the end of your tenancy.
+                        </p>
+                      </CardContent>
+                    </Card>
+                  )}
                 </div>
               )}
 

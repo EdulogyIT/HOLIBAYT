@@ -91,6 +91,7 @@ interface FormData {
   fees: {
     cleaningFee: {enabled: boolean; amount: number};
     serviceFee: {enabled: boolean; amount: number};
+    securityDeposit: {enabled: boolean; amount: number; refundable: boolean};
   };
   
   // Contact Information
@@ -188,6 +189,7 @@ const PublishPropertySteps = ({ onSubmit, isSubmitting = false }: PublishPropert
     fees: {
       cleaningFee: { enabled: false, amount: 0 },
       serviceFee: { enabled: false, amount: 0 },
+      securityDeposit: { enabled: false, amount: 0, refundable: true },
     },
     fullName: "",
     phoneNumber: "",
@@ -1003,6 +1005,61 @@ const PublishPropertySteps = ({ onSubmit, isSubmitting = false }: PublishPropert
                         />
                       )}
                     </div>
+                  </CardContent>
+                </Card>
+              )}
+
+              {/* Security Deposit (for rent properties) */}
+              {formData.category === 'rent' && (
+                <Card className="bg-muted/30">
+                  <CardHeader>
+                    <CardTitle className="text-lg flex items-center gap-2">
+                      <ShieldCheck className="w-5 h-5" />
+                      Security Deposit
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="flex items-center justify-between p-3 bg-background rounded-lg">
+                      <div className="flex items-center space-x-3">
+                        <Checkbox
+                          id="securityDepositEnabled"
+                          checked={formData.fees.securityDeposit.enabled}
+                          onCheckedChange={(checked) => handleInputChange("fees.securityDeposit.enabled", checked)}
+                        />
+                        <Label htmlFor="securityDepositEnabled" className="cursor-pointer font-medium">
+                          Require Security Deposit
+                        </Label>
+                      </div>
+                    </div>
+                    {formData.fees.securityDeposit.enabled && (
+                      <div className="space-y-4 p-4 bg-background rounded-lg">
+                        <div className="space-y-2">
+                          <Label htmlFor="securityDepositAmount">
+                            Deposit Amount ({formData.priceCurrency})
+                          </Label>
+                          <Input
+                            id="securityDepositAmount"
+                            type="number"
+                            placeholder="e.g., 5000"
+                            value={formData.fees.securityDeposit.amount}
+                            onChange={(e) => handleInputChange("fees.securityDeposit.amount", Number(e.target.value))}
+                          />
+                          <p className="text-sm text-muted-foreground">
+                            Typically equivalent to 1 month's rent. Held in escrow and refunded after tenancy ends.
+                          </p>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <Checkbox
+                            id="securityDepositRefundable"
+                            checked={formData.fees.securityDeposit.refundable}
+                            onCheckedChange={(checked) => handleInputChange("fees.securityDeposit.refundable", checked)}
+                          />
+                          <Label htmlFor="securityDepositRefundable" className="cursor-pointer">
+                            Refundable (Recommended)
+                          </Label>
+                        </div>
+                      </div>
+                    )}
                   </CardContent>
                 </Card>
               )}

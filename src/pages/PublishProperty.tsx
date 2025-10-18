@@ -114,6 +114,12 @@ const PublishProperty = () => {
           fireExtinguisher: false,
           securityCameras: false
         },
+        fees: {
+          cleaning_fee: formData.fees.cleaningFee,
+          service_fee: formData.fees.serviceFee,
+          security_deposit: formData.fees.securityDeposit,
+          other_fees: []
+        },
         status: 'pending' // Requires admin approval
       };
 
