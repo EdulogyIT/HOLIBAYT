@@ -43,6 +43,7 @@ import { RentPaymentSafetyBadge } from "@/components/RentPaymentSafetyBadge";
 import { RentVerificationStatus } from "@/components/RentVerificationStatus";
 import { DigitalLeaseOption } from "@/components/DigitalLeaseOption";
 import { LegalSupportButton } from "@/components/LegalSupportButton";
+import GooglePropertyMap from "@/components/GooglePropertyMap";
 
 interface Property {
   id: string;
@@ -83,6 +84,8 @@ interface Property {
   cancellation_policy?: string;
   house_rules?: any;
   safety_features?: any;
+  latitude?: number | null;
+  longitude?: number | null;
 }
 
 interface Profile {
@@ -357,6 +360,15 @@ const PropertyEnhanced = () => {
             {/* Where You'll Be - Location & Neighborhood */}
             <div className="space-y-4">
               <h2 className="text-2xl md:text-3xl font-bold">Where you'll be</h2>
+              
+              {/* Google Maps */}
+              <GooglePropertyMap
+                location={`${property.location}, ${property.city}, Algeria`}
+                address={property.full_address}
+                latitude={property.latitude}
+                longitude={property.longitude}
+              />
+              
               <NeighborhoodInsights
                 city={property.city}
                 location={property.location}
