@@ -1,7 +1,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Home, Key, Bed, ArrowRight, ShieldCheck, CreditCard, Shield, DollarSign, Search, Calendar, HandCoins, Plus, FileCheck } from "lucide-react";
+import { Home, Key, Bed, ArrowRight, ShieldCheck, CreditCard, Shield, DollarSign, Search, Calendar, HandCoins, Plus, FileCheck, Lock, Scale, FileSignature } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useLanguage } from "@/contexts/LanguageContext";
 
@@ -10,62 +10,84 @@ const BuyWorkflowDiagram = () => {
   const { t } = useLanguage();
   
   return (
-    <div className="space-y-3">
-      {/* Layer 1: Trust */}
-      <div className="relative bg-[#1a5f5f] text-white p-4 rounded-lg">
-        <div className="flex items-start gap-3">
-          <ShieldCheck className="h-8 w-8 flex-shrink-0 mt-1" />
-          <div className="flex-1">
-            <h4 className="font-semibold text-sm mb-2">{t('workflow.buy.layer1.title')}</h4>
-            <ul className="space-y-1 text-xs opacity-90">
+    <div className="space-y-6">
+      {/* Layer Labels - Desktop Only */}
+      <div className="hidden lg:grid lg:grid-cols-4 gap-4 text-center font-semibold text-sm text-muted-foreground">
+        <div>{t('workflow.buy.layer1.label')}</div>
+        <div>{t('workflow.buy.layer2.label')}</div>
+        <div>{t('workflow.buy.layer3.label')}</div>
+        <div>{t('workflow.buy.layer4.label')}</div>
+      </div>
+
+      {/* Workflow Columns */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 relative">
+        {/* Layer 1: Trust */}
+        <div className="relative bg-[#0d4d4d] text-white p-6 rounded-lg flex flex-col items-center text-center space-y-4">
+          <div className="lg:hidden text-xs font-semibold text-gray-300 uppercase tracking-wide">{t('workflow.buy.layer1.label')}</div>
+          <FileCheck className="h-12 w-12 flex-shrink-0" />
+          <div className="space-y-3">
+            <h4 className="font-semibold text-base">{t('workflow.buy.layer1.title')}</h4>
+            <ul className="space-y-2 text-xs text-left">
               <li>• {t('workflow.buy.layer1.detail1')}</li>
               <li>• {t('workflow.buy.layer1.detail2')}</li>
+              <li>• {t('workflow.buy.layer1.detail3')}</li>
             </ul>
           </div>
+          {/* Arrow - Vertical on mobile, Horizontal on desktop */}
+          <ArrowRight className="lg:hidden absolute -bottom-3 left-1/2 transform -translate-x-1/2 h-6 w-6 text-[#0d4d4d] rotate-90" />
         </div>
-        <ArrowRight className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 h-6 w-6 text-[#1a5f5f] rotate-90" />
-      </div>
 
-      {/* Layer 2: Security */}
-      <div className="relative bg-[#1a5f5f] text-white p-4 rounded-lg">
-        <div className="flex items-start gap-3">
-          <CreditCard className="h-8 w-8 flex-shrink-0 mt-1" />
-          <div className="flex-1">
-            <h4 className="font-semibold text-sm mb-2">{t('workflow.buy.layer2.title')}</h4>
-            <ul className="space-y-1 text-xs opacity-90">
+        {/* Arrow between 1-2 - Desktop Only */}
+        <ArrowRight className="hidden lg:block absolute top-1/2 left-[23.5%] transform -translate-y-1/2 h-8 w-8 text-muted-foreground z-10" />
+
+        {/* Layer 2: Security */}
+        <div className="relative bg-[#0d4d4d] text-white p-6 rounded-lg flex flex-col items-center text-center space-y-4">
+          <div className="lg:hidden text-xs font-semibold text-gray-300 uppercase tracking-wide">{t('workflow.buy.layer2.label')}</div>
+          <Lock className="h-12 w-12 flex-shrink-0" />
+          <div className="space-y-3">
+            <h4 className="font-semibold text-base">{t('workflow.buy.layer2.title')}</h4>
+            <ul className="space-y-2 text-xs text-left">
               <li>• {t('workflow.buy.layer2.detail1')}</li>
               <li>• {t('workflow.buy.layer2.detail2')}</li>
+              <li>• {t('workflow.buy.layer2.detail3')}</li>
             </ul>
           </div>
+          {/* Arrow - Vertical on mobile, Horizontal on desktop */}
+          <ArrowRight className="lg:hidden absolute -bottom-3 left-1/2 transform -translate-x-1/2 h-6 w-6 text-[#0d4d4d] rotate-90" />
         </div>
-        <ArrowRight className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 h-6 w-6 text-[#1a5f5f] rotate-90" />
-      </div>
 
-      {/* Layer 3: Protection */}
-      <div className="relative bg-[#f5b942] text-gray-900 p-4 rounded-lg">
-        <div className="flex items-start gap-3">
-          <Shield className="h-8 w-8 flex-shrink-0 mt-1" />
-          <div className="flex-1">
-            <h4 className="font-semibold text-sm mb-2">{t('workflow.buy.layer3.title')}</h4>
-            <ul className="space-y-1 text-xs">
+        {/* Arrow between 2-3 - Desktop Only */}
+        <ArrowRight className="hidden lg:block absolute top-1/2 left-[48.5%] transform -translate-y-1/2 h-8 w-8 text-muted-foreground z-10" />
+
+        {/* Layer 3: Protection */}
+        <div className="relative bg-[#f5b942] text-gray-900 p-6 rounded-lg flex flex-col items-center text-center space-y-4">
+          <div className="lg:hidden text-xs font-semibold uppercase tracking-wide">{t('workflow.buy.layer3.label')}</div>
+          <Scale className="h-12 w-12 flex-shrink-0" />
+          <div className="space-y-3">
+            <h4 className="font-semibold text-base">{t('workflow.buy.layer3.title')}</h4>
+            <ul className="space-y-2 text-xs text-left">
               <li>• {t('workflow.buy.layer3.detail1')}</li>
               <li>• {t('workflow.buy.layer3.detail2')}</li>
               <li>• {t('workflow.buy.layer3.detail3')}</li>
             </ul>
           </div>
+          {/* Arrow - Vertical on mobile, Horizontal on desktop */}
+          <ArrowRight className="lg:hidden absolute -bottom-3 left-1/2 transform -translate-x-1/2 h-6 w-6 text-[#f5b942] rotate-90" />
         </div>
-        <ArrowRight className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 h-6 w-6 text-[#f5b942] rotate-90" />
-      </div>
 
-      {/* Layer 4: Transparency */}
-      <div className="bg-gray-400 text-gray-900 p-4 rounded-lg">
-        <div className="flex items-start gap-3">
-          <DollarSign className="h-8 w-8 flex-shrink-0 mt-1" />
-          <div className="flex-1">
-            <h4 className="font-semibold text-sm mb-2">{t('workflow.buy.layer4.title')}</h4>
-            <ul className="space-y-1 text-xs">
+        {/* Arrow between 3-4 - Desktop Only */}
+        <ArrowRight className="hidden lg:block absolute top-1/2 left-[73.5%] transform -translate-y-1/2 h-8 w-8 text-muted-foreground z-10" />
+
+        {/* Layer 4: Transparency */}
+        <div className="bg-gray-400 text-gray-900 p-6 rounded-lg flex flex-col items-center text-center space-y-4">
+          <div className="lg:hidden text-xs font-semibold uppercase tracking-wide">{t('workflow.buy.layer4.label')}</div>
+          <FileSignature className="h-12 w-12 flex-shrink-0" />
+          <div className="space-y-3">
+            <h4 className="font-semibold text-base">{t('workflow.buy.layer4.title')}</h4>
+            <ul className="space-y-2 text-xs text-left">
               <li>• {t('workflow.buy.layer4.detail1')}</li>
               <li>• {t('workflow.buy.layer4.detail2')}</li>
+              <li>• {t('workflow.buy.layer4.detail3')}</li>
             </ul>
           </div>
         </div>
