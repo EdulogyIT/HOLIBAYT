@@ -1,11 +1,88 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Home, Key, Bed, ArrowRight } from "lucide-react";
+import { Home, Key, Bed, ArrowRight, ShieldCheck, CreditCard, Shield, Search, Calendar, CheckCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useLanguage } from "@/contexts/LanguageContext";
-import buyWorkflow from "@/assets/buy-workflow-diagram.jpeg";
-import rentWorkflow from "@/assets/rent-workflow-diagram.jpeg";
-import shortstayWorkflow from "@/assets/shortstay-workflow-diagram.jpeg";
+
+// Workflow Diagram Components
+const BuyWorkflowDiagram = () => (
+  <div className="flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-2 p-4 bg-primary/5 rounded-lg">
+    <div className="flex flex-col items-center text-center flex-1">
+      <ShieldCheck className="h-8 w-8 sm:h-10 sm:w-10 text-primary mb-2" />
+      <p className="font-semibold text-xs sm:text-sm text-foreground">Verify</p>
+      <p className="text-[10px] sm:text-xs text-muted-foreground">Holibayt Verify™</p>
+    </div>
+    <ArrowRight className="h-4 w-4 sm:h-5 sm:w-5 text-primary rotate-90 sm:rotate-0 flex-shrink-0" />
+    <div className="flex flex-col items-center text-center flex-1">
+      <CreditCard className="h-8 w-8 sm:h-10 sm:w-10 text-primary mb-2" />
+      <p className="font-semibold text-xs sm:text-sm text-foreground">Pay</p>
+      <p className="text-[10px] sm:text-xs text-muted-foreground">Escrow Protection</p>
+    </div>
+    <ArrowRight className="h-4 w-4 sm:h-5 sm:w-5 text-primary rotate-90 sm:rotate-0 flex-shrink-0" />
+    <div className="flex flex-col items-center text-center flex-1">
+      <Shield className="h-8 w-8 sm:h-10 sm:w-10 text-primary mb-2" />
+      <p className="font-semibold text-xs sm:text-sm text-foreground">Protect</p>
+      <p className="text-[10px] sm:text-xs text-muted-foreground">Holibayt Protect™</p>
+    </div>
+  </div>
+);
+
+const RentWorkflowDiagram = () => (
+  <div className="flex flex-col gap-2 p-4 bg-accent/5 rounded-lg">
+    <div className="flex items-center gap-2 p-2 bg-accent/10 rounded">
+      <CheckCircle className="h-5 w-5 sm:h-6 sm:w-6 text-accent flex-shrink-0" />
+      <div className="flex-1">
+        <p className="font-semibold text-xs sm:text-sm text-foreground">Trust</p>
+        <p className="text-[10px] sm:text-xs text-muted-foreground">Verified landlords</p>
+      </div>
+    </div>
+    <div className="flex items-center gap-2 p-2 bg-accent/10 rounded">
+      <Shield className="h-5 w-5 sm:h-6 sm:w-6 text-accent flex-shrink-0" />
+      <div className="flex-1">
+        <p className="font-semibold text-xs sm:text-sm text-foreground">Security</p>
+        <p className="text-[10px] sm:text-xs text-muted-foreground">Holibayt Pay™</p>
+      </div>
+    </div>
+    <div className="flex items-center gap-2 p-2 bg-accent/10 rounded">
+      <ShieldCheck className="h-5 w-5 sm:h-6 sm:w-6 text-accent flex-shrink-0" />
+      <div className="flex-1">
+        <p className="font-semibold text-xs sm:text-sm text-foreground">Protection</p>
+        <p className="text-[10px] sm:text-xs text-muted-foreground">Holibayt Insurance™</p>
+      </div>
+    </div>
+    <div className="flex items-center gap-2 p-2 bg-accent/10 rounded">
+      <Search className="h-5 w-5 sm:h-6 sm:w-6 text-accent flex-shrink-0" />
+      <div className="flex-1">
+        <p className="font-semibold text-xs sm:text-sm text-foreground">Transparency</p>
+        <p className="text-[10px] sm:text-xs text-muted-foreground">Digital contracts</p>
+      </div>
+    </div>
+  </div>
+);
+
+const ShortStayWorkflowDiagram = () => (
+  <div className="relative p-4 bg-foreground/5 rounded-lg">
+    <div className="flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-2">
+      <div className="flex flex-col items-center text-center flex-1">
+        <Search className="h-8 w-8 sm:h-10 sm:w-10 text-foreground mb-2" />
+        <p className="font-semibold text-xs sm:text-sm text-foreground">Find & Verify</p>
+        <p className="text-[10px] sm:text-xs text-muted-foreground">Guest screening</p>
+      </div>
+      <ArrowRight className="h-4 w-4 sm:h-5 sm:w-5 text-foreground rotate-90 sm:rotate-0 flex-shrink-0" />
+      <div className="flex flex-col items-center text-center flex-1">
+        <CreditCard className="h-8 w-8 sm:h-10 sm:w-10 text-foreground mb-2" />
+        <p className="font-semibold text-xs sm:text-sm text-foreground">Book & Pay</p>
+        <p className="text-[10px] sm:text-xs text-muted-foreground">Holibayt Pay™</p>
+      </div>
+      <ArrowRight className="h-4 w-4 sm:h-5 sm:w-5 text-foreground rotate-90 sm:rotate-0 flex-shrink-0" />
+      <div className="flex flex-col items-center text-center flex-1">
+        <Shield className="h-8 w-8 sm:h-10 sm:w-10 text-foreground mb-2" />
+        <p className="font-semibold text-xs sm:text-sm text-foreground">Stay Protected</p>
+        <p className="text-[10px] sm:text-xs text-muted-foreground">Holibayt Insurance™</p>
+      </div>
+    </div>
+  </div>
+);
 
 const QuickAccessSection = () => {
   const navigate = useNavigate();
@@ -18,7 +95,7 @@ const QuickAccessSection = () => {
       title: t('buyPropertyTitle'),
       description: t('buyNewDescription') || 'Properties for sale with verified sellers and legal support.',
       subtitle: t('buyPropertySubtitle'),
-      workflowImage: buyWorkflow,
+      DiagramComponent: BuyWorkflowDiagram,
       color: 'bg-primary',
       hoverColor: 'group-hover:bg-primary',
       borderColor: 'border-primary/20 group-hover:border-primary/40',
@@ -29,7 +106,7 @@ const QuickAccessSection = () => {
       title: t('rentPropertyTitle'),
       description: t('rentNewDescription') || 'Long-term rentals with verified landlords and guaranteed payments.',
       subtitle: t('rentPropertySubtitle'),
-      workflowImage: rentWorkflow,
+      DiagramComponent: RentWorkflowDiagram,
       color: 'bg-accent',
       hoverColor: 'group-hover:bg-accent',
       borderColor: 'border-accent/20 group-hover:border-accent/40',
@@ -40,7 +117,7 @@ const QuickAccessSection = () => {
       title: t('shortStayTitle2'),
       description: t('shortStayNewDescription') || 'Your Algerian Airbnb — safe, verified, and convenient.',
       subtitle: t('shortStaySubtitle'),
-      workflowImage: shortstayWorkflow,
+      DiagramComponent: ShortStayWorkflowDiagram,
       color: 'bg-foreground',
       hoverColor: 'group-hover:bg-foreground',
       borderColor: 'border-foreground/20 group-hover:border-foreground/40',
@@ -95,13 +172,9 @@ const QuickAccessSection = () => {
                       {action.description}
                     </p>
 
-                    {/* Workflow Diagram Image */}
-                    <div className="mt-4 sm:mt-6 rounded-lg overflow-hidden border border-border/50 bg-white">
-                      <img 
-                        src={action.workflowImage} 
-                        alt={`${action.title} workflow`}
-                        className="w-full h-auto object-contain"
-                      />
+                    {/* Workflow Diagram Component */}
+                    <div className="mt-4 sm:mt-6">
+                      <action.DiagramComponent />
                     </div>
                   </div>
 
