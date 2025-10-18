@@ -2,6 +2,7 @@ import { Shield, Lock, CheckCircle2, ArrowRight } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Button } from "./ui/button";
 import { useNavigate } from "react-router-dom";
+import { formatTranslationKey } from "@/lib/utils";
 
 interface HolibaytPayExplainerProps {
   category: "buy" | "rent" | "short-stay";
@@ -11,23 +12,28 @@ export const HolibaytPayExplainer = ({ category }: HolibaytPayExplainerProps) =>
   const { t } = useLanguage();
   const navigate = useNavigate();
 
+  const getTitleOrFormatted = (key: string) => {
+    const translation = t(key);
+    return translation === key ? formatTranslationKey(key) : translation;
+  };
+
   const buyContent = {
-    title: t("holibaytPayExplainer"),
-    description: t("fundsHeldSafely"),
+    title: getTitleOrFormatted("holibaytPayExplainer"),
+    description: getTitleOrFormatted("fundsHeldSafely"),
     features: [
-      t("escrowProtectionFeature"),
-      t("verifiedDocumentsFeature"),
-      t("transactionTransparencyFeature")
+      getTitleOrFormatted("escrowProtectionFeature"),
+      getTitleOrFormatted("verifiedDocumentsFeature"),
+      getTitleOrFormatted("transactionTransparencyFeature")
     ]
   };
 
   const rentContent = {
-    title: t("holibaytPayProtection"),
-    description: t("rentDepositHeldSecurely"),
+    title: getTitleOrFormatted("holibaytPayProtection"),
+    description: getTitleOrFormatted("rentDepositHeldSecurely"),
     features: [
-      t("refundsAvailable"),
-      t("noHiddenFees"),
-      t("securePaymentProcessingFeature")
+      getTitleOrFormatted("refundsAvailable"),
+      getTitleOrFormatted("noHiddenFees"),
+      getTitleOrFormatted("securePaymentProcessingFeature")
     ]
   };
 

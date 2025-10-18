@@ -40,14 +40,15 @@ export default function LocationAutocomplete({
         if (wrapperRef.current) {
           const rect = wrapperRef.current.getBoundingClientRect();
           setDropdownPosition({
-            top: rect.bottom + window.scrollY + 8,
-            left: rect.left + window.scrollX,
+            top: rect.bottom + 8, // Use fixed positioning relative to viewport
+            left: rect.left,
             width: rect.width
           });
         }
       };
       
-      updatePosition();
+      // Use requestAnimationFrame to ensure DOM is fully updated
+      requestAnimationFrame(updatePosition);
       
       window.addEventListener('scroll', updatePosition, true);
       window.addEventListener('resize', updatePosition);

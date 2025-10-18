@@ -1,36 +1,42 @@
 import { Shield, DollarSign, Scale, AlertCircle } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { formatTranslationKey } from "@/lib/utils";
 
 export const WhyBuyWithHolibayt = () => {
   const { t } = useLanguage();
 
+  const getTitleOrFormatted = (key: string) => {
+    const translation = t(key);
+    return translation === key ? formatTranslationKey(key) : translation;
+  };
+
   const benefits = [
     {
       icon: Shield,
-      title: t("verifiedOwnership"),
-      description: t("verifiedOwnershipDesc")
+      title: getTitleOrFormatted("verifiedOwnership"),
+      description: getTitleOrFormatted("verifiedOwnershipDesc")
     },
     {
       icon: DollarSign,
-      title: t("escrowPayment"),
-      description: t("escrowPaymentDesc")
+      title: getTitleOrFormatted("escrowPayment"),
+      description: getTitleOrFormatted("escrowPaymentDesc")
     },
     {
       icon: Scale,
-      title: t("legalSupport"),
-      description: t("legalSupportDesc")
+      title: getTitleOrFormatted("legalSupport"),
+      description: getTitleOrFormatted("legalSupportDesc")
     },
     {
       icon: AlertCircle,
-      title: t("noHiddenFees"),
-      description: t("noHiddenFeesDesc")
+      title: getTitleOrFormatted("noHiddenFees"),
+      description: getTitleOrFormatted("noHiddenFeesDesc")
     }
   ];
 
   return (
     <div className="bg-gradient-to-br from-primary/5 via-background to-background border border-border rounded-xl p-8">
       <h2 className="text-2xl md:text-3xl font-bold mb-8 text-center">
-        {t("whyBuyWithHolibayt")}
+        {getTitleOrFormatted("whyBuyWithHolibayt")}
       </h2>
       
       <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">

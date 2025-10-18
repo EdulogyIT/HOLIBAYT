@@ -3,6 +3,8 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { formatTranslationKey } from "@/lib/utils";
+import { useAuth } from "@/contexts/AuthContext";
+import { toast } from "sonner";
 
 interface DigitalLeaseOptionProps {
   propertyId: string;
@@ -18,6 +20,7 @@ export const DigitalLeaseOption = ({
   className = ""
 }: DigitalLeaseOptionProps) => {
   const { t } = useLanguage();
+  const { user } = useAuth();
   const navigate = useNavigate();
 
   const getTitleOrFormatted = (key: string) => {
@@ -31,6 +34,11 @@ export const DigitalLeaseOption = ({
   };
 
   const handleStartAgreement = () => {
+    if (!user) {
+      toast.error("Please log in to create an agreement");
+      navigate("/login");
+      return;
+    }
     navigate(`/host/create-agreement?propertyId=${propertyId}`);
   };
 
