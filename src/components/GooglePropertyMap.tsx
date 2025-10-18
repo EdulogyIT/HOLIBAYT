@@ -1,6 +1,9 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { MapPin } from "lucide-react";
+import { MapPin, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { useState } from "react";
 
 interface GooglePropertyMapProps {
   location: string;
@@ -10,6 +13,9 @@ interface GooglePropertyMapProps {
 }
 
 const GooglePropertyMap = ({ location, address, latitude, longitude }: GooglePropertyMapProps) => {
+  const [isLoading, setIsLoading] = useState(true);
+  const [hasError, setHasError] = useState(false);
+
   // Build the embed URL - use coordinates if available, otherwise use location string
   const getMapUrl = () => {
     if (latitude && longitude) {
@@ -25,6 +31,18 @@ const GooglePropertyMap = ({ location, address, latitude, longitude }: GooglePro
   };
 
   console.log('🗺️ GooglePropertyMap rendered', { location, address, latitude, longitude });
+
+  const handleIframeLoad = () => {
+    console.log('🗺️ GooglePropertyMap: iframe loaded successfully');
+    setIsLoading(false);
+    setHasError(false);
+  };
+
+  const handleIframeError = () => {
+    console.error('🗺️ GooglePropertyMap: iframe failed to load');
+    setIsLoading(false);
+    setHasError(true);
+  };
 
   const getDirectionsUrl = () => {
     if (latitude && longitude) {
@@ -45,6 +63,30 @@ const GooglePropertyMap = ({ location, address, latitude, longitude }: GooglePro
       <CardContent className="space-y-4">
         {/* Google Maps Embed */}
         <div className="relative w-full h-[400px] rounded-lg overflow-hidden border">
+          {/* Loading Skeleton */}
+          {isLoading && (
+            <Skeleton className="absolute inset-0 w-full h-full" />
+          )}
+          
+          {/* Error Message */}
+          {hasError && (
+            <Alert variant="destructive" className="absolute inset-0 m-4">
+              <AlertCircle className="h-4 w-4" />
+              <AlertDescription>
+                Failed to load map. Please try opening in{" "}
+                <a 
+                  href={getDirectionsUrl()} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="underline font-medium"
+                >
+                  Google Maps
+                </a>
+              </AlertDescription>
+            </Alert>
+          )}
+          
+          {/* Map iframe */}
           <iframe
             src={getMapUrl()}
             width="100%"
@@ -55,6 +97,8 @@ const GooglePropertyMap = ({ location, address, latitude, longitude }: GooglePro
             referrerPolicy="no-referrer-when-downgrade"
             title="Property location map"
             className="absolute inset-0"
+            onLoad={handleIframeLoad}
+            onError={handleIframeError}
           />
         </div>
 
