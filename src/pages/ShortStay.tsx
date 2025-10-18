@@ -325,10 +325,6 @@ const ShortStay = () => {
                 onPropertyClick={(id) => navigate(`/property/${id}`)}
                 height="500px"
               />
-              <LocationInsights 
-                zoneName="Algeria"
-                className="mt-4"
-              />
             </div>
 
             {/* Right: Properties */}

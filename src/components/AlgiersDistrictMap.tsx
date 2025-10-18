@@ -40,20 +40,47 @@ const AlgiersDistrictMap: React.FC<AlgiersDistrictMapProps> = ({
   const markersRef = useRef<mapboxgl.Marker[]>([]);
   const [mapboxToken, setMapboxToken] = useState<string>('');
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string>('');
   const { currentLang } = useLanguage();
   const { formatPrice } = useCurrency();
 
   // Fetch Mapbox token
   useEffect(() => {
     const fetchToken = async () => {
+      console.log('🗺️ [AlgiersDistrictMap] Starting token fetch...');
+      
+      const timeoutId = setTimeout(() => {
+        console.error('🗺️ [AlgiersDistrictMap] Token fetch timeout');
+        setError('Map loading timeout. Please refresh the page.');
+        setIsLoading(false);
+      }, 10000);
+
       try {
-        const { data, error } = await supabase.functions.invoke('get-mapbox-token');
-        if (error) throw error;
+        const { data, error: invokeError } = await supabase.functions.invoke('get-mapbox-token');
+        clearTimeout(timeoutId);
+        
+        console.log('🗺️ [AlgiersDistrictMap] Token response:', { data, error: invokeError });
+        
+        if (invokeError) {
+          console.error('🗺️ [AlgiersDistrictMap] Invoke error:', invokeError);
+          setError(`Failed to load map: ${invokeError.message}`);
+          setIsLoading(false);
+          return;
+        }
+        
         if (data?.token) {
+          console.log('🗺️ [AlgiersDistrictMap] Token received successfully');
           setMapboxToken(data.token);
+        } else {
+          console.error('🗺️ [AlgiersDistrictMap] No token in response');
+          setError('Map configuration missing. Please contact support.');
+          setIsLoading(false);
         }
       } catch (error) {
-        console.error('Error fetching Mapbox token:', error);
+        clearTimeout(timeoutId);
+        console.error('🗺️ [AlgiersDistrictMap] Exception:', error);
+        setError('Failed to load map. Please refresh the page.');
+        setIsLoading(false);
       }
     };
     fetchToken();
@@ -277,6 +304,30 @@ const AlgiersDistrictMap: React.FC<AlgiersDistrictMapProps> = ({
       0.08
     ]);
   }, [selectedDistrict]);
+
+  if (error) {
+    return (
+      <Card className="flex items-center justify-center p-8" style={{ height }}>
+        <div className="text-center space-y-4">
+          <div className="text-destructive">
+            <svg className="w-12 h-12 mx-auto mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+            </svg>
+          </div>
+          <div>
+            <p className="text-sm font-medium text-destructive">{error}</p>
+            <p className="text-xs text-muted-foreground mt-1">Try refreshing the page or contact support if the issue persists.</p>
+          </div>
+          <button 
+            onClick={() => window.location.reload()} 
+            className="text-sm text-primary hover:underline"
+          >
+            Refresh Page
+          </button>
+        </div>
+      </Card>
+    );
+  }
 
   if (!mapboxToken) {
     return (

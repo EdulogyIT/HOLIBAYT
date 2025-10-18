@@ -46,21 +46,40 @@ const MapboxMap = ({
 
   useEffect(() => {
     const fetchToken = async () => {
+      console.log('🗺️ [MapboxMap] Starting token fetch...');
+      
+      const timeoutId = setTimeout(() => {
+        console.error('🗺️ [MapboxMap] Token fetch timeout');
+        setError('Map loading timeout. Please refresh the page.');
+        setIsLoading(false);
+      }, 10000);
+
       try {
-        const { data, error } = await supabase.functions.invoke('get-mapbox-token');
+        const { data, error: invokeError } = await supabase.functions.invoke('get-mapbox-token');
+        clearTimeout(timeoutId);
         
-        if (error) {
-          throw error;
+        console.log('🗺️ [MapboxMap] Token response:', { data, error: invokeError });
+        
+        if (invokeError) {
+          console.error('🗺️ [MapboxMap] Invoke error:', invokeError);
+          setError(`Failed to load map: ${invokeError.message}`);
+          setIsLoading(false);
+          return;
         }
+        
         if (data?.token) {
+          console.log('🗺️ [MapboxMap] Token received successfully');
           setMapboxToken(data.token);
+          setIsLoading(false);
         } else {
-          throw new Error('No token received from edge function');
+          console.error('🗺️ [MapboxMap] No token in response');
+          setError('Map configuration missing. Please contact support.');
+          setIsLoading(false);
         }
       } catch (err) {
-        console.error('Failed to fetch Mapbox token:', err);
+        clearTimeout(timeoutId);
+        console.error('🗺️ [MapboxMap] Exception:', err);
         setError(`Failed to load map: ${err instanceof Error ? err.message : 'Unknown error'}`);
-      } finally {
         setIsLoading(false);
       }
     };
