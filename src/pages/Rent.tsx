@@ -18,7 +18,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useWishlist } from "@/hooks/useWishlist";
 import { WishlistButton } from "@/components/WishlistButton";
 import { PropertyBadges } from "@/components/PropertyBadges";
-import InteractivePropertyMap from "@/components/InteractivePropertyMap";
+import AlgiersDistrictMap from "@/components/AlgiersDistrictMap";
 import { usePropertyTranslation } from "@/hooks/usePropertyTranslation";
 import { ConversionBanner } from "@/components/ConversionBanner";
 
@@ -42,6 +42,9 @@ interface Property {
   is_hot_deal?: boolean;
   is_verified?: boolean;
   is_new?: boolean;
+  category?: string;
+  latitude?: number;
+  longitude?: number;
 }
 
 const num = (v: unknown) => {
@@ -233,9 +236,9 @@ const Rent = () => {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {/* Left: Map & Zones */}
             <div className="lg:col-span-1">
-              <InteractivePropertyMap 
+              <AlgiersDistrictMap 
                 properties={filteredProperties}
-                selectedPropertyId={undefined}
+                onPropertyClick={(id) => navigate(`/property/${id}`)}
                 height="500px"
               />
             </div>

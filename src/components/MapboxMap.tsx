@@ -2,10 +2,11 @@ import React, { useEffect, useRef, useState } from 'react';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { MapPin } from "lucide-react";
+import { MapPin, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { supabase } from "@/integrations/supabase/client";
+import { geocodeAddressWithCache } from "@/utils/geocoding";
 
 interface MapboxMapProps {
   location: string;
@@ -34,6 +35,8 @@ const MapboxMap = ({
   const [mapboxToken, setMapboxToken] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
+  const [geocodedCoords, setGeocodedCoords] = useState<{ lat: number; lng: number } | null>(null);
+  const [isGeocoding, setIsGeocoding] = useState(false);
 
   // Validate coordinates
   const hasValidCoordinates = latitude && longitude && 
@@ -65,17 +68,43 @@ const MapboxMap = ({
     fetchToken();
   }, []);
 
+  // Geocode location if coordinates are missing
+  useEffect(() => {
+    const geocodeLocation = async () => {
+      if (hasValidCoordinates || !location || !mapboxToken || isGeocoding) return;
+
+      setIsGeocoding(true);
+      try {
+        const coords = await geocodeAddressWithCache(location, mapboxToken);
+        if (coords) {
+          setGeocodedCoords({ lat: coords.latitude, lng: coords.longitude });
+        }
+      } catch (error) {
+        console.error('Geocoding failed:', error);
+      } finally {
+        setIsGeocoding(false);
+      }
+    };
+
+    geocodeLocation();
+  }, [location, mapboxToken, hasValidCoordinates, isGeocoding]);
+
   useEffect(() => {
     if (mapboxToken && mapContainer.current && !map.current) {
       try {
         mapboxgl.accessToken = mapboxToken;
+        
+        // Use coordinates in priority: provided coords > geocoded coords > default Algiers center
+        const displayLat = hasValidCoordinates ? latitude! : geocodedCoords?.lat ?? 36.7538;
+        const displayLng = hasValidCoordinates ? longitude! : geocodedCoords?.lng ?? 3.0588;
+        const shouldShowMarker = hasValidCoordinates || geocodedCoords !== null;
         
         const useWebGL = mapboxgl.supported();
         
         map.current = new mapboxgl.Map({
           container: mapContainer.current,
           style: useWebGL ? 'mapbox://styles/mapbox/streets-v12' : 'mapbox://styles/mapbox/light-v11',
-          center: [longitude || 3.0588, latitude || 36.7538],
+          center: [displayLng, displayLat],
           zoom: zoom,
           interactive: interactive,
         });
@@ -85,7 +114,7 @@ const MapboxMap = ({
         }
 
         // Add custom property marker with "You are here" text
-        if (showPropertyMarker) {
+        if (showPropertyMarker && shouldShowMarker) {
           const el = document.createElement('div');
           el.className = 'you-are-here-marker';
           el.style.display = 'flex';
@@ -139,11 +168,7 @@ const MapboxMap = ({
           `;
 
           new mapboxgl.Marker({ element: el, anchor: 'bottom' })
-            .setLngLat([longitude || 3.0588, latitude || 36.7538])
-            .addTo(map.current);
-        } else {
-          new mapboxgl.Marker({ color: '#FF6B6B' })
-            .setLngLat([longitude || 3.0588, latitude || 36.7538])
+            .setLngLat([displayLng, displayLat])
             .addTo(map.current);
         }
       } catch (err) {
@@ -160,10 +185,36 @@ const MapboxMap = ({
         map.current = null;
       }
     };
-  }, [mapboxToken, latitude, longitude, showPropertyMarker, interactive, zoom]);
+  }, [mapboxToken, hasValidCoordinates, geocodedCoords, latitude, longitude, showPropertyMarker, interactive, zoom, t]);
+
+  if (isLoading || isGeocoding) {
+    const loadingMessage = isGeocoding ? 'Finding location...' : 'Loading map...';
+    
+    if (compact) {
+      return (
+        <div className="w-full h-full bg-muted rounded-lg flex items-center justify-center">
+          <div className="flex items-center gap-2">
+            <Loader2 className="w-4 h-4 animate-spin" />
+            <p className="text-sm text-muted-foreground">{loadingMessage}</p>
+          </div>
+        </div>
+      );
+    }
+    
+    return (
+      <Card>
+        <CardContent className="flex items-center justify-center h-64">
+          <div className="flex items-center gap-2">
+            <Loader2 className="w-5 h-5 animate-spin text-primary" />
+            <p className="text-muted-foreground">{loadingMessage}</p>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
 
   if (compact) {
-    if (!hasValidCoordinates) {
+    if (!hasValidCoordinates && !geocodedCoords) {
       return (
         <div className="w-full h-full bg-muted rounded-lg flex flex-col items-center justify-center p-4">
           <MapPin className="w-8 h-8 text-muted-foreground mb-2" />
@@ -173,11 +224,7 @@ const MapboxMap = ({
     }
     return (
       <>
-        {isLoading ? (
-          <div className="w-full h-full bg-muted rounded-lg flex items-center justify-center">
-            <p className="text-sm text-muted-foreground font-inter">Loading map...</p>
-          </div>
-        ) : error ? (
+        {error ? (
           <div className="w-full h-full bg-muted rounded-lg flex items-center justify-center">
             <p className="text-sm text-destructive font-inter">{error}</p>
           </div>
@@ -188,7 +235,7 @@ const MapboxMap = ({
     );
   }
 
-  if (!hasValidCoordinates) {
+  if (!hasValidCoordinates && !geocodedCoords) {
     return (
       <Card>
         <CardHeader>
@@ -241,11 +288,7 @@ const MapboxMap = ({
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
-        {isLoading ? (
-          <div className="w-full h-64 bg-muted rounded-lg flex items-center justify-center">
-            <p className="text-sm text-muted-foreground font-inter">Loading map...</p>
-          </div>
-        ) : error ? (
+        {error ? (
           <div className="w-full h-64 bg-muted rounded-lg flex items-center justify-center">
             <p className="text-sm text-destructive font-inter">{error}</p>
           </div>

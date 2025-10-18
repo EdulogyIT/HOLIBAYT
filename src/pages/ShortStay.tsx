@@ -22,7 +22,7 @@ import { LocationInsights } from "@/components/LocationInsights";
 import { TopRatedStays } from "@/components/TopRatedStays";
 import { PopularAmenities } from "@/components/PopularAmenities";
 import { DestinationsToExplore } from "@/components/DestinationsToExplore";
-import InteractivePropertyMap from "@/components/InteractivePropertyMap";
+import AlgiersDistrictMap from "@/components/AlgiersDistrictMap";
 
 interface Property {
   id: string;
@@ -46,6 +46,8 @@ interface Property {
   is_verified?: boolean;
   is_new?: boolean;
   pets_allowed?: boolean;
+  latitude?: number;
+  longitude?: number;
 }
 
 const num = (v: unknown) => {
@@ -318,9 +320,9 @@ const ShortStay = () => {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {/* Left: Map & Zones */}
             <div className="lg:col-span-1">
-              <InteractivePropertyMap 
+              <AlgiersDistrictMap 
                 properties={filteredProperties}
-                selectedPropertyId={undefined}
+                onPropertyClick={(id) => navigate(`/property/${id}`)}
                 height="500px"
               />
               <LocationInsights 
