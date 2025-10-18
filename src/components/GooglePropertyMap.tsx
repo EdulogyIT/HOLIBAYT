@@ -13,12 +13,18 @@ const GooglePropertyMap = ({ location, address, latitude, longitude }: GooglePro
   // Build the embed URL - use coordinates if available, otherwise use location string
   const getMapUrl = () => {
     if (latitude && longitude) {
-      return `https://maps.google.com/maps?q=${latitude},${longitude}&output=embed`;
+      const url = `https://maps.google.com/maps?q=${latitude},${longitude}&output=embed`;
+      console.log('🗺️ GooglePropertyMap: Using coordinates', { latitude, longitude, url });
+      return url;
     }
     // Fallback to location string
     const query = encodeURIComponent(location);
-    return `https://maps.google.com/maps?q=${query}&output=embed`;
+    const url = `https://maps.google.com/maps?q=${query}&output=embed`;
+    console.log('🗺️ GooglePropertyMap: Using location string', { location, query, url });
+    return url;
   };
+
+  console.log('🗺️ GooglePropertyMap rendered', { location, address, latitude, longitude });
 
   const getDirectionsUrl = () => {
     if (latitude && longitude) {
