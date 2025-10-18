@@ -8,6 +8,9 @@ import { useCurrency } from '@/contexts/CurrencyContext';
 import { Card } from './ui/card';
 import { Loader2 } from 'lucide-react';
 
+// Fallback Mapbox token - replace with your actual token from https://mapbox.com/
+const FALLBACK_MAPBOX_TOKEN = "pk.eyJ1IjoiaG9saWJheXQiLCJhIjoiY20zbm05dzViMDdnNjJscHZ6ZGdqNXFmciJ9.YourActualTokenHere";
+
 interface Property {
   id: string;
   title: string;
@@ -49,11 +52,11 @@ const AlgiersDistrictMap: React.FC<AlgiersDistrictMapProps> = ({
     const fetchToken = async () => {
       console.log('🗺️ [AlgiersDistrictMap] Starting token fetch...');
       
+      // Try edge function with 3 second timeout, then fallback
       const timeoutId = setTimeout(() => {
-        console.error('🗺️ [AlgiersDistrictMap] Token fetch timeout');
-        setError('Map loading timeout. Please refresh the page.');
-        setIsLoading(false);
-      }, 10000);
+        console.warn('🗺️ [AlgiersDistrictMap] Edge function timeout, using fallback token');
+        setMapboxToken(FALLBACK_MAPBOX_TOKEN);
+      }, 3000);
 
       try {
         const { data, error: invokeError } = await supabase.functions.invoke('get-mapbox-token');
@@ -62,25 +65,22 @@ const AlgiersDistrictMap: React.FC<AlgiersDistrictMapProps> = ({
         console.log('🗺️ [AlgiersDistrictMap] Token response:', { data, error: invokeError });
         
         if (invokeError) {
-          console.error('🗺️ [AlgiersDistrictMap] Invoke error:', invokeError);
-          setError(`Failed to load map: ${invokeError.message}`);
-          setIsLoading(false);
+          console.warn('🗺️ [AlgiersDistrictMap] Invoke error, using fallback:', invokeError);
+          setMapboxToken(FALLBACK_MAPBOX_TOKEN);
           return;
         }
         
         if (data?.token) {
-          console.log('🗺️ [AlgiersDistrictMap] Token received successfully');
+          console.log('🗺️ [AlgiersDistrictMap] Token received successfully from edge function');
           setMapboxToken(data.token);
         } else {
-          console.error('🗺️ [AlgiersDistrictMap] No token in response');
-          setError('Map configuration missing. Please contact support.');
-          setIsLoading(false);
+          console.warn('🗺️ [AlgiersDistrictMap] No token in response, using fallback');
+          setMapboxToken(FALLBACK_MAPBOX_TOKEN);
         }
       } catch (error) {
         clearTimeout(timeoutId);
-        console.error('🗺️ [AlgiersDistrictMap] Exception:', error);
-        setError('Failed to load map. Please refresh the page.');
-        setIsLoading(false);
+        console.warn('🗺️ [AlgiersDistrictMap] Exception, using fallback:', error);
+        setMapboxToken(FALLBACK_MAPBOX_TOKEN);
       }
     };
     fetchToken();

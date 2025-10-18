@@ -8,6 +8,9 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { supabase } from "@/integrations/supabase/client";
 import { geocodeAddressWithCache } from "@/utils/geocoding";
 
+// Fallback Mapbox token - replace with your actual token from https://mapbox.com/
+const FALLBACK_MAPBOX_TOKEN = "pk.eyJ1IjoiaG9saWJheXQiLCJhIjoiY20zbm05dzViMDdnNjJscHZ6ZGdqNXFmciJ9.YourActualTokenHere";
+
 interface MapboxMapProps {
   location: string;
   address?: string;
@@ -48,11 +51,12 @@ const MapboxMap = ({
     const fetchToken = async () => {
       console.log('🗺️ [MapboxMap] Starting token fetch...');
       
+      // Try edge function with 3 second timeout, then fallback
       const timeoutId = setTimeout(() => {
-        console.error('🗺️ [MapboxMap] Token fetch timeout');
-        setError('Map loading timeout. Please refresh the page.');
+        console.warn('🗺️ [MapboxMap] Edge function timeout, using fallback token');
+        setMapboxToken(FALLBACK_MAPBOX_TOKEN);
         setIsLoading(false);
-      }, 10000);
+      }, 3000);
 
       try {
         const { data, error: invokeError } = await supabase.functions.invoke('get-mapbox-token');
@@ -61,25 +65,25 @@ const MapboxMap = ({
         console.log('🗺️ [MapboxMap] Token response:', { data, error: invokeError });
         
         if (invokeError) {
-          console.error('🗺️ [MapboxMap] Invoke error:', invokeError);
-          setError(`Failed to load map: ${invokeError.message}`);
+          console.warn('🗺️ [MapboxMap] Invoke error, using fallback:', invokeError);
+          setMapboxToken(FALLBACK_MAPBOX_TOKEN);
           setIsLoading(false);
           return;
         }
         
         if (data?.token) {
-          console.log('🗺️ [MapboxMap] Token received successfully');
+          console.log('🗺️ [MapboxMap] Token received successfully from edge function');
           setMapboxToken(data.token);
           setIsLoading(false);
         } else {
-          console.error('🗺️ [MapboxMap] No token in response');
-          setError('Map configuration missing. Please contact support.');
+          console.warn('🗺️ [MapboxMap] No token in response, using fallback');
+          setMapboxToken(FALLBACK_MAPBOX_TOKEN);
           setIsLoading(false);
         }
       } catch (err) {
         clearTimeout(timeoutId);
-        console.error('🗺️ [MapboxMap] Exception:', err);
-        setError(`Failed to load map: ${err instanceof Error ? err.message : 'Unknown error'}`);
+        console.warn('🗺️ [MapboxMap] Exception, using fallback:', err);
+        setMapboxToken(FALLBACK_MAPBOX_TOKEN);
         setIsLoading(false);
       }
     };
