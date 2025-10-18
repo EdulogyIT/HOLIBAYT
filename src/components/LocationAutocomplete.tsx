@@ -68,19 +68,6 @@ export default function LocationAutocomplete({
     }
   };
 
-  const getTypeIcon = (type: string) => {
-    switch (type) {
-      case 'beach':
-        return '🏖️';
-      case 'landmark':
-        return '🏛️';
-      case 'district':
-        return '📍';
-      default:
-        return '🏙️';
-    }
-  };
-
   return (
     <div ref={wrapperRef} className="relative flex-2 min-w-0">
       <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4 z-10" />
@@ -94,9 +81,9 @@ export default function LocationAutocomplete({
       />
       
       {showSuggestions && suggestions.length > 0 && (
-        <div className="absolute top-[calc(100%+0.5rem)] left-0 right-0 bg-card border border-border rounded-lg shadow-2xl z-[9999] max-h-80 overflow-y-auto">
+        <div className="absolute top-[calc(100%+0.5rem)] left-0 right-0 min-w-[320px] bg-card border border-border rounded-lg shadow-2xl z-[9999] max-h-80 overflow-y-auto">
           {value.trim().length === 0 && (
-            <div className="px-4 py-2 text-xs font-medium text-muted-foreground bg-muted/50 border-b border-border">
+            <div className="px-5 py-3 text-sm font-medium text-muted-foreground bg-muted/50 border-b border-border sticky top-0 z-10">
               Popular destinations in Algeria
             </div>
           )}
@@ -104,12 +91,11 @@ export default function LocationAutocomplete({
             <button
               key={`${location.name}-${index}`}
               onClick={() => handleSuggestionClick(location.name)}
-              className="w-full px-4 py-3 text-left hover:bg-accent transition-colors flex items-center gap-3 border-b border-border/50 last:border-b-0"
+              className="w-full px-5 py-4 text-left hover:bg-accent transition-colors border-b border-border/50 last:border-b-0"
             >
-              <span className="text-xl">{getTypeIcon(location.type)}</span>
               <div className="flex-1">
-                <div className="font-medium text-foreground">{location.name}</div>
-                <div className="text-xs text-muted-foreground capitalize">{location.type} • {location.region}</div>
+                <div className="font-medium text-foreground text-base">{location.name}</div>
+                <div className="text-sm text-muted-foreground capitalize mt-1">{location.type} • {location.region}</div>
               </div>
             </button>
           ))}

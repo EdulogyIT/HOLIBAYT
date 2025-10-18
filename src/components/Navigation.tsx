@@ -74,11 +74,11 @@ const Navigation = () => {
             <Link to="/buy" className="text-foreground hover:text-primary transition-colors font-inter">
               {t('buy')}
             </Link>
-            <Link to="/rent" className="text-foreground hover:text-primary transition-colors font-inter">
-              {t('rent')}
-            </Link>
             <Link to="/short-stay" className="text-foreground hover:text-primary transition-colors font-inter">
               {t('shortStay')}
+            </Link>
+            <Link to="/rent" className="text-foreground hover:text-primary transition-colors font-inter">
+              {t('rent')}
             </Link>
             <Link to="/holibayt-pay" className="text-foreground hover:text-primary transition-colors font-inter">
               {t('holibaytPayBrand')}
@@ -233,11 +233,11 @@ const Navigation = () => {
                   <Link to="/buy" className="text-foreground hover:text-primary transition-colors font-inter font-medium" onClick={() => setIsMenuOpen(false)}>
                     {t('buy')}
                   </Link>
-                  <Link to="/rent" className="text-foreground hover:text-primary transition-colors font-inter font-medium" onClick={() => setIsMenuOpen(false)}>
-                    {t('rent')}
-                  </Link>
                   <Link to="/short-stay" className="text-foreground hover:text-primary transition-colors font-inter font-medium" onClick={() => setIsMenuOpen(false)}>
                     {t('shortStay')}
+                  </Link>
+                  <Link to="/rent" className="text-foreground hover:text-primary transition-colors font-inter font-medium" onClick={() => setIsMenuOpen(false)}>
+                    {t('rent')}
                   </Link>
                   <Link to="/holibayt-pay" className="text-foreground hover:text-primary transition-colors font-inter font-medium" onClick={() => setIsMenuOpen(false)}>
                     {t('holibaytPayBrand')}

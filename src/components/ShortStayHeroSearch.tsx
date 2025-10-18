@@ -290,12 +290,12 @@ const ShortStayHeroSearch: React.FC<ShortStayHeroSearchProps> = ({ onSearch }) =
         isScrolled ? "translate-y-0 opacity-100" : "-translate-y-full opacity-0"
       )}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
-          <div className="flex items-center gap-4">
+          <div className="flex items-center justify-center gap-4">
             <div className="flex items-center gap-2 text-primary">
               <Home className="h-5 w-5" />
               <span className="font-semibold text-sm">{t("shortStay")}</span>
             </div>
-            <div className="flex-1">
+            <div className="flex-1 max-w-5xl">
               <SearchForm compact />
             </div>
           </div>

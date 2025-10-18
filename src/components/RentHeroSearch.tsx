@@ -93,12 +93,12 @@ const RentHeroSearch: React.FC<RentHeroSearchProps> = ({ onSearch }) => {
         placeholder={t("whereToRent")}
         className={cn(
           "font-inter",
-          compact ? "h-11 text-sm flex-1" : "h-14 text-base"
+          compact ? "h-11 text-sm flex-1 min-w-[180px]" : "h-14 text-base"
         )}
       />
 
             <Select value={formData.housingType} onValueChange={(value) => updateFormField("housingType", value)}>
-              <SelectTrigger className={cn("text-sm", compact ? "h-11 w-[160px]" : "h-14 w-full text-base")}>
+              <SelectTrigger className={cn("text-sm", compact ? "h-11 w-[140px]" : "h-14 w-full text-base")}>
                 <SelectValue placeholder={t("housingType")} />
               </SelectTrigger>
         <SelectContent>
@@ -109,7 +109,7 @@ const RentHeroSearch: React.FC<RentHeroSearchProps> = ({ onSearch }) => {
         </SelectContent>
       </Select>
 
-      <div className={cn("relative", compact ? "w-[160px]" : "flex-1")}>
+      <div className={cn("relative", compact ? "w-[200px]" : "flex-1")}>
         <DollarSign className={cn(
           "absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground",
           compact ? "h-4 w-4" : "h-5 w-5"
@@ -151,12 +151,12 @@ const RentHeroSearch: React.FC<RentHeroSearchProps> = ({ onSearch }) => {
         isScrolled ? "translate-y-0 opacity-100" : "-translate-y-full opacity-0"
       )}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
-          <div className="flex items-center gap-4">
+          <div className="flex items-center justify-center gap-4">
             <div className="flex items-center gap-2 text-primary">
               <Home className="h-5 w-5" />
               <span className="font-semibold text-sm">{t("rent")}</span>
             </div>
-            <div className="flex-1">
+            <div className="flex-1 max-w-4xl">
               <SearchForm compact />
             </div>
           </div>
