@@ -123,7 +123,7 @@ const BuyHeroSearch: React.FC<BuyHeroSearchProps> = ({ onSearch }) => {
         <div className="relative">
           <Input
             type="number"
-            placeholder="DA"
+            placeholder="Budget (DA)"
             value={formData.budget}
             onChange={(e) => updateFormField("budget", e.target.value)}
             className={cn(

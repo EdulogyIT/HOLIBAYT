@@ -120,7 +120,7 @@ const RentHeroSearch: React.FC<RentHeroSearchProps> = ({ onSearch }) => {
         <div className="relative">
           <Input
             type="number"
-            placeholder="DA"
+            placeholder="Max rent (DA)"
             value={formData.maxRent}
             onChange={(e) => updateFormField("maxRent", e.target.value)}
             className={cn(

@@ -30,12 +30,15 @@ export function useDashboardMetrics() {
     try {
       // Fetch Platform GMV
       const { data: gmvData } = await supabase.rpc('calculate_platform_gmv', { days_back: 30 });
+      console.log('📊 Admin Dashboard - GMV from database:', gmvData);
       
       // Fetch Average Booking Value
       const { data: avgBookingData } = await supabase.rpc('calculate_avg_booking_value', { days_back: 30 });
+      console.log('📊 Admin Dashboard - Avg Booking from database:', avgBookingData);
       
       // Fetch Conversion Rate
       const { data: conversionData } = await supabase.rpc('calculate_conversion_rate', { days_back: 30 });
+      console.log('📊 Admin Dashboard - Conversion Rate from database:', conversionData);
       
       // Fetch Verification Pending Count
       const { count: pendingCount } = await supabase
@@ -73,10 +76,20 @@ export function useDashboardMetrics() {
       });
       const gmvTrend = Object.values(dailyGMV);
 
-      setMetrics({
-        platformGMV: gmvData || 0,
-        avgBookingValue: avgBookingData || 0,
-        conversionRate: conversionData || 0,
+        const finalGMV = gmvData || 0;
+        const finalAvgBooking = avgBookingData || 0;
+        const finalConversionRate = conversionData || 0;
+        
+        console.log('📊 Admin Dashboard - Final values before setting state:', {
+          finalGMV,
+          finalAvgBooking,
+          finalConversionRate
+        });
+
+        setMetrics({
+          platformGMV: finalGMV,
+          avgBookingValue: finalAvgBooking,
+          conversionRate: finalConversionRate,
         verificationPending: pendingCount || 0,
         avgResponseTime: formattedResponseTime,
         gmvTrend: gmvTrend.length > 0 ? gmvTrend : [0, 0, 0, 0, 0, 0, 0],

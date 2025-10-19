@@ -74,7 +74,7 @@ export default function LocationAutocomplete({
 
   const handleSuggestionClick = (locationName: string) => {
     onChange(locationName);
-    setShowSuggestions(false);
+    setTimeout(() => setShowSuggestions(false), 100);
   };
 
   const handleFocus = () => {
@@ -114,7 +114,7 @@ export default function LocationAutocomplete({
         value={value}
         onChange={(e) => handleInputChange(e.target.value)}
         onFocus={handleFocus}
-        className={cn("pl-12 pr-3 bg-background border border-input truncate", className)}
+        className={cn("pl-16 pr-3 bg-background border border-input truncate", className)}
       />
       
       {showSuggestions && suggestions.length > 0 && createPortal(

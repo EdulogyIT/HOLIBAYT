@@ -35,6 +35,7 @@ interface RentalAgreement {
     location: string;
     images: string[];
   };
+  is_booking_only?: boolean;
 }
 
 interface RentPayment {
@@ -107,27 +108,30 @@ const TenantAgreements = () => {
       const combinedRentals = [
         ...(agreementsData as any || []),
         // Add rent bookings without agreements as pseudo-agreements
-        ...(bookingsData || []).map(booking => ({
-          id: booking.id,
-          property_id: booking.property_id,
-          tenant_user_id: booking.user_id,
-          host_user_id: (booking.properties as any)?.user_id,
-          monthly_rent: 0,
-          deposit_amount: booking.security_deposit,
-          start_date: booking.check_in_date,
-          end_date: booking.check_out_date,
-          lease_duration_months: 12,
-          status: 'pending_agreement',
-          currency: 'DZD',
-          payment_terms: {
-            payment_day: 1,
-            late_fee_percentage: 5,
-            grace_period_days: 3,
-            payment_method: 'bank_transfer'
-          },
-          properties: booking.properties,
-          is_booking_only: true // Flag to identify these
-        }))
+        ...(bookingsData || []).map(booking => {
+          const property = booking.properties as any;
+          return {
+            id: booking.id,
+            property_id: booking.property_id,
+            tenant_user_id: booking.user_id,
+            host_user_id: property?.user_id,
+            monthly_rent: parseFloat(property?.price || '0'),
+            deposit_amount: booking.security_deposit,
+            start_date: booking.check_in_date,
+            end_date: booking.check_out_date,
+            lease_duration_months: 12,
+            status: 'pending_agreement',
+            currency: property?.price_currency || 'DZD',
+            payment_terms: {
+              payment_day: 1,
+              late_fee_percentage: 5,
+              grace_period_days: 3,
+              payment_method: 'bank_transfer'
+            },
+            properties: booking.properties,
+            is_booking_only: true
+          };
+        })
       ];
 
       setAgreements(combinedRentals);
@@ -213,7 +217,7 @@ const TenantAgreements = () => {
   return (
     <div className="min-h-screen bg-background">
       <Navigation />
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-4 py-24 md:py-28">
         <div className="mb-8">
           <h1 className="text-3xl font-bold mb-2">My Rentals</h1>
           <p className="text-muted-foreground">Manage your rental agreements and payments</p>
@@ -342,13 +346,20 @@ const TenantAgreements = () => {
                       <DollarSign className="w-4 h-4 mr-2" />
                       {pendingPayment ? 'Payment in Progress' : 'Pay Rent Now'}
                     </Button>
-                    <Button
-                      variant="outline"
-                      onClick={() => navigate(`/agreement/${agreement.id}`)}
-                    >
-                      <FileText className="w-4 h-4 mr-2" />
-                      View Agreement
-                    </Button>
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      if (agreement.is_booking_only) {
+                        toast.info('Rental agreement pending. Host will create the agreement soon.');
+                      } else {
+                        navigate(`/agreement/${agreement.id}`);
+                      }
+                    }}
+                    disabled={agreement.is_booking_only}
+                  >
+                    <FileText className="w-4 h-4 mr-2" />
+                    {agreement.is_booking_only ? 'Agreement Pending' : 'View Agreement'}
+                  </Button>
                   </div>
                 </CardContent>
               </Card>
