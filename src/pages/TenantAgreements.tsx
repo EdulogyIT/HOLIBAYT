@@ -64,23 +64,73 @@ const TenantAgreements = () => {
     if (!user) return;
 
     try {
-      const { data: agreementsData, error: agreementsError } = await supabase
-        .from('rental_agreements')
-        .select(`
-          *,
-          properties (
-            title,
-            location,
-            images
-          )
-        `)
-        .eq('tenant_user_id', user.id)
-        .in('status', ['active', 'pending_tenant', 'pending_host'])
-        .order('created_at', { ascending: false });
+      // Fetch both rental agreements AND rent bookings
+      const [agreementsResult, bookingsResult] = await Promise.all([
+        supabase
+          .from('rental_agreements')
+          .select(`
+            *,
+            properties (
+              title,
+              location,
+              images
+            )
+          `)
+          .eq('tenant_user_id', user.id)
+          .in('status', ['active', 'pending_tenant', 'pending_host'])
+          .order('created_at', { ascending: false }),
+        
+        supabase
+          .from('bookings')
+          .select(`
+            *,
+            properties!inner (
+              title,
+              location,
+              images,
+              category
+            )
+          `)
+          .eq('user_id', user.id)
+          .eq('properties.category', 'rent')
+          .in('status', ['pending_agreement', 'confirmed', 'payment_escrowed'])
+          .order('created_at', { ascending: false })
+      ]);
+
+      const { data: agreementsData, error: agreementsError } = agreementsResult;
+      const { data: bookingsData, error: bookingsError } = bookingsResult;
 
       if (agreementsError) throw agreementsError;
+      if (bookingsError) console.error('Error fetching rent bookings:', bookingsError);
 
-      setAgreements(agreementsData as any || []);
+      // Combine agreements and bookings - show bookings as "pending agreement" rentals
+      const combinedRentals = [
+        ...(agreementsData as any || []),
+        // Add rent bookings without agreements as pseudo-agreements
+        ...(bookingsData || []).map(booking => ({
+          id: booking.id,
+          property_id: booking.property_id,
+          tenant_user_id: booking.user_id,
+          host_user_id: (booking.properties as any)?.user_id,
+          monthly_rent: 0,
+          deposit_amount: booking.security_deposit,
+          start_date: booking.check_in_date,
+          end_date: booking.check_out_date,
+          lease_duration_months: 12,
+          status: 'pending_agreement',
+          currency: 'DZD',
+          payment_terms: {
+            payment_day: 1,
+            late_fee_percentage: 5,
+            grace_period_days: 3,
+            payment_method: 'bank_transfer'
+          },
+          properties: booking.properties,
+          is_booking_only: true // Flag to identify these
+        }))
+      ];
+
+      setAgreements(combinedRentals);
 
       // Fetch payments for each agreement
       if (agreementsData && agreementsData.length > 0) {

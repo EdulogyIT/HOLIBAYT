@@ -120,16 +120,18 @@ const BuyHeroSearch: React.FC<BuyHeroSearchProps> = ({ onSearch }) => {
           </SelectContent>
         </Select>
 
-        <Input
-          type="number"
-          placeholder={t("budgetPlaceholder")}
-          value={formData.budget}
-          onChange={(e) => updateFormField("budget", e.target.value)}
-          className={cn(
-            "font-inter bg-background border border-input px-4",
-            compact ? "h-12 text-sm w-full sm:w-auto sm:min-w-[140px]" : "h-14 text-base w-full lg:w-[220px]"
-          )}
-        />
+        <div className="relative">
+          <Input
+            type="number"
+            placeholder="DA"
+            value={formData.budget}
+            onChange={(e) => updateFormField("budget", e.target.value)}
+            className={cn(
+              "font-inter bg-background border border-input px-4",
+              compact ? "h-12 text-sm w-full sm:w-auto sm:min-w-[140px]" : "h-14 text-base w-full lg:w-[220px]"
+            )}
+          />
+        </div>
 
         <Button
           type="submit"

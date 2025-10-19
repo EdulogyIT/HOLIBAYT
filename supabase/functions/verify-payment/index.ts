@@ -112,9 +112,90 @@ serve(async (req) => {
       throw new Error(`Failed to update payment: ${updateError.message}`);
     }
 
-    // If payment is successful and there's booking data, create the booking (using service client)
-    if (newStatus === 'completed' && payment.metadata?.bookingData) {
-      const bookingData = payment.metadata.bookingData;
+    // If payment is successful and there's booking data OR security deposit for rent, create the booking
+    if (newStatus === 'completed' && (payment.metadata?.bookingData || payment.payment_type === 'security_deposit')) {
+      const bookingData = payment.metadata?.bookingData;
+      // Get property details to determine category
+      const { data: property } = await dbClient
+        .from('properties')
+        .select('category, commission_rate, user_id')
+        .eq('id', payment.property_id)
+        .single();
+
+      // For rent properties with security deposit, create booking without date validation
+      if (property?.category === 'rent' && payment.payment_type === 'security_deposit' && !bookingData) {
+        logStep("Creating rent security deposit booking");
+        
+        // Check if booking already exists for this payment
+        const { data: existingBooking } = await dbClient
+          .from("bookings")
+          .select("*")
+          .eq("payment_id", paymentId)
+          .maybeSingle();
+
+        if (!existingBooking) {
+          const { data: newBooking, error: createError } = await dbClient
+            .from('bookings')
+            .insert({
+              user_id: user.id,
+              property_id: payment.property_id,
+              payment_id: paymentId,
+              check_in_date: new Date().toISOString().split('T')[0], // Placeholder
+              check_out_date: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], // +1 year
+              guests_count: 1,
+              total_amount: payment.amount,
+              booking_fee: 0,
+              security_deposit: payment.amount,
+              status: 'pending_agreement', // Waiting for rental agreement
+            })
+            .select()
+            .single();
+
+          if (!createError && newBooking) {
+            logStep("Rent security deposit booking created", { bookingId: newBooking.id });
+            
+            // Notify user
+            await dbClient
+              .from('notifications')
+              .insert({
+                user_id: user.id,
+                title: '✅ Security Deposit Paid',
+                message: 'Your security deposit has been received. The host will contact you to finalize the rental agreement.',
+                type: 'payment_success',
+                related_id: newBooking.id
+              });
+
+            // Notify host
+            if (property?.user_id) {
+              await dbClient
+                .from('notifications')
+                .insert({
+                  user_id: property.user_id,
+                  title: '💰 Security Deposit Received',
+                  message: `Security deposit received for your rental property. Please create a rental agreement for ${user.email}.`,
+                  type: 'security_deposit_received',
+                  related_id: newBooking.id
+                });
+            }
+          }
+        }
+
+        return new Response(JSON.stringify({ 
+          success: true,
+          paymentId,
+          status: newStatus,
+          paymentIntentId,
+          message: 'Security deposit paid. Host will contact you for rental agreement.'
+        }), {
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+          status: 200,
+        });
+      }
+
+      // For short-stay bookings, check availability
+      if (!bookingData) {
+        throw new Error('Missing booking data for non-rent property');
+      }
       
       // CHECK FOR EXISTING BOOKINGS - PREVENT DOUBLE BOOKING
       const { data: existingBookings, error: checkError } = await dbClient
@@ -189,13 +270,6 @@ serve(async (req) => {
       if (existingBooking) {
         logStep("Booking already exists for this payment", { bookingId: existingBooking.id });
       } else {
-        // Get property details for commission calculation
-        const { data: property } = await dbClient
-          .from('properties')
-          .select('commission_rate, user_id')
-          .eq('id', payment.property_id)
-          .single();
-        
         // Create new booking
         const { data: newBooking, error: createError } = await dbClient
           .from('bookings')

@@ -1089,6 +1089,7 @@ export type Database = {
           ownership_verified: boolean | null
           response_rate: number | null
           role: Database["public"]["Enums"]["app_role"]
+          spoken_languages: Json | null
           total_reviews: number | null
           transaction_count: number | null
           trust_score: number | null
@@ -1112,6 +1113,7 @@ export type Database = {
           ownership_verified?: boolean | null
           response_rate?: number | null
           role?: Database["public"]["Enums"]["app_role"]
+          spoken_languages?: Json | null
           total_reviews?: number | null
           transaction_count?: number | null
           trust_score?: number | null
@@ -1135,6 +1137,7 @@ export type Database = {
           ownership_verified?: boolean | null
           response_rate?: number | null
           role?: Database["public"]["Enums"]["app_role"]
+          spoken_languages?: Json | null
           total_reviews?: number | null
           transaction_count?: number | null
           trust_score?: number | null
