@@ -20,44 +20,61 @@ serve(async (req) => {
   try {
     logStep("Function started");
 
-    // Initialize Supabase clients
-    const authClient = createClient(
-      Deno.env.get("SUPABASE_URL") ?? "",
-      Deno.env.get("SUPABASE_ANON_KEY") ?? "",
-      { auth: { persistSession: false } }
-    );
-
+    // Initialize Supabase client with service role
     const dbClient = createClient(
       Deno.env.get("SUPABASE_URL") ?? "",
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
       { auth: { persistSession: false } }
     );
 
-    // Parse request body first (only once!)
+    // Parse request body
     const requestBody = await req.json();
     const { bookingId, reason } = requestBody;
     
-    if (!bookingId) throw new Error("Booking ID is required");
+    logStep("Request received", { bookingId, reason });
     
-    // Authenticate user (skip for system auto-release calls)
-    const authHeader = req.headers.get("Authorization");
-    let user = null;
+    if (!bookingId) {
+      throw new Error("Booking ID is required");
+    }
+    
+    // Check if this is a system call (auto-release) or user-initiated
     const isSystemCall = reason === 'auto_release_24h_post_checkout';
+    logStep("Call type determined", { isSystemCall });
     
-    if (authHeader) {
-      const token = authHeader.replace("Bearer ", "");
-      const { data: { user: authUser }, error: userError } = await authClient.auth.getUser(token);
-      if (!userError && authUser) {
+    // Authenticate user (only for non-system calls)
+    let user = null;
+    if (!isSystemCall) {
+      const authHeader = req.headers.get("Authorization");
+      if (!authHeader) {
+        throw new Error("Authorization header is required for user calls");
+      }
+
+      const authClient = createClient(
+        Deno.env.get("SUPABASE_URL") ?? "",
+        Deno.env.get("SUPABASE_ANON_KEY") ?? "",
+        { auth: { persistSession: false } }
+      );
+      
+      try {
+        const token = authHeader.replace("Bearer ", "");
+        const { data: { user: authUser }, error: userError } = await authClient.auth.getUser(token);
+        
+        if (userError || !authUser) {
+          logStep("Authentication failed", { error: userError?.message });
+          throw new Error("User not authenticated");
+        }
+        
         user = authUser;
         logStep("User authenticated", { userId: user.id });
+      } catch (authError) {
+        logStep("Authentication error", { error: authError.message });
+        throw new Error("Authentication failed");
       }
-    }
-    
-    if (!user && !isSystemCall) {
-      throw new Error("User not authenticated");
+    } else {
+      logStep("System call - skipping user authentication");
     }
 
-    logStep("Request parsed", { bookingId, reason });
+    logStep("Authentication complete", { hasUser: !!user, isSystemCall });
 
     // Fetch booking with related data
     const { data: booking, error: bookingError } = await dbClient

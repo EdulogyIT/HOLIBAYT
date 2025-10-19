@@ -91,6 +91,24 @@ serve(async (req) => {
           })
         });
 
+        if (!response.ok) {
+          const errorText = await response.text();
+          logStep("Release escrow HTTP error", { 
+            bookingId: booking.id, 
+            status: response.status,
+            statusText: response.statusText,
+            error: errorText 
+          });
+          results.push({ bookingId: booking.id, status: 'failed', error: `HTTP ${response.status}: ${errorText}` });
+          
+          // Unmark as scheduled so it can be retried
+          await dbClient
+            .from('bookings')
+            .update({ auto_release_scheduled: false })
+            .eq('id', booking.id);
+          continue;
+        }
+
         const result = await response.json();
 
         if (result.success) {
