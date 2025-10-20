@@ -80,9 +80,6 @@ const Navigation = () => {
             <Link to="/rent" className="text-foreground hover:text-primary transition-colors font-inter text-sm lg:text-base">
               {t('rent')}
             </Link>
-            <Link to="/holibayt-pay" className="text-foreground hover:text-primary transition-colors font-inter text-sm lg:text-base">
-              {t('holibaytPayBrand')}
-            </Link>
             <Link to="/about" className="text-foreground hover:text-primary transition-colors font-inter text-sm lg:text-base">
               {t('about')}
             </Link>

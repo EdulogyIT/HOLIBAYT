@@ -127,7 +127,7 @@ export default function LocationAutocomplete({
       {showSuggestions && suggestions.length > 0 && createPortal(
         <div 
           ref={dropdownRef}
-          className="fixed w-[calc(100vw-32px)] sm:min-w-[400px] sm:w-max sm:max-w-[600px] bg-card border border-border rounded-lg shadow-2xl z-[100000] max-h-[60vh] sm:max-h-80 overflow-y-auto touch-action-manipulation"
+          className="fixed w-[calc(100vw-32px)] sm:min-w-[400px] sm:w-max sm:max-w-[600px] bg-card border border-border rounded-lg shadow-2xl z-[100000] max-h-[40vh] sm:max-h-64 overflow-y-auto touch-action-manipulation"
           style={{
             top: `${dropdownPosition.top}px`,
             left: `${Math.max(16, dropdownPosition.left)}px`,

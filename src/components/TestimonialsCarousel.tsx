@@ -10,6 +10,8 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import Autoplay from "embla-carousel-autoplay";
 
 interface Testimonial {
   id: string;
@@ -76,6 +78,7 @@ const TestimonialsCarousel = () => {
   const { t } = useLanguage();
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
   const [loading, setLoading] = useState(true);
+  const [selectedTestimonial, setSelectedTestimonial] = useState<Testimonial | null>(null);
 
   useEffect(() => {
     fetchTestimonials();
@@ -124,13 +127,22 @@ const TestimonialsCarousel = () => {
             align: "start",
             loop: true,
           }}
+          plugins={[
+            Autoplay({
+              delay: 4000,
+              stopOnInteraction: true,
+            })
+          ]}
           className="w-full max-w-6xl mx-auto"
         >
           <CarouselContent>
             {displayTestimonials.map((testimonial, index) => (
               <CarouselItem key={index} className="md:basis-1/2 lg:basis-1/3">
                 <div className="p-1">
-                  <Card className="h-full border-2 border-border hover:border-primary/30 hover:shadow-elegant transition-all duration-300">
+                  <Card 
+                    className="h-full border-2 border-border hover:border-primary/30 hover:shadow-elegant transition-all duration-300 cursor-pointer"
+                    onClick={() => setSelectedTestimonial(testimonial)}
+                  >
                     <CardContent className="p-6 flex flex-col h-full">
                       {/* Quote Icon */}
                       <Quote className="h-8 w-8 text-primary/20 mb-4" />
@@ -166,6 +178,59 @@ const TestimonialsCarousel = () => {
           <CarouselPrevious />
           <CarouselNext />
         </Carousel>
+
+        {/* Testimonial Detail Dialog */}
+        <Dialog open={!!selectedTestimonial} onOpenChange={() => setSelectedTestimonial(null)}>
+          <DialogContent className="max-w-2xl">
+            <DialogHeader>
+              <DialogTitle className="text-2xl font-playfair">
+                {t('clientTestimonial') || 'Client Testimonial'}
+              </DialogTitle>
+            </DialogHeader>
+            {selectedTestimonial && (
+              <div className="space-y-6">
+                {/* Rating */}
+                <div className="flex items-center gap-1">
+                  {[...Array(5)].map((_, i) => (
+                    <Star
+                      key={i}
+                      className={`h-6 w-6 ${
+                        i < selectedTestimonial.rating
+                          ? "fill-amber-400 text-amber-400"
+                          : "fill-muted text-muted"
+                      }`}
+                    />
+                  ))}
+                  <span className="ml-2 text-lg font-semibold text-foreground">
+                    {selectedTestimonial.rating}/5
+                  </span>
+                </div>
+
+                {/* Review Text */}
+                <p className="text-base text-foreground font-inter leading-relaxed">
+                  "{selectedTestimonial.review_text}"
+                </p>
+
+                {/* Client Info */}
+                <div className="pt-4 border-t border-border">
+                  <div className="flex items-center gap-3">
+                    <div className="w-12 h-12 rounded-full bg-primary flex items-center justify-center text-primary-foreground font-inter font-semibold text-lg">
+                      {selectedTestimonial.avatar_initials}
+                    </div>
+                    <div>
+                      <p className="font-semibold text-foreground text-lg font-playfair">
+                        {selectedTestimonial.client_name}
+                      </p>
+                      <p className="text-sm text-muted-foreground font-inter">
+                        {selectedTestimonial.client_location}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+          </DialogContent>
+        </Dialog>
       </div>
     </section>
   );

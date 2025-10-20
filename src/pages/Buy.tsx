@@ -23,6 +23,7 @@ import { InteractivePropertyMarkerMap } from "@/components/InteractivePropertyMa
 import CitiesSection from "@/components/CitiesSection";
 import { usePropertyTranslation } from "@/hooks/usePropertyTranslation";
 import { ConversionBanner } from "@/components/ConversionBanner";
+import WorkflowInteractive from "@/components/WorkflowInteractive";
 
 interface Property {
   id: string;
@@ -346,6 +347,8 @@ const Buy = () => {
             </div>
           </div>
         </div>
+
+        <WorkflowInteractive mode="buy" />
 
         <div className="py-16">
           <CitiesSection />

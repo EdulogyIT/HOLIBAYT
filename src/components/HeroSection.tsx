@@ -302,26 +302,26 @@ const HeroSection = () => {
           alt="Architecture algérienne moderne" 
           className="w-full h-full object-cover"
         />
-        <div className="absolute inset-0 bg-gradient-to-br from-background/70 via-background/50 to-background/60"></div>
+        <div className="absolute inset-0 bg-gradient-to-br from-background/40 via-background/30 to-background/35"></div>
       </div>
 
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center pt-20 md:pt-16">
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center pt-24 sm:pt-20 md:pt-16">
         {/* Hero Content */}
-        <div className="max-w-6xl mx-auto mb-12">
-          <div className="text-center mb-8">
-            <h1 className="text-5xl md:text-7xl lg:text-8xl font-playfair font-bold text-foreground mb-4 leading-tight">
+        <div className="max-w-6xl mx-auto mb-8 sm:mb-12">
+          <div className="text-center mb-6 sm:mb-8">
+            <h1 className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-playfair font-bold text-foreground mb-3 sm:mb-4 leading-tight px-2">
               {t('heroTrustTagline') || 'Holibayt'}
             </h1>
-            <p className="text-2xl md:text-3xl lg:text-4xl font-playfair font-medium text-primary mb-6 leading-tight">
+            <p className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-playfair font-medium text-primary mb-4 sm:mb-6 leading-tight px-2">
               {t('heroSubheading') || 'Buy. Rent. Live Algeria safely with verified listings and secure payments'}
             </p>
-            <p className="text-lg md:text-xl text-muted-foreground font-inter font-light max-w-3xl mx-auto leading-relaxed">
+            <p className="text-base sm:text-lg md:text-xl text-muted-foreground font-inter font-light max-w-3xl mx-auto leading-relaxed px-4">
               {t('heroTrustDescription') || 'Holibayt combines verified owners, legal support, and escrow protection for every transaction.'}
             </p>
           </div>
           
           {/* Mode Selector */}
-          <div className="mb-6 sm:mb-8">
+          <div className="mb-6 sm:mb-8 px-2">
             <div className="inline-flex flex-wrap sm:flex-nowrap bg-card/90 backdrop-blur-md rounded-xl sm:rounded-2xl p-1 sm:p-1.5 border border-border/30 shadow-elegant justify-center gap-1 max-w-full">
               {modes.map((mode) => {
                 const IconComponent = mode.icon;
@@ -329,14 +329,14 @@ const HeroSection = () => {
                   <button
                     key={mode.id}
                     onClick={() => setSelectedMode(mode.id)}
-                    className={`flex items-center gap-2 sm:gap-3 px-4 sm:px-6 py-3 sm:py-4 rounded-lg sm:rounded-xl font-inter font-semibold text-sm sm:text-base transition-all duration-300 min-h-[48px] min-w-[100px] ${
+                    className={`flex items-center gap-2 sm:gap-3 px-3 sm:px-6 py-2.5 sm:py-4 rounded-lg sm:rounded-xl font-inter font-semibold text-xs sm:text-sm md:text-base transition-all duration-300 min-h-[44px] sm:min-h-[48px] min-w-[85px] sm:min-w-[100px] ${
                       selectedMode === mode.id
                         ? 'bg-primary text-primary-foreground shadow-lg scale-105'
                         : 'text-muted-foreground hover:text-foreground hover:bg-muted/30'
                     }`}
                   >
                     <IconComponent className="h-4 w-4 sm:h-5 sm:w-5" />
-                    <span className="whitespace-nowrap">{mode.label}</span>
+                    <span className="whitespace-nowrap text-xs sm:text-sm md:text-base">{mode.label}</span>
                   </button>
                 );
               })}
@@ -344,7 +344,7 @@ const HeroSection = () => {
           </div>
 
           {/* Dynamic Search Card */}
-          <Card className="max-w-6xl mx-auto p-3 sm:p-4 md:p-6 lg:p-8 bg-card/90 backdrop-blur-md border-border/30 shadow-elegant rounded-2xl sm:rounded-3xl overflow-x-hidden">
+          <Card className="search-card max-w-6xl mx-auto p-4 sm:p-6 md:p-8 bg-card/90 backdrop-blur-md border-border/30 shadow-elegant rounded-2xl sm:rounded-3xl overflow-x-hidden">
             <div className="flex flex-col gap-3 sm:gap-4">
               {/* Location Input with Autocomplete - Always full width */}
               <LocationAutocomplete
@@ -378,7 +378,7 @@ const HeroSection = () => {
         </div>
 
         {/* Quick Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 max-w-3xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-8 max-w-3xl mx-auto px-4">
           <div className="text-center">
             <div className="text-2xl md:text-3xl lg:text-4xl font-playfair font-bold text-primary mb-2">10K+</div>
             <div className="text-muted-foreground font-inter text-sm md:text-base">{t('availableProperties')}</div>

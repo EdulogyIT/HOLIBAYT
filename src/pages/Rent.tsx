@@ -22,6 +22,7 @@ import { InteractivePropertyMarkerMap } from "@/components/InteractivePropertyMa
 import { usePropertyTranslation } from "@/hooks/usePropertyTranslation";
 import { ConversionBanner } from "@/components/ConversionBanner";
 import CitiesSection from "@/components/CitiesSection";
+import WorkflowInteractive from "@/components/WorkflowInteractive";
 
 interface Property {
   id: string;
@@ -319,6 +320,8 @@ const Rent = () => {
             </div>
           </div>
         </div>
+
+        <WorkflowInteractive mode="rent" />
 
         <CitiesSection />
 
