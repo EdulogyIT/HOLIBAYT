@@ -177,13 +177,6 @@ const ShortStayHeroSearch: React.FC<ShortStayHeroSearchProps> = ({ onSearch }) =
         ) : (
           <>
             <div className="flex flex-col lg:flex-row gap-4">
-              <LocationAutocomplete
-                value={formData.location}
-                onChange={(value) => updateFormField("location", value)}
-                placeholder={t("stayDestination")}
-                className="h-14 text-base font-inter"
-              />
-
               <div className="flex-1">
                 <GuestsSelector
                   value={formData.guests}

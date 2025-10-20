@@ -89,7 +89,10 @@ const TenantAgreements = () => {
               title,
               location,
               images,
-              category
+              category,
+              price,
+              price_currency,
+              user_id
             )
           `)
           .eq('user_id', user.id)
