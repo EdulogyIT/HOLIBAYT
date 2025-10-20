@@ -175,9 +175,19 @@ const TestimonialsCarousel = () => {
               </CarouselItem>
             ))}
           </CarouselContent>
-          <CarouselPrevious />
-          <CarouselNext />
+          <CarouselPrevious className="hidden md:flex" />
+          <CarouselNext className="hidden md:flex" />
         </Carousel>
+
+        {/* Progress Dots - Mobile Only */}
+        <div className="flex justify-center gap-2 mt-6 md:hidden">
+          {displayTestimonials.slice(0, 6).map((_, idx) => (
+            <div 
+              key={idx} 
+              className="w-2 h-2 rounded-full bg-primary/30 transition-all duration-300"
+            />
+          ))}
+        </div>
 
         {/* Testimonial Detail Dialog */}
         <Dialog open={!!selectedTestimonial} onOpenChange={() => setSelectedTestimonial(null)}>

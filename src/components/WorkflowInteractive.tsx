@@ -1,16 +1,27 @@
-import { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ChevronRight } from "lucide-react";
+import { 
+  FileCheck, 
+  Lock, 
+  Scale, 
+  ShieldCheck, 
+  Home, 
+  FileSignature, 
+  DollarSign,
+  ArrowRight,
+  CheckCircle2
+} from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 
-interface WorkflowStep {
+interface WorkflowLayer {
   number: number;
   title: string;
-  description: string;
-  details: string;
-  icon: string;
+  subtitle: string;
+  points: string[];
+  icon: React.ComponentType<any>;
+  color: string;
+  borderColor: string;
+  bgColor: string;
 }
 
 interface WorkflowInteractiveProps {
@@ -19,153 +30,234 @@ interface WorkflowInteractiveProps {
 
 const WorkflowInteractive = ({ mode }: WorkflowInteractiveProps) => {
   const { t } = useLanguage();
-  const [selectedStep, setSelectedStep] = useState<WorkflowStep | null>(null);
 
-  const getBuySteps = (): WorkflowStep[] => [
+  const getBuyLayers = (): WorkflowLayer[] => [
     {
       number: 1,
-      title: t('buy.layer1') || 'Layer 1: Find Your Dream Property',
-      description: t('buy.layer1Desc') || 'Browse verified listings with virtual tours',
-      details: t('buy.layer1Details') || 'Search through thousands of verified properties with detailed photos, virtual tours, and accurate descriptions. Filter by location, price, size, and amenities to find exactly what you need.',
-      icon: '🏠'
+      title: t('trustLayer') || 'Trust Layer',
+      subtitle: t('findVerifiedProperty') || 'Find a Verified Property',
+      points: [
+        t('everyPropertyVerified') || 'Every property and seller verified',
+        t('holibaytVerifyCert') || 'Holibayt Verify™ certification',
+        t('transparentListings') || 'Transparent, detailed listings'
+      ],
+      icon: FileCheck,
+      color: 'text-blue-600',
+      borderColor: 'border-blue-500/50',
+      bgColor: 'bg-blue-50 dark:bg-blue-950/20'
     },
     {
       number: 2,
-      title: t('buy.layer2') || 'Layer 2: Legal Due Diligence',
-      description: t('buy.layer2Desc') || 'Property verification and legal support',
-      details: t('buy.layer2Details') || 'Our legal team verifies property ownership, checks for liens, ensures all documentation is in order, and provides full legal support throughout the purchase process.',
-      icon: '⚖️'
+      title: t('securityLayer') || 'Security Layer',
+      subtitle: t('secureDepositHolibaytPay') || 'Secure Deposit via Holibayt Pay™',
+      points: [
+        t('buyerDepositLocked') || "Buyer's deposit locked in escrow",
+        t('releaseAfterDueDiligence') || 'Release only after due diligence',
+        t('transparentMilestones') || 'Transparent milestone-based flow'
+      ],
+      icon: Lock,
+      color: 'text-green-600',
+      borderColor: 'border-green-500/50',
+      bgColor: 'bg-green-50 dark:bg-green-950/20'
     },
     {
       number: 3,
-      title: t('buy.layer3') || 'Layer 3: Secure Payment',
-      description: t('buy.layer3Desc') || 'Escrow-protected transaction',
-      details: t('buy.layer3Details') || 'Your payment is held securely in escrow until all conditions are met and you receive your property keys. Holibayt Pay™ protects both buyer and seller.',
-      icon: '🔒'
+      title: t('protectionLayer') || 'Protection Layer',
+      subtitle: t('legalDueDiligence') || 'Legal Due Diligence',
+      points: [
+        t('propertyTitleCheck') || 'Property title verification',
+        t('lawyerAssistance') || 'Holibayt lawyer assistance',
+        t('contractReview') || 'Contract review and notary support'
+      ],
+      icon: Scale,
+      color: 'text-amber-600',
+      borderColor: 'border-amber-500/50',
+      bgColor: 'bg-amber-50 dark:bg-amber-950/20'
     },
     {
       number: 4,
-      title: t('buy.layer4') || 'Layer 4: Key Handover',
-      description: t('buy.layer4Desc') || 'Complete the transaction safely',
-      details: t('buy.layer4Details') || 'Meet at our verified location for key handover. Once confirmed, payment is released to the seller. You\'re now a proud property owner in Algeria!',
-      icon: '🔑'
+      title: t('transparencyLayer') || 'Transparency Layer',
+      subtitle: t('keysAndCompletion') || 'Key Handover & Completion',
+      points: [
+        t('verifiedKeyHandover') || 'Verified key handover',
+        t('fundsReleasedToSeller') || 'Funds released to seller',
+        t('digitalProofOfOwnership') || 'Digital proof of ownership'
+      ],
+      icon: ShieldCheck,
+      color: 'text-pink-600',
+      borderColor: 'border-pink-500/50',
+      bgColor: 'bg-pink-50 dark:bg-pink-950/20'
     }
   ];
 
-  const getRentSteps = (): WorkflowStep[] => [
+  const getRentLayers = (): WorkflowLayer[] => [
     {
       number: 1,
-      title: t('rent.layer1') || 'Layer 1: Discover Rental Properties',
-      description: t('rent.layer1Desc') || 'Find verified rental listings',
-      details: t('rent.layer1Details') || 'Browse through verified rental properties with detailed information, photos, and rental terms. Filter by location, budget, size, and lease duration.',
-      icon: '🏘️'
+      title: t('trustLayer') || 'Trust Layer',
+      subtitle: t('findVerifiedRental') || 'Find a Verified Rental',
+      points: [
+        t('verifiedLandlords') || 'Verified landlords only',
+        t('authenticPhotos') || 'Authentic photos and descriptions',
+        t('transparentTerms') || 'Transparent lease terms'
+      ],
+      icon: Home,
+      color: 'text-blue-600',
+      borderColor: 'border-blue-500/50',
+      bgColor: 'bg-blue-50 dark:bg-blue-950/20'
     },
     {
       number: 2,
-      title: t('rent.layer2') || 'Layer 2: Digital Lease Agreement',
-      description: t('rent.layer2Desc') || 'Sign secure digital contracts',
-      details: t('rent.layer2Details') || 'Review and sign legally-binding digital lease agreements with clear terms. Our system ensures both parties are protected with transparent rental conditions.',
-      icon: '📄'
+      title: t('securityLayer') || 'Security Layer',
+      subtitle: t('digitalLeaseAgreement') || 'Digital Lease Agreement',
+      points: [
+        t('legallyBindingContract') || 'Legally-binding digital contract',
+        t('clearRentalTerms') || 'Clear rental terms and conditions',
+        t('bothPartiesProtected') || 'Protection for both parties'
+      ],
+      icon: FileSignature,
+      color: 'text-green-600',
+      borderColor: 'border-green-500/50',
+      bgColor: 'bg-green-50 dark:bg-green-950/20'
     },
     {
       number: 3,
-      title: t('rent.layer3') || 'Layer 3: Secure Deposit & Payment',
-      description: t('rent.layer3Desc') || 'Protected deposit and rent payment',
-      details: t('rent.layer3Details') || 'Your security deposit is held safely in escrow. Monthly rent payments are processed securely through Holibayt Pay™, ensuring timely payments and proper documentation.',
-      icon: '💳'
+      title: t('protectionLayer') || 'Protection Layer',
+      subtitle: t('secureDepositPayment') || 'Secure Deposit & Payment',
+      points: [
+        t('depositInEscrow') || 'Security deposit held in escrow',
+        t('monthlyRentProtected') || 'Monthly rent via Holibayt Pay™',
+        t('autoRefundEligible') || 'Auto-refund when eligible'
+      ],
+      icon: ShieldCheck,
+      color: 'text-amber-600',
+      borderColor: 'border-amber-500/50',
+      bgColor: 'bg-amber-50 dark:bg-amber-950/20'
     },
     {
       number: 4,
-      title: t('rent.layer4') || 'Layer 4: Move In & Support',
-      description: t('rent.layer4Desc') || 'Inspection and ongoing assistance',
-      details: t('rent.layer4Details') || 'Complete move-in inspection with digital documentation. Access 24/7 support for any issues. Your deposit is returned automatically at lease end if no damages.',
-      icon: '🏡'
+      title: t('transparencyLayer') || 'Transparency Layer',
+      subtitle: t('moveInSupport') || 'Move-in & Ongoing Support',
+      points: [
+        t('digitalInspection') || 'Digital move-in inspection',
+        t('support247') || '24/7 tenant support',
+        t('depositReturnGuaranteed') || 'Guaranteed deposit return process'
+      ],
+      icon: DollarSign,
+      color: 'text-pink-600',
+      borderColor: 'border-pink-500/50',
+      bgColor: 'bg-pink-50 dark:bg-pink-950/20'
     }
   ];
 
-  const steps = mode === 'buy' ? getBuySteps() : getRentSteps();
+  const layers = mode === 'buy' ? getBuyLayers() : getRentLayers();
 
   return (
-    <section className="py-16 bg-gradient-to-br from-muted/30 via-background to-accent/10">
+    <section className="py-16 md:py-20 bg-gradient-to-br from-muted/30 via-background to-accent/10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Section Header */}
         <div className="text-center mb-12">
           <Badge className="mb-4 text-sm font-semibold">
-            {mode === 'buy' ? t('howToBuy') || 'How to Buy' : t('howToRent') || 'How to Rent'}
+            {mode === 'buy' ? (t('howToBuy') || 'How to Buy') : (t('howToRent') || 'How to Rent')}
           </Badge>
-          <h2 className="text-4xl md:text-5xl font-playfair font-bold text-foreground mb-4">
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-playfair font-bold text-foreground mb-4">
             {mode === 'buy' 
-              ? t('buyWorkflowTitle') || 'Your Journey to Property Ownership'
-              : t('rentWorkflowTitle') || 'Your Journey to Finding a Home'
+              ? (t('buyWorkflowTitle') || 'Buy - Verified. Secured. Guaranteed.')
+              : (t('rentWorkflowTitle') || 'Rent - Trusted. Protected. Simple.')
             }
           </h2>
           <p className="text-lg text-muted-foreground font-inter max-w-2xl mx-auto">
             {mode === 'buy'
-              ? t('buyWorkflowSubtitle') || 'Four simple layers that ensure a safe and transparent property purchase'
-              : t('rentWorkflowSubtitle') || 'Four simple layers that ensure a safe and transparent rental experience'
+              ? (t('buyWorkflowSubtitle') || 'Four layers of protection for your property purchase')
+              : (t('rentWorkflowSubtitle') || 'Four layers ensuring a safe rental experience')
             }
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {steps.map((step, index) => (
-            <Card 
-              key={step.number}
-              className="group relative overflow-hidden hover:shadow-elegant transition-all duration-300 hover:-translate-y-2 cursor-pointer bg-card border-border/50"
-              onClick={() => setSelectedStep(step)}
-            >
-              <CardHeader className="pb-4">
-                <div className="flex items-start justify-between mb-2">
-                  <div className="text-4xl mb-2">{step.icon}</div>
-                  <Badge variant="outline" className="font-mono text-xs">
-                    {t('step')} {step.number}
-                  </Badge>
-                </div>
-                <CardTitle className="text-lg font-playfair leading-tight">
-                  {step.title}
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="pt-0">
-                <p className="text-sm text-muted-foreground font-inter mb-4">
-                  {step.description}
-                </p>
-                <div className="flex items-center text-primary text-sm font-semibold group-hover:gap-2 transition-all duration-300">
-                  <span>{t('learnMore') || 'Learn More'}</span>
-                  <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" />
-                </div>
-              </CardContent>
+        {/* Workflow Layers - Horizontal Flow */}
+        <div className="relative">
+          {/* Desktop View - Horizontal */}
+          <div className="hidden lg:flex items-stretch justify-between gap-4">
+            {layers.map((layer, index) => {
+              const Icon = layer.icon;
+              return (
+                <div key={layer.number} className="flex items-center">
+                  <Card className={`flex-1 ${layer.borderColor} border-2 hover:shadow-elegant transition-all duration-300 ${layer.bgColor}`}>
+                    <CardContent className="p-6">
+                      {/* Layer Badge */}
+                      <div className="flex items-center justify-between mb-4">
+                        <Badge variant="outline" className="font-mono text-xs">
+                          Layer {layer.number}
+                        </Badge>
+                        <Icon className={`w-8 h-8 ${layer.color}`} />
+                      </div>
 
-              {/* Progress indicator line */}
-              {index < steps.length - 1 && (
-                <div className="hidden lg:block absolute top-1/2 -right-3 w-6 h-0.5 bg-gradient-to-r from-primary/50 to-transparent z-10" />
-              )}
-            </Card>
-          ))}
+                      {/* Layer Title */}
+                      <h3 className="text-lg font-playfair font-bold text-foreground mb-2">
+                        {layer.title}
+                      </h3>
+                      <h4 className="text-sm font-semibold text-foreground/80 mb-4">
+                        {layer.subtitle}
+                      </h4>
+
+                      {/* Layer Points */}
+                      <ul className="space-y-2">
+                        {layer.points.map((point, idx) => (
+                          <li key={idx} className="flex items-start gap-2 text-xs text-muted-foreground">
+                            <CheckCircle2 className={`w-4 h-4 ${layer.color} flex-shrink-0 mt-0.5`} />
+                            <span>{point}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </CardContent>
+                  </Card>
+
+                  {/* Arrow Connector */}
+                  {index < layers.length - 1 && (
+                    <ArrowRight className="w-8 h-8 text-primary mx-2 flex-shrink-0" />
+                  )}
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Mobile/Tablet View - Vertical Stack */}
+          <div className="lg:hidden space-y-6">
+            {layers.map((layer) => {
+              const Icon = layer.icon;
+              return (
+                <Card key={layer.number} className={`${layer.borderColor} border-2 ${layer.bgColor}`}>
+                  <CardContent className="p-6">
+                    {/* Header */}
+                    <div className="flex items-start justify-between mb-4">
+                      <div className="flex-1">
+                        <Badge variant="outline" className="font-mono text-xs mb-2">
+                          Layer {layer.number}
+                        </Badge>
+                        <h3 className="text-xl font-playfair font-bold text-foreground mb-1">
+                          {layer.title}
+                        </h3>
+                        <h4 className="text-sm font-semibold text-foreground/80">
+                          {layer.subtitle}
+                        </h4>
+                      </div>
+                      <Icon className={`w-12 h-12 ${layer.color} flex-shrink-0 ml-4`} />
+                    </div>
+
+                    {/* Points */}
+                    <ul className="space-y-3 mt-4">
+                      {layer.points.map((point, idx) => (
+                        <li key={idx} className="flex items-start gap-2 text-sm text-muted-foreground">
+                          <CheckCircle2 className={`w-5 h-5 ${layer.color} flex-shrink-0 mt-0.5`} />
+                          <span>{point}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </CardContent>
+                </Card>
+              );
+            })}
+          </div>
         </div>
-
-        {/* Dialog for expanded step details */}
-        <Dialog open={!!selectedStep} onOpenChange={() => setSelectedStep(null)}>
-          <DialogContent className="max-w-2xl">
-            <DialogHeader>
-              <div className="flex items-center gap-4 mb-2">
-                <div className="text-5xl">{selectedStep?.icon}</div>
-                <Badge variant="outline" className="font-mono">
-                  {t('step')} {selectedStep?.number}
-                </Badge>
-              </div>
-              <DialogTitle className="text-2xl font-playfair">
-                {selectedStep?.title}
-              </DialogTitle>
-              <DialogDescription className="text-base text-muted-foreground">
-                {selectedStep?.description}
-              </DialogDescription>
-            </DialogHeader>
-            <div className="pt-4">
-              <p className="text-base text-foreground font-inter leading-relaxed">
-                {selectedStep?.details}
-              </p>
-            </div>
-          </DialogContent>
-        </Dialog>
       </div>
     </section>
   );

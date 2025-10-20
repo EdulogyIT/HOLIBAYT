@@ -2,9 +2,12 @@ import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Building, Users, Award, Shield, Lock, CreditCard, CheckCircle, Clock, RefreshCcw, Globe, ArrowRight, AlertTriangle, BadgeCheck } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { Building, Users, Award, Shield, Lock, CreditCard, CheckCircle, Clock, RefreshCcw, Globe, ArrowRight, AlertTriangle, BadgeCheck, Home, Building2, CalendarDays } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useScrollToTop } from "@/hooks/useScrollToTop";
+import { Link } from "react-router-dom";
 
 const About = () => {
   const { t } = useLanguage();
@@ -51,27 +54,184 @@ const About = () => {
             })}
           </div>
 
-          {/* Company Story */}
-          <div id="our-story" className="bg-muted/50 rounded-lg p-8 mb-16">
-            <h2 className="text-3xl font-bold text-foreground mb-6 font-playfair">{t('ourStory')}</h2>
-            <div className="grid md:grid-cols-2 gap-8">
-              <div>
-                <p className="text-muted-foreground mb-4 font-inter">
-                  {t('storyParagraph1')}
-                </p>
-                <p className="text-muted-foreground mb-4 font-inter">
-                  {t('storyParagraph2')}
-                </p>
-              </div>
-              <div>
-                <p className="text-muted-foreground mb-4 font-inter">
-                  {t('storyParagraph3')}
-                </p>
-                <p className="text-muted-foreground font-inter">
-                  {t('storyParagraph4')}
-                </p>
-              </div>
+          {/* Services Overview */}
+          <div className="mb-16">
+            <h2 className="text-3xl font-bold text-foreground mb-6 font-playfair text-center">
+              {t('howWeHelpYou') || 'How We Help You'}
+            </h2>
+            <div className="grid md:grid-cols-3 gap-6">
+              <Card className="hover:shadow-elegant hover:-translate-y-1 transition-all duration-300">
+                <CardHeader>
+                  <Building2 className="w-12 h-12 text-blue-600 mb-3" />
+                  <CardTitle className="text-xl font-playfair">{t('buyProperty') || 'Buy Property'}</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm text-muted-foreground font-inter mb-4">
+                    {t('buyPropertyDesc') || '4-layer verification process ensuring secure property purchase'}
+                  </p>
+                  <Button variant="link" asChild className="p-0 h-auto">
+                    <Link to="/buy">{t('learnMore') || 'Learn More'} →</Link>
+                  </Button>
+                </CardContent>
+              </Card>
+
+              <Card className="hover:shadow-elegant hover:-translate-y-1 transition-all duration-300">
+                <CardHeader>
+                  <Home className="w-12 h-12 text-green-600 mb-3" />
+                  <CardTitle className="text-xl font-playfair">{t('rentProperty') || 'Rent Property'}</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm text-muted-foreground font-inter mb-4">
+                    {t('rentPropertyDesc') || 'Secure rental process with digital contracts and escrow protection'}
+                  </p>
+                  <Button variant="link" asChild className="p-0 h-auto">
+                    <Link to="/rent">{t('learnMore') || 'Learn More'} →</Link>
+                  </Button>
+                </CardContent>
+              </Card>
+
+              <Card className="hover:shadow-elegant hover:-translate-y-1 transition-all duration-300">
+                <CardHeader>
+                  <CalendarDays className="w-12 h-12 text-amber-600 mb-3" />
+                  <CardTitle className="text-xl font-playfair">{t('shortStay') || 'Short Stay'}</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm text-muted-foreground font-inter mb-4">
+                    {t('shortStayDesc') || 'Verified vacation rentals with instant booking and secure payments'}
+                  </p>
+                  <Button variant="link" asChild className="p-0 h-auto">
+                    <Link to="/short-stay">{t('learnMore') || 'Learn More'} →</Link>
+                  </Button>
+                </CardContent>
+              </Card>
             </div>
+          </div>
+
+          {/* Company Story - Accordion */}
+          <div id="our-story" className="mb-16">
+            <h2 className="text-3xl font-bold text-foreground mb-6 font-playfair">{t('ourStory')}</h2>
+            <Accordion type="single" collapsible className="w-full space-y-4">
+              <AccordionItem value="story-1" className="border border-border rounded-lg px-6">
+                <AccordionTrigger className="hover:no-underline">
+                  <span className="text-lg font-semibold">{t('theBeginning') || 'The Beginning'}</span>
+                </AccordionTrigger>
+                <AccordionContent className="text-muted-foreground font-inter">
+                  {t('storyParagraph1') || 'Founded in 2010, Holibayt emerged from a vision to revolutionize the real estate market in Algeria. We recognized the challenges faced by both property seekers and owners in navigating the complex real estate landscape.'}
+                </AccordionContent>
+              </AccordionItem>
+
+              <AccordionItem value="story-2" className="border border-border rounded-lg px-6">
+                <AccordionTrigger className="hover:no-underline">
+                  <span className="text-lg font-semibold">{t('ourGrowth') || 'Our Growth'}</span>
+                </AccordionTrigger>
+                <AccordionContent className="text-muted-foreground font-inter">
+                  {t('storyParagraph2') || 'Over the years, we have grown from a small startup to one of Algeria\'s most trusted real estate platforms. Our commitment to transparency, security, and user experience has earned us the trust of thousands of clients across the country.'}
+                </AccordionContent>
+              </AccordionItem>
+
+              <AccordionItem value="story-3" className="border border-border rounded-lg px-6">
+                <AccordionTrigger className="hover:no-underline">
+                  <span className="text-lg font-semibold">{t('innovation') || 'Innovation'}</span>
+                </AccordionTrigger>
+                <AccordionContent className="text-muted-foreground font-inter">
+                  {t('storyParagraph3') || 'We were the first to introduce escrow-based payments and digital contracts in the Algerian real estate market, setting new standards for security and trust.'}
+                </AccordionContent>
+              </AccordionItem>
+
+              <AccordionItem value="story-4" className="border border-border rounded-lg px-6">
+                <AccordionTrigger className="hover:no-underline">
+                  <span className="text-lg font-semibold">{t('today') || 'Today'}</span>
+                </AccordionTrigger>
+                <AccordionContent className="text-muted-foreground font-inter">
+                  {t('storyParagraph4') || 'Today, Holibayt continues to lead the market with innovative solutions, making property transactions safer, faster, and more transparent for everyone.'}
+                </AccordionContent>
+              </AccordionItem>
+            </Accordion>
+          </div>
+
+          {/* Verification & Protection */}
+          <div className="grid md:grid-cols-2 gap-8 mb-16">
+            <Card className="border-primary/50">
+              <CardHeader>
+                <div className="flex items-center gap-3">
+                  <BadgeCheck className="w-10 h-10 text-primary" />
+                  <div>
+                    <CardTitle className="text-2xl font-playfair">{t('holibaytVerify') || 'Holibayt Verify™'}</CardTitle>
+                    <p className="text-sm text-muted-foreground">{t('trustThroughVerification') || 'Trust through verification'}</p>
+                  </div>
+                </div>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="flex items-start gap-3">
+                  <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                    <CheckCircle className="w-5 h-5 text-primary" />
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-sm mb-1">{t('identityVerification') || 'Identity Verification'}</h4>
+                    <p className="text-xs text-muted-foreground">{t('governmentIdSelfie') || 'Government ID + selfie verification'}</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                    <CheckCircle className="w-5 h-5 text-primary" />
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-sm mb-1">{t('propertyVerification') || 'Property Verification'}</h4>
+                    <p className="text-xs text-muted-foreground">{t('documentCheckOnSite') || 'Document verification + on-site inspection'}</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                    <CheckCircle className="w-5 h-5 text-primary" />
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-sm mb-1">{t('ownershipVerification') || 'Ownership Verification'}</h4>
+                    <p className="text-xs text-muted-foreground">{t('legalTitleCheck') || 'Legal title and ownership verification'}</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="border-green-500/50">
+              <CardHeader>
+                <div className="flex items-center gap-3">
+                  <Shield className="w-10 h-10 text-green-600" />
+                  <div>
+                    <CardTitle className="text-2xl font-playfair">{t('holibaytProtect') || 'Holibayt Protect™'}</CardTitle>
+                    <p className="text-sm text-muted-foreground">{t('insuranceProtection') || 'Insurance-backed protection'}</p>
+                  </div>
+                </div>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="flex items-start gap-3">
+                  <div className="w-8 h-8 rounded-full bg-green-500/10 flex items-center justify-center flex-shrink-0">
+                    <CheckCircle className="w-5 h-5 text-green-600" />
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-sm mb-1">{t('transactionProtection') || 'Transaction Protection'}</h4>
+                    <p className="text-xs text-muted-foreground">{t('coverageAmount') || 'Coverage up to 500,000 DZD'}</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <div className="w-8 h-8 rounded-full bg-green-500/10 flex items-center justify-center flex-shrink-0">
+                    <CheckCircle className="w-5 h-5 text-green-600" />
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-sm mb-1">{t('fraudProtection') || 'Fraud Protection'}</h4>
+                    <p className="text-xs text-muted-foreground">{t('fraudCoverage') || 'Full coverage against fraudulent listings'}</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <div className="w-8 h-8 rounded-full bg-green-500/10 flex items-center justify-center flex-shrink-0">
+                    <CheckCircle className="w-5 h-5 text-green-600" />
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-sm mb-1">{t('disputeResolution') || 'Dispute Resolution'}</h4>
+                    <p className="text-xs text-muted-foreground">{t('mediationSupport') || 'Professional mediation and legal support'}</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
           </div>
 
           {/* Mission & Values */}

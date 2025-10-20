@@ -200,6 +200,16 @@ All colors MUST be HSL.
   .grid {
     grid-template-columns: 1fr !important;
   }
+
+  /* Testimonials carousel - prevent horizontal overflow */
+  .testimonials-carousel {
+    overflow-x: hidden;
+  }
+  
+  /* Ensure smooth swipe on carousel */
+  .embla__container {
+    -webkit-overflow-scrolling: touch;
+  }
 }
 
 /* Tablet optimizations */
