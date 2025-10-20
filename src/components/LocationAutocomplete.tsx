@@ -22,10 +22,15 @@ export default function LocationAutocomplete({
   const [suggestions, setSuggestions] = useState<ReturnType<typeof searchLocations>>([]);
   const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0, width: 0 });
   const wrapperRef = useRef<HTMLDivElement>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
-      if (wrapperRef.current && !wrapperRef.current.contains(event.target as Node)) {
+      const target = event.target as Node;
+      const isInsideWrapper = wrapperRef.current?.contains(target);
+      const isInsideDropdown = dropdownRef.current?.contains(target);
+      
+      if (!isInsideWrapper && !isInsideDropdown) {
         setShowSuggestions(false);
       }
     }
@@ -74,7 +79,9 @@ export default function LocationAutocomplete({
 
   const handleSuggestionClick = (locationName: string) => {
     onChange(locationName);
-    setTimeout(() => setShowSuggestions(false), 150);
+    requestAnimationFrame(() => {
+      setShowSuggestions(false);
+    });
   };
 
   const handleFocus = () => {
@@ -119,6 +126,7 @@ export default function LocationAutocomplete({
       
       {showSuggestions && suggestions.length > 0 && createPortal(
         <div 
+          ref={dropdownRef}
           className="fixed w-[calc(100vw-32px)] sm:min-w-[400px] sm:w-max sm:max-w-[600px] bg-card border border-border rounded-lg shadow-2xl z-[100000] max-h-[60vh] sm:max-h-80 overflow-y-auto touch-action-manipulation"
           style={{
             top: `${dropdownPosition.top}px`,
@@ -135,8 +143,12 @@ export default function LocationAutocomplete({
             <button
               key={`${location.name}-${index}`}
               onClick={(e) => {
+                e.preventDefault();
                 e.stopPropagation();
                 handleSuggestionClick(location.name);
+              }}
+              onMouseDown={(e) => {
+                e.preventDefault();
               }}
               className="w-full px-4 sm:px-5 py-4 text-left hover:bg-accent active:bg-accent transition-colors border-b border-border/50 last:border-b-0 min-h-[48px] cursor-pointer"
             >

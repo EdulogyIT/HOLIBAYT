@@ -93,7 +93,7 @@ const RentHeroSearch: React.FC<RentHeroSearchProps> = ({ onSearch }) => {
           onChange={(value) => updateFormField("location", value)}
           placeholder={t("whereToRent")}
           className={cn(
-            "font-inter px-4",
+            "font-inter pr-3",
             compact ? "h-12 text-sm w-full sm:flex-1 sm:min-w-[180px]" : "h-14 text-base flex-1 lg:min-w-[300px]"
           )}
         />
