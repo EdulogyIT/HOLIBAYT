@@ -7,8 +7,7 @@ import {
   Carousel,
   CarouselContent,
   CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
+  CarouselApi,
 } from "@/components/ui/carousel";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import Autoplay from "embla-carousel-autoplay";
@@ -79,10 +78,22 @@ const TestimonialsCarousel = () => {
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedTestimonial, setSelectedTestimonial] = useState<Testimonial | null>(null);
+  const [api, setApi] = useState<CarouselApi>();
+  const [current, setCurrent] = useState(0);
 
   useEffect(() => {
     fetchTestimonials();
   }, []);
+
+  useEffect(() => {
+    if (!api) return;
+
+    setCurrent(api.selectedScrollSnap());
+
+    api.on("select", () => {
+      setCurrent(api.selectedScrollSnap());
+    });
+  }, [api]);
 
   const fetchTestimonials = async () => {
     try {
@@ -123,6 +134,7 @@ const TestimonialsCarousel = () => {
 
         {/* Testimonials Carousel */}
         <Carousel
+          setApi={setApi}
           opts={{
             align: "start",
             loop: true,
@@ -133,7 +145,7 @@ const TestimonialsCarousel = () => {
               stopOnInteraction: true,
             })
           ]}
-          className="w-full max-w-6xl mx-auto"
+          className="w-full max-w-6xl mx-auto testimonials-carousel"
         >
           <CarouselContent>
             {displayTestimonials.map((testimonial, index) => (
@@ -175,16 +187,18 @@ const TestimonialsCarousel = () => {
               </CarouselItem>
             ))}
           </CarouselContent>
-          <CarouselPrevious className="hidden md:flex" />
-          <CarouselNext className="hidden md:flex" />
         </Carousel>
 
-        {/* Progress Dots - Mobile Only */}
-        <div className="flex justify-center gap-2 mt-6 md:hidden">
-          {displayTestimonials.slice(0, 6).map((_, idx) => (
-            <div 
-              key={idx} 
-              className="w-2 h-2 rounded-full bg-primary/30 transition-all duration-300"
+        {/* Interactive Progress Dots */}
+        <div className="flex justify-center gap-2 mt-6">
+          {displayTestimonials.map((_, idx) => (
+            <button
+              key={idx}
+              onClick={() => api?.scrollTo(idx)}
+              className={`h-2 rounded-full transition-all duration-300 ${
+                current === idx ? 'w-8 bg-primary' : 'w-2 bg-primary/30'
+              }`}
+              aria-label={`Go to testimonial ${idx + 1}`}
             />
           ))}
         </div>

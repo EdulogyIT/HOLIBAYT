@@ -129,6 +129,21 @@ All colors MUST be HSL.
   body {
     @apply bg-background text-foreground;
   }
+
+  /* Smooth scrolling for all anchor links */
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+/* Testimonials Carousel - Prevent horizontal scroll on all screens */
+.testimonials-carousel,
+.testimonials-carousel .embla {
+  overflow-x: hidden !important;
+}
+
+.testimonials-carousel .embla__container {
+  -webkit-overflow-scrolling: touch;
 }
 
 /* Mobile-specific optimizations */

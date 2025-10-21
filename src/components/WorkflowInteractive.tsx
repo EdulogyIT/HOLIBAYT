@@ -4,9 +4,9 @@ import {
   FileCheck, 
   Lock, 
   Scale, 
-  ShieldCheck, 
-  Home, 
   FileSignature, 
+  Home, 
+  ShieldCheck, 
   DollarSign,
   ArrowRight,
   CheckCircle2
@@ -19,9 +19,9 @@ interface WorkflowLayer {
   subtitle: string;
   points: string[];
   icon: React.ComponentType<any>;
-  color: string;
-  borderColor: string;
   bgColor: string;
+  textColor: string;
+  iconColor: string;
 }
 
 interface WorkflowInteractiveProps {
@@ -37,56 +37,56 @@ const WorkflowInteractive = ({ mode }: WorkflowInteractiveProps) => {
       title: t('trustLayer') || 'Trust Layer',
       subtitle: t('findVerifiedProperty') || 'Find a Verified Property',
       points: [
-        t('everyPropertyVerified') || 'Every property and seller verified',
-        t('holibaytVerifyCert') || 'Holibayt Verify™ certification',
-        t('transparentListings') || 'Transparent, detailed listings'
+        t('verifiedListingsSellers') || 'Verified listings, sellers & buyers',
+        t('kycPropertyVerification') || 'ID (KYC) and property verification via Holibayt Verify™',
+        t('propertiesInspected') || 'Properties inspected and documents validated'
       ],
       icon: FileCheck,
-      color: 'text-blue-600',
-      borderColor: 'border-blue-500/50',
-      bgColor: 'bg-blue-50 dark:bg-blue-950/20'
+      bgColor: 'bg-teal-900',
+      textColor: 'text-white',
+      iconColor: 'text-white'
     },
     {
       number: 2,
       title: t('securityLayer') || 'Security Layer',
       subtitle: t('secureDepositHolibaytPay') || 'Secure Deposit via Holibayt Pay™',
       points: [
-        t('buyerDepositLocked') || "Buyer's deposit locked in escrow",
-        t('releaseAfterDueDiligence') || 'Release only after due diligence',
-        t('transparentMilestones') || 'Transparent milestone-based flow'
+        t('paymentLockedEscrow') || 'Payment locked in secure escrow account',
+        t('protectionBuyerSeller') || 'Protection for both buyer and seller during transaction',
+        t('transparentMilestoneFlow') || 'Transparent, milestone-based transaction flow'
       ],
       icon: Lock,
-      color: 'text-green-600',
-      borderColor: 'border-green-500/50',
-      bgColor: 'bg-green-50 dark:bg-green-950/20'
+      bgColor: 'bg-teal-900',
+      textColor: 'text-white',
+      iconColor: 'text-white'
     },
     {
       number: 3,
       title: t('protectionLayer') || 'Protection Layer',
-      subtitle: t('legalDueDiligence') || 'Legal Due Diligence',
+      subtitle: t('legalSupportInsurance') || 'Legal Support & Insurance with Holibayt Protect™',
       points: [
-        t('propertyTitleCheck') || 'Property title verification',
-        t('lawyerAssistance') || 'Holibayt lawyer assistance',
-        t('contractReview') || 'Contract review and notary support'
+        t('legalAssistanceNotaries') || 'Legal assistance provided by certified notaries',
+        t('transactionBackedProtect') || 'Transaction backed by Holibayt Protect™ and Holibayt Insurance™',
+        t('coversFraudDisputes') || 'Covers fraud, contract disputes, or documentation errors'
       ],
       icon: Scale,
-      color: 'text-amber-600',
-      borderColor: 'border-amber-500/50',
-      bgColor: 'bg-amber-50 dark:bg-amber-950/20'
+      bgColor: 'bg-amber-400',
+      textColor: 'text-black',
+      iconColor: 'text-black'
     },
     {
       number: 4,
       title: t('transparencyLayer') || 'Transparency Layer',
-      subtitle: t('keysAndCompletion') || 'Key Handover & Completion',
+      subtitle: t('transactionFinalized') || 'Transaction Finalized',
       points: [
-        t('verifiedKeyHandover') || 'Verified key handover',
-        t('fundsReleasedToSeller') || 'Funds released to seller',
-        t('digitalProofOfOwnership') || 'Digital proof of ownership'
+        t('ownershipTransferred') || 'Ownership officially transferred and confirmed',
+        t('fundsReleasedSeller') || 'Funds released to seller through Holibayt Pay™',
+        t('finalDocumentsProvided') || 'Final documents and receipts provided to both parties'
       ],
-      icon: ShieldCheck,
-      color: 'text-pink-600',
-      borderColor: 'border-pink-500/50',
-      bgColor: 'bg-pink-50 dark:bg-pink-950/20'
+      icon: FileSignature,
+      bgColor: 'bg-slate-400',
+      textColor: 'text-black',
+      iconColor: 'text-black'
     }
   ];
 
@@ -96,14 +96,14 @@ const WorkflowInteractive = ({ mode }: WorkflowInteractiveProps) => {
       title: t('trustLayer') || 'Trust Layer',
       subtitle: t('findVerifiedRental') || 'Find a Verified Rental',
       points: [
-        t('verifiedLandlords') || 'Verified landlords only',
-        t('authenticPhotos') || 'Authentic photos and descriptions',
-        t('transparentTerms') || 'Transparent lease terms'
+        t('verifiedLandlordsOnly') || 'Verified landlords and tenants only',
+        t('authenticPhotosDesc') || 'Authentic photos and accurate descriptions',
+        t('transparentLeaseTerms') || 'Transparent lease terms and conditions'
       ],
       icon: Home,
-      color: 'text-blue-600',
-      borderColor: 'border-blue-500/50',
-      bgColor: 'bg-blue-50 dark:bg-blue-950/20'
+      bgColor: 'bg-teal-900',
+      textColor: 'text-white',
+      iconColor: 'text-white'
     },
     {
       number: 2,
@@ -111,13 +111,13 @@ const WorkflowInteractive = ({ mode }: WorkflowInteractiveProps) => {
       subtitle: t('digitalLeaseAgreement') || 'Digital Lease Agreement',
       points: [
         t('legallyBindingContract') || 'Legally-binding digital contract',
-        t('clearRentalTerms') || 'Clear rental terms and conditions',
-        t('bothPartiesProtected') || 'Protection for both parties'
+        t('clearRentalTerms') || 'Clear rental terms and responsibilities',
+        t('bothPartiesProtected') || 'Protection for landlord and tenant'
       ],
       icon: FileSignature,
-      color: 'text-green-600',
-      borderColor: 'border-green-500/50',
-      bgColor: 'bg-green-50 dark:bg-green-950/20'
+      bgColor: 'bg-teal-900',
+      textColor: 'text-white',
+      iconColor: 'text-white'
     },
     {
       number: 3,
@@ -126,33 +126,33 @@ const WorkflowInteractive = ({ mode }: WorkflowInteractiveProps) => {
       points: [
         t('depositInEscrow') || 'Security deposit held in escrow',
         t('monthlyRentProtected') || 'Monthly rent via Holibayt Pay™',
-        t('autoRefundEligible') || 'Auto-refund when eligible'
+        t('autoRefundEligible') || 'Auto-refund when lease ends'
       ],
       icon: ShieldCheck,
-      color: 'text-amber-600',
-      borderColor: 'border-amber-500/50',
-      bgColor: 'bg-amber-50 dark:bg-amber-950/20'
+      bgColor: 'bg-amber-400',
+      textColor: 'text-black',
+      iconColor: 'text-black'
     },
     {
       number: 4,
       title: t('transparencyLayer') || 'Transparency Layer',
       subtitle: t('moveInSupport') || 'Move-in & Ongoing Support',
       points: [
-        t('digitalInspection') || 'Digital move-in inspection',
-        t('support247') || '24/7 tenant support',
+        t('digitalInspection') || 'Digital move-in inspection report',
+        t('support247') || '24/7 tenant and landlord support',
         t('depositReturnGuaranteed') || 'Guaranteed deposit return process'
       ],
       icon: DollarSign,
-      color: 'text-pink-600',
-      borderColor: 'border-pink-500/50',
-      bgColor: 'bg-pink-50 dark:bg-pink-950/20'
+      bgColor: 'bg-slate-400',
+      textColor: 'text-black',
+      iconColor: 'text-black'
     }
   ];
 
   const layers = mode === 'buy' ? getBuyLayers() : getRentLayers();
 
   return (
-    <section className="py-16 md:py-20 bg-gradient-to-br from-muted/30 via-background to-accent/10">
+    <section className="py-16 md:py-20 bg-background">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="text-center mb-12">
@@ -176,35 +176,39 @@ const WorkflowInteractive = ({ mode }: WorkflowInteractiveProps) => {
         {/* Workflow Layers - Horizontal Flow */}
         <div className="relative">
           {/* Desktop View - Horizontal */}
-          <div className="hidden lg:flex items-stretch justify-between gap-4">
+          <div className="hidden lg:flex items-center justify-center gap-6">
             {layers.map((layer, index) => {
               const Icon = layer.icon;
               return (
                 <div key={layer.number} className="flex items-center">
-                  <Card className={`flex-1 ${layer.borderColor} border-2 hover:shadow-elegant transition-all duration-300 ${layer.bgColor}`}>
-                    <CardContent className="p-6">
+                  <Card className={`${layer.bgColor} border-none shadow-elegant hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 w-64`}>
+                    <CardContent className="p-8">
+                      {/* Icon - Large and Prominent */}
+                      <div className="flex justify-center mb-6">
+                        <Icon className={`w-16 h-16 ${layer.iconColor}`} />
+                      </div>
+
                       {/* Layer Badge */}
-                      <div className="flex items-center justify-between mb-4">
-                        <Badge variant="outline" className="font-mono text-xs">
+                      <div className="text-center mb-4">
+                        <Badge variant="outline" className={`font-mono text-xs ${layer.textColor} border-current`}>
                           Layer {layer.number}
                         </Badge>
-                        <Icon className={`w-8 h-8 ${layer.color}`} />
                       </div>
 
                       {/* Layer Title */}
-                      <h3 className="text-lg font-playfair font-bold text-foreground mb-2">
+                      <h3 className={`text-xl font-playfair font-bold ${layer.textColor} mb-2 text-center`}>
                         {layer.title}
                       </h3>
-                      <h4 className="text-sm font-semibold text-foreground/80 mb-4">
+                      <h4 className={`text-sm font-semibold ${layer.textColor} opacity-90 mb-6 text-center`}>
                         {layer.subtitle}
                       </h4>
 
                       {/* Layer Points */}
-                      <ul className="space-y-2">
+                      <ul className="space-y-3">
                         {layer.points.map((point, idx) => (
-                          <li key={idx} className="flex items-start gap-2 text-xs text-muted-foreground">
-                            <CheckCircle2 className={`w-4 h-4 ${layer.color} flex-shrink-0 mt-0.5`} />
-                            <span>{point}</span>
+                          <li key={idx} className="flex items-start gap-2 text-xs">
+                            <CheckCircle2 className={`w-4 h-4 ${layer.iconColor} flex-shrink-0 mt-0.5`} />
+                            <span className={layer.textColor}>{point}</span>
                           </li>
                         ))}
                       </ul>
@@ -213,42 +217,80 @@ const WorkflowInteractive = ({ mode }: WorkflowInteractiveProps) => {
 
                   {/* Arrow Connector */}
                   {index < layers.length - 1 && (
-                    <ArrowRight className="w-8 h-8 text-primary mx-2 flex-shrink-0" />
+                    <ArrowRight className="w-12 h-12 text-primary mx-4 flex-shrink-0" />
                   )}
                 </div>
               );
             })}
           </div>
 
-          {/* Mobile/Tablet View - Vertical Stack */}
-          <div className="lg:hidden space-y-6">
+          {/* Tablet View - 2 Columns */}
+          <div className="hidden md:grid lg:hidden grid-cols-2 gap-8">
             {layers.map((layer) => {
               const Icon = layer.icon;
               return (
-                <Card key={layer.number} className={`${layer.borderColor} border-2 ${layer.bgColor}`}>
+                <Card key={layer.number} className={`${layer.bgColor} border-none shadow-elegant`}>
                   <CardContent className="p-6">
                     {/* Header */}
                     <div className="flex items-start justify-between mb-4">
                       <div className="flex-1">
-                        <Badge variant="outline" className="font-mono text-xs mb-2">
+                        <Badge variant="outline" className={`font-mono text-xs mb-2 ${layer.textColor} border-current`}>
                           Layer {layer.number}
                         </Badge>
-                        <h3 className="text-xl font-playfair font-bold text-foreground mb-1">
+                        <h3 className={`text-lg font-playfair font-bold ${layer.textColor} mb-1`}>
                           {layer.title}
                         </h3>
-                        <h4 className="text-sm font-semibold text-foreground/80">
+                        <h4 className={`text-sm font-semibold ${layer.textColor} opacity-90`}>
                           {layer.subtitle}
                         </h4>
                       </div>
-                      <Icon className={`w-12 h-12 ${layer.color} flex-shrink-0 ml-4`} />
+                      <Icon className={`w-12 h-12 ${layer.iconColor} flex-shrink-0 ml-4`} />
                     </div>
 
                     {/* Points */}
                     <ul className="space-y-3 mt-4">
                       {layer.points.map((point, idx) => (
-                        <li key={idx} className="flex items-start gap-2 text-sm text-muted-foreground">
-                          <CheckCircle2 className={`w-5 h-5 ${layer.color} flex-shrink-0 mt-0.5`} />
-                          <span>{point}</span>
+                        <li key={idx} className="flex items-start gap-2 text-xs">
+                          <CheckCircle2 className={`w-4 h-4 ${layer.iconColor} flex-shrink-0 mt-0.5`} />
+                          <span className={layer.textColor}>{point}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </CardContent>
+                </Card>
+              );
+            })}
+          </div>
+
+          {/* Mobile View - Vertical Stack */}
+          <div className="md:hidden space-y-6">
+            {layers.map((layer) => {
+              const Icon = layer.icon;
+              return (
+                <Card key={layer.number} className={`${layer.bgColor} border-none shadow-elegant`}>
+                  <CardContent className="p-6">
+                    {/* Header */}
+                    <div className="flex items-start justify-between mb-4">
+                      <div className="flex-1">
+                        <Badge variant="outline" className={`font-mono text-xs mb-2 ${layer.textColor} border-current`}>
+                          Layer {layer.number}
+                        </Badge>
+                        <h3 className={`text-xl font-playfair font-bold ${layer.textColor} mb-1`}>
+                          {layer.title}
+                        </h3>
+                        <h4 className={`text-sm font-semibold ${layer.textColor} opacity-90`}>
+                          {layer.subtitle}
+                        </h4>
+                      </div>
+                      <Icon className={`w-12 h-12 ${layer.iconColor} flex-shrink-0 ml-4`} />
+                    </div>
+
+                    {/* Points */}
+                    <ul className="space-y-3 mt-4">
+                      {layer.points.map((point, idx) => (
+                        <li key={idx} className="flex items-start gap-2 text-sm">
+                          <CheckCircle2 className={`w-5 h-5 ${layer.iconColor} flex-shrink-0 mt-0.5`} />
+                          <span className={layer.textColor}>{point}</span>
                         </li>
                       ))}
                     </ul>
