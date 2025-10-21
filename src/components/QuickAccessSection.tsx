@@ -308,47 +308,68 @@ const RentWorkflowDiagram = () => {
 /** ---------------------------------------------------------
  *  Short Stay — left as simpler tiles (optional to restyle)
  * -------------------------------------------------------- */
-const ShortStayWorkflowTiles = () => {
+// Short Stay Workflow - Circular Flow
+const ShortStayWorkflowDiagram = () => {
   const { t } = useLanguage();
+  
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-      <Card className="border border-border">
-        <CardContent className="p-5 text-center">
-          <Search className="w-10 h-10 mx-auto text-primary" />
-          <div className="mt-2 font-semibold">
-            {t("stay.tile1.title") || "Search & Verify"}
+    <div className="space-y-4">
+      {/* Top Row - 3 Main Steps */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        {/* Step 1: Find */}
+        <div className="bg-card border border-border p-4 rounded-lg text-center">
+          <Search className="h-10 w-10 text-primary mx-auto mb-2" />
+          <h4 className="font-semibold text-sm mb-1">{t('workflow.shortStay.step1.title')}</h4>
+          <p className="text-xs text-muted-foreground">{t('workflow.shortStay.step1.detail')}</p>
+        </div>
+
+        {/* Step 2: Book Safely - Central with emphasis */}
+        <div className="bg-[#1a5f5f] text-white p-4 rounded-lg text-center border-2 border-[#1a5f5f]">
+          <CreditCard className="h-10 w-10 mx-auto mb-2" />
+          <h4 className="font-semibold text-sm mb-2">{t('workflow.shortStay.step2.title')}</h4>
+          <div className="space-y-2 text-xs">
+            <p>{t('workflow.shortStay.step2.detail1')}</p>
+            <Plus className="h-4 w-4 mx-auto" />
+            <p>{t('workflow.shortStay.step2.detail2')}</p>
           </div>
-          <div className="text-sm text-slate-600">
-            {t("stay.tile1.desc") || "Find verified stays with trusted hosts."}
+        </div>
+
+        {/* Step 3: Payout */}
+        <div className="bg-card border border-border p-4 rounded-lg text-center">
+          <HandCoins className="h-10 w-10 text-primary mx-auto mb-2" />
+          <h4 className="font-semibold text-sm mb-1">{t('workflow.shortStay.step3.title')}</h4>
+          <p className="text-xs text-muted-foreground">{t('workflow.shortStay.step3.detail')}</p>
+        </div>
+      </div>
+
+      {/* Bottom Row - Protection Loop */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+        {/* Left Protection */}
+        <div className="bg-accent/10 border border-accent p-4 rounded-lg">
+          <div className="flex items-start gap-3">
+            <Shield className="h-8 w-8 text-accent flex-shrink-0 mt-1" />
+            <div>
+              <h4 className="font-semibold text-sm mb-1">{t('workflow.shortStay.protect1.title')}</h4>
+              <p className="text-xs text-muted-foreground">{t('workflow.shortStay.protect1.detail')}</p>
+            </div>
           </div>
-        </CardContent>
-      </Card>
-      <Card className="bg-teal-900 text-white border-none">
-        <CardContent className="p-5 text-center">
-          <CreditCard className="w-10 h-10 mx-auto" />
-          <div className="mt-2 font-semibold">
-            {t("stay.tile2.title") || "Book with Holibayt Pay™"}
+        </div>
+
+        {/* Right Protection */}
+        <div className="bg-accent/10 border border-accent p-4 rounded-lg">
+          <div className="flex items-start gap-3">
+            <Shield className="h-8 w-8 text-accent flex-shrink-0 mt-1" />
+            <div>
+              <h4 className="font-semibold text-sm mb-1">{t('workflow.shortStay.protect2.title')}</h4>
+              <p className="text-xs text-muted-foreground">{t('workflow.shortStay.protect2.detail')}</p>
+            </div>
           </div>
-          <div className="text-sm opacity-90">
-            {t("stay.tile2.desc") ||
-              "Escrow holds funds; host is paid after your stay."}
-          </div>
-        </CardContent>
-      </Card>
-      <Card className="border border-border">
-        <CardContent className="p-5 text-center">
-          <HandCoins className="w-10 h-10 mx-auto text-primary" />
-          <div className="mt-2 font-semibold">
-            {t("stay.tile3.title") || "Secure Payout"}
-          </div>
-          <div className="text-sm text-slate-600">
-            {t("stay.tile3.desc") || "Payout released after completion."}
-          </div>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     </div>
   );
 };
+
 
 /** ---------------------------------------------------------
  *  QuickAccessSection — Tabs wrapper around the three flows
