@@ -136,6 +136,21 @@ All colors MUST be HSL.
   }
 }
 
+/* Enhanced card shadows */
+.shadow-elegant {
+  box-shadow: 0 10px 30px -10px hsl(var(--primary) / 0.2);
+}
+
+/* Hover lift effect */
+.hover-lift {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.hover-lift:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 40px -10px hsl(var(--primary) / 0.25);
+}
+
 /* Testimonials Carousel - Prevent horizontal scroll on all screens */
 .testimonials-carousel,
 .testimonials-carousel .embla {
