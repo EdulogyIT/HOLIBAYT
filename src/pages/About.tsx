@@ -15,13 +15,13 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { useScrollToTop } from "@/hooks/useScrollToTop";
 import WorkflowInteractive from "@/components/WorkflowInteractive";
 
-/* ---------------- Animation (gentle to avoid layout jumps) ---------------- */
+/* Animation (gentle) */
 const fadeIn = {
   hidden: { opacity: 0, y: 8 },
   show: { opacity: 1, y: 0, transition: { duration: 0.35, ease: "easeOut" } }
 };
 
-/* ---------------- Section wrapper (isolate prevents overlap) --------------- */
+/* Section wrapper (isolate avoids bleed/overlap) */
 const Section = ({
   id,
   children,
@@ -80,9 +80,13 @@ const About = () => {
   useScrollToTop();
 
   // i18n fallback so raw keys never show
-  const tt = (k: string, fallback: string) => {
-    const v = t(k) as string;
-    return v && v !== k ? v : fallback;
+  const tx = (k: string, fallback: string) => {
+    try {
+      const v = t(k) as string;
+      return v && v !== k ? v : fallback;
+    } catch {
+      return fallback;
+    }
   };
 
   const stats = [
@@ -96,7 +100,7 @@ const About = () => {
     <div className="min-h-screen bg-background text-foreground antialiased">
       <Navigation />
 
-      {/* ------------------------------ HERO ------------------------------ */}
+      {/* HERO */}
       <header className="relative isolate overflow-hidden">
         {/* Decorative blobs behind content */}
         <div aria-hidden className="pointer-events-none absolute inset-0 -z-10">
@@ -113,7 +117,7 @@ const About = () => {
               animate="show"
               className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-6"
             >
-              {tt("aboutBeitik", "About Holibayt")}
+              {tx("aboutBeitik", "About Holibayt")}
             </motion.h1>
 
             <motion.p
@@ -143,7 +147,7 @@ const About = () => {
       </header>
 
       <main className="relative isolate">
-        {/* ------------------------------ STATS ----------------------------- */}
+        {/* STATS */}
         <Section className="pt-4">
           <motion.div
             initial="hidden"
@@ -157,7 +161,7 @@ const About = () => {
           </motion.div>
         </Section>
 
-        {/* ------------------------- HOW WE HELP YOU ------------------------ */}
+        {/* HOW WE HELP YOU */}
         <Section>
           <motion.h2
             variants={fadeIn}
@@ -166,7 +170,7 @@ const About = () => {
             viewport={{ once: true, amount: 0.2 }}
             className="text-3xl md:text-4xl font-bold text-center mb-10"
           >
-            {tt("howWeHelpYou", "How we help you")}
+            {tx("howWeHelpYou", "How we help you")}
           </motion.h2>
 
           {/* Service Overview Cards */}
@@ -226,25 +230,57 @@ const About = () => {
             ))}
           </div>
 
-          {/* Interactive Workflow Diagrams (contained to avoid overflow) */}
+          {/* Workflows wrapped to avoid overflow.
+             We also pass title/subtitle props; see WorkflowInteractive patch below. */}
           <div className="mt-12 space-y-12">
             <Card className="overflow-hidden">
+              <CardHeader className="pb-0">
+                <div className="mx-auto text-center space-y-2">
+                  <span className="inline-block text-xs font-semibold px-3 py-1 rounded-full bg-primary/10 text-primary">
+                    {tx("howToBuy", "How to Buy")}
+                  </span>
+                  <h3 className="text-2xl md:text-3xl font-bold">{tx("buyWorkflowTitle", "Buying workflow")}</h3>
+                  <p className="text-sm md:text-base text-muted-foreground">
+                    {tx("buyWorkflowSubtitle", "A simple, step-by-step path to purchasing")}
+                  </p>
+                </div>
+              </CardHeader>
               <CardContent className="p-4 md:p-6">
-                <WorkflowInteractive mode="buy" />
+                <WorkflowInteractive
+                  mode="buy"
+                  title={tx("buyWorkflowTitle", "Buying workflow")}
+                  subtitle={tx("buyWorkflowSubtitle", "A simple, step-by-step path to purchasing")}
+                />
               </CardContent>
             </Card>
+
             <Card className="overflow-hidden">
+              <CardHeader className="pb-0">
+                <div className="mx-auto text-center space-y-2">
+                  <span className="inline-block text-xs font-semibold px-3 py-1 rounded-full bg-primary/10 text-primary">
+                    {tx("howToRent", "How to Rent")}
+                  </span>
+                  <h3 className="text-2xl md:text-3xl font-bold">{tx("rentWorkflowTitle", "Renting workflow")}</h3>
+                  <p className="text-sm md:text-base text-muted-foreground">
+                    {tx("rentWorkflowSubtitle", "A clear checklist for secure renting")}
+                  </p>
+                </div>
+              </CardHeader>
               <CardContent className="p-4 md:p-6">
-                <WorkflowInteractive mode="rent" />
+                <WorkflowInteractive
+                  mode="rent"
+                  title={tx("rentWorkflowTitle", "Renting workflow")}
+                  subtitle={tx("rentWorkflowSubtitle", "A clear checklist for secure renting")}
+                />
               </CardContent>
             </Card>
           </div>
         </Section>
 
-        {/* ---------------------------- OUR STORY --------------------------- */}
+        {/* OUR STORY */}
         <Section id="our-story">
           <div className="max-w-3xl mb-6">
-            <h2 className="text-3xl md:text-4xl font-bold mb-3">{tt("ourStory", "Our Story")}</h2>
+            <h2 className="text-3xl md:text-4xl font-bold mb-3">{tx("ourStory", "Our Story")}</h2>
             <p className="text-muted-foreground leading-relaxed">{t("storyIntro")}</p>
           </div>
           <Accordion type="single" collapsible className="w-full space-y-4">
@@ -266,35 +302,25 @@ const About = () => {
           </Accordion>
         </Section>
 
-        {/* ------------------------ VERIFY & PROTECT ------------------------ */}
-        {/* NOTE: relative z-10 keeps it above the next section's backgrounds */}
-        <Section className="grid md:grid-cols-2 gap-8 relative z-10">
-          <Card className="border border-primary/50 rounded-2xl shadow-sm hover:shadow-md transition-all">
+        {/* VERIFY & PROTECT */}
+        <Section className="grid md:grid-cols-2 gap-8 relative z-10 items-stretch">
+          <Card className="flex flex-col justify-between border border-primary/40 rounded-2xl shadow-sm hover:shadow-md transition-all">
             <CardHeader>
               <div className="flex items-center gap-3">
                 <BadgeCheck className="w-10 h-10 text-primary" aria-hidden="true" />
                 <div>
-                  <CardTitle className="text-2xl">{tt("holibaytVerify", "Holibayt Verify")}</CardTitle>
+                  <CardTitle className="text-2xl">{tx("holibaytVerify", "Holibayt Verify")}</CardTitle>
                   <p className="text-sm text-muted-foreground">
-                    {tt("trustThroughVerification", "Trust through verification")}
+                    {tx("trustThroughVerification", "Trust through verification")}
                   </p>
                 </div>
               </div>
             </CardHeader>
             <CardContent className="space-y-4">
               {[
-                {
-                  title: tt("identityVerification", "Identity verification"),
-                  sub: tt("governmentIdSelfie", "Government ID + selfie check"),
-                },
-                {
-                  title: tt("propertyVerification", "Property verification"),
-                  sub: tt("documentCheckOnSite", "Documents & optional on-site"),
-                },
-                {
-                  title: tt("ownershipVerification", "Ownership verification"),
-                  sub: tt("legalTitleCheck", "Legal title check"),
-                },
+                { title: tx("identityVerification", "Identity verification"), sub: tx("governmentIdSelfie", "Government ID + selfie check") },
+                { title: tx("propertyVerification", "Property verification"), sub: tx("documentCheckOnSite", "Documents & optional on-site") },
+                { title: tx("ownershipVerification", "Ownership verification"), sub: tx("legalTitleCheck", "Legal title check") },
               ].map((i, idx) => (
                 <div className="flex items-start gap-3" key={idx}>
                   <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
@@ -309,23 +335,23 @@ const About = () => {
             </CardContent>
           </Card>
 
-          <Card className="border border-green-500/50 rounded-2xl shadow-sm hover:shadow-md transition-all">
+          <Card className="flex flex-col justify-between border border-green-500/40 rounded-2xl shadow-sm hover:shadow-md transition-all">
             <CardHeader>
               <div className="flex items-center gap-3">
                 <Shield className="w-10 h-10 text-green-600" aria-hidden="true" />
                 <div>
-                  <CardTitle className="text-2xl">{tt("holibaytProtect", "Holibayt Protect")}</CardTitle>
+                  <CardTitle className="text-2xl">{tx("holibaytProtect", "Holibayt Protect")}</CardTitle>
                   <p className="text-sm text-muted-foreground">
-                    {tt("insuranceProtection", "Insurance-style protection")}
+                    {tx("insuranceProtection", "Insurance-style protection")}
                   </p>
                 </div>
               </div>
             </CardHeader>
             <CardContent className="space-y-4">
               {[
-                { title: tt("transactionProtection", "Transaction protection"), sub: tt("coverageAmount", "Funds held until handover") },
-                { title: tt("fraudProtection", "Fraud protection"), sub: tt("fraudCoverage", "Coverage for misrepresentation") },
-                { title: tt("disputeResolution", "Dispute resolution"), sub: tt("mediationSupport", "Mediation support") },
+                { title: tx("transactionProtection", "Transaction protection"), sub: tx("coverageAmount", "Funds held until handover") },
+                { title: tx("fraudProtection", "Fraud protection"), sub: tx("fraudCoverage", "Coverage for misrepresentation") },
+                { title: tx("disputeResolution", "Dispute resolution"), sub: tx("mediationSupport", "Mediation support") },
               ].map((i, idx) => (
                 <div className="flex items-start gap-3" key={idx}>
                   <div className="w-8 h-8 rounded-full bg-green-500/10 flex items-center justify-center flex-shrink-0">
@@ -341,12 +367,12 @@ const About = () => {
           </Card>
         </Section>
 
-        {/* ------------------ MISSION / VISION / VALUES --------------------- */}
-        <Section className="grid md:grid-cols-3 gap-6 relative z-10">
+        {/* MISSION / VISION / VALUES */}
+        <Section className="grid gap-6 md:grid-cols-3 relative z-10">
           {[
-            { title: tt("ourMission", "Our Mission"), body: t("missionDescription") },
-            { title: tt("ourVision", "Our Vision"), body: t("visionDescription") },
-            { title: tt("ourValues", "Our Values"), body: t("valuesDescription") },
+            { title: tx("ourMission", "Our Mission"), body: t("missionDescription") },
+            { title: tx("ourVision", "Our Vision"), body: t("visionDescription") },
+            { title: tx("ourValues", "Our Values"), body: t("valuesDescription") },
           ].map((b, i) => (
             <Card key={i} className="border border-border/60 rounded-2xl shadow-sm hover:shadow-md transition-all">
               <CardHeader>
@@ -359,10 +385,9 @@ const About = () => {
           ))}
         </Section>
 
-        {/* --------------------------- HOLIBAYT PAY ------------------------- */}
-        {/* NOTE: z-0 + mt-12 ensures it sits below previous sections visually */}
+        {/* HOLIBAYT PAY */}
         <Section id="holibayt-pay" className="relative z-0 mt-12">
-          <div className="bg-gradient-to-br from-primary/15 via-background to-accent/10 rounded-3xl p-6 md:p-10 mb-8 border border-border/50">
+          <div className="bg-gradient-to-br from-primary/10 via-background to-accent/10 rounded-2xl p-6 md:p-10 mb-12 border border-border/50 shadow-sm">
             <div className="text-center max-w-4xl mx-auto space-y-6">
               <Badge className="mb-2 text-sm font-semibold inline-flex items-center">
                 <Shield className="w-4 h-4 mr-1" aria-hidden="true" />
@@ -370,7 +395,7 @@ const About = () => {
               </Badge>
 
               <h2 className="text-3xl md:text-5xl font-bold">
-                {tt("holibaytPayMainTitle", "Holibayt Pay™ – Secure Real Estate Payments in Algeria")}
+                {tx("holibaytPayMainTitle", "Holibayt Pay™ – Secure Real Estate Payments in Algeria")}
               </h2>
 
               <p className="text-base md:text-lg text-muted-foreground max-w-3xl mx-auto leading-relaxed">
@@ -399,7 +424,7 @@ const About = () => {
           {/* How It Works */}
           <div className="mb-10">
             <h3 className="text-2xl md:text-3xl font-bold mb-6 text-center">
-              {tt("howItWorks", "How Holibayt Pay™ Works")}
+              {tx("howItWorks", "How Holibayt Pay™ Works")}
             </h3>
 
             <div className="flex flex-wrap items-center justify-center gap-6 md:gap-8 mb-6">
