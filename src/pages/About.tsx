@@ -21,7 +21,7 @@ const fadeIn = {
   show: { opacity: 1, y: 0, transition: { duration: 0.35, ease: "easeOut" } }
 };
 
-/* ---------------- Section wrapper (IMPORTANT CHANGE)
+/* ---------------- Section wrapper (IMPORTANT)
    className now applies to the INNER container so grid utilities work. -------- */
 const Section = ({
   id,
@@ -37,6 +37,16 @@ const Section = ({
       {children}
     </div>
   </section>
+);
+
+/* Horizontal safe-scroll frame for wide content like workflows */
+const ScrollFrame: React.FC<{ children: React.ReactNode }> = ({ children }) => (
+  <div className="relative -mx-4 sm:-mx-6 lg:-mx-8">
+    <div className="overflow-x-auto px-4 sm:px-6 lg:px-8">
+      {/* give the row comfortable min-width on small screens, but allow natural width on md+ */}
+      <div className="min-w-[1000px] md:min-w-0">{children}</div>
+    </div>
+  </div>
 );
 
 const StatCard = ({ icon: Icon, value, title, description, index }: any) => (
@@ -147,7 +157,7 @@ const About = () => {
 
       <main className="relative isolate">
         {/* ------------------------------ STATS ----------------------------- */}
-        <Section className="">
+        <Section>
           <motion.div
             initial="hidden"
             whileInView="show"
@@ -227,8 +237,9 @@ const About = () => {
             ))}
           </div>
 
-          {/* Workflows (titles shown above to avoid raw keys; also passed as props) */}
+          {/* ----------------------------- Workflows ----------------------------- */}
           <div className="mt-12 space-y-12">
+            {/* BUY */}
             <Card className="overflow-hidden">
               <CardHeader className="pb-0">
                 <div className="mx-auto text-center space-y-2">
@@ -241,15 +252,18 @@ const About = () => {
                   </p>
                 </div>
               </CardHeader>
-              <CardContent className="p-4 md:p-6">
-                <WorkflowInteractive
-                  mode="buy"
-                  title={tx("buyWorkflowTitle", "Buying workflow")}
-                  subtitle={tx("buyWorkflowSubtitle", "A simple, step-by-step path to purchasing")}
-                />
+              <CardContent className="p-0 md:p-2">
+                <ScrollFrame>
+                  <WorkflowInteractive
+                    mode="buy"
+                    title={tx("buyWorkflowTitle", "Buying workflow")}
+                    subtitle={tx("buyWorkflowSubtitle", "A simple, step-by-step path to purchasing")}
+                  />
+                </ScrollFrame>
               </CardContent>
             </Card>
 
+            {/* RENT */}
             <Card className="overflow-hidden">
               <CardHeader className="pb-0">
                 <div className="mx-auto text-center space-y-2">
@@ -262,12 +276,14 @@ const About = () => {
                   </p>
                 </div>
               </CardHeader>
-              <CardContent className="p-4 md:p-6">
-                <WorkflowInteractive
-                  mode="rent"
-                  title={tx("rentWorkflowTitle", "Renting workflow")}
-                  subtitle={tx("rentWorkflowSubtitle", "A clear checklist for secure renting")}
-                />
+              <CardContent className="p-0 md:p-2">
+                <ScrollFrame>
+                  <WorkflowInteractive
+                    mode="rent"
+                    title={tx("rentWorkflowTitle", "Renting workflow")}
+                    subtitle={tx("rentWorkflowSubtitle", "A clear checklist for secure renting")}
+                  />
+                </ScrollFrame>
               </CardContent>
             </Card>
           </div>
@@ -381,7 +397,8 @@ const About = () => {
           </Card>
         </Section>
 
-        {/* ------------------ MISSION / VISION / VALUES --------------------- */}
+        {/* ------------------ MISSION / VISION / VALUES --------------------- */
+}
         <Section className="grid gap-6 md:grid-cols-3 relative z-10">
           {[
             { title: tx("ourMission", "Our Mission"), body: tx("missionDescription", "Democratize access to real estate in Algeria by offering a modern, secure and easy-to-use platform.") },
