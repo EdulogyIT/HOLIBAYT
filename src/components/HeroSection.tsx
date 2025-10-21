@@ -213,18 +213,20 @@ const HeroSection = () => {
                   </Button>
                 </PopoverTrigger>
               <PopoverContent
-  // Constrain the panel on small screens
-  className="w-[92vw] max-w-[360px] sm:w-auto p-0 z-[100]"
+  className="p-0 z-[100] w-[92vw] max-w-[360px] sm:w-auto sm:max-w-[640px]"
   align="center"
   sideOffset={8}
   collisionPadding={12}
 >
-  <DateRangePicker
-    value={formData.dateRange}
-    onChange={(range) => updateFormField('dateRange', range)}
-    allowPast={false}
-  />
+  <div className="max-h-[70vh] overflow-auto">
+    <DateRangePicker
+      value={formData.dateRange}
+      onChange={(range) => updateFormField('dateRange', range)}
+      allowPast={false}
+    />
+  </div>
 </PopoverContent>
+
 
               </Popover>
             </div>
@@ -244,18 +246,20 @@ const HeroSection = () => {
                   </Button>
                 </PopoverTrigger>
                <PopoverContent
-  // Constrain the panel on small screens
-  className="w-[92vw] max-w-[360px] sm:w-auto p-0 z-[100]"
+  className="p-0 z-[100] w-[92vw] max-w-[360px] sm:w-auto sm:max-w-[640px]"
   align="center"
   sideOffset={8}
   collisionPadding={12}
 >
-  <DateRangePicker
-    value={formData.dateRange}
-    onChange={(range) => updateFormField('dateRange', range)}
-    allowPast={false}
-  />
+  <div className="max-h-[70vh] overflow-auto">
+    <DateRangePicker
+      value={formData.dateRange}
+      onChange={(range) => updateFormField('dateRange', range)}
+      allowPast={false}
+    />
+  </div>
 </PopoverContent>
+
 
               </Popover>
             </div>
