@@ -13,7 +13,7 @@ import {
 import { Link } from "react-router-dom";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useScrollToTop } from "@/hooks/useScrollToTop";
-import WorkflowInteractive from "@/components/WorkflowInteractive";
+import WorkflowPreview from "@/components/WorkflowPreview";
 
 // Animation variants
 const fadeIn = {
@@ -217,10 +217,23 @@ const About = () => {
             ))}
           </div>
           
-          {/* Interactive Workflow Diagrams */}
-          <div className="mt-16 space-y-16">
-            <WorkflowInteractive mode="buy" />
-            <WorkflowInteractive mode="rent" />
+          {/* Workflow Previews - Compact */}
+          <div className="mt-12 space-y-8">
+            <div>
+              <h3 className="text-xl font-semibold mb-4 flex items-center gap-2">
+                <Building2 className="w-6 h-6 text-blue-600" />
+                {t('buyProperty')} {t('workflow')}
+              </h3>
+              <WorkflowPreview mode="buy" />
+            </div>
+            
+            <div>
+              <h3 className="text-xl font-semibold mb-4 flex items-center gap-2">
+                <Home className="w-6 h-6 text-green-600" />
+                {t('rentProperty')} {t('workflow')}
+              </h3>
+              <WorkflowPreview mode="rent" />
+            </div>
           </div>
         </Section>
 

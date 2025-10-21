@@ -321,7 +321,7 @@ const Rent = () => {
           </div>
         </div>
 
-        <WorkflowInteractive mode="rent" />
+        
 
         <CitiesSection />
 

@@ -348,7 +348,7 @@ const Buy = () => {
           </div>
         </div>
 
-        <WorkflowInteractive mode="buy" />
+        
 
         <div className="py-16">
           <CitiesSection />
