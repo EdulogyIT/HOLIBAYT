@@ -212,13 +212,20 @@ const HeroSection = () => {
                     <span className="truncate">{formData.dateRange?.from ? format(formData.dateRange.from, "dd/MM/yy") : t('checkIn')}</span>
                   </Button>
                 </PopoverTrigger>
-                <PopoverContent className="w-auto p-0 z-[100]" align="center" collisionPadding={10}>
-                  <DateRangePicker
-                    value={formData.dateRange}
-                    onChange={(range) => updateFormField('dateRange', range)}
-                    allowPast={false}
-                  />
-                </PopoverContent>
+              <PopoverContent
+  // Constrain the panel on small screens
+  className="w-[92vw] max-w-[360px] sm:w-auto p-0 z-[100]"
+  align="center"
+  sideOffset={8}
+  collisionPadding={12}
+>
+  <DateRangePicker
+    value={formData.dateRange}
+    onChange={(range) => updateFormField('dateRange', range)}
+    allowPast={false}
+  />
+</PopoverContent>
+
               </Popover>
             </div>
             <div className="flex-1">
@@ -236,13 +243,20 @@ const HeroSection = () => {
                     <span className="truncate">{formData.dateRange?.to ? format(formData.dateRange.to, "dd/MM/yy") : t('checkOut')}</span>
                   </Button>
                 </PopoverTrigger>
-                <PopoverContent className="w-auto p-0 z-[100]" align="center" collisionPadding={10}>
-                  <DateRangePicker
-                    value={formData.dateRange}
-                    onChange={(range) => updateFormField('dateRange', range)}
-                    allowPast={false}
-                  />
-                </PopoverContent>
+               <PopoverContent
+  // Constrain the panel on small screens
+  className="w-[92vw] max-w-[360px] sm:w-auto p-0 z-[100]"
+  align="center"
+  sideOffset={8}
+  collisionPadding={12}
+>
+  <DateRangePicker
+    value={formData.dateRange}
+    onChange={(range) => updateFormField('dateRange', range)}
+    allowPast={false}
+  />
+</PopoverContent>
+
               </Popover>
             </div>
             <div className="flex-1">
