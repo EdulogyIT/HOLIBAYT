@@ -13,6 +13,7 @@ import {
 import { Link } from "react-router-dom";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useScrollToTop } from "@/hooks/useScrollToTop";
+import WorkflowInteractive from "@/components/WorkflowInteractive";
 
 // Animation variants
 const fadeIn = {
@@ -37,7 +38,7 @@ const staggerChildren = {
 };
 
 const Section = ({ id, children, className = "" }: { id?: string; children: React.ReactNode; className?: string }) => (
-  <section id={id} className={`relative py-12 md:py-16 ${className}`}>
+  <section id={id} className={`relative py-16 md:py-20 ${className}`}>
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">{children}</div>
   </section>
 );
@@ -156,14 +157,17 @@ const About = () => {
             initial="hidden"
             whileInView="show"
             viewport={{ once: true }}
-            className="text-3xl md:text-4xl font-bold text-center mb-12"
+            className="text-3xl md:text-4xl font-bold text-center mb-16"
           >
             {t('howWeHelpYou')}
           </motion.h2>
-          <div className="grid md:grid-cols-3 gap-6">
+          
+          {/* Service Overview Cards */}
+          <div className="grid md:grid-cols-3 gap-8 mb-12">
             {[
               {
                 icon: Building2,
+                bgColor: "bg-blue-50 dark:bg-blue-950",
                 color: "text-blue-600",
                 title: t('buyProperty'),
                 desc: t('buyPropertyDesc'),
@@ -171,6 +175,7 @@ const About = () => {
               },
               {
                 icon: Home,
+                bgColor: "bg-green-50 dark:bg-green-950",
                 color: "text-green-600",
                 title: t('rentProperty'),
                 desc: t('rentPropertyDesc'),
@@ -178,6 +183,7 @@ const About = () => {
               },
               {
                 icon: CalendarDays,
+                bgColor: "bg-amber-50 dark:bg-amber-950",
                 color: "text-amber-600",
                 title: t('shortStay'),
                 desc: t('shortStayDesc'),
@@ -191,24 +197,30 @@ const About = () => {
                 whileInView="show" 
                 viewport={{ once: true }}
               >
-                <Card className="group h-full transition-all duration-300 hover:shadow-elegant hover:-translate-y-1">
+                <Card className="group h-full transition-all duration-300 hover:shadow-elegant hover:-translate-y-2">
                   <CardHeader>
-                    <div className={`w-12 h-12 ${item.color} mb-3`}>
-                      <item.icon className="w-12 h-12" aria-hidden="true" />
+                    <div className={`w-16 h-16 rounded-2xl ${item.bgColor} flex items-center justify-center mb-4`}>
+                      <item.icon className={`w-10 h-10 ${item.color}`} aria-hidden="true" />
                     </div>
-                    <CardTitle className="text-xl">{item.title}</CardTitle>
+                    <CardTitle className="text-2xl">{item.title}</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <p className="text-sm text-muted-foreground mb-4 leading-relaxed">{item.desc}</p>
+                    <p className="text-sm text-muted-foreground mb-6 leading-relaxed">{item.desc}</p>
                     <Button variant="link" asChild className="p-0 h-auto">
-                      <Link to={item.to} className="inline-flex items-center gap-1">
-                        {t('learnMore')} <ArrowRight className="w-4 h-4" />
+                      <Link to={item.to} className="inline-flex items-center gap-2 text-base">
+                        {t('learnMore')} <ArrowRight className="w-5 h-5" />
                       </Link>
                     </Button>
                   </CardContent>
                 </Card>
               </motion.div>
             ))}
+          </div>
+          
+          {/* Interactive Workflow Diagrams */}
+          <div className="mt-16 space-y-16">
+            <WorkflowInteractive mode="buy" />
+            <WorkflowInteractive mode="rent" />
           </div>
         </Section>
 
@@ -220,7 +232,7 @@ const About = () => {
               {t('storyIntro')}
             </p>
           </div>
-          <Accordion type="single" collapsible className="w-full space-y-4">
+          <Accordion type="single" collapsible className="w-full space-y-6">
             {[
               {
                 v: "story-1",
@@ -243,7 +255,7 @@ const About = () => {
                 body: t('storyParagraph4')
               }
             ].map((row) => (
-              <AccordionItem key={row.v} value={row.v} className="border border-border rounded-2xl px-6">
+              <AccordionItem key={row.v} value={row.v} className="border-2 border-border rounded-2xl px-4 sm:px-6 py-2">
                 <AccordionTrigger className="hover:no-underline text-left">
                   <span className="text-lg font-semibold">{row.title}</span>
                 </AccordionTrigger>

@@ -35,28 +35,28 @@ const WhyChooseSection = () => {
   ];
 
   return (
-    <section className="py-16 md:py-20 bg-muted/30">
+    <section className="py-12 md:py-16 lg:py-20 bg-muted/30">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-playfair font-bold text-foreground mb-4">
+          <h2 className="text-2xl md:text-3xl lg:text-4xl font-playfair font-bold text-foreground mb-4">
             {t('whyChooseTitle') || 'Why Thousands Trust'} <span className="text-primary">Holibayt</span>
           </h2>
           <div className="flex items-center justify-center gap-2 mb-4">
             {[...Array(5)].map((_, i) => (
-              <Star key={i} className="h-6 w-6 fill-amber-400 text-amber-400" />
+              <Star key={i} className="h-5 w-5 sm:h-6 sm:w-6 fill-amber-400 text-amber-400" />
             ))}
-            <span className="ml-2 text-lg font-inter font-semibold text-foreground">
+            <span className="ml-2 text-base sm:text-lg font-inter font-semibold text-foreground">
               4.8/5 {t('averageRating') || 'average rating'}
             </span>
           </div>
-          <p className="text-lg text-muted-foreground font-inter font-light max-w-2xl mx-auto">
+          <p className="text-base md:text-lg text-muted-foreground font-inter font-light max-w-2xl mx-auto">
             {t('whyChooseSubtitle') || 'Algeria\'s most trusted real estate platform with verified properties and secure transactions.'}
           </p>
         </div>
 
         {/* Features Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
           {features.map((feature, index) => {
             const Icon = feature.icon;
             const isLegalSupport = feature.title.includes('Legal Support') || feature.title.includes('juridique') || feature.title.includes('قانوني');
@@ -75,21 +75,21 @@ const WhyChooseSection = () => {
               <Card 
                 key={index} 
                 onClick={isClickable ? handleClick : undefined}
-                className={`group relative overflow-hidden border-2 border-border hover:border-primary/30 hover:shadow-elegant transition-all duration-300 hover:-translate-y-2 bg-card ${isClickable ? 'cursor-pointer' : ''}`}
+                className={`group relative overflow-hidden border-2 border-border hover:border-primary/30 hover:shadow-elegant transition-all duration-300 hover:-translate-y-1 sm:hover:-translate-y-2 bg-card ${isClickable ? 'cursor-pointer' : ''}`}
               >
-                <CardContent className="p-6 text-center">
+                <CardContent className="p-4 sm:p-6 text-center">
                   {/* Icon Container */}
-                  <div className="relative mb-4 flex justify-center">
-                    <div className={`inline-flex items-center justify-center w-14 h-14 ${feature.color} text-white rounded-xl group-hover:scale-110 transition-transform duration-300 shadow-lg`}>
-                      <Icon className="h-7 w-7" />
+                  <div className="relative mb-3 sm:mb-4 flex justify-center">
+                    <div className={`inline-flex items-center justify-center w-12 h-12 sm:w-14 sm:h-14 ${feature.color} text-white rounded-xl group-hover:scale-110 transition-transform duration-300 shadow-lg`}>
+                      <Icon className="h-6 w-6 sm:h-7 sm:w-7" />
                     </div>
                   </div>
 
                   {/* Content */}
-                  <h3 className="text-lg font-playfair font-semibold text-foreground mb-3">
+                  <h3 className="text-base sm:text-lg font-playfair font-semibold text-foreground mb-2 sm:mb-3">
                     {feature.title}
                   </h3>
-                  <p className="text-sm text-muted-foreground font-inter leading-relaxed">
+                  <p className="text-xs sm:text-sm text-muted-foreground font-inter leading-relaxed">
                     {feature.description}
                   </p>
                 </CardContent>
