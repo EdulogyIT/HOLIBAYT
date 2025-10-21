@@ -344,37 +344,40 @@ const HeroSection = () => {
           </div>
 
           {/* Dynamic Search Card */}
-          <Card className="search-card max-w-6xl mx-auto p-4 sm:p-6 md:p-8 bg-card/90 backdrop-blur-md border-border/30 shadow-elegant rounded-2xl sm:rounded-3xl overflow-x-hidden">
-            <div className="flex flex-col gap-3 sm:gap-4">
-              {/* Location Input with Autocomplete - Always full width */}
-              <LocationAutocomplete
-                value={formData.location}
-                onChange={(value) => updateFormField('location', value)}
-                placeholder={t('searchPlaceholder')}
-                className="w-full h-12 sm:h-14 font-inter text-sm"
-              />
-              
-              {/* Dynamic Fields - Stack on mobile, row on tablet+ */}
-              <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
-                {renderSearchFields()}
-              
-                {/* Search Button */}
-                <Button 
-                  onClick={handleSearch}
-                  disabled={!isFormValid()}
-                  className={cn(
-                    "h-12 sm:h-14 px-6 sm:px-8 font-inter font-medium transition-all duration-300 w-full sm:w-auto sm:min-w-[140px]",
-                    isFormValid() 
-                      ? "bg-gradient-primary hover:shadow-elegant text-white" 
-                      : "bg-gray-300 text-gray-500 cursor-not-allowed"
-                  )}
-                >
-                  <Search className="mr-2 h-4 w-4 sm:h-5 sm:w-5" />
-                  <span className="text-sm sm:text-base">{t('search')}</span>
-                </Button>
-              </div>
-            </div>
-          </Card>
+<Card className="search-card max-w-3xl mx-auto p-4 sm:p-6 md:p-8 bg-card/90 backdrop-blur-md border-border/30 shadow-elegant rounded-2xl sm:rounded-3xl overflow-x-hidden">
+  <div className="flex flex-col gap-3 sm:gap-4">
+    {/* Location Input with Autocomplete - Always full width */}
+    <div className="relative w-full">
+      <LocationAutocomplete
+        value={formData.location}
+        onChange={(value) => updateFormField('location', value)}
+        placeholder={t('searchPlaceholder')}
+        className="w-full h-12 sm:h-14 font-inter text-sm"
+      />
+    </div>
+
+    {/* Dynamic Fields - Stack on mobile, row on tablet+ */}
+    <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 items-stretch">
+      {renderSearchFields()}
+
+      {/* Search Button */}
+      <Button 
+        onClick={handleSearch}
+        disabled={!isFormValid()}
+        className={cn(
+          "h-12 sm:h-14 px-6 sm:px-8 font-inter font-medium transition-all duration-300 w-full sm:w-auto sm:min-w-[140px]",
+          isFormValid() 
+            ? "bg-gradient-primary hover:shadow-elegant text-white" 
+            : "bg-gray-300 text-gray-500 cursor-not-allowed"
+        )}
+      >
+        <Search className="mr-2 h-4 w-4 sm:h-5 sm:w-5" />
+        <span className="text-sm sm:text-base">{t('search')}</span>
+      </Button>
+    </div>
+  </div>
+</Card>
+
         </div>
 
         {/* Quick Stats */}
