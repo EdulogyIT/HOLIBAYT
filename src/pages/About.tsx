@@ -15,13 +15,14 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { useScrollToTop } from "@/hooks/useScrollToTop";
 import WorkflowInteractive from "@/components/WorkflowInteractive";
 
-/* Animation (gentle) */
+/* ---------------- Animation (gentle) ---------------- */
 const fadeIn = {
   hidden: { opacity: 0, y: 8 },
   show: { opacity: 1, y: 0, transition: { duration: 0.35, ease: "easeOut" } }
 };
 
-/* Section wrapper (isolate avoids bleed/overlap) */
+/* ---------------- Section wrapper (IMPORTANT CHANGE)
+   className now applies to the INNER container so grid utilities work. -------- */
 const Section = ({
   id,
   children,
@@ -31,8 +32,10 @@ const Section = ({
   children: React.ReactNode;
   className?: string;
 }) => (
-  <section id={id} className={`relative isolate py-12 md:py-16 ${className}`}>
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">{children}</div>
+  <section id={id} className="relative isolate py-12 md:py-16">
+    <div className={`max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 ${className}`}>
+      {children}
+    </div>
   </section>
 );
 
@@ -81,12 +84,8 @@ const About = () => {
 
   // i18n fallback so raw keys never show
   const tx = (k: string, fallback: string) => {
-    try {
-      const v = t(k) as string;
-      return v && v !== k ? v : fallback;
-    } catch {
-      return fallback;
-    }
+    try { const v = t(k) as string; return v && v !== k ? v : fallback; }
+    catch { return fallback; }
   };
 
   const stats = [
@@ -100,7 +99,7 @@ const About = () => {
     <div className="min-h-screen bg-background text-foreground antialiased">
       <Navigation />
 
-      {/* HERO */}
+      {/* ------------------------------ HERO ------------------------------ */}
       <header className="relative isolate overflow-hidden">
         {/* Decorative blobs behind content */}
         <div aria-hidden className="pointer-events-none absolute inset-0 -z-10">
@@ -126,7 +125,7 @@ const About = () => {
               animate="show"
               className="mt-4 text-base md:text-lg text-muted-foreground leading-relaxed"
             >
-              {t("aboutDescription")}
+              {tx("aboutDescription", "Holibayt is Algeria’s leading real estate platform, connecting buyers, sellers and tenants with trusted, verified listings.")}
             </motion.p>
 
             <motion.div
@@ -136,10 +135,10 @@ const About = () => {
               className="mt-8 flex items-center justify-center gap-3 flex-wrap"
             >
               <Button asChild size="lg">
-                <Link to="/buy">{t("buyProperty")}</Link>
+                <Link to="/buy">{tx("buyProperty", "Buy a property")}</Link>
               </Button>
               <Button asChild variant="secondary" size="lg">
-                <Link to="/rent">{t("rentProperty")}</Link>
+                <Link to="/rent">{tx("rentProperty", "Rent a home")}</Link>
               </Button>
             </motion.div>
           </div>
@@ -147,8 +146,8 @@ const About = () => {
       </header>
 
       <main className="relative isolate">
-        {/* STATS */}
-        <Section className="pt-4">
+        {/* ------------------------------ STATS ----------------------------- */}
+        <Section className="">
           <motion.div
             initial="hidden"
             whileInView="show"
@@ -161,7 +160,7 @@ const About = () => {
           </motion.div>
         </Section>
 
-        {/* HOW WE HELP YOU */}
+        {/* ------------------------- HOW WE HELP YOU ------------------------ */}
         <Section>
           <motion.h2
             variants={fadeIn}
@@ -180,24 +179,24 @@ const About = () => {
                 icon: Building2,
                 bgColor: "bg-blue-50 dark:bg-blue-950/40",
                 color: "text-blue-600",
-                title: t("buyProperty"),
-                desc: t("buyPropertyDesc"),
+                title: tx("buyProperty", "Buy a property"),
+                desc: tx("buyPropertyDesc", "Discover the best opportunities for sale"),
                 to: "/buy",
               },
               {
                 icon: Home,
                 bgColor: "bg-green-50 dark:bg-green-950/40",
                 color: "text-green-600",
-                title: t("rentProperty"),
-                desc: t("rentPropertyDesc"),
+                title: tx("rentProperty", "Rent a home"),
+                desc: tx("rentPropertyDesc", "Find your next home"),
                 to: "/rent",
               },
               {
                 icon: CalendarDays,
                 bgColor: "bg-amber-50 dark:bg-amber-950/40",
                 color: "text-amber-600",
-                title: t("shortStay"),
-                desc: t("shortStayDesc"),
+                title: tx("shortStay", "Short Stay"),
+                desc: tx("shortStayDesc", "Perfect accommodations for your short stays"),
                 to: "/short-stay",
               },
             ].map((item, i) => (
@@ -210,9 +209,7 @@ const About = () => {
               >
                 <Card className="border border-border/60 rounded-2xl shadow-sm hover:shadow-md transition-all">
                   <CardHeader>
-                    <div
-                      className={`w-16 h-16 rounded-2xl ${item.bgColor} flex items-center justify-center mb-4`}
-                    >
+                    <div className={`w-16 h-16 rounded-2xl ${item.bgColor} flex items-center justify-center mb-4`}>
                       <item.icon className={`w-10 h-10 ${item.color}`} aria-hidden="true" />
                     </div>
                     <CardTitle className="text-2xl">{item.title}</CardTitle>
@@ -221,7 +218,7 @@ const About = () => {
                     <p className="text-sm text-muted-foreground mb-6 leading-relaxed">{item.desc}</p>
                     <Button variant="link" asChild className="p-0 h-auto">
                       <Link to={item.to} className="inline-flex items-center gap-2 text-base">
-                        {t("learnMore")} <ArrowRight className="w-5 h-5" />
+                        {tx("learnMore", "Learn More")} <ArrowRight className="w-5 h-5" />
                       </Link>
                     </Button>
                   </CardContent>
@@ -230,8 +227,7 @@ const About = () => {
             ))}
           </div>
 
-          {/* Workflows wrapped to avoid overflow.
-             We also pass title/subtitle props; see WorkflowInteractive patch below. */}
+          {/* Workflows (titles shown above to avoid raw keys; also passed as props) */}
           <div className="mt-12 space-y-12">
             <Card className="overflow-hidden">
               <CardHeader className="pb-0">
@@ -277,18 +273,36 @@ const About = () => {
           </div>
         </Section>
 
-        {/* OUR STORY */}
+        {/* ---------------------------- OUR STORY --------------------------- */}
         <Section id="our-story">
           <div className="max-w-3xl mb-6">
             <h2 className="text-3xl md:text-4xl font-bold mb-3">{tx("ourStory", "Our Story")}</h2>
-            <p className="text-muted-foreground leading-relaxed">{t("storyIntro")}</p>
+            <p className="text-muted-foreground leading-relaxed">
+              {tx("storyIntro", "A quick look at how we started, grew, and where we are today.")}
+            </p>
           </div>
           <Accordion type="single" collapsible className="w-full space-y-4">
             {[
-              { v: "story-1", title: t("theBeginning"), body: t("storyParagraph1") },
-              { v: "story-2", title: t("ourGrowth"), body: t("storyParagraph2") },
-              { v: "story-3", title: t("innovation"), body: t("storyParagraph3") },
-              { v: "story-4", title: t("today"), body: t("storyParagraph4") },
+              {
+                v: "story-1",
+                title: tx("theBeginning", "The beginning"),
+                body: tx("storyParagraph1", "We launched to make real estate simpler and safer for everyone.")
+              },
+              {
+                v: "story-2",
+                title: tx("ourGrowth", "Our growth"),
+                body: tx("storyParagraph2", "We expanded with verified listings and stronger customer support.")
+              },
+              {
+                v: "story-3",
+                title: tx("innovation", "Innovation"),
+                body: tx("storyParagraph3", "We introduced new security and payment layers to protect users.")
+              },
+              {
+                v: "story-4",
+                title: tx("today", "Today"),
+                body: tx("storyParagraph4", "We’re focused on trust, transparency, and a delightful experience.")
+              }
             ].map((row) => (
               <AccordionItem key={row.v} value={row.v} className="border rounded-2xl px-4 sm:px-6">
                 <AccordionTrigger className="hover:no-underline text-left py-4">
@@ -302,7 +316,7 @@ const About = () => {
           </Accordion>
         </Section>
 
-        {/* VERIFY & PROTECT */}
+        {/* ------------------------ VERIFY & PROTECT ------------------------ */}
         <Section className="grid md:grid-cols-2 gap-8 relative z-10 items-stretch">
           <Card className="flex flex-col justify-between border border-primary/40 rounded-2xl shadow-sm hover:shadow-md transition-all">
             <CardHeader>
@@ -367,12 +381,12 @@ const About = () => {
           </Card>
         </Section>
 
-        {/* MISSION / VISION / VALUES */}
+        {/* ------------------ MISSION / VISION / VALUES --------------------- */}
         <Section className="grid gap-6 md:grid-cols-3 relative z-10">
           {[
-            { title: tx("ourMission", "Our Mission"), body: t("missionDescription") },
-            { title: tx("ourVision", "Our Vision"), body: t("visionDescription") },
-            { title: tx("ourValues", "Our Values"), body: t("valuesDescription") },
+            { title: tx("ourMission", "Our Mission"), body: tx("missionDescription", "Democratize access to real estate in Algeria by offering a modern, secure and easy-to-use platform.") },
+            { title: tx("ourVision", "Our Vision"), body: tx("visionDescription", "Become the essential reference for real estate in the Maghreb and transform the way people buy and rent.") },
+            { title: tx("ourValues", "Our Values"), body: tx("valuesDescription", "Transparency, trust, innovation and exceptional customer service are at the heart of everything we do.") },
           ].map((b, i) => (
             <Card key={i} className="border border-border/60 rounded-2xl shadow-sm hover:shadow-md transition-all">
               <CardHeader>
@@ -385,13 +399,13 @@ const About = () => {
           ))}
         </Section>
 
-        {/* HOLIBAYT PAY */}
+        {/* --------------------------- HOLIBAYT PAY ------------------------- */}
         <Section id="holibayt-pay" className="relative z-0 mt-12">
           <div className="bg-gradient-to-br from-primary/10 via-background to-accent/10 rounded-2xl p-6 md:p-10 mb-12 border border-border/50 shadow-sm">
             <div className="text-center max-w-4xl mx-auto space-y-6">
               <Badge className="mb-2 text-sm font-semibold inline-flex items-center">
                 <Shield className="w-4 h-4 mr-1" aria-hidden="true" />
-                {t("holibaytPayHero")}
+                {tx("holibaytPayHero", "Secure Real Estate Payments")}
               </Badge>
 
               <h2 className="text-3xl md:text-5xl font-bold">
@@ -399,16 +413,16 @@ const About = () => {
               </h2>
 
               <p className="text-base md:text-lg text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-                {t("holibaytPaySubhero")}
+                {tx("holibaytPaySubhero", "Protect your money with verified listings and escrow-style protection until handover.")}
               </p>
 
               {/* Trust Icons */}
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4 pt-6 border-t border-border/50">
                 {[
-                  { Icon: Globe, label: t("designedForAlgeria"), wrap: "bg-primary/10", tone: "text-primary" },
-                  { Icon: CreditCard, label: t("multiCurrency"), wrap: "bg-accent/10", tone: "text-accent" },
-                  { Icon: BadgeCheck, label: t("verifiedUsersOnly"), wrap: "bg-green-500/10", tone: "text-green-600" },
-                  { Icon: Shield, label: t("escrowProtected"), wrap: "bg-blue-500/10", tone: "text-blue-600" },
+                  { Icon: Globe, label: tx("designedForAlgeria", "Designed for Algeria"), wrap: "bg-primary/10", tone: "text-primary" },
+                  { Icon: CreditCard, label: tx("multiCurrency", "Multi-Currency Support"), wrap: "bg-accent/10", tone: "text-accent" },
+                  { Icon: BadgeCheck, label: tx("verifiedUsersOnly", "Verified Users Only"), wrap: "bg-green-500/10", tone: "text-green-600" },
+                  { Icon: Shield, label: tx("escrowProtected", "Escrow-Protected"), wrap: "bg-blue-500/10", tone: "text-blue-600" },
                 ].map(({ Icon, label, wrap, tone }, i) => (
                   <div key={i} className="flex flex-col items-center gap-2 text-center">
                     <div className={`w-12 h-12 rounded-full ${wrap} flex items-center justify-center`}>
@@ -428,17 +442,17 @@ const About = () => {
             </h3>
 
             <div className="flex flex-wrap items-center justify-center gap-6 md:gap-8 mb-6">
-              <Step icon={Users} title={t("buyerTenant")} subtitle={t("initiatesPayment")} />
+              <Step icon={Users} title={tx("buyerTenant", "Buyer / Tenant")} subtitle={tx("initiatesPayment", "Initiates payment securely through Holibayt Pay™")} />
               <ArrowRight className="w-8 h-8 text-primary rotate-90 md:rotate-0" aria-hidden="true" />
-              <Step icon={Shield} title={t("holibaytEscrow")} subtitle={t("holdsSecurely")} tone="accent" />
+              <Step icon={Shield} title={tx("holibaytEscrow", "Holibayt Escrow")} subtitle={tx("holdsSecurely", "Holds funds in secure escrow account")} tone="accent" />
               <ArrowRight className="w-8 h-8 text-primary rotate-90 md:rotate-0" aria-hidden="true" />
-              <Step icon={CheckCircle} title={t("sellerHost")} subtitle={t("receivesAfterConfirmation")} tone="success" />
+              <Step icon={CheckCircle} title={tx("sellerHost", "Seller / Host")} subtitle={tx("receivesAfterConfirmation", "Receives payment after confirmation")} tone="success" />
             </div>
 
             <div className="p-4 md:p-6 bg-primary/5 border border-primary/20 rounded-xl text-center">
               <p className="text-sm">
                 <Lock className="w-4 h-4 inline mr-2 text-primary" aria-hidden="true" />
-                {t("escrowExplainer")}
+                {tx("escrowExplainer", "Your money stays safe in escrow until you confirm the property handover. Only then is payment released.")}
               </p>
             </div>
           </div>
@@ -450,13 +464,16 @@ const About = () => {
                 <div className="flex items-center gap-3">
                   <AlertTriangle className="w-8 h-8 text-destructive" aria-hidden="true" />
                   <div>
-                    <CardTitle className="text-xl">{t("directPayment")}</CardTitle>
-                    <p className="text-sm text-muted-foreground">{t("directPaymentSubtitle")}</p>
+                    <CardTitle className="text-xl">{tx("directPayment", "Direct Payment")}</CardTitle>
+                    <p className="text-sm text-muted-foreground">{tx("directPaymentSubtitle", "Risks you take without protection")}</p>
                   </div>
                 </div>
               </CardHeader>
               <CardContent className="space-y-3">
-                {[t("riskFraud"), t("riskNoRefund"), t("riskNoVerification")].map((txt, i) => (
+                {[tx("riskFraud","No protection against fraud or misrepresentation"),
+                  tx("riskNoRefund","Difficult to recover funds if issues arise"),
+                  tx("riskNoVerification","No verification of identity or property ownership")]
+                  .map((txt, i) => (
                   <div className="flex items-start gap-2" key={i}>
                     <div className="w-2 h-2 rounded-full bg-destructive mt-2" />
                     <p className="text-sm text-muted-foreground">{txt}</p>
@@ -470,13 +487,16 @@ const About = () => {
                 <div className="flex items-center gap-3">
                   <Shield className="w-8 h-8 text-primary" aria-hidden="true" />
                   <div>
-                    <CardTitle className="text-xl">{t("holibaytPayBrand")}</CardTitle>
-                    <p className="text-sm text-muted-foreground">{t("holibaytPayBenefitsSubtitle")}</p>
+                    <CardTitle className="text-xl">{tx("holibaytPayBrand", "Holibayt Pay™")}</CardTitle>
+                    <p className="text-sm text-muted-foreground">{tx("holibaytPayBenefitsSubtitle", "Built-in protection at every step")}</p>
                   </div>
                 </div>
               </CardHeader>
               <CardContent className="space-y-3">
-                {[t("benefitEscrow"), t("benefitRefund"), t("benefitVerified")].map((txt, i) => (
+                {[tx("benefitEscrow","Funds held in secure escrow until handover confirmed"),
+                  tx("benefitRefund","Refund guarantee if property doesn't match listing"),
+                  tx("benefitVerified","All users and properties verified before transactions")]
+                  .map((txt, i) => (
                   <div className="flex items-start gap-2" key={i}>
                     <CheckCircle className="w-5 h-5 text-green-600" />
                     <p className="text-sm font-semibold">{txt}</p>
@@ -489,17 +509,14 @@ const About = () => {
           {/* Key Features */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {[
-              { Icon: Shield, title: t("bankLevelSecurity"), body: t("holibaytPaySecurityDesc") },
-              { Icon: Lock, title: t("secureTransactions"), body: t("holibaytPayStripeDesc") },
-              { Icon: CreditCard, title: t("multiplePaymentMethods"), body: t("holibaytPayPaymentMethodsDesc") },
-              { Icon: CheckCircle, title: t("instantConfirmation"), body: t("holibaytPayConfirmationDesc") },
-              { Icon: Clock, title: t("timelyPayouts"), body: t("holibaytPayPayoutsDesc") },
-              { Icon: RefreshCcw, title: t("easyRefundsTitle"), body: t("holibaytPayRefundsDesc") },
+              { Icon: Shield, title: tx("bankLevelSecurity","Bank-Level Security"), body: tx("holibaytPaySecurityDesc","All payments are encrypted and verified with industry-leading security standards.") },
+              { Icon: Lock, title: tx("secureTransactions","Secure transactions"), body: tx("holibaytPayStripeDesc","Powered by Stripe — a globally trusted payment platform used by millions worldwide.") },
+              { Icon: CreditCard, title: tx("multiplePaymentMethods","Multiple Payment Methods"), body: tx("holibaytPayPaymentMethodsDesc","Pay with Visa, Mastercard, or local options in EUR, USD, or DZD.") },
+              { Icon: CheckCircle, title: tx("instantConfirmation","Instant Confirmation"), body: tx("holibaytPayConfirmationDesc","Get notified immediately once your payment is processed and secured.") },
+              { Icon: Clock, title: tx("timelyPayouts","Timely Payouts"), body: tx("holibaytPayPayoutsDesc","Hosts are paid quickly after confirmation — transparent fees, no surprises.") },
+              { Icon: RefreshCcw, title: tx("easyRefundsTitle","Easy Refunds"), body: tx("holibaytPayRefundsDesc","Hassle-free refund process if something goes wrong or the property doesn't match.") },
             ].map(({ Icon, title, body }, i) => (
-              <Card
-                key={i}
-                className="border border-border/60 rounded-2xl shadow-sm hover:shadow-md transition-all"
-              >
+              <Card key={i} className="border border-border/60 rounded-2xl shadow-sm hover:shadow-md transition-all">
                 <CardHeader>
                   <Icon className="w-10 h-10 text-primary mb-3" aria-hidden="true" />
                   <CardTitle className="text-lg">{title}</CardTitle>
