@@ -17,6 +17,7 @@ import {
   Shield,
   Search,
   HandCoins,
+  Plus,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useLanguage } from "@/contexts/LanguageContext";
