@@ -8,12 +8,11 @@ import { Button } from "@/components/ui/button";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import {
   Building, Users, Award, Shield, Lock, CreditCard, CheckCircle, Clock, RefreshCcw, Globe, ArrowRight,
-  AlertTriangle, BadgeCheck, Home, Building2, CalendarDays
+  AlertTriangle, BadgeCheck, Home, Building2, CalendarDays, Search, FileCheck2, Wallet, Handshake, LifeBuoy
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useScrollToTop } from "@/hooks/useScrollToTop";
-import WorkflowInteractive from "@/components/WorkflowInteractive";
 
 /* ---------------- Animation (gentle) ---------------- */
 const fadeIn = {
@@ -21,8 +20,7 @@ const fadeIn = {
   show: { opacity: 1, y: 0, transition: { duration: 0.35, ease: "easeOut" } }
 };
 
-/* ---------------- Section wrapper (IMPORTANT)
-   className now applies to the INNER container so grid utilities work. -------- */
+/* ---------------- Section wrapper (grid classes apply to inner container) --- */
 const Section = ({
   id,
   children,
@@ -43,7 +41,6 @@ const Section = ({
 const ScrollFrame: React.FC<{ children: React.ReactNode }> = ({ children }) => (
   <div className="relative -mx-4 sm:-mx-6 lg:-mx-8">
     <div className="overflow-x-auto px-4 sm:px-6 lg:px-8">
-      {/* give the row comfortable min-width on small screens, but allow natural width on md+ */}
       <div className="min-w-[1000px] md:min-w-0">{children}</div>
     </div>
   </div>
@@ -111,7 +108,6 @@ const About = () => {
 
       {/* ------------------------------ HERO ------------------------------ */}
       <header className="relative isolate overflow-hidden">
-        {/* Decorative blobs behind content */}
         <div aria-hidden className="pointer-events-none absolute inset-0 -z-10">
           <div className="absolute -top-16 -left-14 h-56 w-56 rounded-full bg-primary/15 blur-2xl md:h-72 md:w-72" />
           <div className="absolute -bottom-16 -right-14 h-56 w-56 rounded-full bg-accent/15 blur-2xl md:h-72 md:w-72" />
@@ -183,7 +179,7 @@ const About = () => {
           </motion.h2>
 
           {/* Service Overview Cards */}
-          <div className="grid md:grid-cols-3 gap-6 md:gap-8 mb-10">
+          <div className="grid md:grid-cols-3 gap-6 md:gap-8 mb-12">
             {[
               {
                 icon: Building2,
@@ -210,13 +206,7 @@ const About = () => {
                 to: "/short-stay",
               },
             ].map((item, i) => (
-              <motion.div
-                key={i}
-                variants={fadeIn}
-                initial="hidden"
-                whileInView="show"
-                viewport={{ once: true, amount: 0.2 }}
-              >
+              <motion.div key={i} variants={fadeIn} initial="hidden" whileInView="show" viewport={{ once: true, amount: 0.2 }}>
                 <Card className="border border-border/60 rounded-2xl shadow-sm hover:shadow-md transition-all">
                   <CardHeader>
                     <div className={`w-16 h-16 rounded-2xl ${item.bgColor} flex items-center justify-center mb-4`}>
@@ -237,56 +227,113 @@ const About = () => {
             ))}
           </div>
 
-          {/* ----------------------------- Workflows ----------------------------- */}
-          <div className="mt-12 space-y-12">
-            {/* BUY */}
-            <Card className="overflow-hidden">
-              <CardHeader className="pb-0">
-                <div className="mx-auto text-center space-y-2">
-                  <span className="inline-block text-xs font-semibold px-3 py-1 rounded-full bg-primary/10 text-primary">
-                    {tx("howToBuy", "How to Buy")}
-                  </span>
-                  <h3 className="text-2xl md:text-3xl font-bold">{tx("buyWorkflowTitle", "Buying workflow")}</h3>
-                  <p className="text-sm md:text-base text-muted-foreground">
-                    {tx("buyWorkflowSubtitle", "A simple, step-by-step path to purchasing")}
-                  </p>
-                </div>
-              </CardHeader>
-              <CardContent className="p-0 md:p-2">
-                <ScrollFrame>
-                  <WorkflowInteractive
-                    mode="buy"
-                    title={tx("buyWorkflowTitle", "Buying workflow")}
-                    subtitle={tx("buyWorkflowSubtitle", "A simple, step-by-step path to purchasing")}
-                  />
-                </ScrollFrame>
-              </CardContent>
-            </Card>
+          {/* ------------------- Universal Holibayt Workflow ------------------- */}
+          <Card className="overflow-hidden">
+            <CardHeader className="pb-0">
+              <div className="mx-auto text-center space-y-2">
+                <span className="inline-block text-xs font-semibold px-3 py-1 rounded-full bg-primary/10 text-primary">
+                  {tx("universalWorkflowKicker", "How Holibayt Works")}
+                </span>
+                <h3 className="text-2xl md:text-3xl font-bold">{tx("universalWorkflowTitle", "One workflow for Buy, Rent & Short Stay")}</h3>
+                <p className="text-sm md:text-base text-muted-foreground">
+                  {tx("universalWorkflowSubtitle", "The same trusted path, with small differences depending on the journey.")}
+                </p>
+              </div>
+            </CardHeader>
+            <CardContent className="p-0 md:p-2">
+              <ScrollFrame>
+                <div className="flex items-stretch gap-6 md:gap-8 py-6">
+                  {/* Step 1 */}
+                  <div className="min-w-[260px] md:min-w-[280px] rounded-2xl bg-primary/10 p-6 flex flex-col">
+                    <div className="w-12 h-12 rounded-xl bg-primary/20 flex items-center justify-center mb-4">
+                      <Search className="w-6 h-6 text-primary" />
+                    </div>
+                    <h4 className="text-xl font-semibold mb-1">{tx("wf_discover", "Discover & shortlist")}</h4>
+                    <p className="text-sm text-muted-foreground mb-4">
+                      {tx("wf_discover_sub", "Browse verified listings that match your needs.")}
+                    </p>
+                    <ul className="text-sm text-muted-foreground space-y-2">
+                      <li>• {tx("wf_buy", "Buy")}: {tx("wf_buy_discover","Compare location, price & ownership docs")}</li>
+                      <li>• {tx("wf_rent", "Rent")}: {tx("wf_rent_discover","Filter by terms, availability & amenities")}</li>
+                      <li>• {tx("wf_stay", "Short stay")}: {tx("wf_stay_discover","Pick dates and property type")}</li>
+                    </ul>
+                  </div>
 
-            {/* RENT */}
-            <Card className="overflow-hidden">
-              <CardHeader className="pb-0">
-                <div className="mx-auto text-center space-y-2">
-                  <span className="inline-block text-xs font-semibold px-3 py-1 rounded-full bg-primary/10 text-primary">
-                    {tx("howToRent", "How to Rent")}
-                  </span>
-                  <h3 className="text-2xl md:text-3xl font-bold">{tx("rentWorkflowTitle", "Renting workflow")}</h3>
-                  <p className="text-sm md:text-base text-muted-foreground">
-                    {tx("rentWorkflowSubtitle", "A clear checklist for secure renting")}
-                  </p>
+                  <ArrowRight className="w-8 h-8 text-primary self-center flex-shrink-0 hidden md:block" />
+
+                  {/* Step 2 */}
+                  <div className="min-w-[260px] md:min-w-[280px] rounded-2xl bg-emerald-50 dark:bg-emerald-950/30 p-6 flex flex-col">
+                    <div className="w-12 h-12 rounded-xl bg-emerald-200/50 dark:bg-emerald-900/50 flex items-center justify-center mb-4">
+                      <FileCheck2 className="w-6 h-6 text-emerald-700 dark:text-emerald-300" />
+                    </div>
+                    <h4 className="text-xl font-semibold mb-1">{tx("wf_verify", "Holibayt Verify")}</h4>
+                    <p className="text-sm text-muted-foreground mb-4">
+                      {tx("wf_verify_sub", "Identity, property and ownership checks for trust.")}
+                    </p>
+                    <ul className="text-sm text-muted-foreground space-y-2">
+                      <li>• {tx("wf_id", "ID + selfie check")}</li>
+                      <li>• {tx("wf_property", "Property documents & optional on-site")}</li>
+                      <li>• {tx("wf_title", "Legal title check (for buy)")}</li>
+                    </ul>
+                  </div>
+
+                  <ArrowRight className="w-8 h-8 text-primary self-center flex-shrink-0 hidden md:block" />
+
+                  {/* Step 3 */}
+                  <div className="min-w-[260px] md:min-w-[280px] rounded-2xl bg-amber-100 dark:bg-amber-900/40 p-6 flex flex-col">
+                    <div className="w-12 h-12 rounded-xl bg-amber-200/70 dark:bg-amber-800/70 flex items-center justify-center mb-4">
+                      <Wallet className="w-6 h-6 text-amber-700 dark:text-amber-200" />
+                    </div>
+                    <h4 className="text-xl font-semibold mb-1">{tx("wf_pay", "Holibayt Pay (escrow)")}</h4>
+                    <p className="text-sm text-muted-foreground mb-4">
+                      {tx("wf_pay_sub", "Funds held securely until handover / check-in.")}
+                    </p>
+                    <ul className="text-sm text-muted-foreground space-y-2">
+                      <li>• {tx("wf_buy_pay","Down payment / deposit locked")}</li>
+                      <li>• {tx("wf_rent_pay","First month / deposit secured")}</li>
+                      <li>• {tx("wf_stay_pay","Booking amount protected")}</li>
+                    </ul>
+                  </div>
+
+                  <ArrowRight className="w-8 h-8 text-primary self-center flex-shrink-0 hidden md:block" />
+
+                  {/* Step 4 */}
+                  <div className="min-w-[260px] md:min-w-[280px] rounded-2xl bg-blue-50 dark:bg-blue-950/40 p-6 flex flex-col">
+                    <div className="w-12 h-12 rounded-xl bg-blue-200/60 dark:bg-blue-900/60 flex items-center justify-center mb-4">
+                      <Handshake className="w-6 h-6 text-blue-700 dark:text-blue-200" />
+                    </div>
+                    <h4 className="text-xl font-semibold mb-1">{tx("wf_handover", "Handover & confirmation")}</h4>
+                    <p className="text-sm text-muted-foreground mb-4">
+                      {tx("wf_handover_sub", "Confirm condition, sign digitally where needed, release funds.")}
+                    </p>
+                    <ul className="text-sm text-muted-foreground space-y-2">
+                      <li>• {tx("wf_buy_hand","Ownership transfer & final docs (buy)")}</li>
+                      <li>• {tx("wf_rent_hand","Lease signing & move-in (rent)")}</li>
+                      <li>• {tx("wf_stay_hand","Check-in & host confirmation (short stay)")}</li>
+                    </ul>
+                  </div>
+
+                  <ArrowRight className="w-8 h-8 text-primary self-center flex-shrink-0 hidden md:block" />
+
+                  {/* Step 5 */}
+                  <div className="min-w-[260px] md:min-w-[280px] rounded-2xl bg-gray-50 dark:bg-zinc-900/40 p-6 flex flex-col">
+                    <div className="w-12 h-12 rounded-xl bg-gray-200/70 dark:bg-zinc-800/70 flex items-center justify-center mb-4">
+                      <LifeBuoy className="w-6 h-6 text-gray-700 dark:text-gray-200" />
+                    </div>
+                    <h4 className="text-xl font-semibold mb-1">{tx("wf_support", "Support & protections")}</h4>
+                    <p className="text-sm text-muted-foreground mb-4">
+                      {tx("wf_support_sub", "Dispute help, refunds if not as described, transparent fees.")}
+                    </p>
+                    <ul className="text-sm text-muted-foreground space-y-2">
+                      <li>• {tx("wf_refunds","Refund eligibility per policy")}</li>
+                      <li>• {tx("wf_help","Mediation & issue resolution")}</li>
+                      <li>• {tx("wf_receipts","Digital receipts & records")}</li>
+                    </ul>
+                  </div>
                 </div>
-              </CardHeader>
-              <CardContent className="p-0 md:p-2">
-                <ScrollFrame>
-                  <WorkflowInteractive
-                    mode="rent"
-                    title={tx("rentWorkflowTitle", "Renting workflow")}
-                    subtitle={tx("rentWorkflowSubtitle", "A clear checklist for secure renting")}
-                  />
-                </ScrollFrame>
-              </CardContent>
-            </Card>
-          </div>
+              </ScrollFrame>
+            </CardContent>
+          </Card>
         </Section>
 
         {/* ---------------------------- OUR STORY --------------------------- */}
@@ -397,8 +444,7 @@ const About = () => {
           </Card>
         </Section>
 
-        {/* ------------------ MISSION / VISION / VALUES --------------------- */
-}
+        {/* ------------------ MISSION / VISION / VALUES --------------------- */}
         <Section className="grid gap-6 md:grid-cols-3 relative z-10">
           {[
             { title: tx("ourMission", "Our Mission"), body: tx("missionDescription", "Democratize access to real estate in Algeria by offering a modern, secure and easy-to-use platform.") },
@@ -433,7 +479,6 @@ const About = () => {
                 {tx("holibaytPaySubhero", "Protect your money with verified listings and escrow-style protection until handover.")}
               </p>
 
-              {/* Trust Icons */}
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4 pt-6 border-t border-border/50">
                 {[
                   { Icon: Globe, label: tx("designedForAlgeria", "Designed for Algeria"), wrap: "bg-primary/10", tone: "text-primary" },
@@ -452,7 +497,6 @@ const About = () => {
             </div>
           </div>
 
-          {/* How It Works */}
           <div className="mb-10">
             <h3 className="text-2xl md:text-3xl font-bold mb-6 text-center">
               {tx("howItWorks", "How Holibayt Pay™ Works")}
@@ -474,7 +518,6 @@ const About = () => {
             </div>
           </div>
 
-          {/* Comparison */}
           <div className="grid md:grid-cols-2 gap-6 mb-10">
             <Card className="border border-destructive/50 bg-destructive/5 rounded-2xl shadow-sm">
               <CardHeader>
@@ -523,7 +566,6 @@ const About = () => {
             </Card>
           </div>
 
-          {/* Key Features */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {[
               { Icon: Shield, title: tx("bankLevelSecurity","Bank-Level Security"), body: tx("holibaytPaySecurityDesc","All payments are encrypted and verified with industry-leading security standards.") },
