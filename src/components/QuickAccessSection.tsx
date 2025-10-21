@@ -1,415 +1,443 @@
+// src/components/sections/QuickAccessSection.tsx
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Home, Key, Bed, ArrowRight, ShieldCheck, CreditCard, Shield, DollarSign, Search, Calendar, HandCoins, Plus, FileCheck, Lock, Scale, FileSignature } from "lucide-react";
+import {
+  Home,
+  Key,
+  Bed,
+  ArrowRight,
+  FileCheck,
+  Lock,
+  Scale,
+  FileSignature,
+  ShieldCheck,
+  DollarSign,
+  CreditCard,
+  Shield,
+  Search,
+  HandCoins,
+} from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useLanguage } from "@/contexts/LanguageContext";
 
-// Buy Workflow - 4 Horizontal Layers
+/** ---------------------------------------------------------
+ *  Buy Workflow — matches: “Buy — Verified. Secured. Guaranteed.”
+ *  4 horizontal columns with icons, arrows between, labels on top
+ * -------------------------------------------------------- */
 const BuyWorkflowDiagram = () => {
   const { t } = useLanguage();
-  
+
+  const cols = [
+    {
+      icon: FileCheck,
+      title: t("buy.step1.title") || "Find a Verified Property",
+      bullets: [
+        t("buy.step1.b1") ||
+          "Every property and seller verified through Holibayt Verify™",
+      ],
+    },
+    {
+      icon: Lock,
+      title: t("buy.step2.title") || "Secure Deposit via Holibayt Pay™",
+      bullets: [
+        t("buy.step2.b1") ||
+          "Buyer’s deposit locked in Holibayt Pay™ escrow",
+        t("buy.step2.b2") ||
+          "Release only after due diligence and document validation",
+        t("buy.step2.b3") ||
+          "Transparent, milestone-based transaction flow",
+      ],
+    },
+    {
+      icon: Scale,
+      title:
+        t("buy.step3.title") ||
+        "Legal Support & insurance with Holibayt Protect™",
+      bullets: [
+        t("buy.step3.b1") || "Legal assistance provided by certified notaries",
+        t("buy.step3.b2") ||
+          "Transaction backed by Holibayt Protect™ and Holibayt Insurance™",
+        t("buy.step3.b3") ||
+          "Covers fraud, contract disputes, or documentation errors",
+      ],
+    },
+    {
+      icon: FileSignature,
+      title: t("buy.step4.title") || "Transaction Finalized",
+      bullets: [
+        t("buy.step4.b1") ||
+          "Ownership officially transferred and confirmed",
+        t("buy.step4.b2") ||
+          "Funds released to seller through Holibayt Pay™",
+      ],
+    },
+  ];
+
   return (
-    <div className="space-y-6">
-      {/* Layer Labels - Desktop Only */}
-      <div className="hidden lg:grid lg:grid-cols-4 gap-4 text-center font-semibold text-sm text-muted-foreground">
-        <div>{t('workflow.buy.layer1.label')}</div>
-        <div>{t('workflow.buy.layer2.label')}</div>
-        <div>{t('workflow.buy.layer3.label')}</div>
-        <div>{t('workflow.buy.layer4.label')}</div>
+    <div className="space-y-8">
+      {/* Heading */}
+      <div className="text-center">
+        <h3 className="text-3xl md:text-4xl font-playfair font-bold text-foreground">
+          {t("buy.heading") || "Buy — Verified. Secured. Guaranteed."}
+        </h3>
       </div>
 
-      {/* Workflow Columns */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 relative">
-        {/* Layer 1: Trust */}
-        <div className="relative bg-[#0d4d4d] text-white p-6 rounded-lg flex flex-col items-center text-center space-y-4">
-          <div className="lg:hidden text-xs font-semibold text-gray-300 uppercase tracking-wide">{t('workflow.buy.layer1.label')}</div>
-          <FileCheck className="h-12 w-12 flex-shrink-0" />
-          <div className="space-y-3">
-            <h4 className="font-semibold text-base">{t('workflow.buy.layer1.title')}</h4>
-            <ul className="space-y-2 text-xs text-left">
-              <li>• {t('workflow.buy.layer1.detail1')}</li>
-              <li>• {t('workflow.buy.layer1.detail2')}</li>
-              <li>• {t('workflow.buy.layer1.detail3')}</li>
-            </ul>
+      {/* Top Layer Labels (Trust / Security / Protection / Transparency) */}
+      <div className="hidden lg:grid grid-cols-4 gap-6 text-center">
+        {[
+          t("layer.trust") || "Trust Layer",
+          t("layer.security") || "Security Layer",
+          t("layer.protection") || "Protection Layer",
+          t("layer.transparency") || "Transparency Layer",
+        ].map((txt, i) => (
+          <div key={i} className="text-sm font-semibold text-slate-600">
+            {txt}
           </div>
-          {/* Arrow - Vertical on mobile, Horizontal on desktop */}
-          <ArrowRight className="lg:hidden absolute -bottom-3 left-1/2 transform -translate-x-1/2 h-6 w-6 text-[#0d4d4d] rotate-90" />
-        </div>
+        ))}
+      </div>
 
-        {/* Arrow between 1-2 - Desktop Only */}
-        <ArrowRight className="hidden lg:block absolute top-1/2 left-[23.5%] transform -translate-y-1/2 h-8 w-8 text-muted-foreground z-10" />
+      {/* Columns with arrows between (desktop) */}
+      <div className="hidden lg:flex items-stretch justify-between gap-6">
+        {cols.map((c, idx) => {
+          const Icon = c.icon;
+          return (
+            <div key={idx} className="flex items-center">
+              <div className="flex flex-col items-center">
+                {/* Icon circle (like screenshot) */}
+                <div className="w-16 h-16 rounded-full bg-white shadow-sm border border-slate-200 flex items-center justify-center">
+                  <Icon className="w-8 h-8 text-slate-800" />
+                </div>
 
-        {/* Layer 2: Security */}
-        <div className="relative bg-[#0d4d4d] text-white p-6 rounded-lg flex flex-col items-center text-center space-y-4">
-          <div className="lg:hidden text-xs font-semibold text-gray-300 uppercase tracking-wide">{t('workflow.buy.layer2.label')}</div>
-          <Lock className="h-12 w-12 flex-shrink-0" />
-          <div className="space-y-3">
-            <h4 className="font-semibold text-base">{t('workflow.buy.layer2.title')}</h4>
-            <ul className="space-y-2 text-xs text-left">
-              <li>• {t('workflow.buy.layer2.detail1')}</li>
-              <li>• {t('workflow.buy.layer2.detail2')}</li>
-              <li>• {t('workflow.buy.layer2.detail3')}</li>
-            </ul>
-          </div>
-          {/* Arrow - Vertical on mobile, Horizontal on desktop */}
-          <ArrowRight className="lg:hidden absolute -bottom-3 left-1/2 transform -translate-x-1/2 h-6 w-6 text-[#0d4d4d] rotate-90" />
-        </div>
+                {/* Title + bullets */}
+                <div className="mt-5 text-center">
+                  <h4 className="font-playfair font-bold text-lg text-slate-900 mb-2">
+                    {c.title}
+                  </h4>
+                  <ul className="text-sm text-slate-700 space-y-2 max-w-[260px] mx-auto">
+                    {c.bullets.map((b, i) => (
+                      <li key={i} className="leading-snug">
+                        {b}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
 
-        {/* Arrow between 2-3 - Desktop Only */}
-        <ArrowRight className="hidden lg:block absolute top-1/2 left-[48.5%] transform -translate-y-1/2 h-8 w-8 text-muted-foreground z-10" />
+              {/* Right arrow between steps */}
+              {idx < cols.length - 1 && (
+                <ArrowRight className="w-10 h-10 text-primary mx-4" />
+              )}
+            </div>
+          );
+        })}
+      </div>
 
-        {/* Layer 3: Protection */}
-        <div className="relative bg-[#f5b942] text-gray-900 p-6 rounded-lg flex flex-col items-center text-center space-y-4">
-          <div className="lg:hidden text-xs font-semibold uppercase tracking-wide">{t('workflow.buy.layer3.label')}</div>
-          <Scale className="h-12 w-12 flex-shrink-0" />
-          <div className="space-y-3">
-            <h4 className="font-semibold text-base">{t('workflow.buy.layer3.title')}</h4>
-            <ul className="space-y-2 text-xs text-left">
-              <li>• {t('workflow.buy.layer3.detail1')}</li>
-              <li>• {t('workflow.buy.layer3.detail2')}</li>
-              <li>• {t('workflow.buy.layer3.detail3')}</li>
-            </ul>
-          </div>
-          {/* Arrow - Vertical on mobile, Horizontal on desktop */}
-          <ArrowRight className="lg:hidden absolute -bottom-3 left-1/2 transform -translate-x-1/2 h-6 w-6 text-[#f5b942] rotate-90" />
-        </div>
-
-        {/* Arrow between 3-4 - Desktop Only */}
-        <ArrowRight className="hidden lg:block absolute top-1/2 left-[73.5%] transform -translate-y-1/2 h-8 w-8 text-muted-foreground z-10" />
-
-        {/* Layer 4: Transparency */}
-        <div className="bg-gray-400 text-gray-900 p-6 rounded-lg flex flex-col items-center text-center space-y-4">
-          <div className="lg:hidden text-xs font-semibold uppercase tracking-wide">{t('workflow.buy.layer4.label')}</div>
-          <FileSignature className="h-12 w-12 flex-shrink-0" />
-          <div className="space-y-3">
-            <h4 className="font-semibold text-base">{t('workflow.buy.layer4.title')}</h4>
-            <ul className="space-y-2 text-xs text-left">
-              <li>• {t('workflow.buy.layer4.detail1')}</li>
-              <li>• {t('workflow.buy.layer4.detail2')}</li>
-              <li>• {t('workflow.buy.layer4.detail3')}</li>
-            </ul>
-          </div>
-        </div>
+      {/* Mobile/Tablet stacked */}
+      <div className="lg:hidden space-y-8">
+        {[
+          t("layer.trust") || "Trust Layer",
+          t("layer.security") || "Security Layer",
+          t("layer.protection") || "Protection Layer",
+          t("layer.transparency") || "Transparency Layer",
+        ].map((label, i) => {
+          const c = cols[i];
+          const Icon = c.icon;
+          return (
+            <div key={i} className="space-y-3">
+              <div className="text-xs font-semibold text-slate-600">
+                {label}
+              </div>
+              <Card className="border border-slate-200">
+                <CardContent className="p-5">
+                  <div className="flex gap-4">
+                    <div className="w-12 h-12 rounded-full bg-white shadow-sm border border-slate-200 flex items-center justify-center flex-shrink-0">
+                      <Icon className="w-7 h-7 text-slate-800" />
+                    </div>
+                    <div>
+                      <h4 className="font-playfair font-bold text-base text-slate-900 mb-1">
+                        {c.title}
+                      </h4>
+                      <ul className="text-sm text-slate-700 space-y-2">
+                        {c.bullets.map((b, j) => (
+                          <li key={j}>{b}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+              {i < cols.length - 1 && (
+                <div className="flex justify-center">
+                  <ArrowRight className="w-6 h-6 text-primary rotate-90" />
+                </div>
+              )}
+            </div>
+          );
+        })}
       </div>
     </div>
   );
 };
 
-// Rent Workflow - 4 Horizontal Layers
+/** ---------------------------------------------------------
+ *  Rent Workflow — matches: “Rent — Secure Long-Term Rentals, Simplified.”
+ *  4 icons & headings across the top, colored arrow bars beneath,
+ *  then bullet rows under each column (exact flow from screenshot)
+ * -------------------------------------------------------- */
 const RentWorkflowDiagram = () => {
   const { t } = useLanguage();
 
+  const top = [
+    {
+      icon: Home,
+      title: t("rent.top1.title") || "Find a Verified Property",
+    },
+    {
+      icon: FileSignature,
+      title:
+        t("rent.top2.title") || "Sign & Secure with Holibayt Pay™ (Escrow)",
+    },
+    {
+      icon: ShieldCheck,
+      title:
+        t("rent.top3.title") ||
+        "Move in Protected with Holibayt Protect™",
+    },
+    { icon: DollarSign, title: t("rent.top4.title") || "Monthly Payouts Released" },
+  ];
+
+  const bars = [
+    { label: t("layer.trust") || "Trust Layer", color: "bg-teal-800" },
+    { label: t("layer.security") || "Security Layer", color: "bg-teal-700" },
+    { label: t("layer.protection") || "Protection Layer", color: "bg-amber-400", text: "text-slate-900" },
+    { label: t("layer.transparency") || "Transparency Layer", color: "bg-slate-400", text: "text-slate-900" },
+  ];
+
+  const bullets = [
+    [
+      t("rent.b1.1") || "Verified listings, landlords & tenants",
+      t("rent.b1.2") ||
+        "ID (KYC) and property verification via Holibayt Verify™",
+    ],
+    [
+      t("rent.b2.1") ||
+        "Tenant pays first month’s rent + deposit into Holibayt Pay™ escrow account",
+      t("rent.b2.2") ||
+        "Owner’s listing commitment secured (property availability guaranteed)",
+    ],
+    [
+      t("rent.b3.1") || "Deposit and contract secured by Holibayt Protect™",
+      t("rent.b3.2") ||
+        "Damage or dispute coverage with Holibayt Insurance™",
+      t("rent.b3.3") || "24/7 mediation and assistance for both parties",
+    ],
+    [
+      t("rent.b4.1") ||
+        "Owner receives payment each month automatically after verification",
+      t("rent.b4.2") || "Holibayt Pay™ manages all transactions securely",
+    ],
+  ];
+
   return (
-    <div className="space-y-6">
-      {/* Layer Labels - Desktop Only */}
-      <div className="hidden lg:grid lg:grid-cols-4 gap-4 text-center">
-        <div className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">
-          {t("workflow.rent.layer1.label")}
-        </div>
-        <div className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">
-          {t("workflow.rent.layer2.label")}
-        </div>
-        <div className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">
-          {t("workflow.rent.layer3.label")}
-        </div>
-        <div className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">
-          {t("workflow.rent.layer4.label")}
-        </div>
+    <div className="space-y-10">
+      {/* Heading */}
+      <div className="text-center">
+        <h3 className="text-3xl md:text-4xl font-playfair font-bold text-foreground">
+          {t("rent.heading") || "Rent — Secure Long-Term Rentals, Simplified."}
+        </h3>
       </div>
 
-      {/* Workflow Columns */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 relative">
-        {/* Layer 1: Trust & Verification */}
-        <div className="bg-[#1a5f5f] text-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-shadow relative">
-          <div className="lg:hidden mb-4">
-            <span className="text-xs font-semibold uppercase tracking-wide opacity-80">
-              {t("workflow.rent.layer1.label")}
-            </span>
-          </div>
-          <div className="flex flex-col items-center text-center space-y-4">
-            <ShieldCheck className="h-12 w-12" />
-            <h4 className="font-semibold text-lg">{t("workflow.rent.layer1.title")}</h4>
-            <ul className="text-sm space-y-2 text-left w-full">
-              <li className="flex items-start gap-2">
-                <span className="mt-1">•</span>
-                <span>{t("workflow.rent.layer1.detail1")}</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="mt-1">•</span>
-                <span>{t("workflow.rent.layer1.detail2")}</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="mt-1">•</span>
-                <span>{t("workflow.rent.layer1.detail3")}</span>
-              </li>
-            </ul>
-          </div>
-          {/* Arrow - Desktop Only */}
-          <ArrowRight className="hidden lg:block absolute -right-3 top-1/2 -translate-y-1/2 h-6 w-6 text-muted-foreground z-10" />
-          {/* Arrow - Mobile Only */}
-          <div className="lg:hidden flex justify-center mt-4">
-            <ArrowRight className="h-6 w-6 text-muted-foreground rotate-90" />
-          </div>
-        </div>
+      {/* Top row: 4 icons + headings */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-8 text-center">
+        {top.map((c, i) => {
+          const Icon = c.icon;
+          return (
+            <div key={i} className="flex flex-col items-center gap-4">
+              <Icon className="w-12 h-12 text-slate-800" />
+              <h4 className="font-playfair font-bold text-lg text-slate-900">
+                {c.title}
+              </h4>
+            </div>
+          );
+        })}
+      </div>
 
-        {/* Layer 2: Secure Booking */}
-        <div className="bg-[#1a5f5f] text-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-shadow relative">
-          <div className="lg:hidden mb-4">
-            <span className="text-xs font-semibold uppercase tracking-wide opacity-80">
-              {t("workflow.rent.layer2.label")}
-            </span>
+      {/* Colored arrow bars (exact look) */}
+      <div className="hidden md:grid grid-cols-4 gap-6">
+        {bars.map((b, i) => (
+          <div key={i} className="flex items-center">
+            {/* Label bar */}
+            <div
+              className={`px-4 py-2 rounded-md font-semibold text-white ${b.color} ${b.text || ""} inline-flex items-center`}
+            >
+              {b.label}
+            </div>
+            {/* right arrow tip */}
+            {i < bars.length - 1 && (
+              <svg
+                className="-ml-1"
+                width="22"
+                height="22"
+                viewBox="0 0 24 24"
+                fill="none"
+              >
+                <path d="M0 0 L20 12 L0 24 Z" className={b.color} />
+              </svg>
+            )}
           </div>
-          <div className="flex flex-col items-center text-center space-y-4">
-            <CreditCard className="h-12 w-12" />
-            <h4 className="font-semibold text-lg">{t("workflow.rent.layer2.title")}</h4>
-            <ul className="text-sm space-y-2 text-left w-full">
-              <li className="flex items-start gap-2">
-                <span className="mt-1">•</span>
-                <span>{t("workflow.rent.layer2.detail1")}</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="mt-1">•</span>
-                <span>{t("workflow.rent.layer2.detail2")}</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="mt-1">•</span>
-                <span>{t("workflow.rent.layer2.detail3")}</span>
-              </li>
-            </ul>
-          </div>
-          {/* Arrow - Desktop Only */}
-          <ArrowRight className="hidden lg:block absolute -right-3 top-1/2 -translate-y-1/2 h-6 w-6 text-muted-foreground z-10" />
-          {/* Arrow - Mobile Only */}
-          <div className="lg:hidden flex justify-center mt-4">
-            <ArrowRight className="h-6 w-6 text-muted-foreground rotate-90" />
-          </div>
-        </div>
+        ))}
+      </div>
 
-        {/* Layer 3: Protection & Insurance */}
-        <div className="bg-[#f5b942] text-gray-900 rounded-xl p-6 shadow-lg hover:shadow-xl transition-shadow relative">
-          <div className="lg:hidden mb-4">
-            <span className="text-xs font-semibold uppercase tracking-wide opacity-70">
-              {t("workflow.rent.layer3.label")}
-            </span>
-          </div>
-          <div className="flex flex-col items-center text-center space-y-4">
-            <Shield className="h-12 w-12" />
-            <h4 className="font-semibold text-lg">{t("workflow.rent.layer3.title")}</h4>
-            <ul className="text-sm space-y-2 text-left w-full">
-              <li className="flex items-start gap-2">
-                <span className="mt-1">•</span>
-                <span>{t("workflow.rent.layer3.detail1")}</span>
+      {/* Bullet rows under each column */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+        {bullets.map((list, i) => (
+          <ul key={i} className="space-y-2 text-sm text-slate-700">
+            {list.map((line, j) => (
+              <li key={j} className="leading-snug">
+                {line}
               </li>
-              <li className="flex items-start gap-2">
-                <span className="mt-1">•</span>
-                <span>{t("workflow.rent.layer3.detail2")}</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="mt-1">•</span>
-                <span>{t("workflow.rent.layer3.detail3")}</span>
-              </li>
-            </ul>
-          </div>
-          {/* Arrow - Desktop Only */}
-          <ArrowRight className="hidden lg:block absolute -right-3 top-1/2 -translate-y-1/2 h-6 w-6 text-muted-foreground z-10" />
-          {/* Arrow - Mobile Only */}
-          <div className="lg:hidden flex justify-center mt-4">
-            <ArrowRight className="h-6 w-6 text-muted-foreground rotate-90" />
-          </div>
-        </div>
-
-        {/* Layer 4: Monthly Payout */}
-        <div className="bg-gray-400 text-gray-900 rounded-xl p-6 shadow-lg hover:shadow-xl transition-shadow relative">
-          <div className="lg:hidden mb-4">
-            <span className="text-xs font-semibold uppercase tracking-wide opacity-70">
-              {t("workflow.rent.layer4.label")}
-            </span>
-          </div>
-          <div className="flex flex-col items-center text-center space-y-4">
-            <DollarSign className="h-12 w-12" />
-            <h4 className="font-semibold text-lg">{t("workflow.rent.layer4.title")}</h4>
-            <ul className="text-sm space-y-2 text-left w-full">
-              <li className="flex items-start gap-2">
-                <span className="mt-1">•</span>
-                <span>{t("workflow.rent.layer4.detail1")}</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="mt-1">•</span>
-                <span>{t("workflow.rent.layer4.detail2")}</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="mt-1">•</span>
-                <span>{t("workflow.rent.layer4.detail3")}</span>
-              </li>
-            </ul>
-          </div>
-        </div>
+            ))}
+          </ul>
+        ))}
       </div>
     </div>
   );
 };
 
-// Short Stay Workflow - Circular Flow
-const ShortStayWorkflowDiagram = () => {
+/** ---------------------------------------------------------
+ *  Short Stay — left as simpler tiles (optional to restyle)
+ * -------------------------------------------------------- */
+const ShortStayWorkflowTiles = () => {
   const { t } = useLanguage();
-  
   return (
-    <div className="space-y-4">
-      {/* Top Row - 3 Main Steps */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        {/* Step 1: Find */}
-        <div className="bg-card border border-border p-4 rounded-lg text-center">
-          <Search className="h-10 w-10 text-primary mx-auto mb-2" />
-          <h4 className="font-semibold text-sm mb-1">{t('workflow.shortStay.step1.title')}</h4>
-          <p className="text-xs text-muted-foreground">{t('workflow.shortStay.step1.detail')}</p>
-        </div>
-
-        {/* Step 2: Book Safely - Central with emphasis */}
-        <div className="bg-[#1a5f5f] text-white p-4 rounded-lg text-center border-2 border-[#1a5f5f]">
-          <CreditCard className="h-10 w-10 mx-auto mb-2" />
-          <h4 className="font-semibold text-sm mb-2">{t('workflow.shortStay.step2.title')}</h4>
-          <div className="space-y-2 text-xs">
-            <p>{t('workflow.shortStay.step2.detail1')}</p>
-            <Plus className="h-4 w-4 mx-auto" />
-            <p>{t('workflow.shortStay.step2.detail2')}</p>
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <Card className="border border-border">
+        <CardContent className="p-5 text-center">
+          <Search className="w-10 h-10 mx-auto text-primary" />
+          <div className="mt-2 font-semibold">
+            {t("stay.tile1.title") || "Search & Verify"}
           </div>
-        </div>
-
-        {/* Step 3: Payout */}
-        <div className="bg-card border border-border p-4 rounded-lg text-center">
-          <HandCoins className="h-10 w-10 text-primary mx-auto mb-2" />
-          <h4 className="font-semibold text-sm mb-1">{t('workflow.shortStay.step3.title')}</h4>
-          <p className="text-xs text-muted-foreground">{t('workflow.shortStay.step3.detail')}</p>
-        </div>
-      </div>
-
-      {/* Bottom Row - Protection Loop */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-        {/* Left Protection */}
-        <div className="bg-accent/10 border border-accent p-4 rounded-lg">
-          <div className="flex items-start gap-3">
-            <Shield className="h-8 w-8 text-accent flex-shrink-0 mt-1" />
-            <div>
-              <h4 className="font-semibold text-sm mb-1">{t('workflow.shortStay.protect1.title')}</h4>
-              <p className="text-xs text-muted-foreground">{t('workflow.shortStay.protect1.detail')}</p>
-            </div>
+          <div className="text-sm text-slate-600">
+            {t("stay.tile1.desc") || "Find verified stays with trusted hosts."}
           </div>
-        </div>
-
-        {/* Right Protection */}
-        <div className="bg-accent/10 border border-accent p-4 rounded-lg">
-          <div className="flex items-start gap-3">
-            <Shield className="h-8 w-8 text-accent flex-shrink-0 mt-1" />
-            <div>
-              <h4 className="font-semibold text-sm mb-1">{t('workflow.shortStay.protect2.title')}</h4>
-              <p className="text-xs text-muted-foreground">{t('workflow.shortStay.protect2.detail')}</p>
-            </div>
+        </CardContent>
+      </Card>
+      <Card className="bg-teal-900 text-white border-none">
+        <CardContent className="p-5 text-center">
+          <CreditCard className="w-10 h-10 mx-auto" />
+          <div className="mt-2 font-semibold">
+            {t("stay.tile2.title") || "Book with Holibayt Pay™"}
           </div>
-        </div>
-      </div>
+          <div className="text-sm opacity-90">
+            {t("stay.tile2.desc") ||
+              "Escrow holds funds; host is paid after your stay."}
+          </div>
+        </CardContent>
+      </Card>
+      <Card className="border border-border">
+        <CardContent className="p-5 text-center">
+          <HandCoins className="w-10 h-10 mx-auto text-primary" />
+          <div className="mt-2 font-semibold">
+            {t("stay.tile3.title") || "Secure Payout"}
+          </div>
+          <div className="text-sm text-slate-600">
+            {t("stay.tile3.desc") || "Payout released after completion."}
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 };
 
+/** ---------------------------------------------------------
+ *  QuickAccessSection — Tabs wrapper around the three flows
+ * -------------------------------------------------------- */
 const QuickAccessSection = () => {
   const navigate = useNavigate();
   const { t } = useLanguage();
-  
+
   return (
-    <section className="py-8 sm:py-12 md:py-16 bg-background">
+    <section className="py-10 md:py-16 bg-background">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Section Header */}
-        <div className="text-center mb-6 sm:mb-8 md:mb-12">
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-playfair font-bold text-foreground mb-2 sm:mb-3 md:mb-4 px-2">
-            {t('howCanWeHelp')}
+        {/* Header */}
+        <div className="text-center mb-10">
+          <h2 className="text-3xl md:text-4xl font-playfair font-bold text-foreground">
+            {t("howCanWeHelp") || "How can we help?"}
           </h2>
-          <p className="text-sm sm:text-base md:text-lg text-muted-foreground font-inter font-light max-w-2xl mx-auto px-4">
-            {t('quickEntriesDesc')}
+          <p className="text-sm md:text-base text-muted-foreground max-w-2xl mx-auto mt-2">
+            {t("quickEntriesDesc") ||
+              "Pick a flow to see the exact steps and protection layers."}
           </p>
         </div>
 
-        {/* Tabbed Workflow Card */}
-        <Card className="border-2 border-primary/20 shadow-elegant">
-          <CardContent className="p-4 sm:p-6 md:p-8">
+        {/* Tabs */}
+        <Card className="border-2 border-primary/20">
+          <CardContent className="p-4 md:p-8">
             <Tabs defaultValue="buy" className="w-full">
-              <TabsList className="grid w-full grid-cols-3 mb-6 sm:mb-8 h-auto">
-                <TabsTrigger value="buy" className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm md:text-base py-2 sm:py-3">
-                  <Home className="h-3 w-3 sm:h-4 sm:w-4" />
-                  <span className="hidden sm:inline">{t('workflow.buy.tab')}</span>
-                  <span className="sm:hidden">{t('Buy')}</span>
+              <TabsList className="grid grid-cols-3 h-auto">
+                <TabsTrigger value="buy" className="gap-2 py-3">
+                  <Home className="w-4 h-4" />
+                  {t("workflow.buy.tab") || "Buy"}
                 </TabsTrigger>
-                <TabsTrigger value="rent" className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm md:text-base py-2 sm:py-3">
-                  <Key className="h-3 w-3 sm:h-4 sm:w-4" />
-                  <span className="hidden sm:inline">{t('workflow.rent.tab')}</span>
-                  <span className="sm:hidden">{t('Rent')}</span>
+                <TabsTrigger value="rent" className="gap-2 py-3">
+                  <Key className="w-4 h-4" />
+                  {t("workflow.rent.tab") || "Rent"}
                 </TabsTrigger>
-                <TabsTrigger value="short-stay" className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm md:text-base py-2 sm:py-3">
-                  <Bed className="h-3 w-3 sm:h-4 sm:w-4" />
-                  <span className="hidden sm:inline">{t('workflow.shortStay.tab')}</span>
-                  <span className="sm:hidden">{t('Stay')}</span>
+                <TabsTrigger value="short-stay" className="gap-2 py-3">
+                  <Bed className="w-4 h-4" />
+                  {t("workflow.shortStay.tab") || "Short Stay"}
                 </TabsTrigger>
               </TabsList>
 
-              {/* Buy Tab Content */}
-              <TabsContent value="buy" className="space-y-4 sm:space-y-6">
-                <div className="text-center mb-4 sm:mb-6 px-2">
-                  <h3 className="text-lg sm:text-xl md:text-2xl font-playfair font-bold text-foreground mb-2">
-                    {t('workflow.buy.title')}
-                  </h3>
-                  <p className="text-xs sm:text-sm text-muted-foreground">{t('workflow.buy.subtitle')}</p>
-                </div>
+              <TabsContent value="buy" className="space-y-8 pt-6">
                 <BuyWorkflowDiagram />
-                <div className="flex justify-center pt-2 sm:pt-4">
-                  <Button 
-                    onClick={() => navigate('/buy')}
-                    className="gap-2 w-full sm:w-auto"
+                <div className="flex justify-center">
+                  <Button
                     size="lg"
+                    className="gap-2"
+                    onClick={() => navigate("/buy")}
                   >
-                    {t('start')}
-                    <ArrowRight className="h-4 w-4" />
+                    {t("start") || "Start"}
+                    <ArrowRight className="w-4 h-4" />
                   </Button>
                 </div>
               </TabsContent>
 
-              {/* Rent Tab Content */}
-              <TabsContent value="rent" className="space-y-4 sm:space-y-6">
-                <div className="text-center mb-4 sm:mb-6 px-2">
-                  <h3 className="text-lg sm:text-xl md:text-2xl font-playfair font-bold text-foreground mb-2">
-                    {t('workflow.rent.title')}
-                  </h3>
-                  <p className="text-xs sm:text-sm text-muted-foreground">{t('workflow.rent.subtitle')}</p>
-                </div>
+              <TabsContent value="rent" className="space-y-8 pt-6">
                 <RentWorkflowDiagram />
-                <div className="flex justify-center pt-2 sm:pt-4">
-                  <Button 
-                    onClick={() => navigate('/rent')}
-                    className="gap-2 w-full sm:w-auto"
+                <div className="flex justify-center">
+                  <Button
                     size="lg"
+                    className="gap-2"
+                    onClick={() => navigate("/rent")}
                   >
-                    {t('start')}
-                    <ArrowRight className="h-4 w-4" />
+                    {t("start") || "Start"}
+                    <ArrowRight className="w-4 h-4" />
                   </Button>
                 </div>
               </TabsContent>
 
-              {/* Short Stay Tab Content */}
-              <TabsContent value="short-stay" className="space-y-4 sm:space-y-6">
-                <div className="text-center mb-4 sm:mb-6 px-2">
-                  <h3 className="text-lg sm:text-xl md:text-2xl font-playfair font-bold text-foreground mb-2">
-                    {t('workflow.shortStay.title')}
+              <TabsContent value="short-stay" className="space-y-8 pt-6">
+                <div className="text-center">
+                  <h3 className="text-2xl md:text-3xl font-playfair font-bold text-foreground">
+                    {t("workflow.shortStay.title") || "Short Stay — Safe & Simple"}
                   </h3>
-                  <p className="text-xs sm:text-sm text-muted-foreground">{t('workflow.shortStay.subtitle')}</p>
+                  <p className="text-xs md:text-sm text-muted-foreground mt-1">
+                    {t("workflow.shortStay.subtitle") ||
+                      "Verified hosts, escrow payments, protected payouts"}
+                  </p>
                 </div>
-                <ShortStayWorkflowDiagram />
-                <div className="flex justify-center pt-2 sm:pt-4">
-                  <Button 
-                    onClick={() => navigate('/short-stay')}
-                    className="gap-2 w-full sm:w-auto"
+                <ShortStayWorkflowTiles />
+                <div className="flex justify-center">
+                  <Button
                     size="lg"
+                    variant="outline"
+                    className="gap-2"
+                    onClick={() => navigate("/short-stay")}
                   >
-                    {t('start')}
-                    <ArrowRight className="h-4 w-4" />
+                    {t("explore") || "Explore stays"}
+                    <ArrowRight className="w-4 h-4" />
                   </Button>
                 </div>
               </TabsContent>
@@ -418,17 +446,17 @@ const QuickAccessSection = () => {
         </Card>
 
         {/* Bottom CTA */}
-        <div className="text-center mt-6 sm:mt-8 md:mt-12">
-          <p className="text-muted-foreground font-inter text-lg sm:text-xl md:text-2xl lg:text-3xl mb-3 sm:mb-4 md:mb-6 font-semibold animate-pulse px-4">
-            {t('needHelp')}
+        <div className="text-center mt-10">
+          <p className="text-muted-foreground text-lg md:text-xl font-semibold">
+            {t("needHelp") || "Not sure where to start? We can help."}
           </p>
-          <Button 
-            variant="outline" 
-            size="lg" 
-            className="font-inter font-medium text-sm sm:text-base md:text-lg px-6 sm:px-8 py-2 sm:py-3 hover:shadow-elegant hover:scale-105 transition-all duration-300 border-2 border-primary hover:bg-primary hover:text-primary-foreground w-full sm:w-auto"
-            onClick={() => navigate('/contact-advisor')}
+          <Button
+            variant="outline"
+            size="lg"
+            className="mt-4 gap-2 border-2 border-primary hover:bg-primary hover:text-primary-foreground"
+            onClick={() => navigate("/contact-advisor")}
           >
-            {t('speakToAdvisor')}
+            {t("speakToAdvisor") || "Speak to an advisor"}
           </Button>
         </div>
       </div>
