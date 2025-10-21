@@ -426,7 +426,7 @@ const QuickAccessSection = () => {
                       "Verified hosts, escrow payments, protected payouts"}
                   </p>
                 </div>
-                <ShortStayWorkflowTiles />
+                <ShortStayWorkflowDiagram />
                 <div className="flex justify-center">
                   <Button
                     size="lg"
