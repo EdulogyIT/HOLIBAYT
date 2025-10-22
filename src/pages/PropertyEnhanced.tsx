@@ -117,7 +117,7 @@ const PropertyEnhanced = () => {
   
   useScrollToTop();
 
-  // Get translation helper with fallback
+  // translation helper
   const tKey = (key: string) => {
     const translations = buyRentTranslations[currentLang] || buyRentTranslations.EN;
     return translations[key] || key;
@@ -150,7 +150,6 @@ const PropertyEnhanced = () => {
 
       setProperty(data);
 
-      // Fetch profile data
       if (data.user_id) {
         const { data: profileData } = await supabase
           .from('profiles')
@@ -215,32 +214,40 @@ const PropertyEnhanced = () => {
     <div className="min-h-screen bg-cream">
       <Navigation />
       
-      <main className="container mx-auto px-4 pt-20 pb-8">
-        <div className="grid lg:grid-cols-3 gap-8">
+      {/* Safe paddings on mobile, wider on desktop */}
+      <main className="mx-auto w-full max-w-7xl px-3 sm:px-4 lg:px-8 pt-18 sm:pt-20 pb-8">
+        {/* Make grid stack on mobile; three columns only on lg+ */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
+          
           {/* Main Content */}
-          <div className="lg:col-span-2 space-y-8">
+          <div className="lg:col-span-2 space-y-6 sm:space-y-8">
             {/* Image Gallery */}
-            <PropertyImageGallery 
-              images={property.images} 
-              title={translatedTitle}
-              isInWishlist={isInWishlist}
-              onWishlistToggle={() => toggleWishlist(property.id)}
-            />
+            <div className="rounded-xl overflow-hidden">
+              <PropertyImageGallery 
+                images={property.images} 
+                title={translatedTitle}
+                isInWishlist={isInWishlist}
+                onWishlistToggle={() => toggleWishlist(property.id)}
+              />
+            </div>
 
             {/* Title & Location */}
-            <div>
-              <div className="flex items-start justify-between mb-4">
-                <div className="flex-1">
-                  <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-3 leading-tight">
+            <div className="space-y-3 sm:space-y-4">
+              {/* On mobile, stack title + actions; on desktop, space-between */}
+              <div className="flex flex-col gap-3 sm:gap-4 md:flex-row md:items-start md:justify-between">
+                <div className="min-w-0 flex-1">
+                  <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold leading-tight break-words">
                     {translatedTitle}
                   </h1>
-                  <div className="flex items-center gap-2 text-muted-foreground mb-3">
-                    <MapPin className="w-5 h-5" />
-                    <span className="text-lg">{property.location}, {property.city}</span>
+                  <div className="mt-2 flex items-start gap-2 text-muted-foreground">
+                    <MapPin className="mt-0.5 w-4 h-4 sm:w-5 sm:h-5 shrink-0" />
+                    <span className="text-sm sm:text-base break-words">
+                      {property.location}, {property.city}
+                    </span>
                   </div>
-                  
-                  {/* Badges */}
-                  <div className="flex flex-wrap gap-2">
+
+                  {/* Badges — wrap on small screens */}
+                  <div className="mt-3 flex flex-wrap gap-2">
                     {property.verified && (
                       <Badge variant="secondary" className="gap-1">
                         <Shield className="w-3 h-3" />
@@ -258,8 +265,9 @@ const PropertyEnhanced = () => {
                     )}
                   </div>
                 </div>
-                
-                <div className="flex gap-2 ml-4">
+
+                {/* Actions */}
+                <div className="flex flex-wrap gap-2 md:ml-4">
                   <PropertyShareButton propertyId={property.id} propertyTitle={translatedTitle} />
                 </div>
               </div>
@@ -267,11 +275,11 @@ const PropertyEnhanced = () => {
 
             <Separator />
 
-            {/* Small Host Card - Compact VerifiedOwnerSection */}
+            {/* Compact Verified Owner */}
             {profile && (
               <>
-                <div className="bg-card border border-border rounded-xl p-6 hover:shadow-md transition-shadow">
-                  <h3 className="text-lg font-semibold mb-4">
+                <div className="bg-card border border-border rounded-xl p-4 sm:p-6 hover:shadow-md transition-shadow">
+                  <h3 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4">
                     {isBuy ? "Meet the seller" : isRent ? "Meet your landlord" : "Meet your host"}
                   </h3>
                   <VerifiedOwnerSection
@@ -292,26 +300,34 @@ const PropertyEnhanced = () => {
             )}
 
             {/* About This Property */}
-            <div className="space-y-4">
+            <div className="space-y-3 sm:space-y-4">
               <h2 className="text-xl sm:text-2xl md:text-3xl font-bold">
                 {isBuy || isRent ? tKey(isBuy ? "aboutThisProperty" : "aboutThisRental") : t("propertyDetails")}
               </h2>
-              <p className="text-muted-foreground leading-relaxed text-base">
+
+              {/* Clamp description on small screens to avoid huge walls of text */}
+              <p
+                className={[
+                  "text-muted-foreground leading-relaxed text-sm sm:text-base",
+                  !showFullDescription ? "line-clamp-6 sm:line-clamp-none" : ""
+                ].join(" ")}
+              >
                 {translatedDescription || "No description available"}
                 {property.verified && (
-                  <span className="block mt-3 text-sm text-primary flex items-center gap-1">
+                  <span className="block mt-3 text-xs sm:text-sm text-primary flex items-center gap-1">
                     <Shield className="w-4 h-4" />
                     {tKey("verifiedByTeam")}
                   </span>
                 )}
               </p>
+
               {translatedDescription && translatedDescription.length > 300 && (
                 <Button
                   variant="link"
                   className="p-0 font-semibold"
                   onClick={() => setShowFullDescription(!showFullDescription)}
                 >
-                  {showFullDescription ? "Show less" : tKey("readMore") + " >"}
+                  {showFullDescription ? "Show less" : tKey("readMore") + " ›"}
                 </Button>
               )}
             </div>
@@ -319,7 +335,7 @@ const PropertyEnhanced = () => {
             <Separator />
 
             {/* Property Highlights */}
-            <div className="space-y-6">
+            <div className="space-y-4 sm:space-y-6">
               <h3 className="text-lg sm:text-xl md:text-2xl font-bold">{tKey("propertyHighlights")}</h3>
               <PropertyHighlights
                 bedrooms={property.bedrooms}
@@ -332,13 +348,13 @@ const PropertyEnhanced = () => {
 
             <Separator />
 
-            {/* What This Place Offers - Amenities */}
+            {/* Amenities */}
             <PropertyAmenities features={property.features} />
 
             <Separator />
 
-            {/* Key Details Table */}
-            <div className="space-y-4">
+            {/* Key Details */}
+            <div className="space-y-3 sm:space-y-4">
               <h3 className="text-lg sm:text-xl md:text-2xl font-bold">Key Details</h3>
               <KeyDetailsTable
                 propertyType={property.property_type}
@@ -358,17 +374,19 @@ const PropertyEnhanced = () => {
 
             <Separator />
 
-            {/* Where You'll Be - Location & Neighborhood */}
-            <div className="space-y-4">
+            {/* Where You'll Be */}
+            <div className="space-y-3 sm:space-y-4">
               <h2 className="text-xl sm:text-2xl md:text-3xl font-bold">Where you'll be</h2>
-              
-              {/* Google Maps */}
-              <GooglePropertyMap
-                location={`${property.location}, ${property.city}, Algeria`}
-                address={property.full_address}
-                latitude={property.latitude}
-                longitude={property.longitude}
-              />
+
+              {/* Ensure the map has a sensible mobile height */}
+              <div className="w-full h-64 sm:h-80 lg:h-96 rounded-xl overflow-hidden">
+                <GooglePropertyMap
+                  location={`${property.location}, ${property.city}, Algeria`}
+                  address={property.full_address}
+                  latitude={property.latitude}
+                  longitude={property.longitude}
+                />
+              </div>
               
               <NeighborhoodInsights
                 city={property.city}
@@ -391,10 +409,10 @@ const PropertyEnhanced = () => {
 
             <Separator />
 
-            {/* Full Host Details - At the Bottom */}
+            {/* Host Details */}
             {profile && (
               <>
-                <div className="space-y-4">
+                <div className="space-y-3 sm:space-y-4">
                   <h2 className="text-xl sm:text-2xl md:text-3xl font-bold">
                     {isBuy ? "About the seller" : isRent ? "About your landlord" : "Meet your host"}
                   </h2>
@@ -415,17 +433,16 @@ const PropertyEnhanced = () => {
               </>
             )}
 
-            {/* Why Buy/Rent with Holibayt */}
+            {/* Why Buy/Rent */}
             {isBuy ? <WhyBuyWithHolibayt /> : isRent ? <WhyRentWithHolibayt /> : null}
 
-            {/* Similar Properties */}
+            {/* Similar / Recently */}
             <SimilarProperties
               currentPropertyId={property.id}
               city={property.city}
               category={property.category}
             />
 
-            {/* Recently Sold/Rented */}
             {(isBuy || isRent) && (
               <RecentlySoldRented
                 city={property.city}
@@ -434,38 +451,40 @@ const PropertyEnhanced = () => {
             )}
           </div>
 
-          {/* Sticky Sidebar */}
+          {/* Sidebar — NOT sticky on mobile to avoid overflow; sticky only on lg+ */}
           <div className="lg:col-span-1">
-            <Card className="sticky top-20 p-4 sm:p-6 shadow-lg hover:shadow-2xl transition-shadow space-y-4 sm:space-y-6 max-h-[calc(100vh-6rem)] overflow-y-auto">
-              {/* Price */}
+            <Card
+              className="p-4 sm:p-6 shadow-lg hover:shadow-2xl transition-shadow space-y-4 sm:space-y-6
+                         lg:sticky lg:top-20 lg:max-h-[calc(100vh-6rem)] lg:overflow-y-auto"
+            >
+              {/* Price block */}
               <div>
-                <div className="flex items-baseline justify-between mb-2">
-                  <div className="text-3xl font-bold text-primary">
+                <div className="flex items-start sm:items-baseline justify-between gap-3 mb-2">
+                  <div className="text-2xl sm:text-3xl font-bold text-primary break-words">
                     {formatPrice(parseFloat(property.price), property.price_type, property.price_currency || "DZD")}
                   </div>
-                  <CurrencySelector />
+                  <div className="shrink-0">
+                    <CurrencySelector />
+                  </div>
                 </div>
-                <p className="text-sm text-muted-foreground">
+                <p className="text-xs sm:text-sm text-muted-foreground">
                   {property.price_type === "per_month" && t("perMonth")}
                   {property.price_type === "per_night" && t("perNight")}
                 </p>
                 {property.fees?.security_deposit?.enabled && (
-                  <p className="text-sm text-muted-foreground mt-1">
+                  <p className="text-xs sm:text-sm text-muted-foreground mt-1">
                     {tKey("deposit")}: {formatPrice(property.fees.security_deposit.amount, property.price_type, property.price_currency || "DZD")} {tKey("depositHeldVia")}
                   </p>
                 )}
               </div>
 
               {/* CTAs */}
-              <div className="space-y-3">
+              <div className="space-y-2.5 sm:space-y-3">
                 {isShortStay ? (
                   <BookingModal 
                     property={property}
                     trigger={
-                      <Button
-                        className="w-full hover:-translate-y-0.5 transition-transform shadow-md"
-                        size="lg"
-                      >
+                      <Button className="w-full hover:-translate-y-0.5 transition-transform shadow-md" size="lg">
                         <Calendar className="w-4 h-4 mr-2" />
                         {t("bookViewingSafely")}
                       </Button>
@@ -504,7 +523,7 @@ const PropertyEnhanced = () => {
               </div>
 
               {/* Trust Info Blocks */}
-              <div className="pt-6 border-t">
+              <div className="pt-5 sm:pt-6 border-t">
                 <PropertyTrustInfoBlocks
                   isVerified={property.verified}
                   holibaytPayEligible={property.holibayt_pay_eligible}
@@ -512,9 +531,9 @@ const PropertyEnhanced = () => {
                 />
               </div>
 
-              {/* Rent-Specific Trust Components */}
+              {/* Rent-specific */}
               {isRent && (
-                <div className="space-y-4 pt-6 border-t">
+                <div className="space-y-4 pt-5 sm:pt-6 border-t">
                   <RentPaymentSafetyBadge 
                     monthlyRent={parseFloat(property.price)}
                     deposit={property.fees?.security_deposit?.amount || 0}
@@ -529,22 +548,19 @@ const PropertyEnhanced = () => {
                     />
                   )}
                   
-                  <DigitalLeaseOption
-                    propertyId={property.id}
-                    hasActiveAgreement={false}
-                  />
+                  <DigitalLeaseOption propertyId={property.id} hasActiveAgreement={false} />
                   
                   {/* Security Deposit Payment */}
                   {property.fees?.security_deposit?.enabled && (
                     <Card className="border-2 border-primary/20">
                       <CardHeader>
-                        <CardTitle className="flex items-center gap-2 text-lg">
+                        <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
                           <Shield className="w-5 h-5 text-primary" />
                           Security Deposit Required
                         </CardTitle>
                       </CardHeader>
                       <CardContent className="space-y-3">
-                        <p className="text-sm text-muted-foreground">
+                        <p className="text-xs sm:text-sm text-muted-foreground">
                           A refundable security deposit of{" "}
                           <span className="font-bold text-foreground">
                             {formatPrice(
@@ -555,7 +571,7 @@ const PropertyEnhanced = () => {
                           </span>{" "}
                           is required before moving in.
                         </p>
-                        <p className="text-xs text-muted-foreground">
+                        <p className="text-[11px] sm:text-xs text-muted-foreground">
                           This deposit will be held securely via Holibayt Pay™ escrow and refunded at the end of your tenancy.
                         </p>
                         <PaymentButton
@@ -574,11 +590,11 @@ const PropertyEnhanced = () => {
                 </div>
               )}
 
-              {/* Warning - Only for Short Stay */}
+              {/* Short-stay warning */}
               {isShortStay && (
-                <div className="flex items-start gap-3 p-4 rounded-lg bg-yellow-50 border border-yellow-200">
+                <div className="flex items-start gap-3 p-3 sm:p-4 rounded-lg bg-yellow-50 border border-yellow-200">
                   <AlertTriangle className="w-5 h-5 text-yellow-600 flex-shrink-0 mt-0.5" />
-                  <p className="text-sm text-yellow-800 whitespace-normal break-words leading-relaxed">
+                  <p className="text-xs sm:text-sm text-yellow-800 whitespace-normal break-words leading-relaxed">
                     {tKey("communicationWarning")}
                   </p>
                 </div>
@@ -599,7 +615,6 @@ const PropertyEnhanced = () => {
       <Footer />
 
       {/* Modals */}
-      {/* Schedule Visit Modal - For Buy/Rent/Sale */}
       {(isBuy || isRent) && (
         <ScheduleVisitModal
           isOpen={isScheduleModalOpen}
