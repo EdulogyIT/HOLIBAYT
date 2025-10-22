@@ -117,49 +117,38 @@ const City = () => {
       },
       image: constantineImage
     }
-  };
+  } as const;
 
   const currentCity = cityData[cityId as keyof typeof cityData];
 
-  // Re-render when language changes and fetch properties
   useEffect(() => {
     if (currentCity) {
-      fetchPropertiesForCity();
+      void fetchPropertiesForCity();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentLang, cityId]);
 
   const fetchPropertiesForCity = async () => {
     if (!currentCity) return;
-    
     try {
       setIsLoading(true);
-      // Use cityId from URL params instead of translated city name
       const searchCity = cityId || '';
       
-      // Fetch buy properties (stored as 'sale' in database)
       const { data: buyData } = await supabase
-        .from('properties')
-        .select('*')
-        .eq('category', 'sale')
-        .eq('status', 'active')
+        .from('properties').select('*')
+        .eq('category', 'sale').eq('status', 'active')
         .or(`city.ilike.%${searchCity}%,location.ilike.%${searchCity}%`)
         .limit(2);
       
-      // Fetch rent properties
       const { data: rentData } = await supabase
-        .from('properties')
-        .select('*')
-        .eq('category', 'rent')
-        .eq('status', 'active')
+        .from('properties').select('*')
+        .eq('category', 'rent').eq('status', 'active')
         .or(`city.ilike.%${searchCity}%,location.ilike.%${searchCity}%`)
         .limit(2);
       
-      // Fetch short-stay properties
       const { data: shortStayData } = await supabase
-        .from('properties')
-        .select('*')
-        .eq('category', 'short-stay')
-        .eq('status', 'active')
+        .from('properties').select('*')
+        .eq('category', 'short-stay').eq('status', 'active')
         .or(`city.ilike.%${searchCity}%,location.ilike.%${searchCity}%`)
         .limit(2);
 
@@ -175,11 +164,11 @@ const City = () => {
 
   if (!currentCity) {
     return (
-      <div className="min-h-screen bg-background">
+      <div className="min-h-screen bg-background overflow-x-hidden">
         <Navigation />
-        <main className="pt-20 flex items-center justify-center">
-          <div className="text-center">
-            <h1 className="text-2xl font-bold text-foreground mb-4">{t('cityNotFound')}</h1>
+        <main className="pt-20 flex items-center justify-center px-4">
+          <div className="text-center max-w-md">
+            <h1 className="text-2xl font-bold text-foreground mb-4 break-words">{t('cityNotFound')}</h1>
             <Button onClick={() => navigate('/')}>{t('backToHome')}</Button>
           </div>
         </main>
@@ -201,54 +190,48 @@ const City = () => {
     type: property.property_type || t('propertyAppartement')
   });
 
-  const PropertyCard = ({ property, listingType }: { property: any, listingType: string }) => {
-    const formattedProperty = formatPropertyForCard(property);
-    
+  const PropertyCard = ({ property }: { property: any; listingType: string }) => {
+    const formatted = formatPropertyForCard(property);
     return (
-      <Card 
-        className="cursor-pointer hover:shadow-lg transition-shadow"
-        onClick={() => navigate(`/property/${formattedProperty.id}`)}
+      <Card
+        className="w-full max-w-full cursor-pointer hover:shadow-lg transition-shadow"
+        onClick={() => navigate(`/property/${formatted.id}`)}
       >
         <div className="aspect-video bg-muted rounded-t-lg overflow-hidden">
-          <img 
-            src={formattedProperty.image} 
-            alt={formattedProperty.title}
+          <img
+            src={formatted.image}
+            alt={formatted.title}
             className="w-full h-full object-cover"
           />
         </div>
         <CardHeader>
-          <div className="flex justify-between items-start">
-            <CardTitle className="text-xl font-playfair">{formattedProperty.title}</CardTitle>
-            <Badge variant="secondary" className="font-inter">{formattedProperty.type}</Badge>
+          <div className="flex items-start justify-between gap-3 min-w-0">
+            <CardTitle className="text-xl font-playfair min-w-0 break-words">
+              {formatted.title}
+            </CardTitle>
+            <Badge variant="secondary" className="font-inter shrink-0">{formatted.type}</Badge>
           </div>
-          <div className="flex items-center text-muted-foreground">
-            <MapPin className="w-4 h-4 mr-1" />
-            <span className="text-sm font-inter">{formattedProperty.location}</span>
+          <div className="flex items-start text-muted-foreground min-w-0">
+            <MapPin className="w-4 h-4 mr-1 shrink-0 mt-0.5" />
+            <span className="text-sm font-inter break-words">{formatted.location}</span>
           </div>
         </CardHeader>
         <CardContent>
-          <div className="flex justify-between items-center mb-4">
-            <span className="text-2xl font-bold text-primary font-playfair">{formattedProperty.price}</span>
+          <div className="flex items-center justify-between mb-4">
+            <span className="text-2xl font-bold text-primary font-playfair break-words">
+              {formatted.price}
+            </span>
           </div>
           <div className="flex justify-between text-sm text-muted-foreground mb-4 font-inter">
-            <div className="flex items-center">
-              <Bed className="w-4 h-4 mr-1" />
-              {formattedProperty.beds}
-            </div>
-            <div className="flex items-center">
-              <Bath className="w-4 h-4 mr-1" />
-              {formattedProperty.baths}
-            </div>
-            <div className="flex items-center">
-              <Square className="w-4 h-4 mr-1" />
-              {formattedProperty.area}
-            </div>
+            <div className="flex items-center"><Bed className="w-4 h-4 mr-1" />{formatted.beds}</div>
+            <div className="flex items-center"><Bath className="w-4 h-4 mr-1" />{formatted.baths}</div>
+            <div className="flex items-center"><Square className="w-4 h-4 mr-1" />{formatted.area}</div>
           </div>
-          <Button 
-            className="w-full bg-gradient-primary hover:shadow-elegant font-inter flex items-center justify-center min-h-[44px]" 
+          <Button
+            className="w-full bg-gradient-primary hover:shadow-elegant font-inter flex items-center justify-center min-h-[44px]"
             onClick={(e) => {
               e.stopPropagation();
-              navigate(`/property/${formattedProperty.id}`);
+              navigate(`/property/${formatted.id}`);
             }}
           >
             {t('viewDetails')}
@@ -259,89 +242,92 @@ const City = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background overflow-x-hidden">
       <Navigation />
       <main className="pt-20">
-        {/* Hero Section */}
-        <div className="relative h-96 overflow-hidden">
-          <img 
-            src={currentCity.image} 
+        {/* Hero Section (mobile-safe) */}
+        <div className="relative w-full max-w-full h-[42vh] sm:h-[52vh] lg:h-[60vh] overflow-hidden">
+          <img
+            src={currentCity.image}
             alt={currentCity.name}
             className="w-full h-full object-cover"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/30 to-transparent"></div>
-          <div className="absolute bottom-0 left-0 right-0 p-8">
-            <div className="max-w-7xl mx-auto">
-              <h1 className="text-4xl md:text-5xl font-playfair font-bold text-white mb-4">
+          <div className="absolute bottom-0 left-0 right-0 px-4 sm:px-6 lg:px-8 pb-6 sm:pb-10">
+            <div className="max-w-7xl mx-auto min-w-0">
+              <h1 className="text-3xl sm:text-4xl md:text-5xl font-playfair font-bold text-white mb-3 sm:mb-4 break-words">
                 {currentCity.name}
               </h1>
-              <p className="text-xl text-white/90 font-inter font-light max-w-2xl">
+              <p className="text-base sm:text-lg text-white/90 font-inter font-light max-w-2xl break-words
+                             line-clamp-6 sm:line-clamp-none">
                 {currentCity.description}
               </p>
             </div>
           </div>
         </div>
 
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8 py-10 sm:py-12">
           {/* City Stats */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-            <div className="text-center p-6 bg-card rounded-xl shadow-sm">
-              <Users className="h-8 w-8 text-primary mx-auto mb-3" />
-              <div className="text-2xl font-bold text-foreground font-playfair mb-1">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 mb-10 sm:mb-12">
+            <div className="text-center p-5 sm:p-6 bg-card rounded-xl shadow-sm">
+              <Users className="h-7 w-7 sm:h-8 sm:w-8 text-primary mx-auto mb-2.5 sm:mb-3" />
+              <div className="text-xl sm:text-2xl font-bold text-foreground font-playfair mb-1">
                 {currentCity.stats.population}
               </div>
-              <div className="text-muted-foreground font-inter text-sm">{t('population')}</div>
+              <div className="text-muted-foreground font-inter text-xs sm:text-sm">{t('population')}</div>
             </div>
-            <div className="text-center p-6 bg-card rounded-xl shadow-sm">
-              <Square className="h-8 w-8 text-accent mx-auto mb-3" />
-              <div className="text-2xl font-bold text-foreground font-playfair mb-1">
+            <div className="text-center p-5 sm:p-6 bg-card rounded-xl shadow-sm">
+              <Square className="h-7 w-7 sm:h-8 sm:w-8 text-accent mx-auto mb-2.5 sm:mb-3" />
+              <div className="text-xl sm:text-2xl font-bold text-foreground font-playfair mb-1">
                 {currentCity.stats.area}
               </div>
-              <div className="text-muted-foreground font-inter text-sm">{t('cityArea')}</div>
+              <div className="text-muted-foreground font-inter text-xs sm:text-sm">{t('cityArea')}</div>
             </div>
-            <div className="text-center p-6 bg-card rounded-xl shadow-sm">
-              <Clock className="h-8 w-8 text-foreground mx-auto mb-3" />
-              <div className="text-2xl font-bold text-foreground font-playfair mb-1">
+            <div className="text-center p-5 sm:p-6 bg-card rounded-xl shadow-sm">
+              <Clock className="h-7 w-7 sm:h-8 sm:w-8 text-foreground mx-auto mb-2.5 sm:mb-3" />
+              <div className="text-xl sm:text-2xl font-bold text-foreground font-playfair mb-1">
                 {currentCity.stats.founded}
               </div>
-              <div className="text-muted-foreground font-inter text-sm">{t('foundedIn')}</div>
+              <div className="text-muted-foreground font-inter text-xs sm:text-sm">{t('foundedIn')}</div>
             </div>
           </div>
 
           {/* History Section */}
-          <div className="mb-12">
-            <h2 className="text-3xl font-playfair font-bold text-foreground mb-6">
+          <div className="mb-10 sm:mb-12">
+            <h2 className="text-2xl sm:text-3xl font-playfair font-bold text-foreground mb-4 sm:mb-6 break-words">
               {t('historyHeritage')}
             </h2>
-            <div className="bg-card p-8 rounded-xl shadow-sm">
-              <p className="text-muted-foreground font-inter leading-relaxed text-lg">
+            <div className="bg-card px-4 sm:px-6 lg:px-8 py-6 sm:py-8 rounded-xl shadow-sm">
+              <p className="text-muted-foreground font-inter leading-relaxed text-base sm:text-lg break-words">
                 {currentCity.history}
               </p>
             </div>
           </div>
 
           {/* Properties Tabs */}
-          <div className="mb-12">
-            <h2 className="text-3xl font-playfair font-bold text-foreground mb-6">
+          <div className="mb-10 sm:mb-12">
+            <h2 className="text-2xl sm:text-3xl font-playfair font-bold text-foreground mb-4 sm:mb-6 break-words">
               {t('propertiesAvailableIn')} {currentCity.name}
             </h2>
-            
+
             <Tabs defaultValue="buy" className="w-full">
-              <TabsList className="grid w-full grid-cols-3 mb-8">
-                <TabsTrigger value="buy" className="font-inter">
-                  <Building className="h-4 w-4 mr-2" />
+              {/* Tabs List: allow wrap & never overflow */}
+              <TabsList className="w-full flex flex-wrap gap-2 sm:gap-3 justify-stretch sm:justify-start mb-6 sm:mb-8">
+                <TabsTrigger value="buy" className="font-inter flex-1 sm:flex-none min-w-[120px]">
+                  <Building className="h-4 w-4 mr-2 shrink-0" />
                   {t('buy')}
                 </TabsTrigger>
-                <TabsTrigger value="rent" className="font-inter">
-                  <MapPin className="h-4 w-4 mr-2" />
+                <TabsTrigger value="rent" className="font-inter flex-1 sm:flex-none min-w-[120px]">
+                  <MapPin className="h-4 w-4 mr-2 shrink-0" />
                   {t('rent')}
                 </TabsTrigger>
-                <TabsTrigger value="shortStay" className="font-inter">
-                  <Bed className="h-4 w-4 mr-2" />
+                <TabsTrigger value="shortStay" className="font-inter flex-1 sm:flex-none min-w-[120px]">
+                  <Bed className="h-4 w-4 mr-2 shrink-0" />
                   {t('shortStay')}
                 </TabsTrigger>
               </TabsList>
-              
+
+              {/* BUY */}
               <TabsContent value="buy" className="space-y-6">
                 {isLoading ? (
                   <div className="flex justify-center py-12">
@@ -349,15 +335,15 @@ const City = () => {
                   </div>
                 ) : buyProperties.length > 0 ? (
                   <>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                      {buyProperties.map((property) => (
-                        <PropertyCard key={property.id} property={property} listingType="buy" />
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+                      {buyProperties.map((p) => (
+                        <PropertyCard key={p.id} property={p} listingType="buy" />
                       ))}
                     </div>
                     <div className="text-center">
-                      <Button 
-                        variant="outline" 
-                        size="lg" 
+                      <Button
+                        variant="outline"
+                        size="lg"
                         className="font-inter"
                         onClick={() => navigate(`/buy?location=${encodeURIComponent(currentCity.name)}`)}
                       >
@@ -368,17 +354,14 @@ const City = () => {
                 ) : (
                   <div className="text-center py-12">
                     <p className="text-muted-foreground">{t('noPropertiesFound')}</p>
-                    <Button 
-                      variant="outline" 
-                      className="mt-4"
-                      onClick={() => navigate('/buy')}
-                    >
+                    <Button variant="outline" className="mt-4" onClick={() => navigate('/buy')}>
                       {t('browseAllProperties')}
                     </Button>
                   </div>
                 )}
               </TabsContent>
-              
+
+              {/* RENT */}
               <TabsContent value="rent" className="space-y-6">
                 {isLoading ? (
                   <div className="flex justify-center py-12">
@@ -386,15 +369,15 @@ const City = () => {
                   </div>
                 ) : rentProperties.length > 0 ? (
                   <>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                      {rentProperties.map((property) => (
-                        <PropertyCard key={property.id} property={property} listingType="rent" />
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+                      {rentProperties.map((p) => (
+                        <PropertyCard key={p.id} property={p} listingType="rent" />
                       ))}
                     </div>
                     <div className="text-center">
-                      <Button 
-                        variant="outline" 
-                        size="lg" 
+                      <Button
+                        variant="outline"
+                        size="lg"
                         className="font-inter"
                         onClick={() => navigate(`/rent?location=${encodeURIComponent(currentCity.name)}`)}
                       >
@@ -405,17 +388,14 @@ const City = () => {
                 ) : (
                   <div className="text-center py-12">
                     <p className="text-muted-foreground">{t('noPropertiesFound')}</p>
-                    <Button 
-                      variant="outline" 
-                      className="mt-4"
-                      onClick={() => navigate('/rent')}
-                    >
+                    <Button variant="outline" className="mt-4" onClick={() => navigate('/rent')}>
                       {t('browseAllProperties')}
                     </Button>
                   </div>
                 )}
               </TabsContent>
-              
+
+              {/* SHORT STAY */}
               <TabsContent value="shortStay" className="space-y-6">
                 {isLoading ? (
                   <div className="flex justify-center py-12">
@@ -423,15 +403,15 @@ const City = () => {
                   </div>
                 ) : shortStayProperties.length > 0 ? (
                   <>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                      {shortStayProperties.map((property) => (
-                        <PropertyCard key={property.id} property={property} listingType="shortStay" />
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+                      {shortStayProperties.map((p) => (
+                        <PropertyCard key={p.id} property={p} listingType="shortStay" />
                       ))}
                     </div>
                     <div className="text-center">
-                      <Button 
-                        variant="outline" 
-                        size="lg" 
+                      <Button
+                        variant="outline"
+                        size="lg"
                         className="font-inter"
                         onClick={() => navigate(`/short-stay?location=${encodeURIComponent(currentCity.name)}`)}
                       >
@@ -442,11 +422,7 @@ const City = () => {
                 ) : (
                   <div className="text-center py-12">
                     <p className="text-muted-foreground">{t('noPropertiesFound')}</p>
-                    <Button 
-                      variant="outline" 
-                      className="mt-4"
-                      onClick={() => navigate('/short-stay')}
-                    >
+                    <Button variant="outline" className="mt-4" onClick={() => navigate('/short-stay')}>
                       {t('browseAllProperties')}
                     </Button>
                   </div>
