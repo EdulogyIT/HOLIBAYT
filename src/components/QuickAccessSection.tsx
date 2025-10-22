@@ -176,9 +176,8 @@ const BuyWorkflowDiagram = () => {
  *  then bullet rows under each column (exact flow from screenshot)
  * -------------------------------------------------------- */
 // Rent Workflow - matches screenshot with top icons, colored arrow bars, and bullets
+// Rent Workflow - mobile friendly
 const RentWorkflowDiagram = () => {
-  // const { t } = useLanguage();
-
   const top = [
     { icon: Home, title: "Find a Verified Property" },
     { icon: FileSignature, title: "Sign & Secure with Holibayt Pay™ (Escrow)" },
@@ -186,12 +185,12 @@ const RentWorkflowDiagram = () => {
     { icon: DollarSign, title: "Monthly Payouts Released" },
   ];
 
-  // colors use hex so we can fill the arrow tip triangles exactly
+  // desktop “layer bars” only
   const bars = [
-    { label: "Trust Layer", hex: "#0f766e", textClass: "text-white" }, // teal-700
-    { label: "Security Layer", hex: "#115e59", textClass: "text-white" }, // teal-800
-    { label: "Protection Layer", hex: "#f59e0b", textClass: "text-slate-900" }, // amber-500
-    { label: "Transparency Layer", hex: "#94a3b8", textClass: "text-slate-900" }, // slate-400
+    { label: "Trust Layer", hex: "#0f766e", textClass: "text-white" },
+    { label: "Security Layer", hex: "#115e59", textClass: "text-white" },
+    { label: "Protection Layer", hex: "#f59e0b", textClass: "text-slate-900" },
+    { label: "Transparency Layer", hex: "#94a3b8", textClass: "text-slate-900" },
   ];
 
   const bullets = [
@@ -215,22 +214,23 @@ const RentWorkflowDiagram = () => {
   ];
 
   return (
-    <div className="space-y-10">
+    // keep overall spacing, but constrain width on small screens for readability
+    <div className="space-y-8 md:space-y-10 mx-auto max-w-[34rem] md:max-w-none">
       {/* Heading */}
-      <div className="text-center">
-        <h3 className="text-3xl md:text-4xl font-playfair font-bold text-foreground">
+      <div className="text-center px-2">
+        <h3 className="text-2xl sm:text-3xl md:text-4xl font-playfair font-bold text-foreground leading-tight">
           Rent — Secure Long-Term Rentals, Simplified.
         </h3>
       </div>
 
-      {/* Top row: 4 icons + titles */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-8 text-center">
+      {/* Top row: icons + titles (2 columns on mobile, 4 on md+) */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8 px-2">
         {top.map((c, i) => {
           const Icon = c.icon;
           return (
-            <div key={i} className="flex flex-col items-center gap-4">
-              <Icon className="w-12 h-12 text-slate-800" />
-              <h4 className="font-playfair font-bold text-lg text-slate-900">
+            <div key={i} className="flex flex-col items-center md:items-center gap-3 text-center">
+              <Icon className="w-9 h-9 md:w-12 md:h-12 text-slate-800" />
+              <h4 className="font-playfair font-semibold text-sm md:text-lg text-slate-900 leading-snug">
                 {c.title}
               </h4>
             </div>
@@ -238,26 +238,18 @@ const RentWorkflowDiagram = () => {
         })}
       </div>
 
-      {/* Colored arrow bars like screenshot (desktop only) */}
-      <div className="hidden md:grid grid-cols-4 gap-6 items-center">
+      {/* Colored arrow bars (desktop only) */}
+      <div className="hidden md:grid grid-cols-4 gap-6 items-center px-2">
         {bars.map((b, i) => (
           <div key={i} className="flex items-center">
-            {/* label bar */}
             <div
               className={`px-4 py-2 rounded-md font-semibold ${b.textClass}`}
               style={{ backgroundColor: b.hex }}
             >
               {b.label}
             </div>
-            {/* right-pointing triangle tip */}
             {i < bars.length - 1 && (
-              <svg
-                width="22"
-                height="22"
-                viewBox="0 0 24 24"
-                style={{ color: b.hex }}
-                className="-ml-1"
-              >
+              <svg width="22" height="22" viewBox="0 0 24 24" style={{ color: b.hex }} className="-ml-1">
                 <path d="M0 0 L20 12 L0 24 Z" fill="currentColor" />
               </svg>
             )}
@@ -266,11 +258,14 @@ const RentWorkflowDiagram = () => {
       </div>
 
       {/* Bullet rows under each column */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 md:gap-8 px-2">
         {bullets.map((list, i) => (
-          <ul key={i} className="space-y-2 text-sm text-slate-700">
+          <ul
+            key={i}
+            className="space-y-2 text-[0.95rem] md:text-sm text-slate-700 text-left list-disc pl-5 md:pl-0 md:list-none leading-relaxed"
+          >
             {list.map((line, j) => (
-              <li key={j} className="leading-snug">
+              <li key={j} className="md:leading-snug">
                 {line}
               </li>
             ))}
