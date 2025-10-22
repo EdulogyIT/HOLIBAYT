@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { MapPin, Shield, AlertTriangle, MessageCircle, Calendar } from "lucide-react";
+import { MapPin, Shield, AlertTriangle, MessageCircle, Calendar, Loader2 } from "lucide-react";
 import { useParams } from "react-router-dom";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useCurrency } from "@/contexts/CurrencyContext";
@@ -12,7 +12,6 @@ import { useScrollToTop } from "@/hooks/useScrollToTop";
 import { useEffect, useState } from "react";
 import { BookingModal } from "@/components/BookingModal";
 import { supabase } from "@/integrations/supabase/client";
-import { Loader2 } from "lucide-react";
 import { PaymentButton } from "@/components/PaymentButton";
 import ScheduleVisitModal from "@/components/ScheduleVisitModal";
 import MessageOwnerModal from "@/components/MessageOwnerModal";
@@ -117,16 +116,15 @@ const PropertyEnhanced = () => {
   
   useScrollToTop();
 
-  // translation helper
+  // i18n helper
   const tKey = (key: string) => {
     const translations = buyRentTranslations[currentLang] || buyRentTranslations.EN;
     return translations[key] || key;
   };
 
   useEffect(() => {
-    if (id) {
-      fetchProperty();
-    }
+    if (id) void fetchProperty();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
   const fetchProperty = async () => {
@@ -142,7 +140,6 @@ const PropertyEnhanced = () => {
         setError('Property not found');
         return;
       }
-
       if (!data) {
         setError('Property not found');
         return;
@@ -156,13 +153,10 @@ const PropertyEnhanced = () => {
           .select('*')
           .eq('id', data.user_id)
           .maybeSingle();
-        
-        if (profileData) {
-          setProfile(profileData);
-        }
+        if (profileData) setProfile(profileData);
       }
-    } catch (error) {
-      console.error('Error fetching property:', error);
+    } catch (e) {
+      console.error('Error fetching property:', e);
       setError('Failed to load property');
     } finally {
       setIsLoading(false);
@@ -174,7 +168,6 @@ const PropertyEnhanced = () => {
     currentLang,
     'property_title'
   );
-
   const { translatedText: translatedDescription } = usePropertyTranslation(
     property?.description,
     currentLang,
@@ -205,24 +198,25 @@ const PropertyEnhanced = () => {
   const isBuy = property.category === "buy" || property.category === "sale";
   const isRent = property.category === "rent";
   const isShortStay = property.category === "short-stay";
-  const verificationYear = profile?.kyc_approved_at && profile.kyc_approved_at !== null
-    ? new Date(profile.kyc_approved_at).getFullYear() 
+  const verificationYear = profile?.kyc_approved_at
+    ? new Date(profile.kyc_approved_at).getFullYear()
     : new Date().getFullYear();
   const isInWishlist = wishlistIds.has(property.id);
 
   return (
-    <div className="min-h-screen bg-cream">
+    // HARD STOP any sideways scroll
+    <div className="min-h-screen bg-cream overflow-x-hidden">
       <Navigation />
       
-      {/* Safe paddings on mobile, wider on desktop */}
+      {/* Safe paddings; never exceed viewport width */}
       <main className="mx-auto w-full max-w-7xl px-3 sm:px-4 lg:px-8 pt-18 sm:pt-20 pb-8">
-        {/* Make grid stack on mobile; three columns only on lg+ */}
+        {/* Grid stacks on mobile; only splits on lg+ */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
           
-          {/* Main Content */}
-          <div className="lg:col-span-2 space-y-6 sm:space-y-8">
-            {/* Image Gallery */}
-            <div className="rounded-xl overflow-hidden">
+          {/* MAIN */}
+          <div className="lg:col-span-2 space-y-6 sm:space-y-8 min-w-0">
+            {/* Gallery wrapped to avoid bleed */}
+            <div className="rounded-xl overflow-hidden w-full max-w-full">
               <PropertyImageGallery 
                 images={property.images} 
                 title={translatedTitle}
@@ -231,10 +225,10 @@ const PropertyEnhanced = () => {
               />
             </div>
 
-            {/* Title & Location */}
+            {/* Title + location + actions */}
             <div className="space-y-3 sm:space-y-4">
-              {/* On mobile, stack title + actions; on desktop, space-between */}
-              <div className="flex flex-col gap-3 sm:gap-4 md:flex-row md:items-start md:justify-between">
+              <div className="flex flex-col gap-3 sm:gap-4 md:flex-row md:items-start md:justify-between min-w-0">
+                {/* LEFT */}
                 <div className="min-w-0 flex-1">
                   <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold leading-tight break-words">
                     {translatedTitle}
@@ -246,7 +240,7 @@ const PropertyEnhanced = () => {
                     </span>
                   </div>
 
-                  {/* Badges — wrap on small screens */}
+                  {/* Badges wrap on small screens */}
                   <div className="mt-3 flex flex-wrap gap-2">
                     {property.verified && (
                       <Badge variant="secondary" className="gap-1">
@@ -266,8 +260,8 @@ const PropertyEnhanced = () => {
                   </div>
                 </div>
 
-                {/* Actions */}
-                <div className="flex flex-wrap gap-2 md:ml-4">
+                {/* RIGHT actions */}
+                <div className="flex flex-wrap gap-2 md:ml-4 min-w-0">
                   <PropertyShareButton propertyId={property.id} propertyTitle={translatedTitle} />
                 </div>
               </div>
@@ -275,17 +269,17 @@ const PropertyEnhanced = () => {
 
             <Separator />
 
-            {/* Compact Verified Owner */}
+            {/* Compact owner */}
             {profile && (
               <>
-                <div className="bg-card border border-border rounded-xl p-4 sm:p-6 hover:shadow-md transition-shadow">
+                <div className="bg-card border border-border rounded-xl p-4 sm:p-6 hover:shadow-md transition-shadow w-full max-w-full">
                   <h3 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4">
                     {isBuy ? "Meet the seller" : isRent ? "Meet your landlord" : "Meet your host"}
                   </h3>
                   <VerifiedOwnerSection
                     name={profile.name || "Property Owner"}
                     avatarUrl={profile.avatar_url}
-                    verifiedSince={!isNaN(verificationYear) ? verificationYear.toString() : new Date().getFullYear().toString()}
+                    verifiedSince={verificationYear.toString()}
                     city={property.city}
                     languages={profile.languages_spoken || ["Arabic", "French"]}
                     transactionCount={profile.transaction_count || 0}
@@ -299,19 +293,12 @@ const PropertyEnhanced = () => {
               </>
             )}
 
-            {/* About This Property */}
+            {/* About */}
             <div className="space-y-3 sm:space-y-4">
               <h2 className="text-xl sm:text-2xl md:text-3xl font-bold">
                 {isBuy || isRent ? tKey(isBuy ? "aboutThisProperty" : "aboutThisRental") : t("propertyDetails")}
               </h2>
-
-              {/* Clamp description on small screens to avoid huge walls of text */}
-              <p
-                className={[
-                  "text-muted-foreground leading-relaxed text-sm sm:text-base",
-                  !showFullDescription ? "line-clamp-6 sm:line-clamp-none" : ""
-                ].join(" ")}
-              >
+              <p className={`text-muted-foreground leading-relaxed text-sm sm:text-base break-words ${!showFullDescription ? "line-clamp-6 sm:line-clamp-none" : ""}`}>
                 {translatedDescription || "No description available"}
                 {property.verified && (
                   <span className="block mt-3 text-xs sm:text-sm text-primary flex items-center gap-1">
@@ -320,7 +307,6 @@ const PropertyEnhanced = () => {
                   </span>
                 )}
               </p>
-
               {translatedDescription && translatedDescription.length > 300 && (
                 <Button
                   variant="link"
@@ -334,7 +320,7 @@ const PropertyEnhanced = () => {
 
             <Separator />
 
-            {/* Property Highlights */}
+            {/* Highlights */}
             <div className="space-y-4 sm:space-y-6">
               <h3 className="text-lg sm:text-xl md:text-2xl font-bold">{tKey("propertyHighlights")}</h3>
               <PropertyHighlights
@@ -353,7 +339,7 @@ const PropertyEnhanced = () => {
 
             <Separator />
 
-            {/* Key Details */}
+            {/* Key details */}
             <div className="space-y-3 sm:space-y-4">
               <h3 className="text-lg sm:text-xl md:text-2xl font-bold">Key Details</h3>
               <KeyDetailsTable
@@ -374,12 +360,10 @@ const PropertyEnhanced = () => {
 
             <Separator />
 
-            {/* Where You'll Be */}
+            {/* Where you'll be */}
             <div className="space-y-3 sm:space-y-4">
               <h2 className="text-xl sm:text-2xl md:text-3xl font-bold">Where you'll be</h2>
-
-              {/* Ensure the map has a sensible mobile height */}
-              <div className="w-full h-64 sm:h-80 lg:h-96 rounded-xl overflow-hidden">
+              <div className="w-full max-w-full h-64 sm:h-80 lg:h-96 rounded-xl overflow-hidden">
                 <GooglePropertyMap
                   location={`${property.location}, ${property.city}, Algeria`}
                   address={property.full_address}
@@ -387,7 +371,6 @@ const PropertyEnhanced = () => {
                   longitude={property.longitude}
                 />
               </div>
-              
               <NeighborhoodInsights
                 city={property.city}
                 location={property.location}
@@ -397,7 +380,7 @@ const PropertyEnhanced = () => {
 
             <Separator />
 
-            {/* Things to Know */}
+            {/* Things to know */}
             <PropertyThingsToKnow 
               category={property.category as "buy" | "rent" | "short-stay"}
               checkInTime={property.check_in_time}
@@ -409,7 +392,7 @@ const PropertyEnhanced = () => {
 
             <Separator />
 
-            {/* Host Details */}
+            {/* Host details */}
             {profile && (
               <>
                 <div className="space-y-3 sm:space-y-4">
@@ -425,7 +408,7 @@ const PropertyEnhanced = () => {
               </>
             )}
 
-            {/* Holibayt Pay Protection */}
+            {/* Holibayt Pay */}
             {property.holibayt_pay_eligible && (
               <>
                 <HolibaytPayExplainer category={isBuy ? "buy" : "rent"} />
@@ -433,16 +416,15 @@ const PropertyEnhanced = () => {
               </>
             )}
 
-            {/* Why Buy/Rent */}
+            {/* Why buy/rent */}
             {isBuy ? <WhyBuyWithHolibayt /> : isRent ? <WhyRentWithHolibayt /> : null}
 
-            {/* Similar / Recently */}
+            {/* Similar / recent */}
             <SimilarProperties
               currentPropertyId={property.id}
               city={property.city}
               category={property.category}
             />
-
             {(isBuy || isRent) && (
               <RecentlySoldRented
                 city={property.city}
@@ -451,13 +433,13 @@ const PropertyEnhanced = () => {
             )}
           </div>
 
-          {/* Sidebar — NOT sticky on mobile to avoid overflow; sticky only on lg+ */}
-          <div className="lg:col-span-1">
+          {/* SIDEBAR (sticky only on lg+) */}
+          <div className="lg:col-span-1 min-w-0">
             <Card
-              className="p-4 sm:p-6 shadow-lg hover:shadow-2xl transition-shadow space-y-4 sm:space-y-6
+              className="max-w-full p-4 sm:p-6 shadow-lg hover:shadow-2xl transition-shadow space-y-4 sm:space-y-6
                          lg:sticky lg:top-20 lg:max-h-[calc(100vh-6rem)] lg:overflow-y-auto"
             >
-              {/* Price block */}
+              {/* Price */}
               <div>
                 <div className="flex items-start sm:items-baseline justify-between gap-3 mb-2">
                   <div className="text-2xl sm:text-3xl font-bold text-primary break-words">
@@ -522,7 +504,7 @@ const PropertyEnhanced = () => {
                 )}
               </div>
 
-              {/* Trust Info Blocks */}
+              {/* Trust blocks */}
               <div className="pt-5 sm:pt-6 border-t">
                 <PropertyTrustInfoBlocks
                   isVerified={property.verified}
@@ -550,7 +532,6 @@ const PropertyEnhanced = () => {
                   
                   <DigitalLeaseOption propertyId={property.id} hasActiveAgreement={false} />
                   
-                  {/* Security Deposit Payment */}
                   {property.fees?.security_deposit?.enabled && (
                     <Card className="border-2 border-primary/20">
                       <CardHeader>
@@ -600,7 +581,7 @@ const PropertyEnhanced = () => {
                 </div>
               )}
 
-              {/* Guest Favourite */}
+              {/* Guest favourite */}
               {property.category === "short-stay" && property.features?.average_rating && (
                 <GuestFavouriteBadge 
                   rating={property.features.average_rating} 
