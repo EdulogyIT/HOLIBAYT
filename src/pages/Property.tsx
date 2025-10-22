@@ -208,10 +208,10 @@ const Property = () => {
     <div className="min-h-screen bg-background">
       <Navigation />
       <main className="pt-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 md:py-8">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
             {/* Main Content */}
-            <div className="lg:col-span-2 space-y-10">
+            <div className="lg:col-span-2 space-y-6 sm:space-y-8 md:space-y-10">
               {/* Property Images Gallery - Interactive */}
               <div className="space-y-4">
                 <div className="relative aspect-video bg-muted rounded-xl overflow-hidden group">
@@ -237,7 +237,7 @@ const Property = () => {
                     </>
                   )}
                 </div>
-                <div className="grid grid-cols-4 md:grid-cols-6 gap-3">
+                <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2 sm:gap-3">
                   {property.images.map((image, index) => (
                     <div 
                       key={index} 
@@ -261,12 +261,12 @@ const Property = () => {
                 <CardHeader>
                   <div className="flex justify-between items-start gap-4">
                     <div className="flex-1">
-                      <CardTitle className="text-3xl font-bold mb-2">
+                      <CardTitle className="text-xl sm:text-2xl md:text-3xl font-bold mb-2">
                         {translatedTitle || property.title}
                       </CardTitle>
                       <div className="flex items-center text-muted-foreground mb-3">
-                        <MapPin className="h-5 w-5 mr-2" />
-                        <span className="text-lg">
+                        <MapPin className="h-4 w-4 sm:h-5 sm:w-5 mr-2" />
+                        <span className="text-sm sm:text-base md:text-lg">
                           {property.city}, {property.location}
                           {property.district && ` - ${property.district}`}
                         </span>
@@ -286,21 +286,21 @@ const Property = () => {
                   </div>
                 </CardHeader>
                 <CardContent>
-                  <div className="flex flex-wrap gap-6 text-lg">
+                  <div className="flex flex-wrap gap-3 sm:gap-4 md:gap-6 text-sm sm:text-base md:text-lg">
                     {property.bedrooms && (
-                      <div className="flex items-center gap-2">
-                        <Bed className="h-6 w-6 text-primary" />
+                      <div className="flex items-center gap-1 sm:gap-2">
+                        <Bed className="h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6 text-primary" />
                         <span>{property.bedrooms} {t('bedrooms')}</span>
                       </div>
                     )}
                     {property.bathrooms && (
-                      <div className="flex items-center gap-2">
-                        <Bath className="h-6 w-6 text-primary" />
+                      <div className="flex items-center gap-1 sm:gap-2">
+                        <Bath className="h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6 text-primary" />
                         <span>{property.bathrooms} {t('bathrooms')}</span>
                       </div>
                     )}
-                    <div className="flex items-center gap-2">
-                      <Square className="h-6 w-6 text-primary" />
+                    <div className="flex items-center gap-1 sm:gap-2">
+                      <Square className="h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6 text-primary" />
                       <span>{property.area} {t('areaUnit')}</span>
                     </div>
                   </div>

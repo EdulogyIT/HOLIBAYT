@@ -73,7 +73,7 @@ const WorkflowPreview = ({ mode }: WorkflowPreviewProps) => {
   const steps = mode === "buy" ? getBuySteps() : getRentSteps();
 
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
+    <div className="grid grid-cols-1 xs:grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
       {steps.map((step, index) => {
         const Icon = step.icon;
         return (
@@ -81,11 +81,11 @@ const WorkflowPreview = ({ mode }: WorkflowPreviewProps) => {
             key={index}
             className="border-2 hover:shadow-md transition-all duration-300"
           >
-            <CardContent className="p-4 text-center">
-              <div className={`inline-flex items-center justify-center w-12 h-12 ${step.bgColor} rounded-xl mb-3`}>
-                <Icon className={`w-6 h-6 ${step.iconColor}`} />
+            <CardContent className="p-3 sm:p-4 text-center">
+              <div className={`inline-flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 ${step.bgColor} rounded-xl mb-3`}>
+                <Icon className={`w-5 h-5 sm:w-6 sm:h-6 ${step.iconColor}`} />
               </div>
-              <h4 className="text-sm font-semibold text-foreground leading-tight">
+              <h4 className="text-xs sm:text-sm font-semibold text-foreground leading-tight">
                 {step.title}
               </h4>
             </CardContent>

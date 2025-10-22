@@ -17,7 +17,7 @@ import { useScrollToTop } from "@/hooks/useScrollToTop";
 /* ---------------- Animation (gentle) ---------------- */
 const fadeIn = {
   hidden: { opacity: 0, y: 8 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.35, ease: "easeOut" } }
+  show: { opacity: 1, y: 0, transition: { duration: 0.35 } }
 };
 
 /* ---------------- Section wrapper (grid classes apply to inner container) --- */
@@ -208,17 +208,17 @@ const About = () => {
             ].map((item, i) => (
               <motion.div key={i} variants={fadeIn} initial="hidden" whileInView="show" viewport={{ once: true, amount: 0.2 }}>
                 <Card className="border border-border/60 rounded-2xl shadow-sm hover:shadow-md transition-all">
-                  <CardHeader>
-                    <div className={`w-16 h-16 rounded-2xl ${item.bgColor} flex items-center justify-center mb-4`}>
-                      <item.icon className={`w-10 h-10 ${item.color}`} aria-hidden="true" />
+                  <CardHeader className="p-4 sm:p-6">
+                    <div className={`w-12 h-12 sm:w-16 sm:h-16 rounded-2xl ${item.bgColor} flex items-center justify-center mb-4`}>
+                      <item.icon className={`w-6 h-6 sm:w-10 sm:h-10 ${item.color}`} aria-hidden="true" />
                     </div>
-                    <CardTitle className="text-2xl">{item.title}</CardTitle>
+                    <CardTitle className="text-lg sm:text-2xl">{item.title}</CardTitle>
                   </CardHeader>
-                  <CardContent>
+                  <CardContent className="p-4 sm:p-6 pt-0">
                     <p className="text-sm text-muted-foreground mb-6 leading-relaxed">{item.desc}</p>
                     <Button variant="link" asChild className="p-0 h-auto">
-                      <Link to={item.to} className="inline-flex items-center gap-2 text-base">
-                        {tx("learnMore", "Learn More")} <ArrowRight className="w-5 h-5" />
+                      <Link to={item.to} className="inline-flex items-center gap-2 text-sm sm:text-base">
+                        {tx("learnMore", "Learn More")} <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
                       </Link>
                     </Button>
                   </CardContent>
