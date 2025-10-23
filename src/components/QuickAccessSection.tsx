@@ -157,39 +157,38 @@ const BuyWorkflowDiagram = () => {
       </div>
 
       {/* Desktop flow with uniform alignment */}
+{/* Desktop flow with uniform alignment */}
 <div className="hidden lg:flex justify-between gap-8 bg-gradient-to-b from-slate-50 to-white p-8 rounded-2xl">
   {cols.map((c, idx) => {
     const Icon = c.icon;
     const layer = layerStyles[idx];
     return (
-      <div key={idx} className="flex items-start">
-        <div className="flex flex-col items-center text-center w-[260px]">
-          {/* Icon circle */}
-          <div
-            className={[
-              "w-16 h-16 rounded-full flex items-center justify-center shadow-md",
-              layer.iconBg,
-            ].join(" ")}
-          >
-            <Icon className={["w-8 h-8", layer.iconColor].join(" ")} />
-          </div>
+      <div key={idx} className="flex flex-1 flex-col items-center text-center">
+        {/* Icon circle */}
+        <div
+          className={[
+            "w-16 h-16 rounded-full flex items-center justify-center shadow-md",
+            layer.iconBg,
+          ].join(" ")}
+        >
+          <Icon className={["w-8 h-8", layer.iconColor].join(" ")} />
+        </div>
 
-          {/* Title + Bullets */}
-          <div className="mt-5 flex flex-col flex-1 justify-start min-h-[180px]">
-            <h4 className="font-playfair font-bold text-lg text-slate-900 mb-2">
-              {c.title}
-            </h4>
-            <ul className="text-sm text-slate-700 space-y-2 leading-snug">
-              {c.bullets.map((b, i) => (
-                <li key={i}>{b}</li>
-              ))}
-            </ul>
-          </div>
+        {/* Title + Bullets (all same min height) */}
+        <div className="mt-5 flex flex-col flex-1 justify-start min-h-[220px]">
+          <h4 className="font-playfair font-bold text-lg text-slate-900 mb-2">
+            {c.title}
+          </h4>
+          <ul className="text-sm text-slate-700 space-y-2 leading-snug">
+            {c.bullets.map((b, i) => (
+              <li key={i}>{b}</li>
+            ))}
+          </ul>
         </div>
 
         {/* Arrow between steps */}
         {idx < cols.length - 1 && (
-          <div className="flex items-center mx-6">
+          <div className="absolute right-0 top-1/2 transform -translate-y-1/2 translate-x-8">
             <ArrowRight className={["w-10 h-10", layer.arrow].join(" ")} />
           </div>
         )}
@@ -197,6 +196,7 @@ const BuyWorkflowDiagram = () => {
     );
   })}
 </div>
+
 
 
       {/* Mobile/Tablet stacked with colors */}
