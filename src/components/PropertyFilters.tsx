@@ -453,7 +453,7 @@ const PropertyFilters = ({ onFilterChange, listingType }: PropertyFiltersProps) 
 
       {/* Rooms and beds */}
       <div className="space-y-4">
-        <Label className="text-base font-semibold">{t('roomsAndBeds') || 'Rooms and beds'}</Label>
+        <Label className="text-base font-semibold">{t('Rooms And Beds') || 'Rooms and beds'}</Label>
         
         <div className="space-y-4">
           <div className="flex items-center justify-between">
