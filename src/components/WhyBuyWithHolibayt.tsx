@@ -7,22 +7,22 @@ export const WhyBuyWithHolibayt = () => {
   const benefits = [
     {
       icon: Shield,
-      title: t("verifiedOwnership"),
+      title: t("Verified Ownership"),
       description: "We verify ownership and documents before listing"
     },
     {
       icon: DollarSign,
-      title: t("escrowPayment"),
+      title: t("Escrow Payment"),
       description: "Payments are held securely in escrow until completion"
     },
     {
       icon: Scale,
-      title: t("legalSupport"),
+      title: t("Legal Support"),
       description: "Legal assistance with agreements, compliance, and disputes"
     },
     {
       icon: AlertCircle,
-      title: t("noHiddenFees"),
+      title: t("No Hidden Fees"),
       description: "Transparent pricing with no surprise charges"
     }
   ];
@@ -30,7 +30,7 @@ export const WhyBuyWithHolibayt = () => {
   return (
     <div className="bg-gradient-to-br from-primary/5 via-background to-background border border-border rounded-xl p-8">
       <h2 className="text-2xl md:text-3xl font-bold mb-8 text-center">
-        {t("whyBuyWithHolibayt")}
+        {t("Why Buy With Holibayt")}
       </h2>
       
       <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
