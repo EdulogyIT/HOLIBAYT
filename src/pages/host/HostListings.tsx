@@ -142,9 +142,10 @@ const HostListings = () => {
             <Card key={property.id} className="overflow-hidden hover:shadow-lg transition-shadow"> 
               <div className="relative"> 
                 <img src={property.images?.[0] || '/placeholder.svg'} alt={property.title} className="w-full h-48 object-cover" onError={(e) => { e.currentTarget.src = '/placeholder.svg'; }} /> 
-                <Badge className={absolute top-3 left-3 ${getStatusColor(property.status)}} > 
-                  {property.status === 'active' ? t('host.active') : property.status} 
-                </Badge> 
+                <Badge className={`absolute top-3 left-3 ${getStatusColor(property.status)}`}>
+  {property.status === 'active' ? t('host.active') : property.status}
+</Badge>
+
               </div> 
               <CardContent className="p-4"> 
                 <div className="space-y-3"> 
