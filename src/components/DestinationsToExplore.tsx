@@ -73,12 +73,12 @@ export const DestinationsToExplore = ({ onDestinationClick }: DestinationsToExpl
             <Button variant="outline" onClick={() => setShowAll(!showAll)} className="gap-2">
               {showAll ? (
                 <>
-                  {t("show_less_destinations")}
+                  {t("Show less destinations")}
                   <ChevronUp className="h-4 w-4" />
                 </>
               ) : (
                 <>
-                  {t("show_more_destinations")}
+                  {t("Show more destinations")}
                   <ChevronDown className="h-4 w-4" />
                 </>
               )}
