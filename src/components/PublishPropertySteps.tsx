@@ -576,7 +576,7 @@ const PublishPropertySteps = ({ onSubmit, isSubmitting = false }: PublishPropert
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div className="space-y-2">
-                  <Label htmlFor="price">{t('priceField')} *</Label>
+                  <Label htmlFor="price">{t('Price Field')} *</Label>
                   <Input
                     id="price"
                     placeholder="e.g., 150000"
@@ -647,15 +647,15 @@ const PublishPropertySteps = ({ onSubmit, isSubmitting = false }: PublishPropert
                 >
                   <div className="flex items-center space-x-2 p-3 border rounded-lg hover:bg-muted/50">
                     <RadioGroupItem value="full" id="full-furnished" />
-                    <Label htmlFor="full-furnished" className="cursor-pointer">{t('fullyFurnished')}</Label>
+                    <Label htmlFor="full-furnished" className="cursor-pointer">{t('Fully Furnished')}</Label>
                   </div>
                   <div className="flex items-center space-x-2 p-3 border rounded-lg hover:bg-muted/50">
                     <RadioGroupItem value="semi" id="semi-furnished" />
-                    <Label htmlFor="semi-furnished" className="cursor-pointer">{t('semiFurnished')}</Label>
+                    <Label htmlFor="semi-furnished" className="cursor-pointer">{t('Semi Furnished')}</Label>
                   </div>
                   <div className="flex items-center space-x-2 p-3 border rounded-lg hover:bg-muted/50">
                     <RadioGroupItem value="none" id="unfurnished" />
-                    <Label htmlFor="unfurnished" className="cursor-pointer">{t('unfurnishedLabel')}</Label>
+                    <Label htmlFor="unfurnished" className="cursor-pointer">{t('Unfurnished Label')}</Label>
                   </div>
                 </RadioGroup>
               </div>
