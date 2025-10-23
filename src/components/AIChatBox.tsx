@@ -1,240 +1,464 @@
-import React from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { MessageCircle } from "lucide-react";
+import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import {
+  X,
+  Send,
+  Bot,
+  User,
+  Minimize2,
+  Maximize2,
+} from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 
-type ChatAssistantTeaserProps = {
-  onOpenChat?: () => void; // optional explicit handler
-  delayMs?: number;        // entrance delay
+interface Message {
+  id: number;
+  text: string;
+  isBot: boolean;
+  timestamp: string; // store as ISO for persistence
+}
+
+const LS_KEYS = {
+  OPEN: "hb_chat_open",
+  MINIMIZED: "hb_chat_minimized",
+  MSGS: "hb_chat_messages",
 };
 
-/**
- * Behavior:
- * - Close "X" now MINIMIZES into a small dock button that always stays bottom-right.
- * - Clicking the mini button restores the teaser.
- * - "Chat now" tries: prop -> Crisp -> Intercom -> Tawk.to -> Drift -> custom event.
- */
-const ChatAssistantTeaser: React.FC<ChatAssistantTeaserProps> = ({
-  onOpenChat,
-  delayMs = 800,
-}) => {
-  const [teaserVisible, setTeaserVisible] = React.useState(true);   // large card
-  const [minimized, setMinimized] = React.useState(false);          // mini dock
+const AIChatBox = () => {
+  const { currentLang } = useLanguage();
+  const { toast } = useToast();
 
-  // Restore minimized state from previous visits if you like:
-  React.useEffect(() => {
-    const saved = localStorage.getItem("hb_chat_minimized");
-    if (saved === "1") {
-      setTeaserVisible(false);
-      setMinimized(true);
+  // UI state
+  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [isMinimized, setIsMinimized] = useState<boolean>(false);
+  const [isTyping, setIsTyping] = useState<boolean>(false);
+  const [isInitialized, setIsInitialized] = useState<boolean>(false);
+
+  // Chat state
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [inputValue, setInputValue] = useState("");
+
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const getWelcomeMessage = () => {
+    switch (currentLang) {
+      case "AR":
+        return "مرحبا! أنا مساعد هولي بايت الذكي. كيف يمكنني مساعدتك اليوم؟ يمكنني الإجابة على أسئلة حول شراء أو استئجار أو الإقامة القصيرة في الجزائر.";
+      case "EN":
+        return "Hello! I'm Holibayt AI assistant. How can I help you today? I can answer questions about buying, renting, or short-stay properties in Algeria.";
+      case "FR":
+      default:
+        return "Bonjour ! Je suis l'assistant IA de Holibayt. Comment puis-je vous aider aujourd'hui ? Je peux répondre aux questions sur l'achat, la location ou les séjours courts en Algérie.";
+    }
+  };
+
+  /* ---------------------------
+   * Restore from localStorage
+   * --------------------------*/
+  useEffect(() => {
+    try {
+      const savedOpen = localStorage.getItem(LS_KEYS.OPEN);
+      const savedMin = localStorage.getItem(LS_KEYS.MINIMIZED);
+      const savedMsgs = localStorage.getItem(LS_KEYS.MSGS);
+
+      if (savedOpen) setIsOpen(savedOpen === "1");
+      if (savedMin) setIsMinimized(savedMin === "1");
+
+      if (savedMsgs) {
+        const parsed: Message[] = JSON.parse(savedMsgs);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          setMessages(parsed);
+          setIsInitialized(true);
+          return;
+        }
+      }
+
+      // First-time init → seed welcome message
+      const welcome: Message = {
+        id: 1,
+        text: getWelcomeMessage(),
+        isBot: true,
+        timestamp: new Date().toISOString(),
+      };
+      setMessages([welcome]);
+      setIsInitialized(true);
+    } catch {
+      // If anything fails, at least show welcome
+      const welcome: Message = {
+        id: 1,
+        text: getWelcomeMessage(),
+        isBot: true,
+        timestamp: new Date().toISOString(),
+      };
+      setMessages([welcome]);
+      setIsInitialized(true);
     }
   }, []);
 
-  const persistMinState = (isMin: boolean) => {
-    localStorage.setItem("hb_chat_minimized", isMin ? "1" : "0");
-  };
-
-  const openChat = () => {
+  // Persist messages + UI state
+  useEffect(() => {
+    if (!isInitialized) return;
     try {
-      if (onOpenChat) {
-        onOpenChat();
-        return;
+      localStorage.setItem(LS_KEYS.MSGS, JSON.stringify(messages));
+    } catch {}
+  }, [messages, isInitialized]);
+
+  useEffect(() => {
+    localStorage.setItem(LS_KEYS.OPEN, isOpen ? "1" : "0");
+  }, [isOpen]);
+
+  useEffect(() => {
+    localStorage.setItem(LS_KEYS.MINIMIZED, isMinimized ? "1" : "0");
+  }, [isMinimized]);
+
+  /* ---------------------------
+   * Language change: refresh *only* the welcome (id=1) text.
+   * Do not clear history.
+   * --------------------------*/
+  useEffect(() => {
+    if (!isInitialized) return;
+    setMessages((prev) => {
+      if (!prev.length) {
+        return [
+          {
+            id: 1,
+            text: getWelcomeMessage(),
+            isBot: true,
+            timestamp: new Date().toISOString(),
+          },
+        ];
       }
-      // Crisp
-      if ((window as any).$crisp?.push) {
-        (window as any).$crisp.push(["do", "chat:open"]);
-        return;
+      const next = [...prev];
+      const idx = next.findIndex((m) => m.id === 1 && m.isBot);
+      if (idx >= 0) {
+        next[idx] = {
+          ...next[idx],
+          text: getWelcomeMessage(),
+          timestamp: new Date().toISOString(),
+        };
+      } else {
+        next.unshift({
+          id: 1,
+          text: getWelcomeMessage(),
+          isBot: true,
+          timestamp: new Date().toISOString(),
+        });
       }
-      // Intercom
-      if ((window as any).Intercom) {
-        (window as any).Intercom("show");
-        return;
+      return next;
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentLang]);
+
+  // Smooth scroll to bottom on message change
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages, isOpen, isMinimized]);
+
+  // Global event to open from teaser or any button:
+  useEffect(() => {
+    const openHandler = () => {
+      setIsOpen(true);
+      setIsMinimized(false);
+      setTimeout(() => inputRef.current?.focus(), 50);
+    };
+    document.addEventListener("holibayt:open-chat" as any, openHandler);
+    return () =>
+      document.removeEventListener("holibayt:open-chat" as any, openHandler);
+  }, []);
+
+  // Keyboard: Esc minimizes / closes
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && isOpen) {
+        setIsMinimized(true);
       }
-      // Tawk.to
-      if ((window as any).Tawk_API?.maximize) {
-        (window as any).Tawk_API.maximize();
-        return;
-      }
-      // Drift
-      if ((window as any).drift?.api?.openChat) {
-        (window as any).drift.api.openChat();
-        return;
-      }
-      // Fallback: custom event your drawer can listen for
-      document.dispatchEvent(new CustomEvent("holibayt:open-chat"));
-    } catch (e) {
-      console.warn("Open chat failed, dispatching fallback event.", e);
-      document.dispatchEvent(new CustomEvent("holibayt:open-chat"));
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [isOpen]);
+
+  /* ---------------------------
+   * Send message
+   * --------------------------*/
+  const handleSend = async () => {
+    const trimmed = inputValue.trim();
+    if (!trimmed || isTyping) return;
+
+    const userMessage: Message = {
+      id: Date.now(),
+      text: trimmed,
+      isBot: false,
+      timestamp: new Date().toISOString(),
+    };
+
+    setMessages((prev) => [...prev, userMessage]);
+    setInputValue("");
+    setIsTyping(true);
+
+    try {
+      const historyPayload = [...messages, userMessage].map((m) => ({
+        role: m.isBot ? "assistant" : "user",
+        content: m.text,
+      }));
+
+      const { data, error } = await supabase.functions.invoke("ai-chat", {
+        body: {
+          messages: historyPayload,
+          language: currentLang,
+        },
+      });
+
+      if (error) throw error;
+
+      const replyText: string =
+        (data && (data.message as string)) ||
+        (currentLang === "AR"
+          ? "تمت المعالجة."
+          : currentLang === "FR"
+          ? "Traitement terminé."
+          : "Processed.");
+
+      const botMessage: Message = {
+        id: Date.now() + 1,
+        text: replyText,
+        isBot: true,
+        timestamp: new Date().toISOString(),
+      };
+      setMessages((prev) => [...prev, botMessage]);
+    } catch (err) {
+      console.error("AI chat error:", err);
+      toast({
+        title: currentLang === "AR" ? "خطأ" : currentLang === "FR" ? "Erreur" : "Error",
+        description:
+          currentLang === "AR"
+            ? "فشل في الحصول على الرد. حاول مرة أخرى."
+            : currentLang === "FR"
+            ? "Échec de la réponse. Veuillez réessayer."
+            : "Failed to get a response. Please try again.",
+        variant: "destructive",
+      });
+
+      const fallbackMessage: Message = {
+        id: Date.now() + 1,
+        text:
+          currentLang === "AR"
+            ? "عذراً، حدث خطأ. يرجى المحاولة مرة أخرى أو التواصل مع مستشارينا."
+            : currentLang === "FR"
+            ? "Désolé, une erreur s'est produite. Réessayez ou contactez nos conseillers."
+            : "Sorry, an error occurred. Please try again or contact our advisors.",
+        isBot: true,
+        timestamp: new Date().toISOString(),
+      };
+      setMessages((prev) => [...prev, fallbackMessage]);
+    } finally {
+      setIsTyping(false);
     }
   };
 
-  const minimize = () => {
-    setTeaserVisible(false);
-    setMinimized(true);
-    persistMinState(true);
+  const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      handleSend();
+    }
   };
 
-  const restore = () => {
-    setTeaserVisible(true);
-    setMinimized(false);
-    persistMinState(false);
-  };
-
-  return (
-    <>
-      {/* Full teaser card */}
-      <AnimatePresence>
-        {teaserVisible && (
-          <motion.div
-            className="fixed bottom-4 right-4 z-[60] pointer-events-auto"
-            initial={{ x: 140, opacity: 0 }}
-            animate={{ x: 0, opacity: 1 }}
-            exit={{ x: 160, opacity: 0 }}
-            transition={{ type: "spring", stiffness: 80, damping: 12, delay: delayMs / 1000 }}
-            aria-label="Holibayt Assistant"
-          >
-            <div className="relative flex items-end gap-3 bg-white/95 backdrop-blur-md border border-slate-200 shadow-xl rounded-2xl p-3 pr-4">
-              {/* Avatar */}
-              <motion.div
-                className="w-[76px] h-[110px] relative"
-                initial={{ x: 64 }}
-                animate={{ x: 0 }}
-                transition={{ type: "spring", stiffness: 120, damping: 14, delay: (delayMs + 200) / 1000 }}
-              >
-                <AnimatedAssistantSVG />
-              </motion.div>
-
-              {/* Bubble */}
-              <motion.div
-                className="max-w-[240px] rounded-xl px-3 py-2 bg-emerald-50 border border-emerald-200 text-sm text-emerald-900 shadow-sm"
-                initial={{ y: 12, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ delay: (delayMs + 450) / 1000 }}
-              >
-                <p className="leading-snug">
-                  Hi! I’m your Holibayt assistant. How can I help you find your perfect stay?
-                </p>
-              </motion.div>
-
-              {/* CTA */}
-              <motion.div
-                initial={{ scale: 0.9, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                transition={{ delay: (delayMs + 600) / 1000 }}
-                className="ml-1"
-              >
-                <Button
-                  onClick={openChat}
-                  className="rounded-xl shadow-md gap-2 focus-visible:ring-2"
-                  size="sm"
-                >
-                  <MessageCircle className="w-4 h-4" />
-                  Chat now
-                </Button>
-              </motion.div>
-
-              {/* Minimize instead of hide */}
-              <button
-                aria-label="Minimize assistant"
-                onClick={minimize}
-                className="absolute -top-2 -right-2 bg-white border border-slate-200 rounded-full w-7 h-7 text-slate-500 hover:text-slate-700 shadow"
-              >
-                ×
-              </button>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* Mini dock button (always visible when minimized) */}
-      <AnimatePresence>
-        {minimized && (
-          <motion.button
-            aria-label="Open Holibayt assistant"
-            onClick={restore}
-            className="fixed bottom-4 right-4 z-[60] pointer-events-auto"
-            initial={{ scale: 0.6, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            exit={{ scale: 0.6, opacity: 0 }}
-            transition={{ type: "spring", stiffness: 240, damping: 16 }}
-          >
-            <div className="relative flex items-center justify-center w-14 h-14 rounded-full bg-emerald-600 shadow-xl border border-emerald-700">
-              <MessageCircle className="w-6 h-6 text-white" />
-              {/* subtle online pulse */}
-              <span className="absolute inset-0 rounded-full ring-2 ring-emerald-300/60 animate-ping pointer-events-none" />
-            </div>
-          </motion.button>
-        )}
-      </AnimatePresence>
-    </>
-  );
-};
-
-export default ChatAssistantTeaser;
-
-/* ================================
-   Avatar SVG (same as before)
-   ================================ */
-const AnimatedAssistantSVG: React.FC = () => {
-  return (
-    <div className="w-full h-full">
-      <motion.svg
-        viewBox="0 0 120 170"
-        role="img"
-        aria-label="Holibayt virtual assistant"
-        className="w-full h-full"
-        initial={false}
-      >
-        <motion.ellipse
-          cx="60" cy="158" rx="26" ry="6" fill="rgba(0,0,0,0.10)"
-          animate={{ scaleX: [1, 0.9, 1], opacity: [0.25, 0.18, 0.25] }}
-          transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }}
-          style={{ transformOrigin: "60px 158px" }}
-        />
-        <motion.rect
-          x="48" y="110" width="10" height="48" rx="5" fill="#0ea5a0"
-          animate={{ rotate: [2, -6, 2], y: [0, 1, 0] }}
-          transition={{ duration: 0.9, repeat: Infinity, ease: "easeInOut" }}
-          style={{ transformOrigin: "53px 158px" }}
-        />
-        <motion.rect
-          x="62" y="110" width="10" height="48" rx="5" fill="#0ea5a0"
-          animate={{ rotate: [-2, 6, -2], y: [0, -1, 0] }}
-          transition={{ duration: 0.9, repeat: Infinity, ease: "easeInOut", delay: 0.45 }}
-          style={{ transformOrigin: "67px 158px" }}
-        />
-        <rect x="45" y="156" width="20" height="6" rx="3" fill="#0f766e" />
-        <rect x="59" y="156" width="20" height="6" rx="3" fill="#0f766e" />
-        <motion.rect
-          x="35" y="60" width="50" height="60" rx="12" fill="#10b981"
-          animate={{ y: [0, -1.5, 0] }}
-          transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }}
-        />
-        <motion.circle
-          cx="60" cy="36" r="18" fill="#fde68a"
-          animate={{ y: [0, -1, 0] }}
-          transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }}
-        />
-        <path d="M44 32 C50 18, 70 18, 76 32 L76 30 C70 14, 50 14, 44 30 Z" fill="#065f46" />
-        <circle cx="53" cy="36" r="1.6" fill="#0f172a" />
-        <circle cx="67" cy="36" r="1.6" fill="#0f172a" />
-        <path d="M54 44 Q60 48 66 44" stroke="#0f172a" strokeWidth="2" fill="none" strokeLinecap="round" />
-        <motion.g
-          style={{ transformOrigin: "37px 72px" }}
-          animate={{ rotate: [0, -18, 0] }}
-          transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
+  /* ---------------------------
+   * Render
+   * --------------------------*/
+  if (!isOpen) {
+    // Floating FAB when minimized/closed
+    return (
+      <div className="fixed bottom-6 right-6 z-50">
+        <Button
+          onClick={() => {
+            setIsOpen(true);
+            setIsMinimized(false);
+            setTimeout(() => inputRef.current?.focus(), 50);
+          }}
+          className="rounded-full w-14 h-14 shadow-elegant hover:shadow-lg transition-all duration-300 hover:scale-110 bg-emerald-700 text-white"
+          size="icon"
+          title={
+            currentLang === "AR"
+              ? "الدردشة مع المساعد"
+              : currentLang === "FR"
+              ? "Discuter avec l'assistant"
+              : "Chat with AI Assistant"
+          }
+          type="button"
         >
-          <rect x="28" y="68" width="18" height="10" rx="5" fill="#10b981" />
-          <rect x="20" y="64" width="12" height="12" rx="6" fill="#fde68a" />
-        </motion.g>
-        <g>
-          <rect x="72" y="72" width="18" height="10" rx="5" fill="#10b981" />
-          <rect x="84" y="66" width="16" height="22" rx="4" fill="#e2e8f0" />
-          <rect x="86" y="68" width="12" height="18" rx="3" fill="#94a3b8" />
-        </g>
-        <rect x="40" y="74" width="12" height="12" rx="3" fill="#ecfeff" />
-        <path d="M42 80 L45 77 L48 80 L45 83 Z" fill="#0ea5a0" />
-      </motion.svg>
+          <Bot className="h-6 w-6" />
+        </Button>
+        <span className="absolute -top-2 -left-2 w-4 h-4 bg-emerald-400 rounded-full animate-ping" />
+      </div>
+    );
+  }
+
+  return (
+    <div className="fixed bottom-6 right-6 z-50">
+      <Card
+        className={`w-80 ${
+          isMinimized ? "h-16" : "h-96"
+        } shadow-elegant transition-all duration-300`}
+        role="dialog"
+        aria-modal="true"
+        aria-label={
+          currentLang === "AR"
+            ? "مساعد هولي بايت الذكي"
+            : currentLang === "FR"
+            ? "Assistant IA Holibayt"
+            : "Holibayt AI Assistant"
+        }
+      >
+        <CardHeader className="p-4 bg-white border-b rounded-t-lg">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-2">
+              <div className="w-6 h-6 rounded-full bg-emerald-600 text-white flex items-center justify-center">
+                <Bot className="h-4 w-4" />
+              </div>
+              <CardTitle className="text-sm font-inter text-slate-900">
+                {currentLang === "AR"
+                  ? "مساعد هولي بايت الذكي"
+                  : currentLang === "FR"
+                  ? "Assistant IA Holibayt"
+                  : "Holibayt AI Assistant"}
+              </CardTitle>
+            </div>
+            <div className="flex items-center space-x-1">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-7 w-7 text-slate-600 hover:bg-slate-100"
+                onClick={() => setIsMinimized(!isMinimized)}
+                type="button"
+                aria-label={isMinimized ? "Maximize" : "Minimize"}
+                title={isMinimized ? "Maximize" : "Minimize"}
+              >
+                {isMinimized ? (
+                  <Maximize2 className="h-4 w-4" />
+                ) : (
+                  <Minimize2 className="h-4 w-4" />
+                )}
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-7 w-7 text-slate-600 hover:bg-slate-100"
+                onClick={() => {
+                  setIsOpen(false); // close -> FAB remains
+                }}
+                type="button"
+                aria-label="Close"
+                title="Close"
+              >
+                <X className="h-4 w-4" />
+              </Button>
+            </div>
+          </div>
+        </CardHeader>
+
+        {!isMinimized && (
+          <CardContent className="p-0 flex flex-col h-80 bg-white">
+            <ScrollArea className="flex-1 p-4">
+              <div className="space-y-4">
+                {messages.map((message) => {
+                  const timeLabel = new Date(message.timestamp).toLocaleTimeString([], {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  });
+                  return (
+                    <div
+                      key={message.id}
+                      className={`flex ${
+                        message.isBot ? "justify-start" : "justify-end"
+                      }`}
+                    >
+                      <div
+                        className={`max-w-[80%] p-3 rounded-lg ${
+                          message.isBot
+                            ? "bg-slate-50 text-slate-900 border"
+                            : "bg-emerald-700 text-white"
+                        }`}
+                      >
+                        <div className="flex items-start space-x-2">
+                          {message.isBot ? (
+                            <Bot className="h-4 w-4 flex-shrink-0 mt-1" />
+                          ) : (
+                            <User className="h-4 w-4 flex-shrink-0 mt-1" />
+                          )}
+                          <p className="text-sm font-inter whitespace-pre-wrap">
+                            {message.text}
+                          </p>
+                        </div>
+                        <p className="text-[11px] opacity-70 mt-1">{timeLabel}</p>
+                      </div>
+                    </div>
+                  );
+                })}
+
+                {isTyping && (
+                  <div className="flex justify-start">
+                    <div className="bg-slate-50 text-slate-900 border p-3 rounded-lg max-w-[80%]">
+                      <div className="flex items-center space-x-2">
+                        <Bot className="h-4 w-4" />
+                        <div className="flex space-x-1">
+                          <span className="w-2 h-2 bg-slate-400 rounded-full animate-bounce" />
+                          <span
+                            className="w-2 h-2 bg-slate-400 rounded-full animate-bounce"
+                            style={{ animationDelay: "0.1s" }}
+                          />
+                          <span
+                            className="w-2 h-2 bg-slate-400 rounded-full animate-bounce"
+                            style={{ animationDelay: "0.2s" }}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                <div ref={messagesEndRef} />
+              </div>
+            </ScrollArea>
+
+            <div className="p-4 border-t bg-white">
+              <div className="flex gap-2">
+                <Input
+                  ref={inputRef}
+                  value={inputValue}
+                  onChange={(e) => setInputValue(e.target.value)}
+                  onKeyDown={handleInputKeyDown}
+                  placeholder={
+                    currentLang === "AR"
+                      ? "اسأل عن العقارات..."
+                      : currentLang === "FR"
+                      ? "Posez des questions sur les propriétés..."
+                      : "Ask about properties..."
+                  }
+                  className="flex-1 text-sm"
+                />
+                <Button
+                  onClick={handleSend}
+                  size="icon"
+                  className="bg-emerald-700 hover:bg-emerald-800"
+                  disabled={!inputValue.trim() || isTyping}
+                  type="button"
+                  aria-label="Send"
+                  title="Send"
+                >
+                  <Send className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+          </CardContent>
+        )}
+      </Card>
     </div>
   );
 };
+
+export default AIChatBox;
