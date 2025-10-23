@@ -9,8 +9,6 @@ import {
   Trash2, 
   Plus,
   MapPin,
-  Star,
-  Calendar,
   MessageSquare,
   FileText
 } from 'lucide-react';
@@ -45,6 +43,7 @@ const HostListings = () => {
 
   useEffect(() => {
     fetchHostProperties();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
   const fetchHostProperties = async () => {
@@ -199,31 +198,46 @@ const HostListings = () => {
                     <div>{t('host.createdOn')} {formatDate(property.created_at)}</div>
                   </div>
 
-                  <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2 pt-2">
-                    <Button size="sm" variant="outline" className="w-full sm:flex-1"
-                      onClick={() => navigate(`/property/${property.id}`)}>
+                  {/* ACTIONS — now wrap safely instead of forcing one row */}
+                  <div className="flex flex-wrap items-stretch gap-2 pt-2">
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="flex-1 min-w-[120px]"
+                      onClick={() => navigate(`/property/${property.id}`)}
+                    >
                       <Eye className="h-4 w-4 mr-1" />
                       <span className="text-xs sm:text-sm">{t('host.view')}</span>
                     </Button>
-                    <Button size="sm" variant="outline" className="w-full sm:flex-1"
-                      onClick={() => navigate(`/edit-property/${property.id}`)}>
+
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="flex-1 min-w-[120px]"
+                      onClick={() => navigate(`/edit-property/${property.id}`)}
+                    >
                       <Edit className="h-4 w-4 mr-1" />
                       <span className="text-xs sm:text-sm">{t('host.edit')}</span>
                     </Button>
+
                     {property.category === 'rent' && (
-                      <Button 
-                        size="sm" 
-                        variant="secondary" 
-                        className="flex-1"
-                        onClick={() => navigate(`/host/create-agreement?propertyId=${property.id}`)}>
+                      <Button
+                        size="sm"
+                        variant="secondary"
+                        className="flex-1 min-w-[140px]"
+                        onClick={() =>
+                          navigate(`/host/create-agreement?propertyId=${property.id}`)
+                        }
+                      >
                         <FileText className="h-4 w-4 mr-1" />
                         Agreement
                       </Button>
                     )}
-                    <Button 
-                      size="sm" 
-                      variant="outline" 
-                      className="text-red-600 hover:text-red-700"
+
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="shrink-0 text-red-600 hover:text-red-700"
                       onClick={async () => {
                         if (window.confirm(t('host.confirmDelete') || 'Are you sure you want to delete this property?')) {
                           try {
@@ -235,13 +249,14 @@ const HostListings = () => {
                             if (error) {
                               console.error('Error deleting property:', error);
                             } else {
-                              fetchHostProperties(); // Refresh the list
+                              fetchHostProperties();
                             }
                           } catch (error) {
                             console.error('Error deleting property:', error);
                           }
                         }
-                      }}>
+                      }}
+                    >
                       <Trash2 className="h-4 w-4" />
                     </Button>
                   </div>
