@@ -13,30 +13,30 @@ export const WhyBuyWithHolibayt = () => {
   const benefits = [
     {
       icon: Shield,
-      title: getTitleOrFormatted("verifiedOwnership"),
-      description: getTitleOrFormatted("verifiedOwnershipDesc")
+      title: getTitleOrFormatted("VerifiedvOwnership"),
+      description: getTitleOrFormatted("Verified Ownership Desc")
     },
     {
       icon: DollarSign,
-      title: getTitleOrFormatted("escrowPayment"),
-      description: getTitleOrFormatted("escrowPaymentDesc")
+      title: getTitleOrFormatted("Escrow Payment"),
+      description: getTitleOrFormatted("Escrow Payment Desc")
     },
     {
       icon: Scale,
-      title: getTitleOrFormatted("legalSupport"),
-      description: getTitleOrFormatted("legalSupportDesc")
+      title: getTitleOrFormatted("Legal Support"),
+      description: getTitleOrFormatted("Legal Support Desc")
     },
     {
       icon: AlertCircle,
-      title: getTitleOrFormatted("noHiddenFees"),
-      description: getTitleOrFormatted("noHiddenFeesDesc")
+      title: getTitleOrFormatted("No Hidden Fees"),
+      description: getTitleOrFormatted("No Hidden Fees Desc")
     }
   ];
 
   return (
     <div className="bg-gradient-to-br from-primary/5 via-background to-background border border-border rounded-xl p-8">
       <h2 className="text-2xl md:text-3xl font-bold mb-8 text-center">
-        {getTitleOrFormatted("whyBuyWithHolibayt")}
+        {getTitleOrFormatted("Why Buy With Holibayt")}
       </h2>
       
       <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
