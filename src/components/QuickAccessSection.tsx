@@ -156,47 +156,48 @@ const BuyWorkflowDiagram = () => {
         ))}
       </div>
 
-      {/* Desktop flow with colors + alignment */}
-      <div className="hidden lg:flex items-stretch justify-between gap-8 bg-gradient-to-b from-slate-50 to-white p-8 rounded-2xl">
-        {cols.map((c, idx) => {
-          const Icon = c.icon;
-          const layer = layerStyles[idx];
-          return (
-            <div key={idx} className="flex items-center">
-              <div className="flex flex-col items-center">
-                {/* colored icon bubble */}
-                <div
-                  className={[
-                    "w-16 h-16 rounded-full flex items-center justify-center shadow-md",
-                    layer.iconBg,
-                  ].join(" ")}
-                >
-                  <Icon className={["w-8 h-8", layer.iconColor].join(" ")} />
-                </div>
+      {/* Desktop flow with uniform alignment */}
+<div className="hidden lg:flex justify-between gap-8 bg-gradient-to-b from-slate-50 to-white p-8 rounded-2xl">
+  {cols.map((c, idx) => {
+    const Icon = c.icon;
+    const layer = layerStyles[idx];
+    return (
+      <div key={idx} className="flex items-start">
+        <div className="flex flex-col items-center text-center w-[260px]">
+          {/* Icon circle */}
+          <div
+            className={[
+              "w-16 h-16 rounded-full flex items-center justify-center shadow-md",
+              layer.iconBg,
+            ].join(" ")}
+          >
+            <Icon className={["w-8 h-8", layer.iconColor].join(" ")} />
+          </div>
 
-                {/* title + bullets */}
-                <div className="mt-5 text-center w-[260px]">
-                  <h4 className="font-playfair font-bold text-lg text-slate-900 mb-2">
-                    {c.title}
-                  </h4>
-                  <ul className="text-sm text-slate-700 space-y-2">
-                    {c.bullets.map((b, i) => (
-                      <li key={i} className="leading-snug">
-                        {b}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </div>
+          {/* Title + Bullets */}
+          <div className="mt-5 flex flex-col flex-1 justify-start min-h-[180px]">
+            <h4 className="font-playfair font-bold text-lg text-slate-900 mb-2">
+              {c.title}
+            </h4>
+            <ul className="text-sm text-slate-700 space-y-2 leading-snug">
+              {c.bullets.map((b, i) => (
+                <li key={i}>{b}</li>
+              ))}
+            </ul>
+          </div>
+        </div>
 
-              {/* arrow between steps (colored per layer) */}
-              {idx < cols.length - 1 && (
-                <ArrowRight className={["w-10 h-10 mx-6", layer.arrow].join(" ")} />
-              )}
-            </div>
-          );
-        })}
+        {/* Arrow between steps */}
+        {idx < cols.length - 1 && (
+          <div className="flex items-center mx-6">
+            <ArrowRight className={["w-10 h-10", layer.arrow].join(" ")} />
+          </div>
+        )}
       </div>
+    );
+  })}
+</div>
+
 
       {/* Mobile/Tablet stacked with colors */}
       <div className="lg:hidden space-y-8">
