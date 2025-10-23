@@ -13,7 +13,7 @@ export const WhyBuyWithHolibayt = () => {
   const benefits = [
     {
       icon: Shield,
-      title: getTitleOrFormatted("VerifiedvOwnership"),
+      title: getTitleOrFormatted("Verified Ownership"),
       description: getTitleOrFormatted("Verified Ownership Desc")
     },
     {
