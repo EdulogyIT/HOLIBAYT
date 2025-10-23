@@ -19,7 +19,7 @@ const currencyConfig = {
     position: 'before' as const // $100
   },
   DZD: {
-    symbol: 'DA',
+    symbol: 'دج',
     code: 'DZD', 
     name: 'Algerian Dinar',
     position: 'after' as const // 100 DA
