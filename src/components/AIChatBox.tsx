@@ -1,273 +1,186 @@
-import { useState, useRef, useEffect } from "react";
+import React from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { 
-  MessageCircle, 
-  X, 
-  Send, 
-  Bot, 
-  User, 
-  Minimize2, 
-  Maximize2 
-} from "lucide-react";
-import { useLanguage } from "@/contexts/LanguageContext";
-import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/hooks/use-toast";
 
-interface Message {
-  id: number;
-  text: string;
-  isBot: boolean;
-  timestamp: Date;
-}
+/**
+ * Props:
+ * - onOpenChat: function that opens your chat widget (Crisp/Intercom/custom drawer)
+ * - delayMs: optional initial delay before the avatar walks in
+ */
+type ChatAssistantTeaserProps = {
+  onOpenChat?: () => void;
+  delayMs?: number;
+};
 
-const AIChatBox = () => {
-  const { t, currentLang } = useLanguage();
-  const { toast } = useToast();
-  const [isOpen, setIsOpen] = useState(false);
-  const [isMinimized, setIsMinimized] = useState(false);
-  const [isInitialized, setIsInitialized] = useState(false);
-  
-  const getWelcomeMessage = () => {
-    switch (currentLang) {
-      case 'AR':
-        return "مرحبا! أنا مساعد هولي بايت الذكي. كيف يمكنني مساعدتك اليوم؟ يمكنني الإجابة على أسئلة حول شراء أو استئجار أو الإقامة القصيرة في الجزائر.";
-      case 'EN':
-        return "Hello! I'm Holibayt AI assistant. How can I help you today? I can answer questions about buying, renting, or short-stay properties in Algeria.";
-      case 'FR':
-      default:
-        return "Bonjour ! Je suis l'assistant IA de Holibayt. Comment puis-je vous aider aujourd'hui ? Je peux répondre aux questions sur l'achat, la location ou les séjours courts en Algérie.";
-    }
+const ChatAssistantTeaser: React.FC<ChatAssistantTeaserProps> = ({
+  onOpenChat,
+  delayMs = 800,
+}) => {
+  const [visible, setVisible] = React.useState(true);
+
+  // Fallback open behavior (toggle a custom event your chat listens for)
+  const openChat = () => {
+    if (onOpenChat) onOpenChat();
+    else if ((window as any).$crisp?.push) (window as any).$crisp.push(["do", "chat:open"]);
+    else document.dispatchEvent(new CustomEvent("holibayt:open-chat"));
   };
-
-  const [messages, setMessages] = useState<Message[]>([]);
-  const [inputValue, setInputValue] = useState("");
-  const [isTyping, setIsTyping] = useState(false);
-  const messagesEndRef = useRef<HTMLDivElement>(null);
-  const lastUserMessageRef = useRef<string>("");
-
-  // Initialize messages with welcome message and update when language changes
-  useEffect(() => {
-    if (!isInitialized) {
-      // Initial load - just set welcome message
-      setMessages([{
-        id: 1,
-        text: getWelcomeMessage(),
-        isBot: true,
-        timestamp: new Date()
-      }]);
-      setIsInitialized(true);
-    } else {
-      // Language change - update only the welcome message without clearing history
-      setMessages(prev => {
-        const filteredMessages = prev.filter(msg => !msg.isBot || prev.indexOf(msg) > 0);
-        return [{
-          id: 1,
-          text: getWelcomeMessage(),
-          isBot: true,
-          timestamp: new Date()
-        }, ...filteredMessages];
-      });
-    }
-  }, [currentLang]); // Re-run when language changes
-
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
-
-  useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
-
-  const handleSend = async () => {
-    if (!inputValue.trim()) return;
-
-    const currentInput = inputValue;
-    const userMessage: Message = {
-      id: Date.now(),
-      text: currentInput,
-      isBot: false,
-      timestamp: new Date()
-    };
-
-    setMessages(prev => [...prev, userMessage]);
-    setInputValue("");
-    setIsTyping(true);
-
-    try {
-      // Call the AI chat edge function
-      const { data, error } = await supabase.functions.invoke('ai-chat', {
-        body: { 
-          messages: [...messages, userMessage].map(m => ({
-            role: m.isBot ? 'assistant' : 'user',
-            content: m.text
-          })),
-          language: currentLang
-        }
-      });
-
-      if (error) throw error;
-
-      const botMessage: Message = {
-        id: Date.now() + 1,
-        text: data.message,
-        isBot: true,
-        timestamp: new Date()
-      };
-      setMessages(prev => [...prev, botMessage]);
-    } catch (error) {
-      console.error('Error calling AI chat:', error);
-      toast({
-        title: "Error",
-        description: "Failed to get response. Please try again.",
-        variant: "destructive"
-      });
-      
-      // Fallback response
-      const fallbackMessage: Message = {
-        id: Date.now() + 1,
-        text: currentLang === 'AR' 
-          ? "عذرا، حدث خطأ. يرجى المحاولة مرة أخرى أو الاتصال بمستشارينا للحصول على المساعدة."
-          : currentLang === 'EN'
-          ? "Sorry, an error occurred. Please try again or contact our advisors for assistance."
-          : "Désolé, une erreur s'est produite. Veuillez réessayer ou contacter nos conseillers pour obtenir de l'aide.",
-        isBot: true,
-        timestamp: new Date()
-      };
-      setMessages(prev => [...prev, fallbackMessage]);
-    } finally {
-      setIsTyping(false);
-    }
-  };
-
-
-  const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault();
-      handleSend();
-    }
-  };
-
-  if (!isOpen) {
-    return (
-      <div className="fixed bottom-6 right-6 z-50 flex flex-col gap-3">
-        <Button
-          onClick={() => setIsOpen(true)}
-          className="bg-gradient-primary text-primary-foreground rounded-full w-14 h-14 shadow-elegant hover:shadow-lg transition-all duration-300 hover:scale-110"
-          size="icon"
-          title="Chat with AI Assistant"
-        >
-          <Bot className="h-6 w-6" />
-        </Button>
-        <div className="absolute -top-2 -left-2 w-4 h-4 bg-accent rounded-full animate-pulse"></div>
-      </div>
-    );
-  }
 
   return (
-    <div className="fixed bottom-6 right-6 z-50">
-      <Card className={`w-80 ${isMinimized ? 'h-16' : 'h-96'} shadow-elegant transition-all duration-300`}>
-        <CardHeader className="p-4 bg-gradient-primary text-primary-foreground rounded-t-lg">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-2">
-              <Bot className="h-5 w-5" />
-              <CardTitle className="text-sm font-inter">
-                {currentLang === 'AR' ? 'مساعد هولي بايت الذكي' : currentLang === 'EN' ? 'Holibayt AI Assistant' : 'Assistant IA Holibayt'}
-              </CardTitle>
-            </div>
-            <div className="flex items-center space-x-1">
+    <AnimatePresence>
+      {visible && (
+        <motion.div
+          className="fixed bottom-4 right-4 z-50 pointer-events-auto"
+          initial={{ x: 140, opacity: 0 }}
+          animate={{ x: 0, opacity: 1 }}
+          exit={{ x: 160, opacity: 0 }}
+          transition={{ type: "spring", stiffness: 80, damping: 12, delay: delayMs / 1000 }}
+          aria-label="Holibayt Assistant"
+        >
+          {/* Container card */}
+          <div className="relative flex items-end gap-3 bg-white/95 backdrop-blur-md border border-slate-200 shadow-xl rounded-2xl p-3 pr-4">
+            {/* Walk-in Avatar */}
+            <motion.div
+              className="w-[76px] h-[110px] relative"
+              initial={{ x: 64 }}
+              animate={{ x: 0 }}
+              transition={{ type: "spring", stiffness: 120, damping: 14, delay: (delayMs + 200) / 1000 }}
+            >
+              <AnimatedAssistantSVG />
+            </motion.div>
+
+            {/* Speech bubble */}
+            <motion.div
+              className="max-w-[220px] rounded-xl px-3 py-2 bg-emerald-50 border border-emerald-200 text-sm text-emerald-900 shadow-sm"
+              initial={{ y: 12, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ delay: (delayMs + 450) / 1000 }}
+            >
+              <p className="leading-snug">
+                Hi! I’m your Holibayt assistant. How can I help you find your perfect stay?
+              </p>
+            </motion.div>
+
+            {/* CTA Button */}
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ delay: (delayMs + 600) / 1000 }}
+              className="ml-1"
+            >
               <Button
-                variant="ghost"
-                size="icon"
-                className="h-6 w-6 text-primary-foreground hover:bg-primary-foreground/20"
-                onClick={() => setIsMinimized(!isMinimized)}
+                onClick={openChat}
+                className="rounded-xl shadow-md gap-2"
+                size="sm"
               >
-                {isMinimized ? <Maximize2 className="h-3 w-3" /> : <Minimize2 className="h-3 w-3" />}
+                <MessageCircle className="w-4 h-4" />
+                Chat now
               </Button>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-6 w-6 text-primary-foreground hover:bg-primary-foreground/20"
-                onClick={() => setIsOpen(false)}
-              >
-                <X className="h-3 w-3" />
-              </Button>
-            </div>
+            </motion.div>
+
+            {/* Close (optional) */}
+            <button
+              aria-label="Hide assistant"
+              onClick={() => setVisible(false)}
+              className="absolute -top-2 -right-2 bg-white border border-slate-200 rounded-full w-7 h-7 text-slate-500 hover:text-slate-700 shadow"
+            >
+              ×
+            </button>
           </div>
-        </CardHeader>
-        
-        {!isMinimized && (
-          <CardContent className="p-0 flex flex-col h-80">
-            <ScrollArea className="flex-1 p-4">
-              <div className="space-y-4">
-                {messages.map((message) => (
-                  <div
-                    key={message.id}
-                    className={`flex ${message.isBot ? 'justify-start' : 'justify-end'}`}
-                  >
-                    <div
-                      className={`max-w-[80%] p-3 rounded-lg ${
-                        message.isBot
-                          ? 'bg-card text-card-foreground border'
-                          : 'bg-primary text-primary-foreground'
-                      }`}
-                    >
-                      <div className="flex items-start space-x-2">
-                        {message.isBot && <Bot className="h-4 w-4 flex-shrink-0 mt-1" />}
-                        {!message.isBot && <User className="h-4 w-4 flex-shrink-0 mt-1" />}
-                        <p className="text-sm font-inter">{message.text}</p>
-                      </div>
-                      <p className="text-xs opacity-70 mt-1">
-                        {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                      </p>
-                    </div>
-                  </div>
-                ))}
-                
-                {isTyping && (
-                  <div className="flex justify-start">
-                    <div className="bg-card text-card-foreground border p-3 rounded-lg max-w-[80%]">
-                      <div className="flex items-center space-x-2">
-                        <Bot className="h-4 w-4" />
-                        <div className="flex space-x-1">
-                          <div className="w-2 h-2 bg-muted-foreground rounded-full animate-bounce"></div>
-                          <div className="w-2 h-2 bg-muted-foreground rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-                          <div className="w-2 h-2 bg-muted-foreground rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                )}
-                <div ref={messagesEndRef} />
-              </div>
-            </ScrollArea>
-            
-            <div className="p-4 border-t">
-              <div className="flex space-x-2">
-                <Input
-                  value={inputValue}
-                  onChange={(e) => setInputValue(e.target.value)}
-                  onKeyPress={handleKeyPress}
-                  placeholder={currentLang === 'AR' ? 'اسأل عن العقارات...' : currentLang === 'EN' ? 'Ask about properties...' : 'Posez des questions sur les propriétés...'}
-                  className="flex-1 text-sm"
-                />
-                <Button
-                  onClick={handleSend}
-                  size="icon"
-                  className="bg-gradient-primary"
-                  disabled={!inputValue.trim()}
-                >
-                  <Send className="h-4 w-4" />
-                </Button>
-              </div>
-            </div>
-          </CardContent>
-        )}
-      </Card>
-    </div>
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
 };
 
-export default AIChatBox;
+export default ChatAssistantTeaser;
+
+/** =========================================
+ *  Avatar SVG with subtle walk & wave anims
+ *  Theme: Holibayt green outfit
+ *  ========================================= */
+const AnimatedAssistantSVG: React.FC = () => {
+  return (
+    <div className="w-full h-full">
+      <motion.svg
+        viewBox="0 0 120 170"
+        role="img"
+        aria-label="Holibayt virtual assistant"
+        className="w-full h-full"
+        initial={false}
+      >
+        {/* Shadow bounce (fake footfall) */}
+        <motion.ellipse
+          cx="60"
+          cy="158"
+          rx="26"
+            ry="6"
+          fill="rgba(0,0,0,0.10)"
+          animate={{ scaleX: [1, 0.9, 1], opacity: [0.25, 0.18, 0.25] }}
+          transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }}
+          style={{ transformOrigin: "60px 158px" }}
+        />
+
+        {/* Legs */}
+        <motion.rect
+          x="48" y="110" width="10" height="48" rx="5" fill="#0ea5a0"
+          animate={{ rotate: [2, -6, 2], y: [0, 1, 0] }}
+          transition={{ duration: 0.9, repeat: Infinity, ease: "easeInOut" }}
+          style={{ transformOrigin: "53px 158px" }}
+        />
+        <motion.rect
+          x="62" y="110" width="10" height="48" rx="5" fill="#0ea5a0"
+          animate={{ rotate: [-2, 6, -2], y: [0, -1, 0] }}
+          transition={{ duration: 0.9, repeat: Infinity, ease: "easeInOut", delay: 0.45 }}
+          style={{ transformOrigin: "67px 158px" }}
+        />
+
+        {/* Shoes */}
+        <rect x="45" y="156" width="20" height="6" rx="3" fill="#0f766e" />
+        <rect x="59" y="156" width="20" height="6" rx="3" fill="#0f766e" />
+
+        {/* Body (emerald jacket) */}
+        <motion.rect
+          x="35" y="60" width="50" height="60" rx="12" fill="#10b981"
+          animate={{ y: [0, -1.5, 0] }}
+          transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }}
+        />
+
+        {/* Head */}
+        <motion.circle
+          cx="60" cy="36" r="18" fill="#fde68a"
+          animate={{ y: [0, -1, 0] }}
+          transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }}
+        />
+        {/* Hair / cap */}
+        <path d="M44 32 C50 18, 70 18, 76 32 L76 30 C70 14, 50 14, 44 30 Z" fill="#065f46" />
+
+        {/* Face details */}
+        <circle cx="53" cy="36" r="1.6" fill="#0f172a" />
+        <circle cx="67" cy="36" r="1.6" fill="#0f172a" />
+        <path d="M54 44 Q60 48 66 44" stroke="#0f172a" strokeWidth="2" fill="none" strokeLinecap="round" />
+
+        {/* Left arm (waving) */}
+        <motion.g
+          style={{ transformOrigin: "37px 72px" }}
+          animate={{ rotate: [0, -18, 0] }}
+          transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
+        >
+          <rect x="28" y="68" width="18" height="10" rx="5" fill="#10b981" />
+          <rect x="20" y="64" width="12" height="12" rx="6" fill="#fde68a" />
+        </motion.g>
+
+        {/* Right arm (holds tablet) */}
+        <g>
+          <rect x="72" y="72" width="18" height="10" rx="5" fill="#10b981" />
+          <rect x="84" y="66" width="16" height="22" rx="4" fill="#e2e8f0" />
+          <rect x="86" y="68" width="12" height="18" rx="3" fill="#94a3b8" />
+        </g>
+
+        {/* Logo badge */}
+        <rect x="40" y="74" width="12" height="12" rx="3" fill="#ecfeff" />
+        <path d="M42 80 L45 77 L48 80 L45 83 Z" fill="#0ea5a0" />
+      </motion.svg>
+    </div>
+  );
+};
