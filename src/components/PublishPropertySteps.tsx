@@ -9,14 +9,18 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { Upload, X, Check, ChevronRight, Wifi, UtensilsCrossed, WashingMachine, Wind, AirVent, Flame, Tv, Car, Dumbbell, Users, ShieldCheck, Zap, Key, PawPrint, Award, Crown } from "lucide-react";
+import {
+  Upload, X, Check, ChevronRight,
+  // icons kept, but amenities/services below are rendered as text for simplicity and to avoid missing icons
+  Wifi, UtensilsCrossed, WashingMachine, Wind, AirVent, Flame, Tv, Car, Dumbbell, Users, ShieldCheck, Zap, Key, PawPrint, Award, Crown
+} from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 
 interface FormData {
   // Property Type
   category: string;
-  
+
   // Basic Information
   title: string;
   propertyCategory: string;
@@ -25,7 +29,7 @@ interface FormData {
   city: string;
   district: string;
   fullAddress: string;
-  
+
   // Property Details
   bedrooms: string;
   bathrooms: string;
@@ -36,23 +40,23 @@ interface FormData {
   priceCurrency: string;
   checkInTime: string;
   checkOutTime: string;
-  
+
   // Common filters
   furnishing: string;
   parking2Wheeler: boolean;
   parking4Wheeler: boolean;
-  
+
   // Rent specific
   availability: string;
   preferredTenants: string[];
   isLeaseProperty: boolean;
-  
+
   // Buy specific
   propertyStatus: string;
   isNewBuilderProject: boolean;
-  
+
   // Short stay specific
-  amenities: string[];
+  amenities: string[]; // will hold the EXACT amenity keys listed below
   instantBookAvailable: boolean;
   selfCheckInAvailable: boolean;
   petsAllowedShortStay: boolean;
@@ -64,7 +68,10 @@ interface FormData {
     bathroom: string[];
   };
   hostLanguages: string[];
-  
+
+  // NEW: Personalized services for short-stay
+  personalizedServices: string[]; // ["housekeeper","cook","privateDriver","tourGuide","bodyguard","ritualSlaughtererHalal"]
+
   features: {
     parking: boolean;
     swimmingPool: boolean;
@@ -86,19 +93,19 @@ interface FormData {
     cityCenter: boolean;
   };
   description: string;
-  
+
   // Fees Configuration
   fees: {
     cleaningFee: {enabled: boolean; amount: number};
     serviceFee: {enabled: boolean; amount: number};
     securityDeposit: {enabled: boolean; amount: number; refundable: boolean};
   };
-  
+
   // Contact Information
   fullName: string;
   phoneNumber: string;
   email: string;
-  
+
   // Policies & Rules (Step 5)
   cancellationPolicy: string;
   houseRules: {
@@ -126,7 +133,7 @@ const PublishPropertySteps = ({ onSubmit, isSubmitting = false }: PublishPropert
   const { t } = useLanguage();
   const [currentStep, setCurrentStep] = useState(1);
   const [images, setImages] = useState<File[]>([]);
-  
+
   const [formData, setFormData] = useState<FormData>({
     category: "",
     title: "",
@@ -153,7 +160,7 @@ const PublishPropertySteps = ({ onSubmit, isSubmitting = false }: PublishPropert
     isLeaseProperty: false,
     propertyStatus: "",
     isNewBuilderProject: false,
-    amenities: [],
+    amenities: [], // short-stay amenities (see exact keys below)
     instantBookAvailable: false,
     selfCheckInAvailable: false,
     petsAllowedShortStay: false,
@@ -165,6 +172,8 @@ const PublishPropertySteps = ({ onSubmit, isSubmitting = false }: PublishPropert
       bathroom: [],
     },
     hostLanguages: [],
+    // NEW: default for personalized services
+    personalizedServices: [],
     features: {
       parking: false,
       swimmingPool: false,
@@ -209,14 +218,14 @@ const PublishPropertySteps = ({ onSubmit, isSubmitting = false }: PublishPropert
       securityCameras: false,
     },
   });
-  
+
   // Auto-save to localStorage every 30 seconds
   useEffect(() => {
     const userId = localStorage.getItem('userId');
     if (!userId) return;
-    
+
     const draftKey = `holibayt_property_draft_${userId}`;
-    
+
     // Restore draft on mount
     const savedDraft = localStorage.getItem(draftKey);
     if (savedDraft) {
@@ -253,14 +262,14 @@ const PublishPropertySteps = ({ onSubmit, isSubmitting = false }: PublishPropert
       }));
     } else if (field.startsWith('fees.')) {
       const parts = field.split('.');
-      const feeType = parts[1]; // cleaningFee or serviceFee
-      const prop = parts[2]; // enabled or amount
+      const feeType = parts[1]; // cleaningFee or serviceFee or securityDeposit
+      const prop = parts[2]; // enabled/amount/refundable
       setFormData(prev => ({
         ...prev,
         fees: {
           ...prev.fees,
           [feeType]: {
-            ...prev.fees[feeType as keyof typeof prev.fees],
+            ...(prev.fees as any)[feeType],
             [prop]: value
           }
         }
@@ -301,23 +310,23 @@ const PublishPropertySteps = ({ onSubmit, isSubmitting = false }: PublishPropert
 
   // Validation functions for each step
   const isStep1Valid = () => formData.category !== "";
-  
-  const isStep2Valid = () => 
-    formData.title !== "" && 
-    formData.propertyCategory !== "" && 
-    formData.location !== "" && 
+
+  const isStep2Valid = () =>
+    formData.title !== "" &&
+    formData.propertyCategory !== "" &&
+    formData.location !== "" &&
     formData.city !== "";
-  
-  const isStep3Valid = () => 
-    formData.area !== "" && 
-    formData.price !== "" && 
+
+  const isStep3Valid = () =>
+    formData.area !== "" &&
+    formData.price !== "" &&
     formData.priceType !== "";
-  
-  const isStep4Valid = () => 
-    formData.fullName !== "" && 
-    formData.phoneNumber !== "" && 
+
+  const isStep4Valid = () =>
+    formData.fullName !== "" &&
+    formData.phoneNumber !== "" &&
     formData.email !== "";
-  
+
   const isStep5Valid = () => true; // Step 5 has no required fields
 
   const handleNext = () => {
@@ -354,6 +363,34 @@ const PublishPropertySteps = ({ onSubmit, isSubmitting = false }: PublishPropert
     { number: 3, title: t('propertyDetailsTitle'), completed: isStep3Valid() },
     { number: 4, title: t('contactInformationTitle'), completed: isStep4Valid() },
     { number: 5, title: 'Policies & Rules', completed: isStep5Valid() },
+  ];
+
+  // NEW: exact amenity list (keys kept consistent, labels as you provided)
+  const SHORT_STAY_AMENITIES: { key: string; label: string }[] = [
+    { key: "swimmingPool", label: "Swimming Pool" },
+    { key: "airConditioning", label: "Air Conditioning" },
+    { key: "jacuzzi", label: "Jacuzzi" },
+    { key: "internetAccess", label: "Internet Access" },
+    { key: "washingMachine", label: "Washing Machine" },
+    { key: "barbecue", label: "Barbecue" },
+    { key: "parking", label: "Parking" },
+    { key: "dishwasher", label: "Dishwasher" },
+    { key: "terraceBalcony", label: "Terrace / Balcony" },
+    { key: "microwave", label: "Microwave" },
+    { key: "sauna", label: "Sauna" },
+    { key: "fireplace", label: "Fireplace" },
+    { key: "wheelchairAccessibility", label: "Wheelchair Accessibility" },
+    { key: "garden", label: "Garden" },
+  ];
+
+  // NEW: personalized services list for short-stay
+  const PERSONALIZED_SERVICES: { key: string; label: string }[] = [
+    { key: "housekeeper", label: "Housekeeper" },
+    { key: "cook", label: "Cook" },
+    { key: "privateDriver", label: "Private Driver" },
+    { key: "tourGuide", label: "Tour Guide" },
+    { key: "bodyguard", label: "Bodyguard" },
+    { key: "ritualSlaughtererHalal", label: "Ritual Slaughterer (Halal)" },
   ];
 
   return (
@@ -455,11 +492,10 @@ const PublishPropertySteps = ({ onSubmit, isSubmitting = false }: PublishPropert
                 </Select>
               </div>
 
-              {/* BHK Type */}
               {(formData.category !== '' && ['villa', 'appartement', 'duplex'].includes(formData.propertyCategory)) && (
                 <div className="space-y-2">
                   <Label>BHK Type</Label>
-                  <RadioGroup 
+                  <RadioGroup
                     value={formData.bhkType}
                     onValueChange={(value) => handleInputChange("bhkType", value)}
                     className="grid grid-cols-3 md:grid-cols-6 gap-3"
@@ -640,7 +676,7 @@ const PublishPropertySteps = ({ onSubmit, isSubmitting = false }: PublishPropert
               {/* Furnishing (ALL categories) */}
               <div className="space-y-2">
                 <Label>Furnishing</Label>
-                <RadioGroup 
+                <RadioGroup
                   value={formData.furnishing}
                   onValueChange={(value) => handleInputChange("furnishing", value)}
                   className="grid grid-cols-3 gap-3"
@@ -665,18 +701,18 @@ const PublishPropertySteps = ({ onSubmit, isSubmitting = false }: PublishPropert
                 <Label>Parking</Label>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="flex items-center space-x-2">
-                    <Checkbox 
+                    <Checkbox
                       id="parking2Wheeler"
                       checked={formData.parking2Wheeler}
-                      onCheckedChange={(checked) => handleInputChange("parking2Wheeler", checked)}
+                      onCheckedChange={(checked) => handleInputChange("parking2Wheeler", checked as boolean)}
                     />
                     <Label htmlFor="parking2Wheeler" className="cursor-pointer">2 Wheeler Parking</Label>
                   </div>
                   <div className="flex items-center space-x-2">
-                    <Checkbox 
+                    <Checkbox
                       id="parking4Wheeler"
                       checked={formData.parking4Wheeler}
-                      onCheckedChange={(checked) => handleInputChange("parking4Wheeler", checked)}
+                      onCheckedChange={(checked) => handleInputChange("parking4Wheeler", checked as boolean)}
                     />
                     <Label htmlFor="parking4Wheeler" className="cursor-pointer">4 Wheeler Parking</Label>
                   </div>
@@ -688,7 +724,7 @@ const PublishPropertySteps = ({ onSubmit, isSubmitting = false }: PublishPropert
                 <>
                   <div className="space-y-2">
                     <Label>Availability</Label>
-                    <RadioGroup 
+                    <RadioGroup
                       value={formData.availability}
                       onValueChange={(value) => handleInputChange("availability", value)}
                       className="grid grid-cols-2 gap-3"
@@ -715,11 +751,11 @@ const PublishPropertySteps = ({ onSubmit, isSubmitting = false }: PublishPropert
                         { value: 'bachelorFemale', label: 'Bachelor Female' }
                       ].map(({ value, label }) => (
                         <div key={value} className="flex items-center space-x-2">
-                          <Checkbox 
+                          <Checkbox
                             id={value}
                             checked={formData.preferredTenants.includes(value)}
                             onCheckedChange={(checked) => {
-                              const updated = checked 
+                              const updated = checked
                                 ? [...formData.preferredTenants, value]
                                 : formData.preferredTenants.filter(t => t !== value);
                               setFormData(prev => ({ ...prev, preferredTenants: updated }));
@@ -732,10 +768,10 @@ const PublishPropertySteps = ({ onSubmit, isSubmitting = false }: PublishPropert
                   </div>
 
                   <div className="flex items-center space-x-2">
-                    <Checkbox 
+                    <Checkbox
                       id="isLeaseProperty"
                       checked={formData.isLeaseProperty}
-                      onCheckedChange={(checked) => handleInputChange("isLeaseProperty", checked)}
+                      onCheckedChange={(checked) => handleInputChange("isLeaseProperty", checked as boolean)}
                     />
                     <Label htmlFor="isLeaseProperty" className="cursor-pointer">This is a lease property</Label>
                   </div>
@@ -747,7 +783,7 @@ const PublishPropertySteps = ({ onSubmit, isSubmitting = false }: PublishPropert
                 <>
                   <div className="space-y-2">
                     <Label>Property Status</Label>
-                    <RadioGroup 
+                    <RadioGroup
                       value={formData.propertyStatus}
                       onValueChange={(value) => handleInputChange("propertyStatus", value)}
                       className="grid grid-cols-2 gap-3"
@@ -764,10 +800,10 @@ const PublishPropertySteps = ({ onSubmit, isSubmitting = false }: PublishPropert
                   </div>
 
                   <div className="flex items-center space-x-2">
-                    <Checkbox 
+                    <Checkbox
                       id="isNewBuilderProject"
                       checked={formData.isNewBuilderProject}
-                      onCheckedChange={(checked) => handleInputChange("isNewBuilderProject", checked)}
+                      onCheckedChange={(checked) => handleInputChange("isNewBuilderProject", checked as boolean)}
                     />
                     <Label htmlFor="isNewBuilderProject" className="cursor-pointer flex items-center gap-2">
                       Part of a new builder project
@@ -780,63 +816,55 @@ const PublishPropertySteps = ({ onSubmit, isSubmitting = false }: PublishPropert
               {/* SHORT STAY-specific fields */}
               {formData.category === 'short-stay' && (
                 <>
+                  {/* NEW: Amenities list that matches your “Popular destinations to explore” items */}
                   <div className="space-y-2">
                     <Label>Amenities</Label>
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                      {[
-                        { value: 'wifi', label: 'WiFi', icon: Wifi },
-                        { value: 'kitchen', label: 'Kitchen', icon: UtensilsCrossed },
-                        { value: 'washingMachine', label: 'Washing Machine', icon: WashingMachine },
-                        { value: 'dryer', label: 'Dryer', icon: Wind },
-                        { value: 'ac', label: 'AC', icon: AirVent },
-                        { value: 'heating', label: 'Heating', icon: Flame },
-                        { value: 'tv', label: 'TV', icon: Tv },
-                        { value: 'parking', label: 'Parking', icon: Car },
-                      ].map(({ value, label, icon: Icon }) => (
-                        <div key={value} className="flex items-center space-x-2 p-2 border rounded-lg hover:bg-muted/50">
-                          <Checkbox 
-                            id={`amenity-${value}`}
-                            checked={formData.amenities.includes(value)}
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                      {SHORT_STAY_AMENITIES.map(({ key, label }) => (
+                        <div key={key} className="flex items-center space-x-2 p-2 border rounded-lg hover:bg-muted/50">
+                          <Checkbox
+                            id={`amenity-${key}`}
+                            checked={formData.amenities.includes(key)}
                             onCheckedChange={(checked) => {
-                              const updated = checked 
-                                ? [...formData.amenities, value]
-                                : formData.amenities.filter(a => a !== value);
+                              const updated = checked
+                                ? [...formData.amenities, key]
+                                : formData.amenities.filter(a => a !== key);
                               setFormData(prev => ({ ...prev, amenities: updated }));
                             }}
                           />
-                          <Icon className="w-4 h-4" />
-                          <Label htmlFor={`amenity-${value}`} className="cursor-pointer text-sm">{label}</Label>
+                          <Label htmlFor={`amenity-${key}`} className="cursor-pointer text-sm">{label}</Label>
                         </div>
                       ))}
                     </div>
                   </div>
 
+                  {/* Booking Options */}
                   <div className="space-y-2">
                     <Label>Booking Options</Label>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                       <div className="flex items-center space-x-2">
-                        <Checkbox 
+                        <Checkbox
                           id="instantBookAvailable"
                           checked={formData.instantBookAvailable}
-                          onCheckedChange={(checked) => handleInputChange("instantBookAvailable", checked)}
+                          onCheckedChange={(checked) => handleInputChange("instantBookAvailable", checked as boolean)}
                         />
                         <Zap className="w-4 h-4" />
                         <Label htmlFor="instantBookAvailable" className="cursor-pointer">{t('instantBooking')}</Label>
                       </div>
                       <div className="flex items-center space-x-2">
-                        <Checkbox 
+                        <Checkbox
                           id="selfCheckInAvailable"
                           checked={formData.selfCheckInAvailable}
-                          onCheckedChange={(checked) => handleInputChange("selfCheckInAvailable", checked)}
+                          onCheckedChange={(checked) => handleInputChange("selfCheckInAvailable", checked as boolean)}
                         />
                         <Key className="w-4 h-4" />
                         <Label htmlFor="selfCheckInAvailable" className="cursor-pointer">{t('selfCheckIn')}</Label>
                       </div>
                       <div className="flex items-center space-x-2">
-                        <Checkbox 
+                        <Checkbox
                           id="petsAllowedShortStay"
                           checked={formData.petsAllowedShortStay}
-                          onCheckedChange={(checked) => handleInputChange("petsAllowedShortStay", checked)}
+                          onCheckedChange={(checked) => handleInputChange("petsAllowedShortStay", checked as boolean)}
                         />
                         <PawPrint className="w-4 h-4" />
                         <Label htmlFor="petsAllowedShortStay" className="cursor-pointer">Pets Allowed</Label>
@@ -844,23 +872,49 @@ const PublishPropertySteps = ({ onSubmit, isSubmitting = false }: PublishPropert
                     </div>
                   </div>
 
+                  {/* NEW: Types of Personalized Services */}
+                  <div className="space-y-2">
+                    <Label>Types of Personalized Services</Label>
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                      {PERSONALIZED_SERVICES.map(({ key, label }) => (
+                        <div key={key} className="flex items-center space-x-2 p-2 border rounded-lg hover:bg-muted/50">
+                          <Checkbox
+                            id={`service-${key}`}
+                            checked={formData.personalizedServices.includes(key)}
+                            onCheckedChange={(checked) => {
+                              const updated = checked
+                                ? [...formData.personalizedServices, key]
+                                : formData.personalizedServices.filter(s => s !== key);
+                              setFormData(prev => ({ ...prev, personalizedServices: updated }));
+                            }}
+                          />
+                          <Label htmlFor={`service-${key}`} className="cursor-pointer text-sm">{label}</Label>
+                        </div>
+                      ))}
+                    </div>
+                    <p className="text-xs text-muted-foreground">
+                      Select any on-demand services you or your co-host can provide to guests.
+                    </p>
+                  </div>
+
+                  {/* Property Highlights (kept as-is) */}
                   <div className="space-y-2">
                     <Label>Property Highlights</Label>
                     <div className="grid grid-cols-2 gap-4">
                       <div className="flex items-center space-x-2">
-                        <Checkbox 
+                        <Checkbox
                           id="isGuestFavourite"
                           checked={formData.isGuestFavourite}
-                          onCheckedChange={(checked) => handleInputChange("isGuestFavourite", checked)}
+                          onCheckedChange={(checked) => handleInputChange("isGuestFavourite", checked as boolean)}
                         />
                         <Award className="w-4 h-4" />
                         <Label htmlFor="isGuestFavourite" className="cursor-pointer">Guest Favourite</Label>
                       </div>
                       <div className="flex items-center space-x-2">
-                        <Checkbox 
+                        <Checkbox
                           id="isLuxeProperty"
                           checked={formData.isLuxeProperty}
-                          onCheckedChange={(checked) => handleInputChange("isLuxeProperty", checked)}
+                          onCheckedChange={(checked) => handleInputChange("isLuxeProperty", checked as boolean)}
                         />
                         <Crown className="w-4 h-4" />
                         <Label htmlFor="isLuxeProperty" className="cursor-pointer">Luxe Property</Label>
@@ -877,11 +931,11 @@ const PublishPropertySteps = ({ onSubmit, isSubmitting = false }: PublishPropert
                       <div className="grid grid-cols-2 md:grid-cols-4 gap-3 p-3 border rounded-lg">
                         {['English', 'French', 'Arabic', 'Spanish', 'German', 'Italian', 'Portuguese', 'Chinese'].map(lang => (
                           <div key={lang} className="flex items-center space-x-2">
-                            <Checkbox 
+                            <Checkbox
                               id={`lang-${lang}`}
                               checked={formData.hostLanguages.includes(lang)}
                               onCheckedChange={(checked) => {
-                                const updated = checked 
+                                const updated = checked
                                   ? [...formData.hostLanguages, lang]
                                   : formData.hostLanguages.filter(l => l !== lang);
                                 setFormData(prev => ({ ...prev, hostLanguages: updated }));
@@ -896,7 +950,7 @@ const PublishPropertySteps = ({ onSubmit, isSubmitting = false }: PublishPropert
                 </>
               )}
 
-              {/* Features & Amenities */}
+              {/* Features & Amenities (kept; separate from short-stay lists) */}
               <div className="space-y-4">
                 <h3 className="text-lg font-semibold font-playfair">{t('featuresAmenities')}</h3>
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
@@ -923,7 +977,7 @@ const PublishPropertySteps = ({ onSubmit, isSubmitting = false }: PublishPropert
                       <Checkbox
                         id={key}
                         checked={formData.features[key as keyof typeof formData.features] as boolean}
-                        onCheckedChange={(checked) => handleInputChange(`features.${key}`, checked)}
+                        onCheckedChange={(checked) => handleInputChange(`features.${key}`, checked as boolean)}
                       />
                       <Label htmlFor={key}>{label}</Label>
                     </div>
@@ -972,7 +1026,7 @@ const PublishPropertySteps = ({ onSubmit, isSubmitting = false }: PublishPropert
                         <Checkbox
                           id="cleaningFeeEnabled"
                           checked={formData.fees.cleaningFee.enabled}
-                          onCheckedChange={(checked) => handleInputChange("fees.cleaningFee.enabled", checked)}
+                          onCheckedChange={(checked) => handleInputChange("fees.cleaningFee.enabled", checked as boolean)}
                         />
                         <Label htmlFor="cleaningFeeEnabled" className="cursor-pointer">Cleaning Fee</Label>
                       </div>
@@ -991,7 +1045,7 @@ const PublishPropertySteps = ({ onSubmit, isSubmitting = false }: PublishPropert
                         <Checkbox
                           id="serviceFeeEnabled"
                           checked={formData.fees.serviceFee.enabled}
-                          onCheckedChange={(checked) => handleInputChange("fees.serviceFee.enabled", checked)}
+                          onCheckedChange={(checked) => handleInputChange("fees.serviceFee.enabled", checked as boolean)}
                         />
                         <Label htmlFor="serviceFeeEnabled" className="cursor-pointer">Service Fee</Label>
                       </div>
@@ -1024,7 +1078,7 @@ const PublishPropertySteps = ({ onSubmit, isSubmitting = false }: PublishPropert
                         <Checkbox
                           id="securityDepositEnabled"
                           checked={formData.fees.securityDeposit.enabled}
-                          onCheckedChange={(checked) => handleInputChange("fees.securityDeposit.enabled", checked)}
+                          onCheckedChange={(checked) => handleInputChange("fees.securityDeposit.enabled", checked as boolean)}
                         />
                         <Label htmlFor="securityDepositEnabled" className="cursor-pointer font-medium">
                           Require Security Deposit
@@ -1052,7 +1106,7 @@ const PublishPropertySteps = ({ onSubmit, isSubmitting = false }: PublishPropert
                           <Checkbox
                             id="securityDepositRefundable"
                             checked={formData.fees.securityDeposit.refundable}
-                            onCheckedChange={(checked) => handleInputChange("fees.securityDeposit.refundable", checked)}
+                            onCheckedChange={(checked) => handleInputChange("fees.securityDeposit.refundable", checked as boolean)}
                           />
                           <Label htmlFor="securityDepositRefundable" className="cursor-pointer">
                             Refundable (Recommended)
@@ -1158,8 +1212,8 @@ const PublishPropertySteps = ({ onSubmit, isSubmitting = false }: PublishPropert
               {/* Cancellation Policy */}
               <div className="space-y-2">
                 <Label htmlFor="cancellationPolicy">Cancellation Policy</Label>
-                <Select 
-                  value={formData.cancellationPolicy} 
+                <Select
+                  value={formData.cancellationPolicy}
                   onValueChange={(value) => handleInputChange("cancellationPolicy", value)}
                 >
                   <SelectTrigger>
@@ -1181,7 +1235,7 @@ const PublishPropertySteps = ({ onSubmit, isSubmitting = false }: PublishPropert
                     <Checkbox
                       id="smokingAllowed"
                       checked={formData.houseRules.smokingAllowed}
-                      onCheckedChange={(checked) => handleInputChange("houseRules.smokingAllowed", checked)}
+                      onCheckedChange={(checked) => handleInputChange("houseRules.smokingAllowed", checked as boolean)}
                     />
                     <Label htmlFor="smokingAllowed">Smoking Allowed</Label>
                   </div>
@@ -1189,7 +1243,7 @@ const PublishPropertySteps = ({ onSubmit, isSubmitting = false }: PublishPropert
                     <Checkbox
                       id="petsAllowedRule"
                       checked={formData.houseRules.petsAllowed}
-                      onCheckedChange={(checked) => handleInputChange("houseRules.petsAllowed", checked)}
+                      onCheckedChange={(checked) => handleInputChange("houseRules.petsAllowed", checked as boolean)}
                     />
                     <Label htmlFor="petsAllowedRule">Pets Allowed</Label>
                   </div>
@@ -1197,7 +1251,7 @@ const PublishPropertySteps = ({ onSubmit, isSubmitting = false }: PublishPropert
                     <Checkbox
                       id="eventsAllowed"
                       checked={formData.houseRules.eventsAllowed}
-                      onCheckedChange={(checked) => handleInputChange("houseRules.eventsAllowed", checked)}
+                      onCheckedChange={(checked) => handleInputChange("houseRules.eventsAllowed", checked as boolean)}
                     />
                     <Label htmlFor="eventsAllowed">Events/Parties Allowed</Label>
                   </div>
@@ -1207,7 +1261,7 @@ const PublishPropertySteps = ({ onSubmit, isSubmitting = false }: PublishPropert
                       id="quietHours"
                       placeholder="e.g., 22:00-08:00"
                       value={formData.houseRules.quietHours}
-                      onChange={(e) => handleInputChange("houseRules.quietHours", e.target.value)}
+                      onChange={(e) => handleInputChange("houseRules.quietHours", (e.target as HTMLInputElement).value)}
                     />
                   </div>
                 </div>
@@ -1221,7 +1275,7 @@ const PublishPropertySteps = ({ onSubmit, isSubmitting = false }: PublishPropert
                     <Checkbox
                       id="smokeAlarm"
                       checked={formData.safetyFeatures.smokeAlarm}
-                      onCheckedChange={(checked) => handleInputChange("safetyFeatures.smokeAlarm", checked)}
+                      onCheckedChange={(checked) => handleInputChange("safetyFeatures.smokeAlarm", checked as boolean)}
                     />
                     <Label htmlFor="smokeAlarm">Smoke Alarm</Label>
                   </div>
@@ -1229,7 +1283,7 @@ const PublishPropertySteps = ({ onSubmit, isSubmitting = false }: PublishPropert
                     <Checkbox
                       id="carbonMonoxideAlarm"
                       checked={formData.safetyFeatures.carbonMonoxideAlarm}
-                      onCheckedChange={(checked) => handleInputChange("safetyFeatures.carbonMonoxideAlarm", checked)}
+                      onCheckedChange={(checked) => handleInputChange("safetyFeatures.carbonMonoxideAlarm", checked as boolean)}
                     />
                     <Label htmlFor="carbonMonoxideAlarm">CO Alarm</Label>
                   </div>
@@ -1237,7 +1291,7 @@ const PublishPropertySteps = ({ onSubmit, isSubmitting = false }: PublishPropert
                     <Checkbox
                       id="firstAidKit"
                       checked={formData.safetyFeatures.firstAidKit}
-                      onCheckedChange={(checked) => handleInputChange("safetyFeatures.firstAidKit", checked)}
+                      onCheckedChange={(checked) => handleInputChange("safetyFeatures.firstAidKit", checked as boolean)}
                     />
                     <Label htmlFor="firstAidKit">First Aid Kit</Label>
                   </div>
@@ -1245,7 +1299,7 @@ const PublishPropertySteps = ({ onSubmit, isSubmitting = false }: PublishPropert
                     <Checkbox
                       id="fireExtinguisher"
                       checked={formData.safetyFeatures.fireExtinguisher}
-                      onCheckedChange={(checked) => handleInputChange("safetyFeatures.fireExtinguisher", checked)}
+                      onCheckedChange={(checked) => handleInputChange("safetyFeatures.fireExtinguisher", checked as boolean)}
                     />
                     <Label htmlFor="fireExtinguisher">Fire Extinguisher</Label>
                   </div>
@@ -1253,7 +1307,7 @@ const PublishPropertySteps = ({ onSubmit, isSubmitting = false }: PublishPropert
                     <Checkbox
                       id="securityCameras"
                       checked={formData.safetyFeatures.securityCameras}
-                      onCheckedChange={(checked) => handleInputChange("safetyFeatures.securityCameras", checked)}
+                      onCheckedChange={(checked) => handleInputChange("safetyFeatures.securityCameras", checked as boolean)}
                     />
                     <Label htmlFor="securityCameras">Security Cameras</Label>
                   </div>
@@ -1266,35 +1320,35 @@ const PublishPropertySteps = ({ onSubmit, isSubmitting = false }: PublishPropert
 
       {/* Navigation Buttons */}
       <div className="flex justify-between">
-        <Button 
-          type="button" 
-          variant="outline" 
+        <Button
+          type="button"
+          variant="outline"
           onClick={handlePrevious}
           disabled={currentStep === 1}
         >
           {t('previous')}
         </Button>
-        
+
         <div className="flex space-x-4">
-          <Button 
-            type="button" 
-            variant="outline" 
+          <Button
+            type="button"
+            variant="outline"
             onClick={() => window.history.back()}
           >
             {t('cancel')}
           </Button>
-          
+
           {currentStep < 5 ? (
-            <Button 
-              type="button" 
+            <Button
+              type="button"
               onClick={handleNext}
               className="bg-gradient-primary hover:shadow-elegant"
             >
               {t('next')} <ChevronRight className="w-4 h-4 ml-2" />
             </Button>
           ) : (
-            <Button 
-              type="button" 
+            <Button
+              type="button"
               onClick={handleSubmit}
               className="bg-gradient-primary hover:shadow-elegant"
               disabled={!isStep5Valid() || isSubmitting}
