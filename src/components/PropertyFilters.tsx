@@ -7,7 +7,7 @@ import { Slider } from "@/components/ui/slider";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
-import { Filter, Minus, Plus, Wifi, Utensils, Waves, Wind, Flame, Car, Key, Zap, PawPrint, Award, Crown } from "lucide-react";
+import { Filter, Minus, Plus, Wifi, Utensils, Waves, Wind, Flame, Key, Zap, PawPrint, Award, Crown } from "lucide-react";
 import { useState } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Separator } from "@/components/ui/separator";
@@ -21,29 +21,32 @@ interface FilterState {
   bathrooms: string;
   minArea: string;
   maxArea: string;
-  
+
   // NEW FILTERS - COMMON
   bhkType: string[];
   furnishing: string[];
   parking: string[];
-  
+
   // RENT SPECIFIC
   showVisitProperties: boolean;
   availability: string;
   preferredTenants: string[];
   showLeaseOnly: boolean;
-  
+
   // BUY SPECIFIC
   propertyStatus: string;
   newBuilderProjects: boolean;
-  
+
   // SHORT STAY SPECIFIC
   amenities: string[];
   bookingOptions: string[];
   standoutStays: string[];
   accessibilityFeatures: string[];
   hostLanguages: string[];
-  
+
+  // NEW: Personalized Services (Short Stay)
+  personalizedServices: string[];
+
   // LEGACY
   verifiedOnly?: boolean;
   financingAvailable?: boolean;
@@ -69,25 +72,28 @@ const PropertyFilters = ({ onFilterChange, listingType }: PropertyFiltersProps) 
     bathrooms: "all",
     minArea: "",
     maxArea: "",
-    
+
     bhkType: [],
     furnishing: [],
     parking: [],
-    
+
     showVisitProperties: false,
     availability: "all",
     preferredTenants: [],
     showLeaseOnly: false,
-    
+
     propertyStatus: "all",
     newBuilderProjects: false,
-    
+
     amenities: [],
     bookingOptions: [],
     standoutStays: [],
     accessibilityFeatures: [],
     hostLanguages: [],
-    
+
+    // NEW
+    personalizedServices: [],
+
     verifiedOnly: false,
     financingAvailable: false,
     newBuild: false,
@@ -122,25 +128,28 @@ const PropertyFilters = ({ onFilterChange, listingType }: PropertyFiltersProps) 
       bathrooms: "all",
       minArea: "",
       maxArea: "",
-      
+
       bhkType: [],
       furnishing: [],
       parking: [],
-      
+
       showVisitProperties: false,
       availability: "all",
       preferredTenants: [],
       showLeaseOnly: false,
-      
+
       propertyStatus: "all",
       newBuilderProjects: false,
-      
+
       amenities: [],
       bookingOptions: [],
       standoutStays: [],
       accessibilityFeatures: [],
       hostLanguages: [],
-      
+
+      // NEW
+      personalizedServices: [],
+
       verifiedOnly: false,
       financingAvailable: false,
       newBuild: false,
@@ -176,6 +185,8 @@ const PropertyFilters = ({ onFilterChange, listingType }: PropertyFiltersProps) 
     if (filters.standoutStays.length > 0) count++;
     if (filters.accessibilityFeatures.length > 0) count++;
     if (filters.hostLanguages.length > 0) count++;
+    // NEW
+    if (filters.personalizedServices.length > 0) count++;
     return count;
   };
 
@@ -246,6 +257,16 @@ const PropertyFilters = ({ onFilterChange, listingType }: PropertyFiltersProps) 
     { value: 'dryer', label: 'Dryer', icon: Wind },
     { value: 'ac', label: 'Air conditioning', icon: Flame },
     { value: 'heating', label: 'Heating', icon: Flame },
+  ];
+
+  // NEW: Personalized Services options (short stay)
+  const personalizedServicesData = [
+    { value: 'housekeeper', label: 'Housekeeper' },
+    { value: 'cook', label: 'Cook' },
+    { value: 'privateDriver', label: 'Private Driver' },
+    { value: 'tourGuide', label: 'Tour Guide' },
+    { value: 'bodyguard', label: 'Bodyguard' },
+    { value: 'ritualSlaughtererHalal', label: 'Ritual Slaughterer (Halal)' },
   ];
 
   const FiltersContent = () => (
@@ -454,7 +475,7 @@ const PropertyFilters = ({ onFilterChange, listingType }: PropertyFiltersProps) 
       {/* Rooms and beds */}
       <div className="space-y-4">
         <Label className="text-base font-semibold">{t('Rooms And Beds') || 'Rooms and beds'}</Label>
-        
+
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <Label>{t('bedrooms') || 'Bedrooms'}</Label>
@@ -561,6 +582,25 @@ const PropertyFilters = ({ onFilterChange, listingType }: PropertyFiltersProps) 
                   />
                   <amenity.icon className="h-4 w-4" />
                   <Label htmlFor={amenity.value} className="font-normal cursor-pointer text-sm">{amenity.label}</Label>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <Separator />
+
+          {/* NEW: Personalized Services */}
+          <div className="space-y-3">
+            <Label className="text-base font-semibold">Types of Personalized Services</Label>
+            <div className="space-y-2">
+              {personalizedServicesData.map(svc => (
+                <div key={svc.value} className="flex items-center space-x-2">
+                  <Checkbox
+                    checked={filters.personalizedServices.includes(svc.value)}
+                    onCheckedChange={() => toggleArrayFilter('personalizedServices', svc.value)}
+                    id={svc.value}
+                  />
+                  <Label htmlFor={svc.value} className="font-normal cursor-pointer">{svc.label}</Label>
                 </div>
               ))}
             </div>
