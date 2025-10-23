@@ -9,8 +9,6 @@ import {
   Trash2, 
   Plus,
   MapPin,
-  Star,
-  Calendar,
   MessageSquare,
   FileText
 } from 'lucide-react';
@@ -45,11 +43,11 @@ const HostListings = () => {
 
   useEffect(() => {
     fetchHostProperties();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
   const fetchHostProperties = async () => {
     if (!user) return;
-    
     try {
       const { data, error } = await supabase
         .from('properties')
@@ -153,102 +151,122 @@ const HostListings = () => {
       {/* Properties Grid */}
       {properties.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {properties.map((property) => (
-            <Card key={property.id} className="overflow-hidden hover:shadow-lg transition-shadow">
-              <div className="relative">
-                <img 
-                  src={property.images?.[0] || '/placeholder.svg'}
-                  alt={property.title}
-                  className="w-full h-48 object-cover"
-                  onError={(e) => {
-                    e.currentTarget.src = '/placeholder.svg';
-                  }}
-                />
-                <Badge 
-                  className={`absolute top-3 left-3 ${getStatusColor(property.status)}`}
-                >
-                  {property.status === 'active' ? t('host.active') : property.status}
-                </Badge>
-              </div>
-              
-              <CardContent className="p-4">
-                <div className="space-y-3">
-                  <div>
-                    <h3 className="font-semibold text-lg line-clamp-2">{property.title}</h3>
-                    <div className="flex items-center text-muted-foreground text-sm mt-1">
-                      <MapPin className="h-4 w-4 mr-1" />
-                      {property.city}, {property.district}
-                    </div>
-                  </div>
-
-                  <div className="flex items-center justify-between">
-                    <Badge variant="outline">{property.property_type}</Badge>
-                    <div className="text-lg font-bold text-primary">
-                      {formatPrice(property.price, property.price_type, property.price_currency)}
-                    </div>
-                  </div>
-
-                  <div className="text-sm text-muted-foreground">
-                    <Badge variant="outline">
-                      {property.category === 'sale' ? t('buy') : 
-                       property.category === 'rent' ? t('rent') : t('shortStay')}
-                    </Badge>
-                  </div>
-
-                  <div className="flex items-center justify-between text-sm text-muted-foreground">
-                    <div>{t('host.createdOn')} {formatDate(property.created_at)}</div>
-                  </div>
-
-                  <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2 pt-2">
-                    <Button size="sm" variant="outline" className="w-full sm:flex-1"
-                      onClick={() => navigate(`/property/${property.id}`)}>
-                      <Eye className="h-4 w-4 mr-1" />
-                      <span className="text-xs sm:text-sm">{t('host.view')}</span>
-                    </Button>
-                    <Button size="sm" variant="outline" className="w-full sm:flex-1"
-                      onClick={() => navigate(`/edit-property/${property.id}`)}>
-                      <Edit className="h-4 w-4 mr-1" />
-                      <span className="text-xs sm:text-sm">{t('host.edit')}</span>
-                    </Button>
-                    {property.category === 'rent' && (
-                      <Button 
-                        size="sm" 
-                        variant="secondary" 
-                        className="flex-1"
-                        onClick={() => navigate(`/host/create-agreement?propertyId=${property.id}`)}>
-                        <FileText className="h-4 w-4 mr-1" />
-                        Agreement
-                      </Button>
-                    )}
-                    <Button 
-                      size="sm" 
-                      variant="outline" 
-                      className="text-red-600 hover:text-red-700"
-                      onClick={async () => {
-                        if (window.confirm(t('host.confirmDelete') || 'Are you sure you want to delete this property?')) {
-                          try {
-                            const { error } = await supabase
-                              .from('properties')
-                              .delete()
-                              .eq('id', property.id);
-                            
-                            if (error) {
-                              console.error('Error deleting property:', error);
-                            } else {
-                              fetchHostProperties(); // Refresh the list
-                            }
-                          } catch (error) {
-                            console.error('Error deleting property:', error);
-                          }
-                        }
-                      }}>
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
-                  </div>
+          {properties.map((property) => {
+            const showAgreement = property.category === 'rent';
+            return (
+              <Card key={property.id} className="overflow-visible hover:shadow-lg transition-shadow">
+                <div className="relative">
+                  <img 
+                    src={property.images?.[0] || '/placeholder.svg'}
+                    alt={property.title}
+                    className="w-full h-48 object-cover"
+                    onError={(e) => {
+                      e.currentTarget.src = '/placeholder.svg';
+                    }}
+                  />
+                  <Badge 
+                    className={`absolute top-3 left-3 ${getStatusColor(property.status)}`}
+                  >
+                    {property.status === 'active' ? t('host.active') : property.status}
+                  </Badge>
                 </div>
-              </CardContent>
-            </Card>
-          ))}
+                
+                <CardContent className="p-4">
+                  <div className="space-y-3">
+                    <div>
+                      <h3 className="font-semibold text-lg line-clamp-2">{property.title}</h3>
+                      <div className="flex items-center text-muted-foreground text-sm mt-1">
+                        <MapPin className="h-4 w-4 mr-1 shrink-0" />
+                        {property.city}, {property.district}
+                      </div>
+                    </div>
+
+                    <div className="flex items-center justify-between">
+                      <Badge variant="outline">{property.property_type}</Badge>
+                      <div className="text-lg font-bold text-primary">
+                        {formatPrice(property.price, property.price_type, property.price_currency)}
+                      </div>
+                    </div>
+
+                    <div className="text-sm text-muted-foreground">
+                      <Badge variant="outline">
+                        {property.category === 'sale' ? t('buy') : 
+                         property.category === 'rent' ? t('rent') : t('shortStay')}
+                      </Badge>
+                    </div>
+
+                    <div className="flex items-center justify-between text-sm text-muted-foreground">
+                      <div>{t('host.createdOn')} {formatDate(property.created_at)}</div>
+                    </div>
+
+                    {/* Actions: fixed grid so buttons never overlap/clip */}
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-2">
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="w-full h-9 min-h-9 shrink-0"
+                        onClick={() => navigate(`/property/${property.id}`)}
+                      >
+                        <Eye className="h-4 w-4 mr-1" />
+                        <span className="text-xs sm:text-sm">{t('host.view')}</span>
+                      </Button>
+
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="w-full h-9 min-h-9 shrink-0"
+                        onClick={() => navigate(`/edit-property/${property.id}`)}
+                      >
+                        <Edit className="h-4 w-4 mr-1" />
+                        <span className="text-xs sm:text-sm">{t('host.edit')}</span>
+                      </Button>
+
+                      {showAgreement ? (
+                        <Button
+                          size="sm"
+                          variant="secondary"
+                          className="w-full h-9 min-h-9 shrink-0"
+                          onClick={() => navigate(`/host/create-agreement?propertyId=${property.id}`)}
+                        >
+                          <FileText className="h-4 w-4 mr-1" />
+                          <span className="text-xs sm:text-sm">Agreement</span>
+                        </Button>
+                      ) : (
+                        // Placeholder to keep 4-column alignment on sm+ when no Agreement
+                        <div className="hidden sm:block" aria-hidden="true" />
+                      )}
+
+                      <Button
+                        size="sm"
+                        variant="destructive"
+                        className="w-full h-9 min-h-9 shrink-0"
+                        onClick={async () => {
+                          if (window.confirm(t('host.confirmDelete') || 'Are you sure you want to delete this property?')) {
+                            try {
+                              const { error } = await supabase
+                                .from('properties')
+                                .delete()
+                                .eq('id', property.id);
+                              if (error) {
+                                console.error('Error deleting property:', error);
+                              } else {
+                                fetchHostProperties();
+                              }
+                            } catch (error) {
+                              console.error('Error deleting property:', error);
+                            }
+                          }
+                        }}
+                      >
+                        <Trash2 className="h-4 w-4 mr-1" />
+                        <span className="text-xs sm:text-sm">{t('delete') ?? 'Delete'}</span>
+                      </Button>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            );
+          })}
         </div>
       ) : (
         <Card className="text-center py-12">
