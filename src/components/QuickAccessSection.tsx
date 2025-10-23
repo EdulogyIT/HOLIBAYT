@@ -26,18 +26,53 @@ import { useLanguage } from "@/contexts/LanguageContext";
  *  Buy Workflow — matches: “Buy — Verified. Secured. Guaranteed.”
  *  4 horizontal columns with icons, arrows between, labels on top
  * -------------------------------------------------------- */
-// Buy Workflow - 4 Horizontal Layers (matches the screenshot)
+// Buy Workflow - 4 Horizontal Layers (colorful, matches Rent palette)
 const BuyWorkflowDiagram = () => {
-  // keep your i18n hook if you need it elsewhere, but we use fixed copy to match design
-  // const { t } = useLanguage();
+  // Palette aligned to Rent bars: teal → teal → amber → slate
+  const layerStyles = [
+    {
+      label: "Trust Layer",
+      badgeBg: "bg-teal-700",
+      badgeText: "text-white",
+      pointer: "border-l-teal-700",
+      iconBg: "bg-teal-100",
+      iconColor: "text-teal-700",
+      arrow: "text-teal-600",
+    },
+    {
+      label: "Security Layer",
+      badgeBg: "bg-teal-700",
+      badgeText: "text-white",
+      pointer: "border-l-teal-700",
+      iconBg: "bg-teal-100",
+      iconColor: "text-teal-700",
+      arrow: "text-teal-600",
+    },
+    {
+      label: "Protection Layer",
+      badgeBg: "bg-amber-500",
+      badgeText: "text-slate-900",
+      pointer: "border-l-amber-500",
+      iconBg: "bg-amber-100",
+      iconColor: "text-amber-600",
+      arrow: "text-amber-500",
+    },
+    {
+      label: "Transparency Layer",
+      badgeBg: "bg-slate-400",
+      badgeText: "text-slate-900",
+      pointer: "border-l-slate-400",
+      iconBg: "bg-slate-200",
+      iconColor: "text-slate-700",
+      arrow: "text-slate-400",
+    },
+  ];
 
   const cols = [
     {
       icon: FileCheck,
       title: "Find a Verified Property",
-      bullets: [
-        "Every property and seller verified through Holibayt Verify™",
-      ],
+      bullets: ["Every property and seller verified through Holibayt Verify™"],
     },
     {
       icon: Lock,
@@ -50,7 +85,7 @@ const BuyWorkflowDiagram = () => {
     },
     {
       icon: Scale,
-      title: "Legal Support & insurance with Holibayt Protect*",
+      title: "Legal Support & Insurance with Holibayt Protect*",
       bullets: [
         "Legal assistance provided by certified notaries",
         "Transaction backed by Holibayt Protect™ and Holibayt Insurance™",
@@ -67,12 +102,36 @@ const BuyWorkflowDiagram = () => {
     },
   ];
 
-  const layerLabels = [
-    "Trust Layer",
-    "Security Layer",
-    "Protection Layer",
-    "Transparency Layer",
-  ];
+  // Reusable colored badge with a right pointer (speech-bubble)
+  const LayerBadge = ({
+    label,
+    badgeBg,
+    badgeText,
+    pointer,
+  }: {
+    label: string;
+    badgeBg: string;
+    badgeText: string;
+    pointer: string;
+  }) => (
+    <div className="relative inline-flex items-center">
+      <span
+        className={[
+          "px-5 py-2.5 rounded-full font-semibold shadow-sm",
+          badgeBg,
+          badgeText,
+        ].join(" ")}
+      >
+        {label}
+      </span>
+      <span
+        className={[
+          "absolute -right-3 w-0 h-0 border-y-[10px] border-y-transparent border-l-[12px]",
+          pointer,
+        ].join(" ")}
+      />
+    </div>
+  );
 
   return (
     <div className="space-y-8">
@@ -83,33 +142,44 @@ const BuyWorkflowDiagram = () => {
         </h3>
       </div>
 
-      {/* Layer labels (desktop like screenshot) */}
+      {/* Colored layer badges (desktop) */}
       <div className="hidden lg:grid grid-cols-4 gap-6 text-center">
-        {layerLabels.map((txt) => (
-          <div key={txt} className="text-sm font-semibold text-slate-600">
-            {txt}
+        {layerStyles.map((l) => (
+          <div key={l.label} className="flex justify-center">
+            <LayerBadge
+              label={l.label}
+              badgeBg={l.badgeBg}
+              badgeText={l.badgeText}
+              pointer={l.pointer}
+            />
           </div>
         ))}
       </div>
 
-      {/* Desktop flow with circle icons and arrows */}
-      <div className="hidden lg:flex items-stretch justify-between gap-6">
+      {/* Desktop flow with colors + alignment */}
+      <div className="hidden lg:flex items-stretch justify-between gap-8 bg-gradient-to-b from-slate-50 to-white p-8 rounded-2xl">
         {cols.map((c, idx) => {
           const Icon = c.icon;
+          const layer = layerStyles[idx];
           return (
             <div key={idx} className="flex items-center">
               <div className="flex flex-col items-center">
-                {/* circular icon like screenshot */}
-                <div className="w-16 h-16 rounded-full bg-white shadow-sm border border-slate-200 flex items-center justify-center">
-                  <Icon className="w-8 h-8 text-slate-800" />
+                {/* colored icon bubble */}
+                <div
+                  className={[
+                    "w-16 h-16 rounded-full flex items-center justify-center shadow-md",
+                    layer.iconBg,
+                  ].join(" ")}
+                >
+                  <Icon className={["w-8 h-8", layer.iconColor].join(" ")} />
                 </div>
 
                 {/* title + bullets */}
-                <div className="mt-5 text-center">
+                <div className="mt-5 text-center w-[260px]">
                   <h4 className="font-playfair font-bold text-lg text-slate-900 mb-2">
                     {c.title}
                   </h4>
-                  <ul className="text-sm text-slate-700 space-y-2 max-w-[260px] mx-auto">
+                  <ul className="text-sm text-slate-700 space-y-2">
                     {c.bullets.map((b, i) => (
                       <li key={i} className="leading-snug">
                         {b}
@@ -119,29 +189,40 @@ const BuyWorkflowDiagram = () => {
                 </div>
               </div>
 
-              {/* arrow between steps */}
+              {/* arrow between steps (colored per layer) */}
               {idx < cols.length - 1 && (
-                <ArrowRight className="w-10 h-10 text-primary mx-4" />
+                <ArrowRight className={["w-10 h-10 mx-6", layer.arrow].join(" ")} />
               )}
             </div>
           );
         })}
       </div>
 
-      {/* Mobile/Tablet stacked with vertical arrows */}
+      {/* Mobile/Tablet stacked with colors */}
       <div className="lg:hidden space-y-8">
         {cols.map((c, i) => {
           const Icon = c.icon;
+          const layer = layerStyles[i];
           return (
             <div key={i} className="space-y-3">
-              <div className="text-xs font-semibold text-slate-600">
-                {layerLabels[i]}
+              <div className="flex justify-start">
+                <LayerBadge
+                  label={layer.label}
+                  badgeBg={layer.badgeBg}
+                  badgeText={layer.badgeText}
+                  pointer={layer.pointer}
+                />
               </div>
-              <Card className="border border-slate-200">
+              <Card className="border border-slate-200 shadow-md hover:shadow-lg transition">
                 <CardContent className="p-5">
                   <div className="flex gap-4">
-                    <div className="w-12 h-12 rounded-full bg-white shadow-sm border border-slate-200 flex items-center justify-center flex-shrink-0">
-                      <Icon className="w-7 h-7 text-slate-800" />
+                    <div
+                      className={[
+                        "w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0 shadow-sm",
+                        layer.iconBg,
+                      ].join(" ")}
+                    >
+                      <Icon className={["w-7 h-7", layer.iconColor].join(" ")} />
                     </div>
                     <div>
                       <h4 className="font-playfair font-bold text-base text-slate-900 mb-1">
@@ -159,7 +240,9 @@ const BuyWorkflowDiagram = () => {
 
               {i < cols.length - 1 && (
                 <div className="flex justify-center">
-                  <ArrowRight className="w-6 h-6 text-primary rotate-90" />
+                  <ArrowRight
+                    className={["w-6 h-6 rotate-90", layer.arrow].join(" ")}
+                  />
                 </div>
               )}
             </div>
@@ -169,6 +252,7 @@ const BuyWorkflowDiagram = () => {
     </div>
   );
 };
+
 
 /** ---------------------------------------------------------
  *  Rent Workflow — matches: “Rent — Secure Long-Term Rentals, Simplified.”
