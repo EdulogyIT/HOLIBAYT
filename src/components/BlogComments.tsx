@@ -368,7 +368,7 @@ export const BlogComments = ({ blogPostId }: BlogCommentsProps) => {
               className="min-h-[100px]"
             />
             <Button onClick={handleSubmitComment} disabled={loading || !newComment.trim()}>
-              {t('postComment')}
+              {t('Post Comment')}
             </Button>
           </div>
         ) : (
