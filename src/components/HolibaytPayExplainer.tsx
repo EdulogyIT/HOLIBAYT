@@ -28,7 +28,7 @@ export const HolibaytPayExplainer = ({ category }: HolibaytPayExplainerProps) =>
   };
 
   const rentContent = {
-    title: getTitleOrFormatted("holibaytPayProtection"),
+    title: getTitleOrFormatted("Holibayt Pay Protection"),
     description: getTitleOrFormatted("rentDepositHeldSecurely"),
     features: [
       getTitleOrFormatted("refundsAvailable"),
