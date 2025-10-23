@@ -18,12 +18,12 @@ export const HolibaytPayExplainer = ({ category }: HolibaytPayExplainerProps) =>
   };
 
   const buyContent = {
-    title: getTitleOrFormatted("holibaytPayExplainer"),
-    description: getTitleOrFormatted("fundsHeldSafely"),
+    title: getTitleOrFormatted("Holibayt Pay Explainer"),
+    description: getTitleOrFormatted("Funds Held Safely"),
     features: [
-      getTitleOrFormatted("escrowProtectionFeature"),
-      getTitleOrFormatted("verifiedDocumentsFeature"),
-      getTitleOrFormatted("transactionTransparencyFeature")
+      getTitleOrFormatted("Escrow Protection Feature"),
+      getTitleOrFormatted("Verified Documents Feature"),
+      getTitleOrFormatted("Transaction Transparency Feature")
     ]
   };
 
@@ -31,9 +31,9 @@ export const HolibaytPayExplainer = ({ category }: HolibaytPayExplainerProps) =>
     title: getTitleOrFormatted("Holibayt Pay Protection"),
     description: getTitleOrFormatted("rentDepositHeldSecurely"),
     features: [
-      getTitleOrFormatted("refundsAvailable"),
-      getTitleOrFormatted("noHiddenFees"),
-      getTitleOrFormatted("securePaymentProcessingFeature")
+      getTitleOrFormatted("Refunds Available"),
+      getTitleOrFormatted("No Hidden Fees"),
+      getTitleOrFormatted("Secure Payment Processing Feature")
     ]
   };
 
