@@ -392,7 +392,7 @@ const ShortStay = () => {
                   <div className="text-lg font-semibold text-foreground mb-2">
                     {t("noPropertiesFound")}
                   </div>
-                  <div className="text-muted-foreground">{t("adjustFiltersOrCheckLater")}</div>
+                  <div className="text-muted-foreground">{t("Adjust Filters Or Check Later")}</div>
                 </div>
               ) : (
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
