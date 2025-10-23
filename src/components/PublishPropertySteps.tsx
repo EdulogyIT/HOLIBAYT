@@ -1299,7 +1299,7 @@ const PublishPropertySteps = ({ onSubmit, isSubmitting = false }: PublishPropert
               className="bg-gradient-primary hover:shadow-elegant"
               disabled={!isStep5Valid() || isSubmitting}
             >
-              {isSubmitting ? t('publishing') : t('publishPropertyBtn')}
+              {isSubmitting ? t('Publishing') : t('publishPropertyBtn')}
             </Button>
           )}
         </div>
