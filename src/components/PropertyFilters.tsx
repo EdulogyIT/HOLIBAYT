@@ -724,7 +724,7 @@ const PropertyFilters = ({ onFilterChange, listingType }: PropertyFiltersProps) 
             {t('clearAll') || 'Clear All'}
           </Button>
           <Button onClick={() => setIsOpen(false)} className="px-8">
-            {t('showResults') || 'Show Results'}
+            {t('Show Results') || 'Show Results'}
           </Button>
         </DialogFooter>
       </DialogContent>
