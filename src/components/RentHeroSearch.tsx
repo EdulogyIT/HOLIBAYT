@@ -86,7 +86,7 @@ const RentHeroSearch: React.FC<RentHeroSearchProps> = ({ onSearch }) => {
     return (
       <form onSubmit={onSubmit} className={cn(
         "flex gap-3",
-        compact ? "flex-col sm:flex-row flex-wrap" : "flex-col lg:flex-row gap-4"
+        compact ? "flex-row items-center" : "flex-col lg:flex-row gap-4"
       )}>
         <LocationAutocomplete
           value={formData.location}
@@ -94,7 +94,7 @@ const RentHeroSearch: React.FC<RentHeroSearchProps> = ({ onSearch }) => {
           placeholder={t("whereToRent")}
           className={cn(
             "font-inter pr-3",
-            compact ? "h-12 text-sm w-full sm:flex-1 sm:min-w-[180px]" : "h-14 text-base flex-1 lg:min-w-[300px]"
+            compact ? "h-12 text-sm flex-1 min-w-[200px]" : "h-14 text-base flex-1 lg:min-w-[300px]"
           )}
         />
         
@@ -104,9 +104,9 @@ const RentHeroSearch: React.FC<RentHeroSearchProps> = ({ onSearch }) => {
         >
           <SelectTrigger className={cn(
             "font-inter bg-background border border-input px-4",
-            compact ? "h-12 text-sm w-full sm:w-auto sm:min-w-[140px]" : "h-14 text-base w-full lg:w-[220px]"
+            compact ? "h-12 text-sm w-auto min-w-[150px]" : "h-14 text-base w-full lg:w-[220px]"
           )}>
-            <SelectValue placeholder={t("housingType")} />
+            <SelectValue placeholder={t("housingType")} className="truncate" />
           </SelectTrigger>
           <SelectContent className="z-[100] bg-background">
             <SelectItem value="all">{t("allTypes")}</SelectItem>
@@ -125,7 +125,7 @@ const RentHeroSearch: React.FC<RentHeroSearchProps> = ({ onSearch }) => {
             onChange={(e) => updateFormField("maxRent", e.target.value)}
             className={cn(
               "font-inter bg-background border border-input px-4",
-              compact ? "h-12 text-sm w-full sm:w-auto sm:min-w-[140px]" : "h-14 text-base w-full lg:w-[220px]"
+              compact ? "h-12 text-sm w-auto min-w-[130px]" : "h-14 text-base w-full lg:w-[220px]"
             )}
           />
         </div>
@@ -135,7 +135,7 @@ const RentHeroSearch: React.FC<RentHeroSearchProps> = ({ onSearch }) => {
           disabled={!isFormValid()}
           className={cn(
             "font-inter font-semibold transition-all duration-300",
-            compact ? "h-12 px-6 text-sm w-full sm:w-auto" : "h-14 px-8 text-base w-full lg:w-auto",
+            compact ? "h-12 px-6 text-sm w-auto flex-shrink-0" : "h-14 px-8 text-base w-full lg:w-auto",
             isFormValid()
               ? "bg-gradient-primary hover:shadow-elegant text-white"
               : "bg-gray-300 text-gray-500 cursor-not-allowed"

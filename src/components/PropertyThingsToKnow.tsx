@@ -135,23 +135,23 @@ export const PropertyThingsToKnow = ({
       
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {/* House Rules */}
-        <Card className="p-6 space-y-4">
+        <Card className="p-4 sm:p-5 md:p-6 space-y-4">
           <div className="flex items-center gap-2">
-            <Clock className="w-5 h-5 text-primary" />
-            <h3 className="text-lg font-semibold">{t('houseRules')}</h3>
+            <Clock className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
+            <h3 className="text-base sm:text-lg font-semibold">{t('houseRules')}</h3>
           </div>
           
           <div className="space-y-3">
             {houseRulesList.slice(0, expandedSection === "rules" ? undefined : 3).map((rule, index) => {
               const Icon = rule.icon;
               return (
-                <div key={index} className="flex items-start gap-2 text-sm">
-                  <Icon className={`w-4 h-4 mt-0.5 flex-shrink-0 ${
+                <div key={index} className="flex items-start gap-2 text-xs sm:text-sm">
+                  <Icon className={`w-3 h-3 sm:w-4 sm:h-4 mt-0.5 flex-shrink-0 ${
                     rule.allowed === true ? "text-green-600" : 
                     rule.allowed === false ? "text-red-600" : 
                     "text-blue-600"
                   }`} />
-                  <span className="text-muted-foreground">{rule.text}</span>
+                  <span className="text-muted-foreground break-words">{rule.text}</span>
                 </div>
               );
             })}
@@ -169,17 +169,17 @@ export const PropertyThingsToKnow = ({
         </Card>
 
         {/* Safety & Property */}
-        <Card className="p-6 space-y-4">
+        <Card className="p-4 sm:p-5 md:p-6 space-y-4">
           <div className="flex items-center gap-2">
-            <Shield className="w-5 h-5 text-primary" />
-            <h3 className="text-lg font-semibold">{t('safetyProperty')}</h3>
+            <Shield className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
+            <h3 className="text-base sm:text-lg font-semibold">{t('safetyProperty')}</h3>
           </div>
           
           <div className="space-y-3">
             {safetyPropertyList.slice(0, expandedSection === "safety" ? undefined : 3).map((item, index) => (
-              <div key={index} className="flex items-start gap-2 text-sm">
-                <CheckCircle2 className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
-                <span className="text-muted-foreground">{item}</span>
+              <div key={index} className="flex items-start gap-2 text-xs sm:text-sm">
+                <CheckCircle2 className="w-3 h-3 sm:w-4 sm:h-4 text-primary mt-0.5 flex-shrink-0" />
+                <span className="text-muted-foreground break-words">{item}</span>
               </div>
             ))}
           </div>
@@ -196,24 +196,24 @@ export const PropertyThingsToKnow = ({
         </Card>
 
         {/* Cancellation Policy */}
-        <Card className="p-6 space-y-4">
+        <Card className="p-4 sm:p-5 md:p-6 space-y-4">
           <div className="flex items-center gap-2">
-            <AlertCircle className="w-5 h-5 text-primary" />
-            <h3 className="text-lg font-semibold">{t('cancellationPolicy')}</h3>
+            <AlertCircle className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
+            <h3 className="text-base sm:text-lg font-semibold">{t('cancellationPolicy')}</h3>
           </div>
           
           <div className="space-y-3">
             <div>
-              <p className="font-semibold text-sm">{currentPolicy.title}</p>
-              <p className="text-sm text-muted-foreground mt-1">{currentPolicy.description}</p>
+              <p className="font-semibold text-xs sm:text-sm">{currentPolicy.title}</p>
+              <p className="text-xs sm:text-sm text-muted-foreground mt-1 break-words">{currentPolicy.description}</p>
             </div>
             
             {expandedSection === "cancellation" && (
-              <ul className="space-y-2 text-sm text-muted-foreground">
+              <ul className="space-y-2 text-xs sm:text-sm text-muted-foreground">
                 {currentPolicy.details.map((detail, index) => (
                   <li key={index} className="flex items-start gap-2">
                     <span className="text-primary mt-0.5">•</span>
-                    <span>{detail}</span>
+                    <span className="break-words">{detail}</span>
                   </li>
                 ))}
               </ul>

@@ -126,7 +126,7 @@ const ShortStayHeroSearch: React.FC<ShortStayHeroSearchProps> = ({ onSearch }) =
     return (
       <form onSubmit={onSubmit} className={cn(
         "flex gap-3",
-        compact ? "flex-col sm:flex-row flex-wrap" : "flex-col gap-4"
+        compact ? "flex-row items-center" : "flex-col gap-4"
       )}>
         <LocationAutocomplete
           value={formData.location}
@@ -134,7 +134,7 @@ const ShortStayHeroSearch: React.FC<ShortStayHeroSearchProps> = ({ onSearch }) =
           placeholder={t("stayDestination")}
           className={cn(
             "font-inter pr-3",
-            compact ? "h-12 text-sm w-full sm:flex-1 sm:min-w-[180px]" : "h-14 text-base flex-1 lg:min-w-[300px]"
+            compact ? "h-12 text-sm flex-1 min-w-[200px]" : "h-14 text-base flex-1 lg:min-w-[300px]"
           )}
         />
         
@@ -146,7 +146,7 @@ const ShortStayHeroSearch: React.FC<ShortStayHeroSearchProps> = ({ onSearch }) =
                   type="button"
                   variant="outline"
                   className={cn(
-                    "justify-start text-left font-inter h-12 text-sm w-full sm:w-auto sm:min-w-[160px] bg-background border border-input",
+                    "justify-start text-left font-inter h-12 text-sm w-auto min-w-[170px] bg-background border border-input",
                     !formData.dateRange?.from && "text-muted-foreground"
                   )}
                 >
@@ -167,7 +167,7 @@ const ShortStayHeroSearch: React.FC<ShortStayHeroSearchProps> = ({ onSearch }) =
               </PopoverContent>
             </Popover>
 
-            <div className="w-full sm:w-auto sm:flex-1 sm:min-w-[140px]">
+            <div className="w-auto min-w-[150px]">
               <GuestsSelector
                 value={formData.guests}
                 onChange={(guests) => updateFormField("guests", guests)}
@@ -267,7 +267,7 @@ const ShortStayHeroSearch: React.FC<ShortStayHeroSearchProps> = ({ onSearch }) =
           disabled={!isFormValid()}
           className={cn(
             "font-inter font-semibold transition-all duration-300",
-            compact ? "h-12 px-6 text-sm w-full sm:w-auto" : "h-14 px-8 text-base min-w-[140px]",
+            compact ? "h-12 px-6 text-sm w-auto flex-shrink-0" : "h-14 px-8 text-base min-w-[140px]",
             isFormValid()
               ? "bg-gradient-primary hover:shadow-elegant text-white"
               : "bg-gray-300 text-gray-500 cursor-not-allowed"
