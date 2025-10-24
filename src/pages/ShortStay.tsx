@@ -111,14 +111,12 @@ const ShortStay = () => {
       );
     }
 
-    // Apply destination filters if present
     if (filterType && filterValue) {
       if (filterType === "feature") {
         filtered = filtered.filter((p) => p.features?.[filterValue] === true);
       } else if (filterType === "pets") {
         filtered = filtered.filter((p) => p.pets_allowed === true);
       } else if (filterType === "price") {
-        // Luxury: price > 20000
         filtered = filtered.filter((p) => num(p.price) > 20000);
       }
     }
@@ -149,7 +147,6 @@ const ShortStay = () => {
     }
   };
 
-  // Update URL from hero search (keeps guest params for hydration)
   const handleSearch = (vals: {
     location?: string;
     checkIn?: string;
@@ -166,12 +163,10 @@ const ShortStay = () => {
     if (vals.location) qs.set("location", String(vals.location));
     if (vals.checkIn) qs.set("checkIn", String(vals.checkIn));
     if (vals.checkOut) qs.set("checkOut", String(vals.checkOut));
-
     qs.set("adults", String(vals.adults ?? 1));
     qs.set("children", String(vals.children ?? 0));
     qs.set("infants", String(vals.infants ?? 0));
     qs.set("pets", String(vals.pets ?? 0));
-
     if (vals.propertyType) qs.set("type", String(vals.propertyType));
     if (vals.travelers !== undefined) qs.set("travelers", String(vals.travelers));
 
@@ -196,7 +191,6 @@ const ShortStay = () => {
     navigate(`/short-stay?${params.toString()}`);
   };
 
-  // Only show icons we explicitly support (coffee maker removed)
   const getFeatureIcon = (feature: string) => {
     switch (feature) {
       case "wifi":
@@ -216,9 +210,7 @@ const ShortStay = () => {
     }
   };
 
-  /** ---------------------------------------------------------
-   *  Card: chunkier, photo-first, square-ish (aspect-[5/4])
-   * --------------------------------------------------------- */
+  /** Card — equal height; CTA pinned bottom; image 5/4 (chunky) */
   const PropertyCard = ({ property }: { property: Property }) => {
     const { translatedText: translatedTitle } = usePropertyTranslation(
       property.title,
@@ -226,10 +218,7 @@ const ShortStay = () => {
       "property_title"
     );
 
-    const handleCardClick = () => {
-      navigate(`/property/${property.id}`);
-    };
-
+    const handleCardClick = () => navigate(`/property/${property.id}`);
     const handleWishlistClick = (e: React.MouseEvent) => {
       e.stopPropagation();
       toggleWishlist(property.id);
@@ -237,10 +226,9 @@ const ShortStay = () => {
 
     return (
       <Card
-        className="overflow-hidden rounded-2xl border shadow-sm hover:shadow-md transition-shadow duration-300 cursor-pointer group"
+        className="flex h-full flex-col overflow-hidden rounded-2xl border shadow-sm hover:shadow-md transition-shadow duration-300 cursor-pointer group"
         onClick={handleCardClick}
       >
-        {/* Image: more square and dominant */}
         <div className="relative aspect-[5/4] overflow-hidden">
           <img
             src={property.images?.[0] || "/placeholder-property.jpg"}
@@ -269,74 +257,77 @@ const ShortStay = () => {
           </div>
         </div>
 
-        <CardHeader className="pb-1">
-          <CardTitle className="text-[15px] font-semibold text-foreground line-clamp-1">
-            {translatedTitle || property.title}
-          </CardTitle>
-          <div className="flex items-center text-muted-foreground">
-            <MapPin className="h-4 w-4 mr-1 flex-shrink-0" />
-            <span className="text-sm line-clamp-1">
-              {(property.city || "").trim()}
-              {property.city && property.location ? ", " : ""}
-              {(property.location || "").trim()}
-            </span>
-          </div>
-        </CardHeader>
-
-        <CardContent className="pt-1">
-          <div className="flex items-center justify-between mb-2">
-            <div className="text-xl font-bold text-primary">
-              {formatPrice(num(property.price), property.price_type, property.price_currency)}
-            </div>
-          </div>
-
-          <div className="flex items-center gap-3 text-muted-foreground text-xs mb-3 flex-wrap">
-            {property.bedrooms && (
-              <div className="flex items-center whitespace-nowrap">
-                <Bed className="h-4 w-4 mr-1" />
-                <span>{property.bedrooms}</span>
-              </div>
-            )}
-            {property.bathrooms && (
-              <div className="flex items-center whitespace-nowrap">
-                <Bath className="h-4 w-4 mr-1" />
-                <span>{property.bathrooms}</span>
-              </div>
-            )}
-            <div className="flex items-center whitespace-nowrap">
-              <Square className="h-4 w-4 mr-1" />
-              <span>
-                {num(property.area)} {t("areaUnit")}
+        {/* Content wrapper grows; CTA pinned with mt-auto */}
+        <div className="flex flex-1 flex-col">
+          <CardHeader className="pb-1">
+            <CardTitle className="text-[15px] font-semibold text-foreground line-clamp-1">
+              {translatedTitle || property.title}
+            </CardTitle>
+            <div className="flex items-center text-muted-foreground">
+              <MapPin className="h-4 w-4 mr-1 flex-shrink-0" />
+              <span className="text-sm line-clamp-1">
+                {(property.city || "").trim()}
+                {property.city && property.location ? ", " : ""}
+                {(property.location || "").trim()}
               </span>
             </div>
-          </div>
+          </CardHeader>
 
-          {property.features && (
-            <div className="flex items-center gap-2 mb-3 overflow-x-auto">
-              {Object.entries(property.features)
-                .filter(([_, value]) => value)
-                .slice(0, 3)
-                .map(([key]) => {
-                  const IconEl = getFeatureIcon(key);
-                  return IconEl ? (
-                    <div key={key} className="flex items-center text-muted-foreground text-xs flex-shrink-0">
-                      {IconEl}
-                    </div>
-                  ) : null;
-                })}
+          <CardContent className="pt-1">
+            <div className="flex items-center justify-between mb-2">
+              <div className="text-xl font-bold text-primary">
+                {formatPrice(num(property.price), property.price_type, property.price_currency)}
+              </div>
             </div>
-          )}
 
-          <Button
-            className="w-full h-10 text-sm"
-            onClick={(e) => {
-              e.stopPropagation();
-              handleCardClick();
-            }}
-          >
-            {t("secureYourStay") || t("bookNow")}
-          </Button>
-        </CardContent>
+            <div className="flex items-center gap-3 text-muted-foreground text-xs mb-3 flex-wrap">
+              {property.bedrooms && (
+                <div className="flex items-center whitespace-nowrap">
+                  <Bed className="h-4 w-4 mr-1" />
+                  <span>{property.bedrooms}</span>
+                </div>
+              )}
+              {property.bathrooms && (
+                <div className="flex items-center whitespace-nowrap">
+                  <Bath className="h-4 w-4 mr-1" />
+                  <span>{property.bathrooms}</span>
+                </div>
+              )}
+              <div className="flex items-center whitespace-nowrap">
+                <Square className="h-4 w-4 mr-1" />
+                <span>
+                  {num(property.area)} {t("areaUnit")}
+                </span>
+              </div>
+            </div>
+
+            {property.features && (
+              <div className="flex items-center gap-2 mb-3 overflow-x-auto">
+                {Object.entries(property.features)
+                  .filter(([_, value]) => value)
+                  .slice(0, 3)
+                  .map(([key]) => {
+                    const IconEl = getFeatureIcon(key);
+                    return IconEl ? (
+                      <div key={key} className="flex items-center text-muted-foreground text-xs flex-shrink-0">
+                        {IconEl}
+                      </div>
+                    ) : null;
+                  })}
+              </div>
+            )}
+
+            <Button
+              className="w-full h-10 text-sm mt-auto"
+              onClick={(e) => {
+                e.stopPropagation();
+                handleCardClick();
+              }}
+            >
+              {t("secureYourStay") || t("bookNow")}
+            </Button>
+          </CardContent>
+        </div>
       </Card>
     );
   };
@@ -347,26 +338,23 @@ const ShortStay = () => {
 
       <main className="pt-20">
         <ShortStayHeroSearch onSearch={handleSearch} />
-
-        {/* Rolling Holibayt Services & Amenities (implemented in component) */}
         <PopularAmenities onAmenityClick={handleAmenityClick} selectedAmenity={selectedAmenity} />
 
         {/* Wider container + tighter paddings */}
         <div className="max-w-[1440px] mx-auto px-3 sm:px-4 lg:px-6 py-6">
-          {/* Smaller gaps so map sits closer; map column a bit narrower */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-            {/* LEFT: smaller map card, closer to the edge */}
-            <div className="lg:col-span-1 lg:max-w-[420px]">
+            {/* LEFT: slightly smaller map, closer to edge */}
+            <div className="lg:col-span-1 lg:max-w-[400px]">
               <div className="lg:sticky lg:top-24">
                 <div className="rounded-2xl border shadow-sm overflow-hidden">
-                  <div className="h-[360px]">
+                  <div className="h-[340px]">
                     <InteractivePropertyMarkerMap properties={filteredProperties} />
                   </div>
                 </div>
               </div>
             </div>
 
-            {/* RIGHT: Filters + 4-up grid */}
+            {/* RIGHT: Filters + Grid */}
             <div className="lg:col-span-2">
               <div className="flex items-center justify-between mb-4 gap-3 flex-wrap">
                 <h2 className="text-2xl font-bold">
@@ -399,7 +387,6 @@ const ShortStay = () => {
                       filtered = filtered.filter((p) => p.bathrooms === filters.bathrooms);
                     }
 
-                    // Short-stay price range
                     if (filters.minPrice[0] > 0 || filters.maxPrice[0] < 50000) {
                       filtered = filtered.filter((p) => {
                         const price = num(p.price);
@@ -407,7 +394,6 @@ const ShortStay = () => {
                       });
                     }
 
-                    // Area filtering
                     if (filters.minArea || filters.maxArea) {
                       const minArea = filters.minArea ? num(filters.minArea) : 0;
                       const maxArea = filters.maxArea ? num(filters.maxArea) : Infinity;
@@ -423,7 +409,7 @@ const ShortStay = () => {
                 />
               </div>
 
-              {/* Properties Grid — 4 per row on desktop; chunkier cards via aspect-[5/4] */}
+              {/* Equal-height cards in a tight 4-up grid */}
               {isLoading ? (
                 <div className="flex items-center justify-center py-12">
                   <Loader2 className="h-8 w-8 animate-spin" />
@@ -431,15 +417,15 @@ const ShortStay = () => {
                 </div>
               ) : filteredProperties.length === 0 ? (
                 <div className="text-center py-12">
-                  <div className="text-lg font-semibold text-foreground mb-2">
-                    {t("noPropertiesFound")}
-                  </div>
+                  <div className="text-lg font-semibold text-foreground mb-2">{t("noPropertiesFound")}</div>
                   <div className="text-muted-foreground">{t("Adjust Filters Or Check Later")}</div>
                 </div>
               ) : (
-                <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-3 lg:gap-4">
+                <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-3 lg:gap-4 content-stretch">
                   {filteredProperties.map((property) => (
-                    <PropertyCard key={property.id} property={property} />
+                    <div key={property.id} className="h-full">
+                      <PropertyCard property={property} />
+                    </div>
                   ))}
                 </div>
               )}
@@ -447,11 +433,9 @@ const ShortStay = () => {
           </div>
         </div>
 
-        {/* Sections below */}
         <TopRatedStays />
         <DestinationsToExplore onDestinationClick={handleDestinationClick} />
         <CitiesSection />
-
         <AIChatBox />
       </main>
 
