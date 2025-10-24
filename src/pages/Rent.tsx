@@ -238,11 +238,11 @@ const Rent = () => {
       <main className="pt-20">
         <RentHeroSearch onSearch={handleSearch} />
 
-        {/* Map + list identical to Short Stay */}
+        {/* Map + list identical structure to Short Stay, smaller map */}
         <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-            {/* Map */}
-            <div className="lg:col-span-4">
+            {/* Map (narrower column & shorter height) */}
+            <div className="lg:col-span-3">
               <style>{`
                 .map-frame, .map-frame * { box-sizing: border-box; }
                 .map-fit, .map-fit > * { height: 100% !important; width: 100% !important; }
@@ -256,14 +256,14 @@ const Rent = () => {
 
               <LocalErrorBoundary
                 fallback={
-                  <div className="sticky top-28 rounded-2xl ring-1 ring-border bg-background grid place-items-center h-[520px] md:h-[560px] xl:h-[600px]">
+                  <div className="sticky top-28 rounded-2xl ring-1 ring-border bg-background grid place-items-center h-[300px] md:h-[340px] xl:h-[380px]">
                     Map unavailable
                   </div>
                 }
               >
                 <div className="sticky top-28">
                   <div className="map-frame rounded-2xl overflow-hidden ring-1 ring-border">
-                    <div className="map-fit h-[300px] md:h-[340px] xl:h-[360px]">
+                    <div className="map-fit h-[300px] md:h-[340px] xl:h-[380px]">
                       <InteractivePropertyMarkerMap
                         properties={filteredProperties || []}
                         className="h-full w-full block"
@@ -275,7 +275,7 @@ const Rent = () => {
             </div>
 
             {/* Cards */}
-            <div className="lg:col-span-8">
+            <div className="lg:col-span-9">
               <div className="flex items-center justify-between mb-6 gap-4 flex-wrap">
                 <h2 className="text-2xl font-bold">
                   {filteredProperties.length} {t("properties") || "properties"}
