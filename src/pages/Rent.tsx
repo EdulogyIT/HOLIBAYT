@@ -263,7 +263,7 @@ const Rent = () => {
               >
                 <div className="sticky top-28">
                   <div className="map-frame rounded-2xl overflow-hidden ring-1 ring-border">
-                    <div className="map-fit h-[520px] md:h-[560px] xl:h-[600px]">
+                    <div className="map-fit h-[380px] md:h-[420px] xl:h-[460px]">
                       <InteractivePropertyMarkerMap
                         properties={filteredProperties || []}
                         className="h-full w-full block"
