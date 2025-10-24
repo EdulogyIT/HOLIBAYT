@@ -4,14 +4,7 @@ import Footer from "@/components/Footer";
 import ShortStayHeroSearch from "@/components/ShortStayHeroSearch";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import {
-  MapPin,
-  Bed,
-  Bath,
-  Square,
-  Loader2,
-  ShieldCheck,
-} from "lucide-react";
+import { MapPin, Bed, Bath, Square, Loader2, ShieldCheck } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useCurrency } from "@/contexts/CurrencyContext";
@@ -230,6 +223,10 @@ const ShortStay = () => {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
             {/* Map column */}
             <div className="lg:col-span-4">
+              {/* CSS kill-switch for any built-in legend the map renders */}
+              <style>{`
+                .no-legend :where([data-legend], .price-legend, .map-legend, .legend, .legend-card){ display: none !important; }
+              `}</style>
               <LocalErrorBoundary
                 fallback={
                   <div className="sticky top-28 rounded-2xl ring-1 ring-border bg-background grid place-items-center h-[520px] md:h-[560px] xl:h-[600px]">
@@ -237,15 +234,19 @@ const ShortStay = () => {
                   </div>
                 }
               >
-                <div className="sticky top-28">
+                <div className="sticky top-28 no-legend">
                   <div className="relative rounded-2xl overflow-hidden ring-1 ring-border">
+                    {/* Full-bleed map */}
                     <div className="absolute inset-0">
                       <InteractivePropertyMarkerMap
                         properties={filteredProperties || []}
                         className="h-full w-full"
+                        // If your component supports it, this will also hide the legend internally:
+                        // @ts-ignore
+                        hideLegend
                       />
                     </div>
-                    {/* Spacer to enforce height */}
+                    {/* Spacer to enforce height and prevent extra padding */}
                     <div className="invisible select-none h-[520px] md:h-[560px] xl:h-[600px]" />
                   </div>
                 </div>
@@ -258,10 +259,7 @@ const ShortStay = () => {
                 <h2 className="text-2xl font-bold">
                   {filteredProperties.length} {t("properties") || "properties"}
                 </h2>
-                <PropertyFilters
-                  onFilterChange={() => {}}
-                  listingType="shortStay"
-                />
+                <PropertyFilters onFilterChange={() => {}} listingType="shortStay" />
               </div>
 
               {isLoading ? (
