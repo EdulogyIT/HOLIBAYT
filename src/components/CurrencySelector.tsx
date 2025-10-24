@@ -15,7 +15,7 @@ const CurrencySelector = () => {
   const currencies = [
     { code: "USD" as Currency, name: "US Dollar", symbol: "$", Icon: DollarSign, showIcon: true },
     { code: "EUR" as Currency, name: "Euro", symbol: "€", Icon: Euro, showIcon: true },
-    { code: "DZD" as Currency, name: "Algerian Dinar", symbol: "DA", Icon: null, showIcon: false }
+    { code: "DZD" as Currency, name: "Algerian Dinar", symbol: "دج", Icon: null, showIcon: false }
   ];
 
   const currentCurrencyInfo = currencies.find(c => c.code === currentCurrency);
