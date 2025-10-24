@@ -1,3 +1,4 @@
+// src/components/ShortStayHeroSearch.tsx
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -55,10 +56,10 @@ const ShortStayHeroSearch: React.FC<ShortStayHeroSearchProps> = ({ onSearch }) =
   // Scroll detection for sticky bar
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 400);
+      setIsScrolled(window.scrollY > 200); // adjust threshold if you want later
     };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   useEffect(() => {
@@ -121,13 +122,11 @@ const ShortStayHeroSearch: React.FC<ShortStayHeroSearchProps> = ({ onSearch }) =
   };
 
   const SearchForm = ({ compact = false }: { compact?: boolean }) => {
-    const totalGuests = formData.guests.adults + formData.guests.children;
-
     return (
-      <form onSubmit={onSubmit} className={cn(
-        "flex gap-3",
-        compact ? "flex-row items-center" : "flex-col gap-4"
-      )}>
+      <form
+        onSubmit={onSubmit}
+        className={cn("flex gap-3", compact ? "flex-row items-center" : "flex-col gap-4")}
+      >
         <LocationAutocomplete
           value={formData.location}
           onChange={(value) => updateFormField("location", value)}
@@ -137,7 +136,8 @@ const ShortStayHeroSearch: React.FC<ShortStayHeroSearchProps> = ({ onSearch }) =
             compact ? "h-12 text-sm flex-1 min-w-[200px]" : "h-14 text-base flex-1 lg:min-w-[300px]"
           )}
         />
-        
+
+        {/* GuestsSelector now stays open until Done */}
         {compact ? (
           <>
             <Popover>
@@ -153,7 +153,10 @@ const ShortStayHeroSearch: React.FC<ShortStayHeroSearchProps> = ({ onSearch }) =
                   <Calendar className="mr-2 h-4 w-4" />
                   <span className="truncate">
                     {formData.dateRange?.from && formData.dateRange?.to
-                      ? `${format(formData.dateRange.from, "MMM dd")} - ${format(formData.dateRange.to, "MMM dd")}`
+                      ? `${format(formData.dateRange.from, "MMM dd")} - ${format(
+                          formData.dateRange.to,
+                          "MMM dd"
+                        )}`
                       : "Add Dates"}
                   </span>
                 </Button>
@@ -171,6 +174,7 @@ const ShortStayHeroSearch: React.FC<ShortStayHeroSearchProps> = ({ onSearch }) =
               <GuestsSelector
                 value={formData.guests}
                 onChange={(guests) => updateFormField("guests", guests)}
+                keepOpen // <-- ensure selector stays open until Done
               />
             </div>
           </>
@@ -181,6 +185,7 @@ const ShortStayHeroSearch: React.FC<ShortStayHeroSearchProps> = ({ onSearch }) =
                 <GuestsSelector
                   value={formData.guests}
                   onChange={(guests) => updateFormField("guests", guests)}
+                  keepOpen
                 />
               </div>
 
@@ -282,11 +287,13 @@ const ShortStayHeroSearch: React.FC<ShortStayHeroSearchProps> = ({ onSearch }) =
 
   return (
     <>
-      {/* Sticky Search Bar */}
-      <div className={cn(
-        "hidden sm:block fixed top-16 left-0 right-0 z-40 transition-all duration-300 bg-white/95 backdrop-blur-md shadow-lg border-b border-border/50",
-        isScrolled ? "translate-y-0 opacity-100" : "-translate-y-full opacity-0"
-      )}>
+      {/* Sticky Search Bar - works on all screens now */}
+      <div
+        className={cn(
+          "fixed top-0 left-0 right-0 z-50 transition-all duration-300 bg-white/95 backdrop-blur-md shadow-lg border-b border-border/50",
+          isScrolled ? "translate-y-0 opacity-100" : "-translate-y-full opacity-0"
+        )}
+      >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
           <div className="flex items-center justify-center gap-4">
             <div className="hidden md:flex items-center gap-2 text-primary">
