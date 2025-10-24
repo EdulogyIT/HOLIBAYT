@@ -76,7 +76,6 @@ const ShortStay = () => {
     fetchProperties();
   }, []);
 
-  // Re-apply filters whenever properties OR the URL query changes
   useEffect(() => {
     applyFiltersFromURL();
   }, [properties, routerLocation.search]);
@@ -87,9 +86,7 @@ const ShortStay = () => {
     const filterType = (urlParams.get("filterType") || "").trim();
     const filterValue = (urlParams.get("filterValue") || "").trim();
 
-    if (location) {
-      setCurrentCity(location);
-    }
+    if (location) setCurrentCity(location);
 
     let filtered = [...properties];
 
@@ -102,14 +99,12 @@ const ShortStay = () => {
       );
     }
 
-    // Apply destination filters
     if (filterType && filterValue) {
       if (filterType === "feature") {
         filtered = filtered.filter((p) => p.features?.[filterValue] === true);
       } else if (filterType === "pets") {
         filtered = filtered.filter((p) => p.pets_allowed === true);
       } else if (filterType === "price") {
-        // Luxury filter: price > 20000
         filtered = filtered.filter((p) => num(p.price) > 20000);
       }
     }
@@ -140,7 +135,6 @@ const ShortStay = () => {
     }
   };
 
-  // Wire ShortStayHeroSearch to update the URL (now includes guest counts)
   const handleSearch = (vals: {
     location?: string;
     checkIn?: string;
@@ -158,7 +152,6 @@ const ShortStay = () => {
     if (vals.checkIn) qs.set("checkIn", String(vals.checkIn));
     if (vals.checkOut) qs.set("checkOut", String(vals.checkOut));
 
-    // Always persist guest params so the hero re-hydrates correctly
     qs.set("adults", String(vals.adults ?? 1));
     qs.set("children", String(vals.children ?? 0));
     qs.set("infants", String(vals.infants ?? 0));
@@ -188,7 +181,6 @@ const ShortStay = () => {
     navigate(`/short-stay?${params.toString()}`);
   };
 
-  // Only render supported icons (no random fallback)
   const getFeatureIcon = (feature: string) => {
     switch (feature) {
       case "wifi":
@@ -220,27 +212,36 @@ const ShortStay = () => {
 
     return (
       <Card
-        className="h-full flex flex-col overflow-hidden hover:shadow-lg transition-shadow duration-300 cursor-pointer group"
+        // Airbnb-style: no heavy borders/shadows; content-driven tile
+        className="bg-transparent shadow-none hover:shadow-none cursor-pointer group"
         onClick={handleCardClick}
       >
-        {/* Square media */}
-        <div className="relative w-full aspect-square overflow-hidden">
+        {/* IMAGE TILE — landscape, rounded, overlays */}
+        <div className="relative w-full rounded-2xl overflow-hidden aspect-[4/3] md:aspect-[5/4]">
           <img
             src={property.images?.[0] || "/placeholder-property.jpg"}
             alt={property.title}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+            className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-[1.03]"
           />
-          <PropertyBadges
-            isHotDeal={property.is_hot_deal}
-            isVerified={property.is_verified}
-            isNew={property.is_new}
-            showVerifiedHost={true}
-            showInstantBooking={true}
-            size="sm"
-          />
-          <div onClick={handleWishlistClick}>
+
+          {/* Badges (top-left) */}
+          <div className="absolute left-3 top-3 flex flex-col gap-2">
+            <PropertyBadges
+              isHotDeal={property.is_hot_deal}
+              isVerified={property.is_verified}
+              isNew={property.is_new}
+              showVerifiedHost={true}
+              showInstantBooking={true}
+              size="sm"
+            />
+          </div>
+
+          {/* Wishlist heart (top-right) */}
+          <div className="absolute right-3 top-3" onClick={handleWishlistClick}>
             <WishlistButton isInWishlist={wishlistIds.has(property.id)} onToggle={() => {}} />
           </div>
+
+          {/* Price unit chip (bottom-right) */}
           <div className="absolute bottom-3 right-3">
             <Badge variant="secondary" className="bg-background/80 text-foreground text-xs">
               {property.price_type === "daily"
@@ -252,9 +253,10 @@ const ShortStay = () => {
           </div>
         </div>
 
-        <CardHeader className="pb-1">
-          <CardTitle className="text-base sm:text-lg font-semibold text-foreground line-clamp-2">
-            {translatedTitle || property.title}
+        {/* TEXT BLOCK — title, location, meta */}
+        <CardHeader className="px-0 pb-1 pt-3">
+          <CardTitle className="text-base sm:text-lg font-semibold line-clamp-2">
+            {translatedText || property.title}
           </CardTitle>
           <div className="flex items-center text-muted-foreground">
             <MapPin className="h-4 w-4 mr-1 flex-shrink-0" />
@@ -266,14 +268,14 @@ const ShortStay = () => {
           </div>
         </CardHeader>
 
-        <CardContent className="pt-0 flex-1 flex flex-col">
-          <div className="mb-2">
-            <div className="text-xl md:text-2xl font-bold text-primary">
+        <CardContent className="px-0 pt-0">
+          <div className="mb-1">
+            <div className="text-lg md:text-xl font-bold">
               {formatPrice(num(property.price), property.price_type, property.price_currency)}
             </div>
           </div>
 
-          <div className="flex items-center gap-3 sm:gap-4 text-muted-foreground text-xs sm:text-sm mb-2 flex-wrap">
+          <div className="flex items-center gap-3 text-muted-foreground text-xs sm:text-sm">
             {property.bedrooms && (
               <div className="flex items-center whitespace-nowrap">
                 <Bed className="h-4 w-4 mr-1" />
@@ -288,37 +290,9 @@ const ShortStay = () => {
             )}
             <div className="flex items-center whitespace-nowrap">
               <Square className="h-4 w-4 mr-1" />
-              <span>
-                {num(property.area)} {t("areaUnit")}
-              </span>
+              <span>{num(property.area)} {t("areaUnit")}</span>
             </div>
           </div>
-
-          {property.features && (
-            <div className="flex items-center gap-2 mb-3 overflow-x-auto">
-              {Object.entries(property.features)
-                .filter(([_, value]) => value)
-                .slice(0, 3)
-                .map(([key]) => {
-                  const IconEl = getFeatureIcon(key);
-                  return IconEl ? (
-                    <div key={key} className="flex items-center text-muted-foreground text-xs flex-shrink-0">
-                      {IconEl}
-                    </div>
-                  ) : null;
-                })}
-            </div>
-          )}
-
-          <Button
-            className="mt-auto w-full h-10 text-sm"
-            onClick={(e) => {
-              e.stopPropagation();
-              handleCardClick();
-            }}
-          >
-            {t("secureYourStay") || t("bookNow")}
-          </Button>
         </CardContent>
       </Card>
     );
@@ -331,22 +305,21 @@ const ShortStay = () => {
       <main className="pt-20">
         <ShortStayHeroSearch onSearch={handleSearch} />
 
-        {/* Popular Amenities Section */}
+        {/* Popular Amenities */}
         <PopularAmenities onAmenityClick={handleAmenityClick} selectedAmenity={selectedAmenity} />
 
-        {/* MAP + LIST side-by-side, aligned */}
+        {/* MAP + LIST side-by-side */}
         <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-            {/* Left: Sticky Map (narrower) */}
+            {/* Map (narrower, sticky) */}
             <div className="lg:col-span-4">
-              <div className="sticky top-24 h-[70vh] rounded-xl overflow-hidden border bg-background">
+              <div className="sticky top-24 h-[70vh] rounded-2xl overflow-hidden border bg-background">
                 <InteractivePropertyMarkerMap properties={filteredProperties} />
               </div>
             </div>
 
-            {/* Right: Listings (wider) */}
+            {/* Listings */}
             <div className="lg:col-span-8">
-              {/* Header + Filters */}
               <div className="flex items-center justify-between mb-6 gap-4 flex-wrap">
                 <h2 className="text-2xl font-bold">
                   {filteredProperties.length} {t("properties") || "properties"}
@@ -378,7 +351,6 @@ const ShortStay = () => {
                       filtered = filtered.filter((p) => p.bathrooms === filters.bathrooms);
                     }
 
-                    // Short-stay price range
                     if (filters.minPrice[0] > 0 || filters.maxPrice[0] < 50000) {
                       filtered = filtered.filter((p) => {
                         const price = num(p.price);
@@ -386,7 +358,6 @@ const ShortStay = () => {
                       });
                     }
 
-                    // Area filtering
                     if (filters.minArea || filters.maxArea) {
                       const minArea = filters.minArea ? num(filters.minArea) : 0;
                       const maxArea = filters.maxArea ? num(filters.maxArea) : Infinity;
@@ -402,7 +373,6 @@ const ShortStay = () => {
                 />
               </div>
 
-              {/* Properties Grid — equal height tiles, 4 per row on xl */}
               {isLoading ? (
                 <div className="flex items-center justify-center py-12">
                   <Loader2 className="h-8 w-8 animate-spin" />
@@ -416,7 +386,8 @@ const ShortStay = () => {
                   <div className="text-muted-foreground">{t("Adjust Filters Or Check Later")}</div>
                 </div>
               ) : (
-                <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4 lg:gap-5 items-stretch">
+                // NOTE: cards are lightweight; gaps tightened a bit
+                <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4 lg:gap-5">
                   {filteredProperties.map((property) => (
                     <PropertyCard key={property.id} property={property} />
                   ))}
@@ -426,15 +397,9 @@ const ShortStay = () => {
           </div>
         </section>
 
-        {/* Top Rated Stays */}
         <TopRatedStays />
-
-        {/* Destinations to Explore */}
         <DestinationsToExplore onDestinationClick={handleDestinationClick} />
-
-        {/* Nearby Cities Section */}
         <CitiesSection />
-
         <AIChatBox />
       </main>
 
