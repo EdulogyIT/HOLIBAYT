@@ -223,15 +223,20 @@ const ShortStay = () => {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
             {/* Map column */}
             <div className="lg:col-span-4">
-              {/* Scoped CSS to hide ANY legend inside the map container */}
+              {/* Scoped CSS to nuke margins/paddings & legends inside the map container so it truly fills */}
               <style>{`
-                .no-map-legend :where(.mapboxgl-ctrl-legend,
-                                       .mapboxgl-legend,
-                                       .leaflet-control-legend,
-                                       .leaflet-legend,
-                                       [class*="legend"],
-                                       [data-legend]) { display: none !important; }
+                .map-frame, .map-frame * { box-sizing: border-box; }
+                .map-fit, .map-fit > * { height: 100% !important; width: 100% !important; }
+                .map-fit :where(.mapboxgl-ctrl-legend,
+                                .mapboxgl-legend,
+                                .leaflet-control-legend,
+                                .leaflet-legend,
+                                [class*="legend"],
+                                [data-legend]) { display: none !important; }
+                .map-fit :where(.legend, .legend-card) { display: none !important; }
+                .map-fit :where(.mapboxgl-control-container) { margin: 0 !important; padding: 0 !important; }
               `}</style>
+
               <LocalErrorBoundary
                 fallback={
                   <div className="sticky top-28 rounded-2xl ring-1 ring-border bg-background grid place-items-center h-[520px] md:h-[560px] xl:h-[600px]">
@@ -240,13 +245,14 @@ const ShortStay = () => {
                 }
               >
                 <div className="sticky top-28">
-                  <div className="relative rounded-2xl overflow-hidden ring-1 ring-border no-map-legend">
-                    {/* Full-bleed map */}
-                    <div className="absolute inset-0">
+                  {/* Frame */}
+                  <div className="map-frame rounded-2xl overflow-hidden ring-1 ring-border">
+                    {/* Fixed-height container the map must fill */}
+                    <div className="map-fit h-[520px] md:h-[560px] xl:h-[600px]">
                       <InteractivePropertyMarkerMap
                         properties={filteredProperties || []}
-                        className="h-full w-full"
-                        // If supported by your component, this also hides the legend:
+                        className="h-full w-full block"
+                        // If supported by your component, these also ensure no legend:
                         // @ts-ignore
                         hideLegend
                         // @ts-ignore
@@ -255,8 +261,6 @@ const ShortStay = () => {
                         legend={false}
                       />
                     </div>
-                    {/* Spacer to enforce height and prevent extra padding */}
-                    <div className="invisible select-none h-[520px] md:h-[560px] xl:h-[600px]" />
                   </div>
                 </div>
               </LocalErrorBoundary>
