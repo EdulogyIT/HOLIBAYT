@@ -2,7 +2,7 @@
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import ShortStayHeroSearch from "@/components/ShortStayHeroSearch";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card } from "@/components/ui/card"; // used only to wrap the IMAGE tile
 import { Badge } from "@/components/ui/badge";
 import {
   MapPin,
@@ -13,6 +13,7 @@ import {
   Wifi,
   Car,
   Waves,
+  ShieldCheck,
 } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -22,11 +23,11 @@ import { useState, useEffect } from "react";
 import AIChatBox from "@/components/AIChatBox";
 import { useScrollToTop } from "@/hooks/useScrollToTop";
 import { supabase } from "@/integrations/supabase/client";
-// NOTE: intentionally NOT using wishlist or property translation hooks in safe mode
 import { TopRatedStays } from "@/components/TopRatedStays";
 import { InteractivePropertyMarkerMap } from "@/components/InteractivePropertyMarkerMap";
 import { DestinationsToExplore } from "@/components/DestinationsToExplore";
 import CitiesSection from "@/components/CitiesSection";
+import React from "react";
 
 /** ---------- Types ---------- */
 interface Property {
@@ -86,8 +87,7 @@ const getFeatureIcon = (feature: string) => {
   }
 };
 
-/** ---------- Error Boundary for unstable children (map, etc.) ---------- */
-import React from "react";
+/** ---------- Error Boundary ---------- */
 class LocalErrorBoundary extends React.Component<
   { children: React.ReactNode; fallback?: React.ReactNode },
   { hasError: boolean }
@@ -147,7 +147,7 @@ const ShortStay = () => {
         .eq("status", "active")
         .order("created_at", { ascending: false });
 
-      if (error) {
+    if (error) {
         console.error("Error fetching properties:", error);
         setProperties([]);
         setFilteredProperties([]);
@@ -250,6 +250,7 @@ const ShortStay = () => {
     navigate(`/short-stay?${params.toString()}`);
   };
 
+  /** IMAGE-TILE-ONLY CARD (text lives outside) */
   const PropertyCard = ({ property }: { property: Property }) => {
     const firstImage =
       (Array.isArray(property.images) && property.images[0]) ||
@@ -258,34 +259,47 @@ const ShortStay = () => {
     const featureEntries = safeFeatureEntries(property.features);
 
     return (
-      <Card className="bg-transparent shadow-none cursor-pointer group">
-        {/* Image */}
-        <div className="relative w-full rounded-2xl overflow-hidden aspect-[4/3] md:aspect-[5/4]">
-          <img
-            src={firstImage}
-            alt={property.title}
-            className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-[1.03]"
-            onError={(e) => {
-              (e.currentTarget as HTMLImageElement).src = "/placeholder-property.jpg";
-            }}
-          />
-          {/* Price unit chip */}
-          <div className="absolute bottom-3 right-3">
-            <Badge variant="secondary" className="bg-background/80 text-foreground text-xs">
-              {property.price_type === "daily"
-                ? t("perNight")
-                : property.price_type === "weekly"
-                ? t("perWeek")
-                : t("perMonth")}
-            </Badge>
-          </div>
-        </div>
+      <div className="cursor-pointer group" onClick={() => navigate(`/property/${property.id}`)}>
+        {/* BOX: only the image lives inside this rounded card */}
+        <Card className="bg-transparent shadow-none border-0">
+          <div className="relative w-full rounded-2xl overflow-hidden aspect-[4/3] md:aspect-[5/4]">
+            <img
+              src={firstImage}
+              alt={property.title}
+              className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-[1.03]"
+              onError={(e) => {
+                (e.currentTarget as HTMLImageElement).src = "/placeholder-property.jpg";
+              }}
+            />
 
-        {/* Text */}
-        <CardHeader className="px-0 pb-0 pt-3">
-          <CardTitle className="text-[15px] sm:text-base font-semibold leading-6 line-clamp-1">
+            {/* Verified icon only (no text) */}
+            {property.is_verified && (
+              <span
+                title="Verified host"
+                className="absolute left-3 top-3 inline-flex h-7 w-7 items-center justify-center rounded-full bg-background/85 backdrop-blur border"
+              >
+                <ShieldCheck className="h-4 w-4" />
+              </span>
+            )}
+
+            {/* Price unit chip */}
+            <div className="absolute bottom-3 right-3">
+              <Badge variant="secondary" className="bg-background/80 text-foreground text-xs">
+                {property.price_type === "daily"
+                  ? t("perNight")
+                  : property.price_type === "weekly"
+                  ? t("perWeek")
+                  : t("perMonth")}
+              </Badge>
+            </div>
+          </div>
+        </Card>
+
+        {/* TEXT OUTSIDE THE BOX */}
+        <div className="mt-2">
+          <div className="text-[15px] sm:text-base font-semibold leading-6 line-clamp-1">
             {property.title}
-          </CardTitle>
+          </div>
           <div className="mt-0.5 flex items-center text-muted-foreground">
             <MapPin className="h-4 w-4 mr-1 flex-shrink-0" />
             <span className="text-[13px] leading-5 line-clamp-1">
@@ -294,16 +308,12 @@ const ShortStay = () => {
               {(property.location || "").trim()}
             </span>
           </div>
-        </CardHeader>
 
-        <CardContent className="px-0 pt-2">
-          <div className="mb-2">
-            <div className="text-lg md:text-xl font-bold leading-6">
-              {formatPrice(num(property.price), property.price_type, property.price_currency)}
-            </div>
+          <div className="mt-1 text-lg md:text-xl font-bold leading-6">
+            {formatPrice(num(property.price), property.price_type, property.price_currency)}
           </div>
 
-          <div className="flex items-center gap-4 text-muted-foreground text-xs sm:text-[13px] leading-5">
+          <div className="mt-1.5 flex items-center gap-4 text-muted-foreground text-xs sm:text-[13px] leading-5">
             {property.bedrooms && (
               <div className="flex items-center whitespace-nowrap">
                 <Bed className="h-4 w-4 mr-1" />
@@ -325,25 +335,22 @@ const ShortStay = () => {
           </div>
 
           {featureEntries.length > 0 && (
-            <div className="flex items-center gap-2 mt-2 overflow-x-auto">
+            <div className="mt-1.5 flex items-center gap-2 overflow-x-auto">
               {featureEntries
                 .filter(([_, value]) => Boolean(value))
                 .slice(0, 3)
                 .map(([key]) => {
                   const IconEl = getFeatureIcon(key);
                   return IconEl ? (
-                    <div
-                      key={key}
-                      className="flex items-center text-muted-foreground text-xs flex-shrink-0"
-                    >
+                    <div key={key} className="flex items-center text-muted-foreground text-xs flex-shrink-0">
                       {IconEl}
                     </div>
                   ) : null;
                 })}
             </div>
           )}
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     );
   };
 
@@ -367,9 +374,7 @@ const ShortStay = () => {
                 onClick={() => handleAmenityClick(a.key)}
                 className={[
                   "border rounded-full px-3 py-1.5 text-sm whitespace-nowrap",
-                  selectedAmenity === a.key
-                    ? "bg-primary text-primary-foreground border-primary"
-                    : "bg-background",
+                  selectedAmenity === a.key ? "bg-primary text-primary-foreground border-primary" : "bg-background"
                 ].join(" ")}
               >
                 {a.label}
@@ -387,7 +392,7 @@ const ShortStay = () => {
           </div>
         </section>
 
-        {/* Map + list wrapped in Error Boundaries */}
+        {/* Map + list */}
         <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
             <div className="lg:col-span-4">
