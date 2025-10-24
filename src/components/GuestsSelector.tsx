@@ -21,45 +21,52 @@ export const GuestsSelector = ({ value, onChange }: GuestsSelectorProps) => {
   const [open, setOpen] = useState(false);
 
   const updateCount = (type: keyof GuestCounts, delta: number) => {
-    const newValue = Math.max(0, value[type] + delta);
-    if (type === 'adults' && newValue === 0) return; // At least 1 adult required
-    onChange({ ...value, [type]: newValue });
+    const next = Math.max(0, value[type] + delta);
+    // At least 1 adult
+    const safe = type === 'adults' ? Math.max(1, next) : next;
+    onChange({ ...value, [type]: safe });
   };
 
-  const totalGuests = value.adults + value.children + value.infants;
+  // Most UIs count "guests" = adults + children (infants shown separately)
+  const totalGuests = (value.adults ?? 0) + (value.children ?? 0);
 
   const guestTypes = [
-    { 
-      key: 'adults' as keyof GuestCounts, 
-      label: t('adults') || 'Adults', 
+    {
+      key: 'adults' as const,
+      label: t('adults') || 'Adults',
       description: t('ages13OrAbove') || 'Ages 13 or above',
-      min: 1 
+      min: 1,
+      max: 16,
     },
-    { 
-      key: 'children' as keyof GuestCounts, 
-      label: t('children') || 'Children', 
-      description: t('ages2to12') || 'Ages 2-12',
-      min: 0 
+    {
+      key: 'children' as const,
+      label: t('children') || 'Children',
+      description: t('ages2to12') || 'Ages 2–12',
+      min: 0,
+      max: 16,
     },
-    { 
-      key: 'infants' as keyof GuestCounts, 
-      label: t('infants') || 'Infants', 
+    {
+      key: 'infants' as const,
+      label: t('infants') || 'Infants',
       description: t('under2') || 'Under 2',
-      min: 0 
+      min: 0,
+      max: 5,
     },
-    { 
-      key: 'pets' as keyof GuestCounts, 
-      label: t('pets') || 'Pets', 
+    {
+      key: 'pets' as const,
+      label: t('pets') || 'Pets',
       description: t('bringingServiceAnimal') || 'Bringing a service animal?',
-      min: 0 
-    }
+      min: 0,
+      max: 5,
+    },
   ];
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <Button 
-          variant="outline" 
+        <Button
+          type="button" // IMPORTANT: prevent form submit
+          variant="outline"
           className="w-full justify-between text-left font-normal h-12 bg-white min-h-[48px]"
         >
           <div className="flex items-center gap-2">
@@ -67,52 +74,76 @@ export const GuestsSelector = ({ value, onChange }: GuestsSelectorProps) => {
             <div className="flex flex-col">
               <span className="text-xs text-muted-foreground">{t('who') || 'Who'}</span>
               <span className="text-sm">
-                {totalGuests > 0 
-                  ? `${totalGuests} ${totalGuests === 1 ? t('guest') || 'guest' : t('guests') || 'guests'}${value.pets > 0 ? `, ${value.pets} ${value.pets === 1 ? 'pet' : 'pets'}` : ''}`
-                  : t('addGuests') || 'Add guests'
-                }
+                {totalGuests > 0
+                  ? `${totalGuests} ${totalGuests === 1 ? (t('guest') || 'guest') : (t('guests') || 'guests')}${
+                      value.infants ? `, ${value.infants} ${value.infants === 1 ? 'infant' : 'infants'}` : ''
+                    }${value.pets ? `, ${value.pets} ${value.pets === 1 ? 'pet' : 'pets'}` : ''}`
+                  : t('addGuests') || 'Add guests'}
               </span>
             </div>
           </div>
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-80 p-4 bg-background z-[100]" align="center" collisionPadding={10}>
+
+      <PopoverContent
+        className="w-80 p-4 bg-background z-[100]"
+        align="start"
+        sideOffset={8}
+        // Keep the popover open during inner clicks/focus changes
+        onOpenAutoFocus={(e) => e.preventDefault()}
+        onCloseAutoFocus={(e) => e.preventDefault()}
+        onPointerDownOutside={(e) => e.preventDefault()}
+        onInteractOutside={(e) => e.preventDefault()}
+      >
         <div className="space-y-4">
-          {guestTypes.map((type) => (
-            <div key={type.key} className="flex items-center justify-between">
-              <div className="flex-1">
-                <div className="font-medium">{type.label}</div>
-                <div className="text-sm text-muted-foreground">{type.description}</div>
+          {guestTypes.map(({ key, label, description, min, max }) => {
+            const val = value[key] ?? 0;
+            return (
+              <div key={key} className="flex items-center justify-between">
+                <div className="flex-1">
+                  <div className="font-medium">{label}</div>
+                  <div className="text-sm text-muted-foreground">{description}</div>
+                </div>
+                <div className="flex items-center gap-3">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="icon"
+                    className="h-8 w-8 rounded-full"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      updateCount(key, -1);
+                    }}
+                    disabled={val <= min}
+                  >
+                    <Minus className="h-4 w-4" />
+                  </Button>
+
+                  <span className="w-8 text-center font-medium tabular-nums">{val}</span>
+
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="icon"
+                    className="h-8 w-8 rounded-full"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      if (val < max) updateCount(key, +1);
+                    }}
+                    disabled={val >= max}
+                  >
+                    <Plus className="h-4 w-4" />
+                  </Button>
+                </div>
               </div>
-              <div className="flex items-center gap-3">
-                <Button
-                  variant="outline"
-                  size="icon"
-                  className="h-8 w-8 rounded-full"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    updateCount(type.key, -1);
-                  }}
-                  disabled={value[type.key] <= type.min}
-                >
-                  <Minus className="h-4 w-4" />
-                </Button>
-                <span className="w-8 text-center font-medium">{value[type.key]}</span>
-                <Button
-                  variant="outline"
-                  size="icon"
-                  className="h-8 w-8 rounded-full"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    updateCount(type.key, 1);
-                  }}
-                  disabled={type.key === 'adults' && value[type.key] >= 16}
-                >
-                  <Plus className="h-4 w-4" />
-                </Button>
-              </div>
-            </div>
-          ))}
+            );
+          })}
+        </div>
+
+        <div className="mt-4 flex justify-end">
+          <Button type="button" variant="ghost" onClick={() => setOpen(false)}>
+            {t('done') || 'Done'}
+          </Button>
         </div>
       </PopoverContent>
     </Popover>
