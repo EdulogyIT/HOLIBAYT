@@ -5,13 +5,31 @@ import ShortStayHeroSearch from "@/components/ShortStayHeroSearch";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { MapPin, Bed, Bath, Square, Loader2, Wifi, Car, Waves, Coffee } from "lucide-react";
+import {
+  MapPin,
+  Bed,
+  Bath,
+  Square,
+  Loader2,
+  Wifi,
+  Car,
+  Waves,
+  Wind,
+  WashingMachine,
+  Flame,
+  UtensilsCrossed,
+  Shield,
+  Leaf,
+  Landmark,
+  Thermometer,
+  Zap,
+} from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useCurrency } from "@/contexts/CurrencyContext";
 import { useAuth } from "@/contexts/AuthContext";
 import PropertyFilters from "@/components/PropertyFilters";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import AIChatBox from "@/components/AIChatBox";
 import { useScrollToTop } from "@/hooks/useScrollToTop";
 import { supabase } from "@/integrations/supabase/client";
@@ -20,7 +38,6 @@ import { WishlistButton } from "@/components/WishlistButton";
 import { PropertyBadges } from "@/components/PropertyBadges";
 import { usePropertyTranslation } from "@/hooks/usePropertyTranslation";
 import { TopRatedStays } from "@/components/TopRatedStays";
-import { PopularAmenities } from "@/components/PopularAmenities";
 import { InteractivePropertyMarkerMap } from "@/components/InteractivePropertyMarkerMap";
 import { DestinationsToExplore } from "@/components/DestinationsToExplore";
 import CitiesSection from "@/components/CitiesSection";
@@ -38,7 +55,7 @@ interface Property {
   area: string | number;
   images: string[];
   property_type: string;
-  features?: any;
+  features?: Record<string, boolean>;
   description?: string;
   commission_rate?: number;
   contact_name: string;
@@ -55,6 +72,145 @@ const num = (v: unknown) => {
   if (typeof v === "number") return v;
   const n = parseInt(String(v ?? "").replace(/[^\d]/g, ""), 10);
   return Number.isFinite(n) ? n : 0;
+};
+
+/** ---------------------------------------------------------
+ *  NEW: Single-line rolling amenities scroller with dots
+ * --------------------------------------------------------- */
+const AmenitiesScroller = ({
+  onAmenityClick,
+  selectedAmenity,
+}: {
+  onAmenityClick?: (key: string) => void;
+  selectedAmenity?: string;
+}) => {
+  const containerRef = useRef<HTMLDivElement | null>(null);
+
+  // Flattened amenity chips (services + essentials)
+  const items = useMemo(
+    () =>
+      [
+        // Services
+        { key: "housekeeper", label: "Housekeeper", icon: Shield }, // using Shield as a tidy badge look
+        { key: "cook", label: "Cook", icon: UtensilsCrossed },
+        { key: "privateDriver", label: "Private Driver", icon: Car },
+        { key: "tourGuide", label: "Tour Guide", icon: Landmark },
+        { key: "bodyguard", label: "Bodyguard", icon: Shield },
+        { key: "ritualSlaughtererHalal", label: "Ritual Slaughterer (Halal)", icon: Shield },
+
+        // Essential filters / amenities
+        { key: "swimmingPool", label: "Swimming Pool", icon: Waves },
+        { key: "airConditioning", label: "Air Conditioning", icon: Wind },
+        { key: "jacuzzi", label: "Jacuzzi", icon: Bath },
+        { key: "internetAccess", label: "Internet Access", icon: Wifi },
+        { key: "washingMachine", label: "Washing Machine", icon: WashingMachine },
+        { key: "barbecue", label: "Barbecue", icon: Flame },
+        { key: "parking", label: "Parking", icon: Car },
+        { key: "dishwasher", label: "Dishwasher", icon: UtensilsCrossed },
+        { key: "terraceBalcony", label: "Terrace / Balcony", icon: Landmark },
+        { key: "microwave", label: "Microwave", icon: Zap },
+        { key: "sauna", label: "Sauna", icon: Thermometer },
+        { key: "fireplace", label: "Fireplace", icon: Flame },
+        { key: "wheelchairAccess", label: "Wheelchair Access", icon: Landmark },
+        { key: "garden", label: "Garden", icon: Leaf },
+      ] as const,
+    []
+  );
+
+  // Determine page size by chip width estimate; keep simple pages of 6
+  const pageSize = 6;
+  const pageCount = Math.ceil(items.length / pageSize);
+  const [page, setPage] = useState(0);
+
+  const scrollToPage = (p: number) => {
+    setPage(p);
+    const el = containerRef.current;
+    if (!el) return;
+    const childWidth = el.clientWidth; // viewport width of scroller
+    el.scrollTo({ left: p * childWidth, behavior: "smooth" });
+  };
+
+  // Keep the dot in sync if the user swipes
+  const onScroll = () => {
+    const el = containerRef.current;
+    if (!el) return;
+    const newPage = Math.round(el.scrollLeft / el.clientWidth);
+    if (newPage !== page) setPage(newPage);
+  };
+
+  return (
+    <section className="bg-muted/20 border-y">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <h3 className="text-xl sm:text-2xl font-semibold mb-4">
+          Holibayt – Services &amp; Amenities
+        </h3>
+
+        {/* Scroller */}
+        <div
+          ref={containerRef}
+          onScroll={onScroll}
+          className="relative w-full overflow-x-auto no-scrollbar snap-x snap-mandatory"
+          style={{ scrollBehavior: "smooth" }}
+        >
+          <div
+            className="flex w-full"
+            style={{
+              width: `${pageCount * 100}%`,
+            }}
+          >
+            {Array.from({ length: pageCount }).map((_, i) => {
+              const slice = items.slice(i * pageSize, i * pageSize + pageSize);
+              return (
+                <div
+                  key={i}
+                  className="w-full flex-shrink-0 snap-start"
+                  style={{ width: `${100 / pageCount}%` }}
+                >
+                  <div className="flex items-center gap-3">
+                    {slice.map(({ key, label, icon: Icon }) => {
+                      const active = selectedAmenity === key;
+                      return (
+                        <button
+                          key={key}
+                          type="button"
+                          onClick={() => onAmenityClick?.(key)}
+                          className={[
+                            "inline-flex items-center whitespace-nowrap rounded-full border px-3 py-2 text-sm transition",
+                            active
+                              ? "bg-primary text-primary-foreground border-primary"
+                              : "bg-background hover:bg-muted",
+                          ].join(" ")}
+                          title={label}
+                        >
+                          <Icon className="h-4 w-4 mr-2" />
+                          {label}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Dots */}
+        <div className="flex justify-center gap-2 mt-4">
+          {Array.from({ length: pageCount }).map((_, i) => (
+            <button
+              key={i}
+              aria-label={`Go to amenities page ${i + 1}`}
+              onClick={() => scrollToPage(i)}
+              className={[
+                "h-2 w-2 rounded-full",
+                i === page ? "bg-primary" : "bg-muted-foreground/30",
+              ].join(" ")}
+            />
+          ))}
+        </div>
+      </div>
+    </section>
+  );
 };
 
 const ShortStay = () => {
@@ -76,7 +232,6 @@ const ShortStay = () => {
     fetchProperties();
   }, []);
 
-  // Re-apply filters whenever properties OR the URL query changes
   useEffect(() => {
     applyFiltersFromURL();
   }, [properties, routerLocation.search]);
@@ -84,18 +239,10 @@ const ShortStay = () => {
   const applyFiltersFromURL = () => {
     const urlParams = new URLSearchParams(routerLocation.search);
     const location = (urlParams.get("location") || "").trim();
-    // const checkIn = (urlParams.get("checkIn") || "").trim();
-    // const checkOut = (urlParams.get("checkOut") || "").trim();
-    // const adults = (urlParams.get("adults") || "").trim();
-    // const children = (urlParams.get("children") || "").trim();
-    // const infants = (urlParams.get("infants") || "").trim();
-    // const pets = (urlParams.get("pets") || "").trim();
     const filterType = (urlParams.get("filterType") || "").trim();
     const filterValue = (urlParams.get("filterValue") || "").trim();
 
-    if (location) {
-      setCurrentCity(location);
-    }
+    if (location) setCurrentCity(location);
 
     let filtered = [...properties];
 
@@ -108,19 +255,15 @@ const ShortStay = () => {
       );
     }
 
-    // Apply destination filters
     if (filterType && filterValue) {
       if (filterType === "feature") {
         filtered = filtered.filter((p) => p.features?.[filterValue] === true);
       } else if (filterType === "pets") {
         filtered = filtered.filter((p) => p.pets_allowed === true);
       } else if (filterType === "price") {
-        // Luxury filter: price > 20000
         filtered = filtered.filter((p) => num(p.price) > 20000);
       }
     }
-
-    // NOTE: Add availability logic later using check-in/out and guests.
 
     setFilteredProperties(filtered);
   };
@@ -148,7 +291,6 @@ const ShortStay = () => {
     }
   };
 
-  // Wire ShortStayHeroSearch to update the URL (now includes guest counts)
   const handleSearch = (vals: {
     location?: string;
     checkIn?: string;
@@ -165,13 +307,10 @@ const ShortStay = () => {
     if (vals.location) qs.set("location", String(vals.location));
     if (vals.checkIn) qs.set("checkIn", String(vals.checkIn));
     if (vals.checkOut) qs.set("checkOut", String(vals.checkOut));
-
-    // Always persist guest params so the hero re-hydrates correctly
     qs.set("adults", String(vals.adults ?? 1));
     qs.set("children", String(vals.children ?? 0));
     qs.set("infants", String(vals.infants ?? 0));
     qs.set("pets", String(vals.pets ?? 0));
-
     if (vals.propertyType) qs.set("type", String(vals.propertyType));
     if (vals.travelers !== undefined) qs.set("travelers", String(vals.travelers));
 
@@ -196,6 +335,7 @@ const ShortStay = () => {
     navigate(`/short-stay?${params.toString()}`);
   };
 
+  // Remove coffee maker: do not render a fallback icon for unknown features
   const getFeatureIcon = (feature: string) => {
     switch (feature) {
       case "wifi":
@@ -204,8 +344,14 @@ const ShortStay = () => {
         return <Car className="h-4 w-4" />;
       case "swimmingPool":
         return <Waves className="h-4 w-4" />;
+      case "airConditioning":
+        return <Wind className="h-4 w-4" />;
+      case "washingMachine":
+        return <WashingMachine className="h-4 w-4" />;
+      case "fireplace":
+        return <Flame className="h-4 w-4" />;
       default:
-        return <Coffee className="h-4 w-4" />;
+        return null; // no coffee icon
     }
   };
 
@@ -303,11 +449,14 @@ const ShortStay = () => {
               {Object.entries(property.features)
                 .filter(([_, value]) => value)
                 .slice(0, 3)
-                .map(([key]) => (
-                  <div key={key} className="flex items-center text-muted-foreground text-xs flex-shrink-0">
-                    {getFeatureIcon(key)}
-                  </div>
-                ))}
+                .map(([key]) => {
+                  const IconEl = getFeatureIcon(key);
+                  return IconEl ? (
+                    <div key={key} className="flex items-center text-muted-foreground text-xs flex-shrink-0">
+                      {IconEl}
+                    </div>
+                  ) : null;
+                })}
             </div>
           )}
 
@@ -332,92 +481,92 @@ const ShortStay = () => {
       <main className="pt-20">
         <ShortStayHeroSearch onSearch={handleSearch} />
 
-        {/* Popular Amenities Section */}
-        <PopularAmenities onAmenityClick={handleAmenityClick} selectedAmenity={selectedAmenity} />
+        {/* NEW: Services & Amenities rolling scroller with dots (coffee maker removed) */}
+        <AmenitiesScroller onAmenityClick={handleAmenityClick} selectedAmenity={selectedAmenity} />
 
+        {/* Moved MAP to full width above the listings for clean alignment */}
+        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8">
+          <InteractivePropertyMarkerMap properties={filteredProperties} />
+        </section>
+
+        {/* Listings + Filters */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {/* Left: Interactive Map */}
-            <div className="lg:col-span-1">
-              <InteractivePropertyMarkerMap properties={filteredProperties} />
-            </div>
+          {/* Header + Filters */}
+          <div className="flex items-center justify-between mb-6 gap-4 flex-wrap">
+            <h2 className="text-2xl font-bold">
+              {filteredProperties.length} {t("properties") || "properties"}
+              {currentCity ? ` — ${currentCity}` : ""}
+            </h2>
 
-            {/* Right: Properties */}
-            <div className="lg:col-span-2">
-              {/* Header with Filter Button */}
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-2xl font-bold">
-                  {filteredProperties.length} {t("properties") || "properties"}
-                </h2>
-                <PropertyFilters
-                  onFilterChange={(filters) => {
-                    let filtered = properties;
+            <PropertyFilters
+              onFilterChange={(filters) => {
+                let filtered = properties;
 
-                    if (filters.location) {
-                      const loc = filters.location.toLowerCase();
-                      filtered = filtered.filter(
-                        (p) =>
-                          (p.city || "").toLowerCase().includes(loc) ||
-                          (p.location || "").toLowerCase().includes(loc)
-                      );
-                    }
+                if (filters.location) {
+                  const loc = filters.location.toLowerCase();
+                  filtered = filtered.filter(
+                    (p) =>
+                      (p.city || "").toLowerCase().includes(loc) ||
+                      (p.location || "").toLowerCase().includes(loc)
+                  );
+                }
 
-                    if (filters.propertyType !== "all") {
-                      filtered = filtered.filter((p) => p.property_type === filters.propertyType);
-                    }
+                if (filters.propertyType !== "all") {
+                  filtered = filtered.filter((p) => p.property_type === filters.propertyType);
+                }
 
-                    if (filters.bedrooms !== "all") {
-                      filtered = filtered.filter((p) => p.bedrooms === filters.bedrooms);
-                    }
+                if (filters.bedrooms !== "all") {
+                  filtered = filtered.filter((p) => p.bedrooms === filters.bedrooms);
+                }
 
-                    if (filters.bathrooms !== "all") {
-                      filtered = filtered.filter((p) => p.bathrooms === filters.bathrooms);
-                    }
+                if (filters.bathrooms !== "all") {
+                  filtered = filtered.filter((p) => p.bathrooms === filters.bathrooms);
+                }
 
-                    // Short-stay price range
-                    if (filters.minPrice[0] > 0 || filters.maxPrice[0] < 50000) {
-                      filtered = filtered.filter((p) => {
-                        const price = num(p.price);
-                        return price >= filters.minPrice[0] && price <= filters.maxPrice[0];
-                      });
-                    }
+                // Short-stay price range
+                if (filters.minPrice[0] > 0 || filters.maxPrice[0] < 50000) {
+                  filtered = filtered.filter((p) => {
+                    const price = num(p.price);
+                    return price >= filters.minPrice[0] && price <= filters.maxPrice[0];
+                  });
+                }
 
-                    // Area filtering
-                    if (filters.minArea || filters.maxArea) {
-                      const minArea = filters.minArea ? num(filters.minArea) : 0;
-                      const maxArea = filters.maxArea ? num(filters.maxArea) : Infinity;
-                      filtered = filtered.filter((p) => {
-                        const area = num(p.area);
-                        return area >= minArea && area <= maxArea;
-                      });
-                    }
+                // Area filtering
+                if (filters.minArea || filters.maxArea) {
+                  const minArea = filters.minArea ? num(filters.minArea) : 0;
+                  const maxArea = filters.maxArea ? num(filters.maxArea) : Infinity;
+                  filtered = filtered.filter((p) => {
+                    const area = num(p.area);
+                    return area >= minArea && area <= maxArea;
+                  });
+                }
 
-                    setFilteredProperties(filtered);
-                  }}
-                  listingType="shortStay"
-                />
-              </div>
-
-              {/* Properties Grid */}
-              {isLoading ? (
-                <div className="flex items-center justify-center py-12">
-                  <Loader2 className="h-8 w-8 animate-spin" />
-                  <span className="ml-2">{t("loading")}</span>
-                </div>
-              ) : filteredProperties.length === 0 ? (
-                <div className="text-center py-12">
-                  <div className="text-lg font-semibold text-foreground mb-2">{t("noPropertiesFound")}</div>
-                  <div className="text-muted-foreground">{t("Adjust Filters Or Check Later")}</div>
-                </div>
-              ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
-                  {filteredProperties.map((property) => (
-                    <PropertyCard key={property.id} property={property} />
-                  ))}
-                </div>
-              )}
-            </div>
+                setFilteredProperties(filtered);
+              }}
+              listingType="shortStay"
+            />
           </div>
+
+          {/* Properties Grid — 4 cards per row on desktop */}
+          {isLoading ? (
+            <div className="flex items-center justify-center py-12">
+              <Loader2 className="h-8 w-8 animate-spin" />
+              <span className="ml-2">{t("loading")}</span>
+            </div>
+          ) : filteredProperties.length === 0 ? (
+            <div className="text-center py-12">
+              <div className="text-lg font-semibold text-foreground mb-2">
+                {t("noPropertiesFound")}
+              </div>
+              <div className="text-muted-foreground">{t("Adjust Filters Or Check Later")}</div>
+            </div>
+          ) : (
+            <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4 lg:gap-6">
+              {filteredProperties.map((property) => (
+                <PropertyCard key={property.id} property={property} />
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Top Rated Stays */}
