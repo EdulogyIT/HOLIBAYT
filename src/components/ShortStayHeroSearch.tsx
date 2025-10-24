@@ -1,4 +1,3 @@
-// src/components/ShortStayHeroSearch.tsx
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -9,8 +8,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { useNavigate, useLocation as useRouterLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { DateRangePicker } from "@/components/DateRangePicker";
-// If you prefer to keep your shared GuestsSelector, comment the local one below
-// import { GuestsSelector } from "@/components/GuestsSelector";
+import { GuestsSelector } from "@/components/GuestsSelector";
 import shortStayHeroBg from "@/assets/short-stay-hero-bg.jpg";
 import LocationAutocomplete from "@/components/LocationAutocomplete";
 
@@ -54,18 +52,15 @@ const ShortStayHeroSearch: React.FC<ShortStayHeroSearchProps> = ({ onSearch }) =
     guests: { adults: 1, children: 0, infants: 0, pets: 0 },
   });
 
-  // Sticky bar visibility
+  // Scroll detection for sticky bar
   useEffect(() => {
     const handleScroll = () => {
-      // Show after modest scroll so it's obvious; adjust if you like
-      setIsScrolled(window.scrollY > 220);
+      setIsScrolled(window.scrollY > 400);
     };
-    handleScroll();
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // URL -> state
   useEffect(() => {
     const urlParams = new URLSearchParams(routerLocation.search);
     const location = urlParams.get("location") || "";
@@ -126,11 +121,13 @@ const ShortStayHeroSearch: React.FC<ShortStayHeroSearchProps> = ({ onSearch }) =
   };
 
   const SearchForm = ({ compact = false }: { compact?: boolean }) => {
+    const totalGuests = formData.guests.adults + formData.guests.children;
+
     return (
-      <form
-        onSubmit={onSubmit}
-        className={cn("flex gap-3", compact ? "flex-row items-center" : "flex-col gap-4")}
-      >
+      <form onSubmit={onSubmit} className={cn(
+        "flex gap-3",
+        compact ? "flex-row items-center" : "flex-col gap-4"
+      )}>
         <LocationAutocomplete
           value={formData.location}
           onChange={(value) => updateFormField("location", value)}
@@ -140,10 +137,9 @@ const ShortStayHeroSearch: React.FC<ShortStayHeroSearchProps> = ({ onSearch }) =
             compact ? "h-12 text-sm flex-1 min-w-[200px]" : "h-14 text-base flex-1 lg:min-w-[300px]"
           )}
         />
-
+        
         {compact ? (
           <>
-            {/* Compact date range */}
             <Popover>
               <PopoverTrigger asChild>
                 <Button
@@ -157,11 +153,8 @@ const ShortStayHeroSearch: React.FC<ShortStayHeroSearchProps> = ({ onSearch }) =
                   <Calendar className="mr-2 h-4 w-4" />
                   <span className="truncate">
                     {formData.dateRange?.from && formData.dateRange?.to
-                      ? `${format(formData.dateRange.from, "MMM dd")} - ${format(
-                          formData.dateRange.to,
-                          "MMM dd"
-                        )}`
-                      : t("addDates") || "Add Dates"}
+                      ? `${format(formData.dateRange.from, "MMM dd")} - ${format(formData.dateRange.to, "MMM dd")}`
+                      : "Add Dates"}
                   </span>
                 </Button>
               </PopoverTrigger>
@@ -174,8 +167,7 @@ const ShortStayHeroSearch: React.FC<ShortStayHeroSearchProps> = ({ onSearch }) =
               </PopoverContent>
             </Popover>
 
-            {/* Compact guests */}
-            <div className="w-auto min-w-[170px]">
+            <div className="w-auto min-w-[150px]">
               <GuestsSelector
                 value={formData.guests}
                 onChange={(guests) => updateFormField("guests", guests)}
@@ -184,7 +176,6 @@ const ShortStayHeroSearch: React.FC<ShortStayHeroSearchProps> = ({ onSearch }) =
           </>
         ) : (
           <>
-            {/* Full row: guests + property type */}
             <div className="flex flex-col lg:flex-row gap-4">
               <div className="flex-1">
                 <GuestsSelector
@@ -208,7 +199,6 @@ const ShortStayHeroSearch: React.FC<ShortStayHeroSearchProps> = ({ onSearch }) =
               </div>
             </div>
 
-            {/* Full row: check-in/out */}
             <div className="flex flex-col sm:flex-row gap-4">
               <div className="flex-1">
                 <Popover>
@@ -292,13 +282,11 @@ const ShortStayHeroSearch: React.FC<ShortStayHeroSearchProps> = ({ onSearch }) =
 
   return (
     <>
-      {/* Sticky Search Bar — shows after slight scroll, mobile + desktop */}
-      <div
-        className={cn(
-          "fixed top-0 left-0 right-0 z-50 transition-all duration-300 bg-white/95 backdrop-blur-md shadow-lg border-b border-border/50",
-          isScrolled ? "translate-y-0 opacity-100" : "-translate-y-full opacity-0"
-        )}
-      >
+      {/* Sticky Search Bar */}
+      <div className={cn(
+        "hidden sm:block fixed top-16 left-0 right-0 z-40 transition-all duration-300 bg-white/95 backdrop-blur-md shadow-lg border-b border-border/50",
+        isScrolled ? "translate-y-0 opacity-100" : "-translate-y-full opacity-0"
+      )}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
           <div className="flex items-center justify-center gap-4">
             <div className="hidden md:flex items-center gap-2 text-primary">
@@ -326,7 +314,9 @@ const ShortStayHeroSearch: React.FC<ShortStayHeroSearchProps> = ({ onSearch }) =
               <Bed className="h-6 w-6 text-white" />
               <span className="text-white font-semibold font-inter">{t("shortStay")}</span>
             </div>
-            {/* Title removed per previous request; keep only hero chip */}
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-playfair font-bold text-white mb-4 leading-tight">
+              {t("shortStayHeroHeading") || "Book trusted short stays across Algeria"}
+            </h1>
           </div>
 
           <div className="w-full max-w-6xl mx-auto">
@@ -341,78 +331,3 @@ const ShortStayHeroSearch: React.FC<ShortStayHeroSearchProps> = ({ onSearch }) =
 };
 
 export default ShortStayHeroSearch;
-
-/* ---------------------------------------------------------------------
-   Local GuestsSelector (keeps the popover OPEN until "Done")
-   If you already have a shared GuestsSelector component, replace its
-   internals with this, and keep the external import instead.
---------------------------------------------------------------------- */
-import { useState } from "react";
-
-type Guests = { adults: number; children: number; infants: number; pets: number };
-export const GuestsSelector = ({
-  value,
-  onChange,
-  label = "Who",
-}: {
-  value: Guests;
-  onChange: (g: Guests) => void;
-  label?: string;
-}) => {
-  const [open, setOpen] = useState(false);
-  const total = value.adults + value.children;
-
-  const update = (field: keyof Guests, delta: number) => {
-    const next = { ...value, [field]: Math.max(0, (value[field] as number) + delta) } as Guests;
-    // Minimum 1 adult
-    if (field === "adults" && next.adults < 1) next.adults = 1;
-    onChange(next);
-  };
-
-  return (
-    <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger asChild>
-        <Button
-          type="button"
-          variant="outline"
-          className="w-full h-14 px-4 justify-between bg-background border border-input"
-        >
-          <div className="flex flex-col text-left">
-            <span className="text-xs text-muted-foreground">{label}</span>
-            <span className="text-base">
-              {total} {total === 1 ? "guest" : "guests"}
-              {value.infants ? `, ${value.infants} infant${value.infants > 1 ? "s" : ""}` : ""}
-              {value.pets ? `, ${value.pets} pet${value.pets > 1 ? "s" : ""}` : ""}
-            </span>
-          </div>
-        </Button>
-      </PopoverTrigger>
-      <PopoverContent className="w-80 p-4 space-y-3" align="start" collisionPadding={8}>
-        {(
-          [
-            ["adults", "Adults"],
-            ["children", "Children"],
-            ["infants", "Infants"],
-            ["pets", "Pets"],
-          ] as [keyof Guests, string][]
-        ).map(([field, label]) => (
-          <div key={field} className="flex items-center justify-between">
-            <span>{label}</span>
-            <div className="flex items-center gap-2">
-              <Button variant="outline" size="sm" onClick={() => update(field, -1)}>
-                –
-              </Button>
-              <span className="w-6 text-center">{value[field]}</span>
-              <Button variant="outline" size="sm" onClick={() => update(field, +1)}>
-                +
-              </Button>
-            </div>
-          </div>
-        ))}
-        <div className="flex justify-end pt-2">
-          <Button onClick={() => setOpen(false)}>Done</Button>
-        </div>
-      </PopoverContent>
-    </Popover>
-  );
-};
