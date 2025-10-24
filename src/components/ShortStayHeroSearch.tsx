@@ -1,4 +1,3 @@
-// src/components/ShortStayHeroSearch.tsx
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -23,7 +22,6 @@ type SearchVals = {
   children?: number;
   infants?: number;
   pets?: number;
-  propertyType?: string;
 };
 
 type ShortStayHeroSearchProps = {
@@ -54,14 +52,15 @@ const ShortStayHeroSearch: React.FC<ShortStayHeroSearchProps> = ({ onSearch }) =
     guests: { adults: 1, children: 0, infants: 0, pets: 0 },
   });
 
-  // Sticky bar reveal
+  // Scroll detection for sticky bar
   useEffect(() => {
-    const handleScroll = () => setIsScrolled(window.scrollY > 400);
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 400);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Hydrate from URL
   useEffect(() => {
     const urlParams = new URLSearchParams(routerLocation.search);
     const location = urlParams.get("location") || "";
@@ -86,7 +85,6 @@ const ShortStayHeroSearch: React.FC<ShortStayHeroSearchProps> = ({ onSearch }) =
 
   const isFormValid = () => formData.location.trim() !== "";
 
-  // IMPORTANT: Always set guests in the URL, even when 0
   const performSearch = (vals: SearchVals) => {
     if (onSearch) {
       onSearch(vals);
@@ -97,16 +95,10 @@ const ShortStayHeroSearch: React.FC<ShortStayHeroSearchProps> = ({ onSearch }) =
     if (formData.propertyType) qs.set("type", formData.propertyType);
     if (vals.checkIn) qs.set("checkIn", String(vals.checkIn));
     if (vals.checkOut) qs.set("checkOut", String(vals.checkOut));
-
-    // Persist guest counts unconditionally so this component rehydrates correctly
-    qs.set("adults", String(vals.adults ?? 1));
-    qs.set("children", String(vals.children ?? 0));
-    qs.set("infants", String(vals.infants ?? 0));
-    qs.set("pets", String(vals.pets ?? 0));
-
-    // Optional legacy travelers
-    if (vals.travelers !== undefined) qs.set("travelers", String(vals.travelers));
-
+    if (vals.adults) qs.set("adults", String(vals.adults));
+    if (vals.children) qs.set("children", String(vals.children));
+    if (vals.infants) qs.set("infants", String(vals.infants));
+    if (vals.pets) qs.set("pets", String(vals.pets));
     navigate(`/short-stay?${qs.toString()}`);
   };
 
@@ -120,7 +112,6 @@ const ShortStayHeroSearch: React.FC<ShortStayHeroSearchProps> = ({ onSearch }) =
       children: formData.guests.children,
       infants: formData.guests.infants,
       pets: formData.guests.pets,
-      propertyType: formData.propertyType,
     });
   };
 
@@ -130,8 +121,13 @@ const ShortStayHeroSearch: React.FC<ShortStayHeroSearchProps> = ({ onSearch }) =
   };
 
   const SearchForm = ({ compact = false }: { compact?: boolean }) => {
+    const totalGuests = formData.guests.adults + formData.guests.children;
+
     return (
-      <form onSubmit={onSubmit} className={cn("flex gap-3", compact ? "flex-row items-center" : "flex-col gap-4")}>
+      <form onSubmit={onSubmit} className={cn(
+        "flex gap-3",
+        compact ? "flex-row items-center" : "flex-col gap-4"
+      )}>
         <LocationAutocomplete
           value={formData.location}
           onChange={(value) => updateFormField("location", value)}
@@ -141,7 +137,7 @@ const ShortStayHeroSearch: React.FC<ShortStayHeroSearchProps> = ({ onSearch }) =
             compact ? "h-12 text-sm flex-1 min-w-[200px]" : "h-14 text-base flex-1 lg:min-w-[300px]"
           )}
         />
-
+        
         {compact ? (
           <>
             <Popover>
@@ -158,7 +154,7 @@ const ShortStayHeroSearch: React.FC<ShortStayHeroSearchProps> = ({ onSearch }) =
                   <span className="truncate">
                     {formData.dateRange?.from && formData.dateRange?.to
                       ? `${format(formData.dateRange.from, "MMM dd")} - ${format(formData.dateRange.to, "MMM dd")}`
-                      : t("Add Dates") || "Add Dates"}
+                      : "Add Dates"}
                   </span>
                 </Button>
               </PopoverTrigger>
@@ -216,7 +212,11 @@ const ShortStayHeroSearch: React.FC<ShortStayHeroSearchProps> = ({ onSearch }) =
                       )}
                     >
                       <Calendar className="mr-3 h-5 w-5" />
-                      <span>{formData.dateRange?.from ? format(formData.dateRange.from, "dd/MM/yyyy") : t("checkIn")}</span>
+                      <span>
+                        {formData.dateRange?.from
+                          ? format(formData.dateRange.from, "dd/MM/yyyy")
+                          : t("checkIn")}
+                      </span>
                     </Button>
                   </PopoverTrigger>
                   <PopoverContent className="w-auto p-0 z-[100]" align="center" collisionPadding={10}>
@@ -242,7 +242,11 @@ const ShortStayHeroSearch: React.FC<ShortStayHeroSearchProps> = ({ onSearch }) =
                       disabled={!formData.dateRange?.from}
                     >
                       <Calendar className="mr-3 h-5 w-5" />
-                      <span>{formData.dateRange?.to ? format(formData.dateRange.to, "dd/MM/yyyy") : t("checkOut")}</span>
+                      <span>
+                        {formData.dateRange?.to
+                          ? format(formData.dateRange.to, "dd/MM/yyyy")
+                          : t("checkOut")}
+                      </span>
                     </Button>
                   </PopoverTrigger>
                   <PopoverContent className="w-auto p-0 z-[100]" align="center" collisionPadding={10}>
@@ -279,12 +283,10 @@ const ShortStayHeroSearch: React.FC<ShortStayHeroSearchProps> = ({ onSearch }) =
   return (
     <>
       {/* Sticky Search Bar */}
-      <div
-        className={cn(
-          "hidden sm:block fixed top-16 left-0 right-0 z-40 transition-all duration-300 bg-white/95 backdrop-blur-md shadow-lg border-b border-border/50",
-          isScrolled ? "translate-y-0 opacity-100" : "-translate-y-full opacity-0"
-        )}
-      >
+      <div className={cn(
+        "hidden sm:block fixed top-16 left-0 right-0 z-40 transition-all duration-300 bg-white/95 backdrop-blur-md shadow-lg border-b border-border/50",
+        isScrolled ? "translate-y-0 opacity-100" : "-translate-y-full opacity-0"
+      )}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
           <div className="flex items-center justify-center gap-4">
             <div className="hidden md:flex items-center gap-2 text-primary">
