@@ -22,50 +22,24 @@ export const GuestsSelector = ({ value, onChange }: GuestsSelectorProps) => {
 
   const updateCount = (type: keyof GuestCounts, delta: number) => {
     const next = Math.max(0, value[type] + delta);
-    // At least 1 adult
-    const safe = type === 'adults' ? Math.max(1, next) : next;
+    const safe = type === 'adults' ? Math.max(1, next) : next; // min 1 adult
     onChange({ ...value, [type]: safe });
   };
 
-  // Most UIs count "guests" = adults + children (infants shown separately)
   const totalGuests = (value.adults ?? 0) + (value.children ?? 0);
 
   const guestTypes = [
-    {
-      key: 'adults' as const,
-      label: t('adults') || 'Adults',
-      description: t('ages13OrAbove') || 'Ages 13 or above',
-      min: 1,
-      max: 16,
-    },
-    {
-      key: 'children' as const,
-      label: t('children') || 'Children',
-      description: t('ages2to12') || 'Ages 2–12',
-      min: 0,
-      max: 16,
-    },
-    {
-      key: 'infants' as const,
-      label: t('infants') || 'Infants',
-      description: t('under2') || 'Under 2',
-      min: 0,
-      max: 5,
-    },
-    {
-      key: 'pets' as const,
-      label: t('pets') || 'Pets',
-      description: t('bringingServiceAnimal') || 'Bringing a service animal?',
-      min: 0,
-      max: 5,
-    },
+    { key: 'adults' as const, label: t('adults') || 'Adults', description: t('ages13OrAbove') || 'Ages 13 or above', min: 1, max: 16 },
+    { key: 'children' as const, label: t('children') || 'Children', description: t('ages2to12') || 'Ages 2–12', min: 0, max: 16 },
+    { key: 'infants' as const, label: t('infants') || 'Infants', description: t('under2') || 'Under 2', min: 0, max: 5 },
+    { key: 'pets' as const, label: t('pets') || 'Pets', description: t('bringingServiceAnimal') || 'Bringing a service animal?', min: 0, max: 5 },
   ];
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <Button
-          type="button" // IMPORTANT: prevent form submit
+          type="button"
           variant="outline"
           className="w-full justify-between text-left font-normal h-12 bg-white min-h-[48px]"
         >
@@ -89,11 +63,9 @@ export const GuestsSelector = ({ value, onChange }: GuestsSelectorProps) => {
         className="w-80 p-4 bg-background z-[100]"
         align="start"
         sideOffset={8}
-        // Keep the popover open during inner clicks/focus changes
+        // keep these to avoid focus jank; they do NOT block outside-click closing
         onOpenAutoFocus={(e) => e.preventDefault()}
         onCloseAutoFocus={(e) => e.preventDefault()}
-        onPointerDownOutside={(e) => e.preventDefault()}
-        onInteractOutside={(e) => e.preventDefault()}
       >
         <div className="space-y-4">
           {guestTypes.map(({ key, label, description, min, max }) => {
@@ -112,7 +84,7 @@ export const GuestsSelector = ({ value, onChange }: GuestsSelectorProps) => {
                     className="h-8 w-8 rounded-full"
                     onClick={(e) => {
                       e.stopPropagation();
-                      updateCount(key, -1);
+                      if (val > min) updateCount(key, -1);
                     }}
                     disabled={val <= min}
                   >
