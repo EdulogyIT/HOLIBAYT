@@ -31,7 +31,7 @@ interface Property {
   location: string;
   city: string;
   price: string | number;
-  price_type: string; // "daily" | "weekly" | "monthly"
+  price_type: string;
   price_currency?: string;
   bedrooms?: string;
   bathrooms?: string;
@@ -181,7 +181,7 @@ const ShortStay = () => {
     navigate(`/short-stay?${params.toString()}`);
   };
 
-  // Coffee maker removed: only show icons we explicitly handle
+  // Only show icons we explicitly support (coffee maker removed)
   const getFeatureIcon = (feature: string) => {
     switch (feature) {
       case "wifi":
@@ -222,11 +222,12 @@ const ShortStay = () => {
         className="overflow-hidden hover:shadow-lg transition-shadow duration-300 cursor-pointer group w-full"
         onClick={handleCardClick}
       >
-        <div className="relative h-44 sm:h-52 md:h-56 overflow-hidden">
+        {/* Make card more square: 4:3 image ratio + compact content */}
+        <div className="relative aspect-[4/3] overflow-hidden">
           <img
             src={property.images?.[0] || "/placeholder-property.jpg"}
             alt={property.title}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+            className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
           />
           <PropertyBadges
             isHotDeal={property.is_hot_deal}
@@ -239,8 +240,8 @@ const ShortStay = () => {
           <div onClick={handleWishlistClick}>
             <WishlistButton isInWishlist={wishlistIds.has(property.id)} onToggle={() => {}} />
           </div>
-          <div className="absolute bottom-3 right-3">
-            <Badge variant="secondary" className="bg-background/80 text-foreground text-xs">
+          <div className="absolute bottom-2 right-2">
+            <Badge variant="secondary" className="bg-background/80 text-foreground text-[11px]">
               {property.price_type === "daily"
                 ? t("perNight")
                 : property.price_type === "weekly"
@@ -249,27 +250,29 @@ const ShortStay = () => {
             </Badge>
           </div>
         </div>
+
         <CardHeader className="pb-2">
-          <CardTitle className="text-sm sm:text-base font-semibold text-foreground line-clamp-2">
+          <CardTitle className="text-base font-semibold text-foreground line-clamp-2">
             {translatedTitle || property.title}
           </CardTitle>
           <div className="flex items-center text-muted-foreground">
             <MapPin className="h-4 w-4 mr-1 flex-shrink-0" />
-            <span className="text-xs sm:text-sm line-clamp-1">
+            <span className="text-sm line-clamp-1">
               {(property.city || "").trim()}
               {property.city && property.location ? ", " : ""}
               {(property.location || "").trim()}
             </span>
           </div>
         </CardHeader>
+
         <CardContent className="pt-0">
-          <div className="flex items-center justify-between mb-3 flex-wrap gap-2">
-            <div className="text-lg sm:text-xl font-bold text-primary">
+          <div className="flex items-center justify-between mb-2 flex-wrap gap-2">
+            <div className="text-xl font-bold text-primary">
               {formatPrice(num(property.price), property.price_type, property.price_currency)}
             </div>
           </div>
 
-          <div className="flex items-center gap-3 sm:gap-4 text-muted-foreground text-xs sm:text-sm mb-3 flex-wrap">
+          <div className="flex items-center gap-3 text-muted-foreground text-xs sm:text-sm mb-3 flex-wrap">
             {property.bedrooms && (
               <div className="flex items-center whitespace-nowrap">
                 <Bed className="h-4 w-4 mr-1" />
@@ -327,22 +330,27 @@ const ShortStay = () => {
       <main className="pt-20">
         <ShortStayHeroSearch onSearch={handleSearch} />
 
-        {/* Keep your original rolling PopularAmenities */}
+        {/* Updated PopularAmenities will render the new Holibayt list in a rolling row */}
         <PopularAmenities onAmenityClick={handleAmenityClick} selectedAmenity={selectedAmenity} />
 
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {/* LEFT: Map (back to original side) */}
+        {/* Make the main container wider and gutters tighter */}
+        <div className="max-w-[1400px] mx-auto px-3 sm:px-4 lg:px-6 py-6">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+            {/* LEFT: Map – a bit smaller, tighter to the edge */}
             <div className="lg:col-span-1">
-              {/* Optional: make sticky on large screens */}
               <div className="lg:sticky lg:top-24">
-                <InteractivePropertyMarkerMap properties={filteredProperties} />
+                <div className="rounded-2xl border shadow-sm overflow-hidden">
+                  {/* Constrain map height so it looks smaller */}
+                  <div className="h-[420px]">
+                    <InteractivePropertyMarkerMap properties={filteredProperties} />
+                  </div>
+                </div>
               </div>
             </div>
 
             {/* RIGHT: Filters + Properties */}
             <div className="lg:col-span-2">
-              <div className="flex items-center justify-between mb-6 gap-4 flex-wrap">
+              <div className="flex items-center justify-between mb-5 gap-3 flex-wrap">
                 <h2 className="text-2xl font-bold">
                   {filteredProperties.length} {t("properties") || "properties"}
                   {currentCity ? ` — ${currentCity}` : ""}
@@ -373,7 +381,6 @@ const ShortStay = () => {
                       filtered = filtered.filter((p) => p.bathrooms === filters.bathrooms);
                     }
 
-                    // Short-stay price range
                     if (filters.minPrice[0] > 0 || filters.maxPrice[0] < 50000) {
                       filtered = filtered.filter((p) => {
                         const price = num(p.price);
@@ -381,7 +388,6 @@ const ShortStay = () => {
                       });
                     }
 
-                    // Area filtering
                     if (filters.minArea || filters.maxArea) {
                       const minArea = filters.minArea ? num(filters.minArea) : 0;
                       const maxArea = filters.maxArea ? num(filters.maxArea) : Infinity;
@@ -397,7 +403,7 @@ const ShortStay = () => {
                 />
               </div>
 
-              {/* 4 cards per row on desktop */}
+              {/* 4 cards per row on desktop; cards look squarer due to aspect-[4/3] */}
               {isLoading ? (
                 <div className="flex items-center justify-center py-12">
                   <Loader2 className="h-8 w-8 animate-spin" />
@@ -411,7 +417,7 @@ const ShortStay = () => {
                   <div className="text-muted-foreground">{t("Adjust Filters Or Check Later")}</div>
                 </div>
               ) : (
-                <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4 lg:gap-6">
+                <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4 lg:gap-5">
                   {filteredProperties.map((property) => (
                     <PropertyCard key={property.id} property={property} />
                   ))}
