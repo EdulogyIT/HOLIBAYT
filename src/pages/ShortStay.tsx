@@ -223,9 +223,14 @@ const ShortStay = () => {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
             {/* Map column */}
             <div className="lg:col-span-4">
-              {/* CSS kill-switch for any built-in legend the map renders */}
+              {/* Scoped CSS to hide ANY legend inside the map container */}
               <style>{`
-                .no-legend :where([data-legend], .price-legend, .map-legend, .legend, .legend-card){ display: none !important; }
+                .no-map-legend :where(.mapboxgl-ctrl-legend,
+                                       .mapboxgl-legend,
+                                       .leaflet-control-legend,
+                                       .leaflet-legend,
+                                       [class*="legend"],
+                                       [data-legend]) { display: none !important; }
               `}</style>
               <LocalErrorBoundary
                 fallback={
@@ -234,16 +239,20 @@ const ShortStay = () => {
                   </div>
                 }
               >
-                <div className="sticky top-28 no-legend">
-                  <div className="relative rounded-2xl overflow-hidden ring-1 ring-border">
+                <div className="sticky top-28">
+                  <div className="relative rounded-2xl overflow-hidden ring-1 ring-border no-map-legend">
                     {/* Full-bleed map */}
                     <div className="absolute inset-0">
                       <InteractivePropertyMarkerMap
                         properties={filteredProperties || []}
                         className="h-full w-full"
-                        // If your component supports it, this will also hide the legend internally:
+                        // If supported by your component, this also hides the legend:
                         // @ts-ignore
                         hideLegend
+                        // @ts-ignore
+                        showLegend={false}
+                        // @ts-ignore
+                        legend={false}
                       />
                     </div>
                     {/* Spacer to enforce height and prevent extra padding */}
