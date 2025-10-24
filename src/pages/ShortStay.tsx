@@ -13,41 +13,34 @@ import {
   Wifi,
   Car,
   Waves,
-  ShieldCheck,
-  Zap,
-  CreditCard,
-  Flame,
-  Star, // ✅ use Star instead of Sparkles (older lucide versions always have this)
 } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useCurrency } from "@/contexts/CurrencyContext";
-import { useAuth } from "@/contexts/AuthContext";
 import PropertyFilters from "@/components/PropertyFilters";
 import { useState, useEffect } from "react";
 import AIChatBox from "@/components/AIChatBox";
 import { useScrollToTop } from "@/hooks/useScrollToTop";
 import { supabase } from "@/integrations/supabase/client";
-import { useWishlist } from "@/hooks/useWishlist";
-import { WishlistButton } from "@/components/WishlistButton";
-import { usePropertyTranslation } from "@/hooks/usePropertyTranslation";
+// NOTE: intentionally NOT using wishlist or property translation hooks in safe mode
 import { TopRatedStays } from "@/components/TopRatedStays";
 import { InteractivePropertyMarkerMap } from "@/components/InteractivePropertyMarkerMap";
 import { DestinationsToExplore } from "@/components/DestinationsToExplore";
 import CitiesSection from "@/components/CitiesSection";
 
+/** ---------- Types ---------- */
 interface Property {
   id: string;
   title: string;
   location: string;
   city: string;
   price: string | number;
-  price_type: string; // "daily" | "weekly" | "monthly"
+  price_type: "daily" | "weekly" | "monthly";
   price_currency?: string;
   bedrooms?: string;
   bathrooms?: string;
   area: string | number;
-  images: string[];
+  images: string[] | null;
   property_type: string;
   features?: unknown;
   description?: string;
@@ -62,13 +55,13 @@ interface Property {
   longitude?: number;
 }
 
+/** ---------- Utils ---------- */
 const num = (v: unknown) => {
   if (typeof v === "number") return v;
   const n = parseInt(String(v ?? "").replace(/[^\d]/g, ""), 10);
   return Number.isFinite(n) ? n : 0;
 };
 
-// Safe helper for features: only return entries for plain objects
 const safeFeatureEntries = (features: unknown): [string, unknown][] => {
   if (features && typeof features === "object" && !Array.isArray(features)) {
     try {
@@ -80,17 +73,59 @@ const safeFeatureEntries = (features: unknown): [string, unknown][] => {
   return [];
 };
 
+const getFeatureIcon = (feature: string) => {
+  switch (feature) {
+    case "wifi":
+      return <Wifi className="h-4 w-4" />;
+    case "parking":
+      return <Car className="h-4 w-4" />;
+    case "swimmingPool":
+      return <Waves className="h-4 w-4" />;
+    default:
+      return null;
+  }
+};
+
+/** ---------- Error Boundary for unstable children (map, etc.) ---------- */
+import React from "react";
+class LocalErrorBoundary extends React.Component<
+  { children: React.ReactNode; fallback?: React.ReactNode },
+  { hasError: boolean }
+> {
+  constructor(props: any) {
+    super(props);
+    this.state = { hasError: false };
+  }
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+  componentDidCatch(err: any) {
+    console.error("ShortStay ErrorBoundary caught:", err);
+  }
+  render() {
+    if (this.state.hasError) {
+      return (
+        this.props.fallback ?? (
+          <div className="rounded-xl border p-6 text-sm text-muted-foreground">
+            Component failed to load.
+          </div>
+        )
+      );
+    }
+    return this.props.children as any;
+  }
+}
+
+/** ---------- Page ---------- */
 const ShortStay = () => {
   const navigate = useNavigate();
   const routerLocation = useLocation();
-  const { t, currentLang } = useLanguage();
+  const { t } = useLanguage();
   const { formatPrice } = useCurrency();
-  const { user } = useAuth();
-  const { wishlistIds, toggleWishlist } = useWishlist(user?.id ?? undefined);
+
   const [properties, setProperties] = useState<Property[]>([]);
   const [filteredProperties, setFilteredProperties] = useState<Property[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [currentCity, setCurrentCity] = useState<string>(""); // keep but don't show
   const [selectedAmenity, setSelectedAmenity] = useState<string>("");
 
   useScrollToTop();
@@ -103,13 +138,37 @@ const ShortStay = () => {
     applyFiltersFromURL();
   }, [properties, routerLocation.search]);
 
+  const fetchProperties = async () => {
+    try {
+      const { data, error } = await supabase
+        .from("properties")
+        .select("*")
+        .eq("category", "short-stay")
+        .eq("status", "active")
+        .order("created_at", { ascending: false });
+
+      if (error) {
+        console.error("Error fetching properties:", error);
+        setProperties([]);
+        setFilteredProperties([]);
+      } else {
+        setProperties((data as any) || []);
+        setFilteredProperties((data as any) || []);
+      }
+    } catch (err) {
+      console.error("Error fetching properties:", err);
+      setProperties([]);
+      setFilteredProperties([]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const applyFiltersFromURL = () => {
     const urlParams = new URLSearchParams(routerLocation.search);
     const location = (urlParams.get("location") || "").trim();
     const filterType = (urlParams.get("filterType") || "").trim();
     const filterValue = (urlParams.get("filterValue") || "").trim();
-
-    if (location) setCurrentCity(location);
 
     let filtered = [...properties];
 
@@ -125,7 +184,10 @@ const ShortStay = () => {
     if (filterType && filterValue) {
       if (filterType === "feature") {
         filtered = filtered.filter((p) => {
-          const dict = Object.fromEntries(safeFeatureEntries(p.features)) as Record<string, unknown>;
+          const dict = Object.fromEntries(safeFeatureEntries(p.features)) as Record<
+            string,
+            unknown
+          >;
           return Boolean(dict[filterValue]);
         });
       } else if (filterType === "pets") {
@@ -136,29 +198,6 @@ const ShortStay = () => {
     }
 
     setFilteredProperties(filtered);
-  };
-
-  const fetchProperties = async () => {
-    try {
-      const { data, error } = await supabase
-        .from("properties")
-        .select("*")
-        .eq("category", "short-stay")
-        .eq("status", "active")
-        .order("created_at", { ascending: false });
-
-      if (error) {
-        console.error("Error fetching properties:", error);
-        return;
-      }
-
-      setProperties(data || []);
-      setFilteredProperties(data || []);
-    } catch (error) {
-      console.error("Error fetching properties:", error);
-    } finally {
-      setIsLoading(false);
-    }
   };
 
   const handleSearch = (vals: {
@@ -177,12 +216,10 @@ const ShortStay = () => {
     if (vals.location) qs.set("location", String(vals.location));
     if (vals.checkIn) qs.set("checkIn", String(vals.checkIn));
     if (vals.checkOut) qs.set("checkOut", String(vals.checkOut));
-
     qs.set("adults", String(vals.adults ?? 1));
     qs.set("children", String(vals.children ?? 0));
     qs.set("infants", String(vals.infants ?? 0));
     qs.set("pets", String(vals.pets ?? 0));
-
     if (vals.propertyType) qs.set("type", String(vals.propertyType));
     if (vals.travelers !== undefined) qs.set("travelers", String(vals.travelers));
 
@@ -196,7 +233,10 @@ const ShortStay = () => {
     } else {
       setSelectedAmenity(amenityKey);
       const filtered = properties.filter((p) => {
-        const dict = Object.fromEntries(safeFeatureEntries(p.features)) as Record<string, unknown>;
+        const dict = Object.fromEntries(safeFeatureEntries(p.features)) as Record<
+          string,
+          unknown
+        >;
         return Boolean(dict[amenityKey]);
       });
       setFilteredProperties(filtered);
@@ -210,101 +250,26 @@ const ShortStay = () => {
     navigate(`/short-stay?${params.toString()}`);
   };
 
-  const getFeatureIcon = (feature: string) => {
-    switch (feature) {
-      case "wifi":
-        return <Wifi className="h-4 w-4" />;
-      case "parking":
-        return <Car className="h-4 w-4" />;
-      case "swimmingPool":
-        return <Waves className="h-4 w-4" />;
-      default:
-        return null;
-    }
-  };
-
-  // Icon-only badges shown on the image (safe icons only)
-  const IconBadges = ({ p }: { p: Property }) => (
-    <div className="absolute left-3 top-3 flex items-center gap-1.5">
-      {p.is_verified && (
-        <span
-          title="Verified host"
-          className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-background/85 backdrop-blur border"
-        >
-          <ShieldCheck className="h-4 w-4" />
-        </span>
-      )}
-      <span
-        title="Instant booking"
-        className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-background/85 backdrop-blur border"
-      >
-        <Zap className="h-4 w-4" />
-      </span>
-      <span
-        title="Holibayt Pay"
-        className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-background/85 backdrop-blur border"
-      >
-        <CreditCard className="h-4 w-4" />
-      </span>
-      {p.is_hot_deal && (
-        <span
-          title="Hot deal"
-          className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-background/85 backdrop-blur border"
-        >
-          <Flame className="h-4 w-4" />
-        </span>
-      )}
-      {p.is_new && (
-        <span
-          title="New"
-          className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-background/85 backdrop-blur border"
-        >
-          <Star className="h-4 w-4" />
-        </span>
-      )}
-    </div>
-  );
-
   const PropertyCard = ({ property }: { property: Property }) => {
-    const { translatedText: translatedTitle } = usePropertyTranslation(
-      property.title,
-      currentLang,
-      "property_title"
-    );
-
-    const handleCardClick = () => {
-      navigate(`/property/${property.id}`);
-    };
-
-    const handleWishlistClick = (e: React.MouseEvent) => {
-      e.stopPropagation();
-      toggleWishlist(property.id);
-    };
+    const firstImage =
+      (Array.isArray(property.images) && property.images[0]) ||
+      "/placeholder-property.jpg";
 
     const featureEntries = safeFeatureEntries(property.features);
 
     return (
-      <Card
-        className="bg-transparent shadow-none hover:shadow-none cursor-pointer group"
-        onClick={handleCardClick}
-      >
-        {/* IMAGE: rounded, landscape */}
+      <Card className="bg-transparent shadow-none cursor-pointer group">
+        {/* Image */}
         <div className="relative w-full rounded-2xl overflow-hidden aspect-[4/3] md:aspect-[5/4]">
           <img
-            src={(Array.isArray(property.images) ? property.images[0] : undefined) || "/placeholder-property.jpg"}
+            src={firstImage}
             alt={property.title}
             className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-[1.03]"
             onError={(e) => {
               (e.currentTarget as HTMLImageElement).src = "/placeholder-property.jpg";
             }}
           />
-
-          <IconBadges p={property} />
-
-          <div className="absolute right-3 top-3" onClick={handleWishlistClick}>
-            <WishlistButton isInWishlist={Boolean(wishlistIds?.has(property.id))} onToggle={() => {}} />
-          </div>
-
+          {/* Price unit chip */}
           <div className="absolute bottom-3 right-3">
             <Badge variant="secondary" className="bg-background/80 text-foreground text-xs">
               {property.price_type === "daily"
@@ -316,10 +281,10 @@ const ShortStay = () => {
           </div>
         </div>
 
-        {/* TEXT: airier spacing */}
+        {/* Text */}
         <CardHeader className="px-0 pb-0 pt-3">
           <CardTitle className="text-[15px] sm:text-base font-semibold leading-6 line-clamp-1">
-            {translatedText || property.title}
+            {property.title}
           </CardTitle>
           <div className="mt-0.5 flex items-center text-muted-foreground">
             <MapPin className="h-4 w-4 mr-1 flex-shrink-0" />
@@ -367,7 +332,10 @@ const ShortStay = () => {
                 .map(([key]) => {
                   const IconEl = getFeatureIcon(key);
                   return IconEl ? (
-                    <div key={key} className="flex items-center text-muted-foreground text-xs flex-shrink-0">
+                    <div
+                      key={key}
+                      className="flex items-center text-muted-foreground text-xs flex-shrink-0"
+                    >
                       {IconEl}
                     </div>
                   ) : null;
@@ -399,7 +367,9 @@ const ShortStay = () => {
                 onClick={() => handleAmenityClick(a.key)}
                 className={[
                   "border rounded-full px-3 py-1.5 text-sm whitespace-nowrap",
-                  selectedAmenity === a.key ? "bg-primary text-primary-foreground border-primary" : "bg-background"
+                  selectedAmenity === a.key
+                    ? "bg-primary text-primary-foreground border-primary"
+                    : "bg-background",
                 ].join(" ")}
               >
                 {a.label}
@@ -417,13 +387,21 @@ const ShortStay = () => {
           </div>
         </section>
 
-        {/* Map + list */}
+        {/* Map + list wrapped in Error Boundaries */}
         <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
             <div className="lg:col-span-4">
-              <div className="sticky top-24 h-[70vh] rounded-2xl overflow-hidden border bg-background">
-                <InteractivePropertyMarkerMap properties={filteredProperties ?? []} />
-              </div>
+              <LocalErrorBoundary
+                fallback={
+                  <div className="sticky top-24 h-[70vh] rounded-2xl overflow-hidden border bg-background grid place-items-center text-sm text-muted-foreground">
+                    Map unavailable
+                  </div>
+                }
+              >
+                <div className="sticky top-24 h-[70vh] rounded-2xl overflow-hidden border bg-background">
+                  <InteractivePropertyMarkerMap properties={filteredProperties || []} />
+                </div>
+              </LocalErrorBoundary>
             </div>
 
             <div className="lg:col-span-8">
@@ -480,25 +458,33 @@ const ShortStay = () => {
                 />
               </div>
 
-              {isLoading ? (
-                <div className="flex items-center justify-center py-12">
-                  <Loader2 className="h-8 w-8 animate-spin" />
-                  <span className="ml-2">{t("loading")}</span>
-                </div>
-              ) : filteredProperties.length === 0 ? (
-                <div className="text-center py-12">
-                  <div className="text-lg font-semibold text-foreground mb-2">
-                    {t("noPropertiesFound")}
+              <LocalErrorBoundary
+                fallback={
+                  <div className="rounded-xl border p-6 text-sm text-muted-foreground">
+                    Listings failed to render.
                   </div>
-                  <div className="text-muted-foreground">{t("Adjust Filters Or Check Later")}</div>
-                </div>
-              ) : (
-                <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4 lg:gap-5">
-                  {filteredProperties.map((property) => (
-                    <PropertyCard key={property.id} property={property} />
-                  ))}
-                </div>
-              )}
+                }
+              >
+                {isLoading ? (
+                  <div className="flex items-center justify-center py-12">
+                    <Loader2 className="h-8 w-8 animate-spin" />
+                    <span className="ml-2">{t("loading")}</span>
+                  </div>
+                ) : filteredProperties.length === 0 ? (
+                  <div className="text-center py-12">
+                    <div className="text-lg font-semibold text-foreground mb-2">
+                      {t("noPropertiesFound")}
+                    </div>
+                    <div className="text-muted-foreground">{t("Adjust Filters Or Check Later")}</div>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4 lg:gap-5">
+                    {filteredProperties.map((property) => (
+                      <PropertyCard key={property.id} property={property} />
+                    ))}
+                  </div>
+                )}
+              </LocalErrorBoundary>
             </div>
           </div>
         </section>
