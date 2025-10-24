@@ -87,7 +87,9 @@ const ShortStay = () => {
     const filterType = (urlParams.get("filterType") || "").trim();
     const filterValue = (urlParams.get("filterValue") || "").trim();
 
-    if (location) setCurrentCity(location);
+    if (location) {
+      setCurrentCity(location);
+    }
 
     let filtered = [...properties];
 
@@ -186,7 +188,7 @@ const ShortStay = () => {
     navigate(`/short-stay?${params.toString()}`);
   };
 
-  // Only show icons we actually support; no generic coffee fallback
+  // Only render supported icons (no random fallback)
   const getFeatureIcon = (feature: string) => {
     switch (feature) {
       case "wifi":
@@ -221,7 +223,7 @@ const ShortStay = () => {
         className="h-full flex flex-col overflow-hidden hover:shadow-lg transition-shadow duration-300 cursor-pointer group"
         onClick={handleCardClick}
       >
-        {/* Square media like Airbnb */}
+        {/* Square media */}
         <div className="relative w-full aspect-square overflow-hidden">
           <img
             src={property.images?.[0] || "/placeholder-property.jpg"}
@@ -250,7 +252,7 @@ const ShortStay = () => {
           </div>
         </div>
 
-        <CardHeader className="pb-2">
+        <CardHeader className="pb-1">
           <CardTitle className="text-base sm:text-lg font-semibold text-foreground line-clamp-2">
             {translatedTitle || property.title}
           </CardTitle>
@@ -265,13 +267,13 @@ const ShortStay = () => {
         </CardHeader>
 
         <CardContent className="pt-0 flex-1 flex flex-col">
-          <div className="mb-3">
-            <div className="text-xl sm:text-2xl font-bold text-primary">
+          <div className="mb-2">
+            <div className="text-xl md:text-2xl font-bold text-primary">
               {formatPrice(num(property.price), property.price_type, property.price_currency)}
             </div>
           </div>
 
-          <div className="flex items-center gap-3 sm:gap-4 text-muted-foreground text-xs sm:text-sm mb-3 flex-wrap">
+          <div className="flex items-center gap-3 sm:gap-4 text-muted-foreground text-xs sm:text-sm mb-2 flex-wrap">
             {property.bedrooms && (
               <div className="flex items-center whitespace-nowrap">
                 <Bed className="h-4 w-4 mr-1" />
@@ -309,7 +311,7 @@ const ShortStay = () => {
           )}
 
           <Button
-            className="mt-auto w-full h-11 text-sm sm:h-10"
+            className="mt-auto w-full h-10 text-sm"
             onClick={(e) => {
               e.stopPropagation();
               handleCardClick();
@@ -332,18 +334,18 @@ const ShortStay = () => {
         {/* Popular Amenities Section */}
         <PopularAmenities onAmenityClick={handleAmenityClick} selectedAmenity={selectedAmenity} />
 
-        {/* MAP + LIST side-by-side, perfectly aligned */}
+        {/* MAP + LIST side-by-side, aligned */}
         <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-            {/* Left: Sticky Map */}
-            <div className="lg:col-span-5">
-              <div className="sticky top-24 h-[calc(100vh-8rem)] rounded-xl overflow-hidden border bg-background">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+            {/* Left: Sticky Map (narrower) */}
+            <div className="lg:col-span-4">
+              <div className="sticky top-24 h-[70vh] rounded-xl overflow-hidden border bg-background">
                 <InteractivePropertyMarkerMap properties={filteredProperties} />
               </div>
             </div>
 
-            {/* Right: Listings */}
-            <div className="lg:col-span-7">
+            {/* Right: Listings (wider) */}
+            <div className="lg:col-span-8">
               {/* Header + Filters */}
               <div className="flex items-center justify-between mb-6 gap-4 flex-wrap">
                 <h2 className="text-2xl font-bold">
@@ -400,7 +402,7 @@ const ShortStay = () => {
                 />
               </div>
 
-              {/* Properties Grid — 4 cards per row on xl */}
+              {/* Properties Grid — equal height tiles, 4 per row on xl */}
               {isLoading ? (
                 <div className="flex items-center justify-center py-12">
                   <Loader2 className="h-8 w-8 animate-spin" />
@@ -414,7 +416,7 @@ const ShortStay = () => {
                   <div className="text-muted-foreground">{t("Adjust Filters Or Check Later")}</div>
                 </div>
               ) : (
-                <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4 lg:gap-6">
+                <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4 lg:gap-5 items-stretch">
                   {filteredProperties.map((property) => (
                     <PropertyCard key={property.id} property={property} />
                   ))}
@@ -435,6 +437,7 @@ const ShortStay = () => {
 
         <AIChatBox />
       </main>
+
       <Footer />
     </div>
   );
