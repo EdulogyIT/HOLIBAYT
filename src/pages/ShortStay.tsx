@@ -10,9 +10,6 @@ import {
   Bath,
   Square,
   Loader2,
-  Wifi,
-  Car,
-  Waves,
   ShieldCheck,
 } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -43,7 +40,6 @@ interface Property {
   area: string | number;
   images: string[] | null;
   property_type: string;
-  features?: unknown;
   is_verified?: boolean;
 }
 
@@ -150,6 +146,7 @@ const ShortStay = () => {
         className="cursor-pointer group"
         onClick={() => navigate(`/property/${property.id}`)}
       >
+        {/* Image box only */}
         <Card className="bg-transparent shadow-none border-0">
           <div className="relative w-full rounded-2xl overflow-hidden aspect-[4/3] md:aspect-[5/4]">
             <img
@@ -161,6 +158,7 @@ const ShortStay = () => {
                   "/placeholder-property.jpg";
               }}
             />
+            {/* Verified icon only */}
             {property.is_verified && (
               <span
                 title="Verified host"
@@ -169,6 +167,7 @@ const ShortStay = () => {
                 <ShieldCheck className="h-4 w-4" />
               </span>
             )}
+            {/* Price badge */}
             <div className="absolute bottom-3 right-3">
               <Badge variant="secondary" className="bg-background/80 text-foreground text-xs">
                 {property.price_type === "daily"
@@ -180,6 +179,8 @@ const ShortStay = () => {
             </div>
           </div>
         </Card>
+
+        {/* Info outside box */}
         <div className="mt-2">
           <div className="text-[15px] sm:text-base font-semibold line-clamp-1">
             {property.title}
@@ -225,17 +226,33 @@ const ShortStay = () => {
         <ShortStayHeroSearch onSearch={() => {}} />
 
         {/* Map + list */}
-        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
+        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-            {/* Map aligned smaller */}
+            {/* Map column */}
             <div className="lg:col-span-4">
-              <LocalErrorBoundary>
-                <div className="sticky top-28 h-[60vh] rounded-2xl overflow-hidden border bg-background">
-                  <InteractivePropertyMarkerMap properties={filteredProperties || []} />
+              <LocalErrorBoundary
+                fallback={
+                  <div className="sticky top-28 rounded-2xl ring-1 ring-border bg-background grid place-items-center h-[520px] md:h-[560px] xl:h-[600px]">
+                    Map unavailable
+                  </div>
+                }
+              >
+                <div className="sticky top-28">
+                  <div className="relative rounded-2xl overflow-hidden ring-1 ring-border">
+                    <div className="absolute inset-0">
+                      <InteractivePropertyMarkerMap
+                        properties={filteredProperties || []}
+                        className="h-full w-full"
+                      />
+                    </div>
+                    {/* Spacer to enforce height */}
+                    <div className="invisible select-none h-[520px] md:h-[560px] xl:h-[600px]" />
+                  </div>
                 </div>
               </LocalErrorBoundary>
             </div>
 
+            {/* Cards */}
             <div className="lg:col-span-8">
               <div className="flex items-center justify-between mb-6 gap-4 flex-wrap">
                 <h2 className="text-2xl font-bold">
