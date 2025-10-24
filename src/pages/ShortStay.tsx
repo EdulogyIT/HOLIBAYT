@@ -191,6 +191,7 @@ const ShortStay = () => {
     navigate(`/short-stay?${params.toString()}`);
   };
 
+  // Only show icons we explicitly support (no coffee maker)
   const getFeatureIcon = (feature: string) => {
     switch (feature) {
       case "wifi":
@@ -210,7 +211,7 @@ const ShortStay = () => {
     }
   };
 
-  /** Card — equal height; CTA pinned bottom; image 5/4 (chunky) */
+  /** Equal-height card with button pinned to bottom; image aspect 5/4 */
   const PropertyCard = ({ property }: { property: Property }) => {
     const { translatedText: translatedTitle } = usePropertyTranslation(
       property.title,
@@ -257,7 +258,6 @@ const ShortStay = () => {
           </div>
         </div>
 
-        {/* Content wrapper grows; CTA pinned with mt-auto */}
         <div className="flex flex-1 flex-col">
           <CardHeader className="pb-1">
             <CardTitle className="text-[15px] font-semibold text-foreground line-clamp-1">
@@ -335,15 +335,16 @@ const ShortStay = () => {
   return (
     <div className="min-h-screen bg-background">
       <Navigation />
-
       <main className="pt-20">
         <ShortStayHeroSearch onSearch={handleSearch} />
+
+        {/* Rolling Holibayt amenities */}
         <PopularAmenities onAmenityClick={handleAmenityClick} selectedAmenity={selectedAmenity} />
 
         {/* Wider container + tighter paddings */}
         <div className="max-w-[1440px] mx-auto px-3 sm:px-4 lg:px-6 py-6">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-            {/* LEFT: slightly smaller map, closer to edge */}
+            {/* LEFT: smaller map, closer to edge */}
             <div className="lg:col-span-1 lg:max-w-[400px]">
               <div className="lg:sticky lg:top-24">
                 <div className="rounded-2xl border shadow-sm overflow-hidden">
@@ -354,7 +355,7 @@ const ShortStay = () => {
               </div>
             </div>
 
-            {/* RIGHT: Filters + Grid */}
+            {/* RIGHT: Filters + equal-height grid */}
             <div className="lg:col-span-2">
               <div className="flex items-center justify-between mb-4 gap-3 flex-wrap">
                 <h2 className="text-2xl font-bold">
@@ -409,7 +410,6 @@ const ShortStay = () => {
                 />
               </div>
 
-              {/* Equal-height cards in a tight 4-up grid */}
               {isLoading ? (
                 <div className="flex items-center justify-center py-12">
                   <Loader2 className="h-8 w-8 animate-spin" />
@@ -438,7 +438,6 @@ const ShortStay = () => {
         <CitiesSection />
         <AIChatBox />
       </main>
-
       <Footer />
     </div>
   );
