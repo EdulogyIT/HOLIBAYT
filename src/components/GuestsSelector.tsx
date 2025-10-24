@@ -89,7 +89,10 @@ export const GuestsSelector = ({ value, onChange }: GuestsSelectorProps) => {
                   variant="outline"
                   size="icon"
                   className="h-8 w-8 rounded-full"
-                  onClick={() => updateCount(type.key, -1)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    updateCount(type.key, -1);
+                  }}
                   disabled={value[type.key] <= type.min}
                 >
                   <Minus className="h-4 w-4" />
@@ -99,7 +102,10 @@ export const GuestsSelector = ({ value, onChange }: GuestsSelectorProps) => {
                   variant="outline"
                   size="icon"
                   className="h-8 w-8 rounded-full"
-                  onClick={() => updateCount(type.key, 1)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    updateCount(type.key, 1);
+                  }}
                   disabled={type.key === 'adults' && value[type.key] >= 16}
                 >
                   <Plus className="h-4 w-4" />
