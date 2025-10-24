@@ -5,7 +5,21 @@ import ShortStayHeroSearch from "@/components/ShortStayHeroSearch";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { MapPin, Bed, Bath, Square, Loader2, Wifi, Car, Waves } from "lucide-react";
+import {
+  MapPin,
+  Bed,
+  Bath,
+  Square,
+  Loader2,
+  Wifi,
+  Car,
+  Waves,
+  ShieldCheck,
+  Zap,
+  CreditCard,
+  Flame,
+  Sparkles,
+} from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useCurrency } from "@/contexts/CurrencyContext";
@@ -17,10 +31,9 @@ import { useScrollToTop } from "@/hooks/useScrollToTop";
 import { supabase } from "@/integrations/supabase/client";
 import { useWishlist } from "@/hooks/useWishlist";
 import { WishlistButton } from "@/components/WishlistButton";
-import { PropertyBadges } from "@/components/PropertyBadges";
+// import { PropertyBadges } from "@/components/PropertyBadges"; // Not needed now (we use icon-only badges)
 import { usePropertyTranslation } from "@/hooks/usePropertyTranslation";
 import { TopRatedStays } from "@/components/TopRatedStays";
-// import { PopularAmenities } from "@/components/PopularAmenities"; // TEMP: disabled to avoid crashes
 import { InteractivePropertyMarkerMap } from "@/components/InteractivePropertyMarkerMap";
 import { DestinationsToExplore } from "@/components/DestinationsToExplore";
 import CitiesSection from "@/components/CitiesSection";
@@ -38,7 +51,6 @@ interface Property {
   area: string | number;
   images: string[];
   property_type: string;
-  // IMPORTANT: make features a dictionary when present
   features?: unknown;
   description?: string;
   commission_rate?: number;
@@ -58,13 +70,9 @@ const num = (v: unknown) => {
   return Number.isFinite(n) ? n : 0;
 };
 
-// Safe helper: turn any "features" field into entries OR empty array
+// Safe helper for features
 const safeFeatureEntries = (features: unknown): [string, unknown][] => {
-  if (
-    features &&
-    typeof features === "object" &&
-    !Array.isArray(features)
-  ) {
+  if (features && typeof features === "object" && !Array.isArray(features)) {
     try {
       return Object.entries(features as Record<string, unknown>);
     } catch {
@@ -84,7 +92,7 @@ const ShortStay = () => {
   const [properties, setProperties] = useState<Property[]>([]);
   const [filteredProperties, setFilteredProperties] = useState<Property[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [currentCity, setCurrentCity] = useState<string>("Constantine");
+  const [currentCity, setCurrentCity] = useState<string>("Constantine"); // kept for filters, but not shown in header
   const [selectedAmenity, setSelectedAmenity] = useState<string>("");
 
   useScrollToTop();
@@ -119,8 +127,7 @@ const ShortStay = () => {
     if (filterType && filterValue) {
       if (filterType === "feature") {
         filtered = filtered.filter((p) => {
-          const entries = safeFeatureEntries(p.features);
-          const dict = Object.fromEntries(entries) as Record<string, unknown>;
+          const dict = Object.fromEntries(safeFeatureEntries(p.features)) as Record<string, unknown>;
           return Boolean(dict[filterValue]);
         });
       } else if (filterType === "pets") {
@@ -191,8 +198,7 @@ const ShortStay = () => {
     } else {
       setSelectedAmenity(amenityKey);
       const filtered = properties.filter((p) => {
-        const entries = safeFeatureEntries(p.features);
-        const dict = Object.fromEntries(entries) as Record<string, unknown>;
+        const dict = Object.fromEntries(safeFeatureEntries(p.features)) as Record<string, unknown>;
         return Boolean(dict[amenityKey]);
       });
       setFilteredProperties(filtered);
@@ -219,6 +225,34 @@ const ShortStay = () => {
     }
   };
 
+  // Icon-only badges shown on the image
+  const IconBadges = ({ p }: { p: Property }) => (
+    <div className="absolute left-3 top-3 flex items-center gap-1.5">
+      {p.is_verified && (
+        <span title="Verified host" className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-background/85 backdrop-blur border">
+          <ShieldCheck className="h-4 w-4" />
+        </span>
+      )}
+      {/* Instant booking (always true per your earlier UI) */}
+      <span title="Instant booking" className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-background/85 backdrop-blur border">
+        <Zap className="h-4 w-4" />
+      </span>
+      <span title="Holibayt Pay" className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-background/85 backdrop-blur border">
+        <CreditCard className="h-4 w-4" />
+      </span>
+      {p.is_hot_deal && (
+        <span title="Hot deal" className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-background/85 backdrop-blur border">
+          <Flame className="h-4 w-4" />
+        </span>
+      )}
+      {p.is_new && (
+        <span title="New" className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-background/85 backdrop-blur border">
+          <Sparkles className="h-4 w-4" />
+        </span>
+      )}
+    </div>
+  );
+
   const PropertyCard = ({ property }: { property: Property }) => {
     const { translatedText: translatedTitle } = usePropertyTranslation(
       property.title,
@@ -238,11 +272,8 @@ const ShortStay = () => {
     const featureEntries = safeFeatureEntries(property.features);
 
     return (
-      <Card
-        className="bg-transparent shadow-none hover:shadow-none cursor-pointer group"
-        onClick={handleCardClick}
-      >
-        {/* IMAGE TILE — landscape, rounded, overlays */}
+      <Card className="bg-transparent shadow-none hover:shadow-none cursor-pointer group" onClick={handleCardClick}>
+        {/* IMAGE: rounded, landscape */}
         <div className="relative w-full rounded-2xl overflow-hidden aspect-[4/3] md:aspect-[5/4]">
           <img
             src={property.images?.[0] || "/placeholder-property.jpg"}
@@ -253,24 +284,12 @@ const ShortStay = () => {
             }}
           />
 
-          {/* Badges (top-left) */}
-          <div className="absolute left-3 top-3 flex flex-col gap-2">
-            <PropertyBadges
-              isHotDeal={property.is_hot_deal}
-              isVerified={property.is_verified}
-              isNew={property.is_new}
-              showVerifiedHost={true}
-              showInstantBooking={true}
-              size="sm"
-            />
-          </div>
+          <IconBadges p={property} />
 
-          {/* Wishlist heart (top-right) */}
           <div className="absolute right-3 top-3" onClick={handleWishlistClick}>
             <WishlistButton isInWishlist={Boolean(wishlistIds?.has(property.id))} onToggle={() => {}} />
           </div>
 
-          {/* Price unit chip (bottom-right) */}
           <div className="absolute bottom-3 right-3">
             <Badge variant="secondary" className="bg-background/80 text-foreground text-xs">
               {property.price_type === "daily"
@@ -282,14 +301,14 @@ const ShortStay = () => {
           </div>
         </div>
 
-        {/* TEXT BLOCK — title, location, meta */}
-        <CardHeader className="px-0 pb-1 pt-3">
-          <CardTitle className="text-base sm:text-lg font-semibold line-clamp-2">
+        {/* TEXT: airier spacing */}
+        <CardHeader className="px-0 pb-0 pt-3">
+          <CardTitle className="text-[15px] sm:text-base font-semibold leading-6 line-clamp-1">
             {translatedTitle || property.title}
           </CardTitle>
-          <div className="flex items-center text-muted-foreground">
+          <div className="mt-0.5 flex items-center text-muted-foreground">
             <MapPin className="h-4 w-4 mr-1 flex-shrink-0" />
-            <span className="text-sm line-clamp-1">
+            <span className="text-[13px] leading-5 line-clamp-1">
               {(property.city || "").trim()}
               {property.city && property.location ? ", " : ""}
               {(property.location || "").trim()}
@@ -297,14 +316,14 @@ const ShortStay = () => {
           </div>
         </CardHeader>
 
-        <CardContent className="px-0 pt-0">
-          <div className="mb-1">
-            <div className="text-lg md:text-xl font-bold">
+        <CardContent className="px-0 pt-2">
+          <div className="mb-2">
+            <div className="text-lg md:text-xl font-bold leading-6">
               {formatPrice(num(property.price), property.price_type, property.price_currency)}
             </div>
           </div>
 
-          <div className="flex items-center gap-3 text-muted-foreground text-xs sm:text-sm">
+          <div className="flex items-center gap-4 text-muted-foreground text-xs sm:text-[13px] leading-5">
             {property.bedrooms && (
               <div className="flex items-center whitespace-nowrap">
                 <Bed className="h-4 w-4 mr-1" />
@@ -350,62 +369,52 @@ const ShortStay = () => {
       <main className="pt-20">
         <ShortStayHeroSearch onSearch={handleSearch} />
 
-        {/* Amenity Filter Bar */}
-        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8 mb-6">
-          <div className="bg-card rounded-xl p-4 shadow-sm border">
-            <div className="flex gap-3 overflow-x-auto scrollbar-hide py-1">
-              {[
-                { key: "swimmingPool", labelKey: "pool" },
-                { key: "wifi", labelKey: "wifi" },
-                { key: "parking", labelKey: "parking" },
-              ].map((a) => (
-                <button
-                  key={a.key}
-                  onClick={() => handleAmenityClick(a.key)}
-                  className={[
-                    "border rounded-full px-4 py-2 text-sm whitespace-nowrap transition-all",
-                    selectedAmenity === a.key 
-                      ? "bg-primary text-primary-foreground border-primary shadow-sm" 
-                      : "bg-background hover:border-primary/50"
-                  ].join(" ")}
-                >
-                  {t(a.labelKey)}
-                </button>
-              ))}
-              {selectedAmenity && (
-                <button
-                  onClick={() => handleAmenityClick(selectedAmenity)}
-                  className="ml-auto text-sm underline text-muted-foreground hover:text-foreground"
-                >
-                  {t("clearFilters")}
-                </button>
-              )}
-            </div>
+        {/* Simple amenity chips (safe) */}
+        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
+          <div className="flex gap-2 overflow-x-auto no-scrollbar py-2">
+            {[
+              { key: "swimmingPool", label: "Swimming Pool" },
+              { key: "wifi", label: "Wi-Fi" },
+              { key: "parking", label: "Parking" },
+            ].map((a) => (
+              <button
+                key={a.key}
+                onClick={() => handleAmenityClick(a.key)}
+                className={[
+                  "border rounded-full px-3 py-1.5 text-sm whitespace-nowrap",
+                  selectedAmenity === a.key ? "bg-primary text-primary-foreground border-primary" : "bg-background"
+                ].join(" ")}
+              >
+                {a.label}
+              </button>
+            ))}
+            {selectedAmenity && (
+              <button
+                onClick={() => setSelectedAmenity("")}
+                className="ml-auto text-sm underline"
+                title="Clear filter"
+              >
+                Clear
+              </button>
+            )}
           </div>
         </section>
 
-        {/* MAP + LIST side-by-side, aligned */}
-        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8">
-          <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 items-start">
-            {/* Map (40% width, sticky) */}
-            <div className="lg:col-span-2">
-              <div className="sticky top-24 h-[75vh] rounded-2xl overflow-hidden border bg-background shadow-sm">
+        {/* Map + list */}
+        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+            <div className="lg:col-span-4">
+              <div className="sticky top-24 h-[70vh] rounded-2xl overflow-hidden border bg-background">
                 <InteractivePropertyMarkerMap properties={filteredProperties} />
               </div>
             </div>
 
-            {/* Listings (60% width) */}
-            <div className="lg:col-span-3">
-              <div className="flex items-center justify-between mb-8 gap-4 flex-wrap">
-                <div>
-                  <h2 className="text-3xl font-bold mb-1">
-                    {filteredProperties.length} {t("properties")}
-                    {currentCity ? ` ${t("in")} ${currentCity}` : ""}
-                  </h2>
-                  <p className="text-sm text-muted-foreground">
-                    {t("discoverYourPerfectStay")}
-                  </p>
-                </div>
+            <div className="lg:col-span-8">
+              {/* Header — no city suffix */}
+              <div className="flex items-center justify-between mb-6 gap-4 flex-wrap">
+                <h2 className="text-2xl font-bold">
+                  {filteredProperties.length} {t("properties") || "properties"}
+                </h2>
 
                 <PropertyFilters
                   onFilterChange={(filters) => {
@@ -444,7 +453,7 @@ const ShortStay = () => {
                       const maxArea = filters.maxArea ? num(filters.maxArea) : Infinity;
                       filtered = filtered.filter((p) => {
                         const area = num(p.area);
-                        return area >= minArea && area <= maxArea;
+                        return area >= minArea && <= maxArea;
                       });
                     }
 
@@ -455,32 +464,19 @@ const ShortStay = () => {
               </div>
 
               {isLoading ? (
-                <div className="flex flex-col items-center justify-center py-20">
-                  <Loader2 className="h-10 w-10 animate-spin text-primary mb-4" />
-                  <span className="text-lg text-muted-foreground">{t("loading")}</span>
+                <div className="flex items-center justify-center py-12">
+                  <Loader2 className="h-8 w-8 animate-spin" />
+                  <span className="ml-2">{t("loading")}</span>
                 </div>
               ) : filteredProperties.length === 0 ? (
-                <div className="text-center py-20 px-4">
-                  <div className="max-w-md mx-auto">
-                    <div className="text-xl font-semibold text-foreground mb-3">
-                      {t("noPropertiesFound")}
-                    </div>
-                    <div className="text-muted-foreground mb-6">
-                      {t("tryAdjustingFilters")}
-                    </div>
-                    <Button 
-                      variant="outline" 
-                      onClick={() => {
-                        setFilteredProperties(properties);
-                        setSelectedAmenity("");
-                      }}
-                    >
-                      {t("clearAllFilters")}
-                    </Button>
+                <div className="text-center py-12">
+                  <div className="text-lg font-semibold text-foreground mb-2">
+                    {t("noPropertiesFound")}
                   </div>
+                  <div className="text-muted-foreground">{t("Adjust Filters Or Check Later")}</div>
                 </div>
               ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4 lg:gap-5">
                   {filteredProperties.map((property) => (
                     <PropertyCard key={property.id} property={property} />
                   ))}
