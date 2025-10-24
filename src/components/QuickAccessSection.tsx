@@ -208,59 +208,104 @@ const RentWorkflowDiagram = () => {
 /** ---------------------------------------------------------
  *  Short Stay Workflow
  * -------------------------------------------------------- */
+/** ---------------------------------------------------------
+ *  Short Stay Workflow — matches Buy & Rent structure
+ * -------------------------------------------------------- */
 const ShortStayWorkflowDiagram = () => {
-  const { t } = useLanguage();
+  const top = [
+    { icon: Search, title: "Find a Verified Stay" },
+    { icon: CreditCard, title: "Book Safely via Holibayt Pay™" },
+    { icon: ShieldCheck, title: "Stay Protected with Holibayt Protect™" },
+    { icon: HandCoins, title: "Payout Released" },
+  ];
+
+  const bars = [
+    { label: "Trust Layer", hex: "#0f766e", textClass: "text-white" },
+    { label: "Security Layer", hex: "#115e59", textClass: "text-white" },
+    { label: "Protection Layer", hex: "#f59e0b", textClass: "text-slate-900" },
+    { label: "Transparency Layer", hex: "#94a3b8", textClass: "text-slate-900" },
+  ];
+
+  const bullets = [
+    [
+      "All listings, hosts, and guests verified through Holibayt Verify™",
+      "Identity & property validation (KYC + ownership check)",
+    ],
+    [
+      "Guest payment locked in Holibayt Pay™ escrow until check-in",
+      "Owner commitment secured—no last-minute cancellations",
+      "Flexible or strict cancellation policies applied automatically",
+    ],
+    [
+      "Guest deposit and property covered under Holibayt Protect™",
+      "Assistance and mediation available 24/7",
+      "Holibayt Insurance™ covers damages or unforeseen events",
+    ],
+    [
+      "Payment released to host after successful stay confirmation",
+      "Both parties rated and verified again for future stays",
+    ],
+  ];
 
   return (
-    <div className="space-y-4">
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="bg-card border border-border p-4 rounded-lg text-center">
-          <Search className="h-10 w-10 text-primary mx-auto mb-2" />
-          <h4 className="font-semibold text-sm mb-1">{t('workflow.shortStay.step1.title')}</h4>
-          <p className="text-xs text-muted-foreground">{t('workflow.shortStay.step1.detail')}</p>
-        </div>
-
-        <div className="bg-[#1a5f5f] text-white p-4 rounded-lg text-center border-2 border-[#1a5f5f]">
-          <CreditCard className="h-10 w-10 mx-auto mb-2" />
-          <h4 className="font-semibold text-sm mb-2">{t('workflow.shortStay.step2.title')}</h4>
-          <div className="space-y-2 text-xs">
-            <p>{t('workflow.shortStay.step2.detail1')}</p>
-            <Plus className="h-4 w-4 mx-auto" />
-            <p>{t('workflow.shortStay.step2.detail2')}</p>
-          </div>
-        </div>
-
-        <div className="bg-card border border-border p-4 rounded-lg text-center">
-          <HandCoins className="h-10 w-10 text-primary mx-auto mb-2" />
-          <h4 className="font-semibold text-sm mb-1">{t('workflow.shortStay.step3.title')}</h4>
-          <p className="text-xs text-muted-foreground">{t('workflow.shortStay.step3.detail')}</p>
-        </div>
+    <div className="space-y-8 md:space-y-10 mx-auto max-w-[34rem] md:max-w-none">
+      <div className="text-center px-2">
+        <h3 className="text-2xl sm:text-3xl md:text-4xl font-playfair font-bold text-foreground leading-tight">
+          Short Stay — Verified. Secured. Protected.
+        </h3>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-        <div className="bg-accent/10 border border-accent p-4 rounded-lg">
-          <div className="flex items-start gap-3">
-            <Shield className="h-8 w-8 text-accent flex-shrink-0 mt-1" />
-            <div>
-              <h4 className="font-semibold text-sm mb-1">{t('workflow.shortStay.protect1.title')}</h4>
-              <p className="text-xs text-muted-foreground">{t('workflow.shortStay.protect1.detail')}</p>
+      {/* Top row: icons + titles */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8 px-2">
+        {top.map((c, i) => {
+          const Icon = c.icon;
+          return (
+            <div key={i} className="flex flex-col items-center gap-3 text-center">
+              <Icon className="w-9 h-9 md:w-12 md:h-12 text-slate-800" />
+              <h4 className="font-playfair font-semibold text-sm md:text-lg text-slate-900">
+                {c.title}
+              </h4>
             </div>
-          </div>
-        </div>
+          );
+        })}
+      </div>
 
-        <div className="bg-accent/10 border border-accent p-4 rounded-lg">
-          <div className="flex items-start gap-3">
-            <Shield className="h-8 w-8 text-accent flex-shrink-0 mt-1" />
-            <div>
-              <h4 className="font-semibold text-sm mb-1">{t('workflow.shortStay.protect2.title')}</h4>
-              <p className="text-xs text-muted-foreground">{t('workflow.shortStay.protect2.detail')}</p>
+      {/* Colored arrow bars */}
+      <div className="hidden md:grid grid-cols-4 gap-6 items-center px-2">
+        {bars.map((b, i) => (
+          <div key={i} className="flex items-center">
+            <div
+              className={`px-4 py-2 rounded-md font-semibold ${b.textClass}`}
+              style={{ backgroundColor: b.hex }}
+            >
+              {b.label}
             </div>
+            {i < bars.length - 1 && (
+              <svg width="22" height="22" viewBox="0 0 24 24" style={{ color: b.hex }} className="-ml-1">
+                <path d="M0 0 L20 12 L0 24 Z" fill="currentColor" />
+              </svg>
+            )}
           </div>
-        </div>
+        ))}
+      </div>
+
+      {/* Bullet rows */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 md:gap-8 px-2">
+        {bullets.map((list, i) => (
+          <ul
+            key={i}
+            className="space-y-2 text-[0.95rem] md:text-sm text-slate-700 list-disc pl-5 md:pl-0 md:list-none"
+          >
+            {list.map((line, j) => (
+              <li key={j}>{line}</li>
+            ))}
+          </ul>
+        ))}
       </div>
     </div>
   );
 };
+
 
 /** ---------------------------------------------------------
  *  QuickAccessSection Tabs wrapper
