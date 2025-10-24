@@ -4,7 +4,6 @@ import Footer from "@/components/Footer";
 import ShortStayHeroSearch from "@/components/ShortStayHeroSearch";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import {
   MapPin,
   Bed,
@@ -31,7 +30,6 @@ import { useScrollToTop } from "@/hooks/useScrollToTop";
 import { supabase } from "@/integrations/supabase/client";
 import { useWishlist } from "@/hooks/useWishlist";
 import { WishlistButton } from "@/components/WishlistButton";
-// import { PropertyBadges } from "@/components/PropertyBadges"; // Not needed now (we use icon-only badges)
 import { usePropertyTranslation } from "@/hooks/usePropertyTranslation";
 import { TopRatedStays } from "@/components/TopRatedStays";
 import { InteractivePropertyMarkerMap } from "@/components/InteractivePropertyMarkerMap";
@@ -92,7 +90,7 @@ const ShortStay = () => {
   const [properties, setProperties] = useState<Property[]>([]);
   const [filteredProperties, setFilteredProperties] = useState<Property[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [currentCity, setCurrentCity] = useState<string>("Constantine"); // kept for filters, but not shown in header
+  const [currentCity, setCurrentCity] = useState<string>("Constantine"); // kept for filters, not shown in header
   const [selectedAmenity, setSelectedAmenity] = useState<string>("");
 
   useScrollToTop();
@@ -233,7 +231,6 @@ const ShortStay = () => {
           <ShieldCheck className="h-4 w-4" />
         </span>
       )}
-      {/* Instant booking (always true per your earlier UI) */}
       <span title="Instant booking" className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-background/85 backdrop-blur border">
         <Zap className="h-4 w-4" />
       </span>
@@ -304,7 +301,7 @@ const ShortStay = () => {
         {/* TEXT: airier spacing */}
         <CardHeader className="px-0 pb-0 pt-3">
           <CardTitle className="text-[15px] sm:text-base font-semibold leading-6 line-clamp-1">
-            {translatedTitle || property.title}
+            {translatedText || property.title}
           </CardTitle>
           <div className="mt-0.5 flex items-center text-muted-foreground">
             <MapPin className="h-4 w-4 mr-1 flex-shrink-0" />
@@ -453,7 +450,7 @@ const ShortStay = () => {
                       const maxArea = filters.maxArea ? num(filters.maxArea) : Infinity;
                       filtered = filtered.filter((p) => {
                         const area = num(p.area);
-                        return area >= minArea && <= maxArea;
+                        return area >= minArea && area <= maxArea; // ✅ fixed syntax
                       });
                     }
 
