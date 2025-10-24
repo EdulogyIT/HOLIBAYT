@@ -350,54 +350,62 @@ const ShortStay = () => {
       <main className="pt-20">
         <ShortStayHeroSearch onSearch={handleSearch} />
 
-        {/* SIMPLE, SAFE AMENITY BAR (temporary instead of PopularAmenities) */}
-        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
-          <div className="flex gap-2 overflow-x-auto no-scrollbar py-2">
-            {[
-              { key: "swimmingPool", label: "Swimming Pool" },
-              { key: "wifi", label: "Wi-Fi" },
-              { key: "parking", label: "Parking" },
-            ].map((a) => (
-              <button
-                key={a.key}
-                onClick={() => handleAmenityClick(a.key)}
-                className={[
-                  "border rounded-full px-3 py-1 text-sm whitespace-nowrap",
-                  selectedAmenity === a.key ? "bg-primary text-primary-foreground border-primary" : "bg-background"
-                ].join(" ")}
-              >
-                {a.label}
-              </button>
-            ))}
-            {selectedAmenity && (
-              <button
-                onClick={() => handleAmenityClick(selectedAmenity)}
-                className="ml-auto text-sm underline"
-                title="Clear filter"
-              >
-                Clear
-              </button>
-            )}
+        {/* Amenity Filter Bar */}
+        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8 mb-6">
+          <div className="bg-card rounded-xl p-4 shadow-sm border">
+            <div className="flex gap-3 overflow-x-auto scrollbar-hide py-1">
+              {[
+                { key: "swimmingPool", labelKey: "pool" },
+                { key: "wifi", labelKey: "wifi" },
+                { key: "parking", labelKey: "parking" },
+              ].map((a) => (
+                <button
+                  key={a.key}
+                  onClick={() => handleAmenityClick(a.key)}
+                  className={[
+                    "border rounded-full px-4 py-2 text-sm whitespace-nowrap transition-all",
+                    selectedAmenity === a.key 
+                      ? "bg-primary text-primary-foreground border-primary shadow-sm" 
+                      : "bg-background hover:border-primary/50"
+                  ].join(" ")}
+                >
+                  {t(a.labelKey)}
+                </button>
+              ))}
+              {selectedAmenity && (
+                <button
+                  onClick={() => handleAmenityClick(selectedAmenity)}
+                  className="ml-auto text-sm underline text-muted-foreground hover:text-foreground"
+                >
+                  {t("clearFilters")}
+                </button>
+              )}
+            </div>
           </div>
         </section>
 
         {/* MAP + LIST side-by-side, aligned */}
-        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-            {/* Map (narrower, sticky) */}
-            <div className="lg:col-span-4">
-              <div className="sticky top-24 h-[70vh] rounded-2xl overflow-hidden border bg-background">
+        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8">
+          <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 items-start">
+            {/* Map (40% width, sticky) */}
+            <div className="lg:col-span-2">
+              <div className="sticky top-24 h-[75vh] rounded-2xl overflow-hidden border bg-background shadow-sm">
                 <InteractivePropertyMarkerMap properties={filteredProperties} />
               </div>
             </div>
 
-            {/* Listings */}
-            <div className="lg:col-span-8">
-              <div className="flex items-center justify-between mb-6 gap-4 flex-wrap">
-                <h2 className="text-2xl font-bold">
-                  {filteredProperties.length} {t("properties") || "properties"}
-                  {currentCity ? ` — ${currentCity}` : ""}
-                </h2>
+            {/* Listings (60% width) */}
+            <div className="lg:col-span-3">
+              <div className="flex items-center justify-between mb-8 gap-4 flex-wrap">
+                <div>
+                  <h2 className="text-3xl font-bold mb-1">
+                    {filteredProperties.length} {t("properties")}
+                    {currentCity ? ` ${t("in")} ${currentCity}` : ""}
+                  </h2>
+                  <p className="text-sm text-muted-foreground">
+                    {t("discoverYourPerfectStay")}
+                  </p>
+                </div>
 
                 <PropertyFilters
                   onFilterChange={(filters) => {
@@ -447,19 +455,32 @@ const ShortStay = () => {
               </div>
 
               {isLoading ? (
-                <div className="flex items-center justify-center py-12">
-                  <Loader2 className="h-8 w-8 animate-spin" />
-                  <span className="ml-2">{t("loading")}</span>
+                <div className="flex flex-col items-center justify-center py-20">
+                  <Loader2 className="h-10 w-10 animate-spin text-primary mb-4" />
+                  <span className="text-lg text-muted-foreground">{t("loading")}</span>
                 </div>
               ) : filteredProperties.length === 0 ? (
-                <div className="text-center py-12">
-                  <div className="text-lg font-semibold text-foreground mb-2">
-                    {t("noPropertiesFound")}
+                <div className="text-center py-20 px-4">
+                  <div className="max-w-md mx-auto">
+                    <div className="text-xl font-semibold text-foreground mb-3">
+                      {t("noPropertiesFound")}
+                    </div>
+                    <div className="text-muted-foreground mb-6">
+                      {t("tryAdjustingFilters")}
+                    </div>
+                    <Button 
+                      variant="outline" 
+                      onClick={() => {
+                        setFilteredProperties(properties);
+                        setSelectedAmenity("");
+                      }}
+                    >
+                      {t("clearAllFilters")}
+                    </Button>
                   </div>
-                  <div className="text-muted-foreground">{t("Adjust Filters Or Check Later")}</div>
                 </div>
               ) : (
-                <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4 lg:gap-5">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
                   {filteredProperties.map((property) => (
                     <PropertyCard key={property.id} property={property} />
                   ))}
