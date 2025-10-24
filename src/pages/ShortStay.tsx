@@ -20,7 +20,7 @@ import { WishlistButton } from "@/components/WishlistButton";
 import { PropertyBadges } from "@/components/PropertyBadges";
 import { usePropertyTranslation } from "@/hooks/usePropertyTranslation";
 import { TopRatedStays } from "@/components/TopRatedStays";
-import { PopularAmenities } from "@/components/PopularAmenities";
+// import { PopularAmenities } from "@/components/PopularAmenities"; // TEMP: disabled to avoid crashes
 import { InteractivePropertyMarkerMap } from "@/components/InteractivePropertyMarkerMap";
 import { DestinationsToExplore } from "@/components/DestinationsToExplore";
 import CitiesSection from "@/components/CitiesSection";
@@ -38,7 +38,8 @@ interface Property {
   area: string | number;
   images: string[];
   property_type: string;
-  features?: Record<string, boolean>;
+  // IMPORTANT: make features a dictionary when present
+  features?: unknown;
   description?: string;
   commission_rate?: number;
   contact_name: string;
@@ -55,6 +56,22 @@ const num = (v: unknown) => {
   if (typeof v === "number") return v;
   const n = parseInt(String(v ?? "").replace(/[^\d]/g, ""), 10);
   return Number.isFinite(n) ? n : 0;
+};
+
+// Safe helper: turn any "features" field into entries OR empty array
+const safeFeatureEntries = (features: unknown): [string, unknown][] => {
+  if (
+    features &&
+    typeof features === "object" &&
+    !Array.isArray(features)
+  ) {
+    try {
+      return Object.entries(features as Record<string, unknown>);
+    } catch {
+      return [];
+    }
+  }
+  return [];
 };
 
 const ShortStay = () => {
@@ -101,7 +118,11 @@ const ShortStay = () => {
 
     if (filterType && filterValue) {
       if (filterType === "feature") {
-        filtered = filtered.filter((p) => p.features?.[filterValue] === true);
+        filtered = filtered.filter((p) => {
+          const entries = safeFeatureEntries(p.features);
+          const dict = Object.fromEntries(entries) as Record<string, unknown>;
+          return Boolean(dict[filterValue]);
+        });
       } else if (filterType === "pets") {
         filtered = filtered.filter((p) => p.pets_allowed === true);
       } else if (filterType === "price") {
@@ -169,7 +190,11 @@ const ShortStay = () => {
       setFilteredProperties(properties);
     } else {
       setSelectedAmenity(amenityKey);
-      const filtered = properties.filter((p) => p.features?.[amenityKey]);
+      const filtered = properties.filter((p) => {
+        const entries = safeFeatureEntries(p.features);
+        const dict = Object.fromEntries(entries) as Record<string, unknown>;
+        return Boolean(dict[amenityKey]);
+      });
       setFilteredProperties(filtered);
     }
   };
@@ -210,9 +235,10 @@ const ShortStay = () => {
       toggleWishlist(property.id);
     };
 
+    const featureEntries = safeFeatureEntries(property.features);
+
     return (
       <Card
-        // Airbnb-style: no heavy borders/shadows; content-driven tile
         className="bg-transparent shadow-none hover:shadow-none cursor-pointer group"
         onClick={handleCardClick}
       >
@@ -222,6 +248,9 @@ const ShortStay = () => {
             src={property.images?.[0] || "/placeholder-property.jpg"}
             alt={property.title}
             className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-[1.03]"
+            onError={(e) => {
+              (e.currentTarget as HTMLImageElement).src = "/placeholder-property.jpg";
+            }}
           />
 
           {/* Badges (top-left) */}
@@ -238,7 +267,7 @@ const ShortStay = () => {
 
           {/* Wishlist heart (top-right) */}
           <div className="absolute right-3 top-3" onClick={handleWishlistClick}>
-            <WishlistButton isInWishlist={wishlistIds.has(property.id)} onToggle={() => {}} />
+            <WishlistButton isInWishlist={Boolean(wishlistIds?.has(property.id))} onToggle={() => {}} />
           </div>
 
           {/* Price unit chip (bottom-right) */}
@@ -256,7 +285,7 @@ const ShortStay = () => {
         {/* TEXT BLOCK — title, location, meta */}
         <CardHeader className="px-0 pb-1 pt-3">
           <CardTitle className="text-base sm:text-lg font-semibold line-clamp-2">
-            {translatedText || property.title}
+            {translatedTitle || property.title}
           </CardTitle>
           <div className="flex items-center text-muted-foreground">
             <MapPin className="h-4 w-4 mr-1 flex-shrink-0" />
@@ -293,6 +322,22 @@ const ShortStay = () => {
               <span>{num(property.area)} {t("areaUnit")}</span>
             </div>
           </div>
+
+          {featureEntries.length > 0 && (
+            <div className="flex items-center gap-2 mt-2 overflow-x-auto">
+              {featureEntries
+                .filter(([_, value]) => Boolean(value))
+                .slice(0, 3)
+                .map(([key]) => {
+                  const IconEl = getFeatureIcon(key);
+                  return IconEl ? (
+                    <div key={key} className="flex items-center text-muted-foreground text-xs flex-shrink-0">
+                      {IconEl}
+                    </div>
+                  ) : null;
+                })}
+            </div>
+          )}
         </CardContent>
       </Card>
     );
@@ -305,11 +350,39 @@ const ShortStay = () => {
       <main className="pt-20">
         <ShortStayHeroSearch onSearch={handleSearch} />
 
-        {/* Popular Amenities */}
-        <PopularAmenities onAmenityClick={handleAmenityClick} selectedAmenity={selectedAmenity} />
+        {/* SIMPLE, SAFE AMENITY BAR (temporary instead of PopularAmenities) */}
+        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
+          <div className="flex gap-2 overflow-x-auto no-scrollbar py-2">
+            {[
+              { key: "swimmingPool", label: "Swimming Pool" },
+              { key: "wifi", label: "Wi-Fi" },
+              { key: "parking", label: "Parking" },
+            ].map((a) => (
+              <button
+                key={a.key}
+                onClick={() => handleAmenityClick(a.key)}
+                className={[
+                  "border rounded-full px-3 py-1 text-sm whitespace-nowrap",
+                  selectedAmenity === a.key ? "bg-primary text-primary-foreground border-primary" : "bg-background"
+                ].join(" ")}
+              >
+                {a.label}
+              </button>
+            ))}
+            {selectedAmenity && (
+              <button
+                onClick={() => handleAmenityClick(selectedAmenity)}
+                className="ml-auto text-sm underline"
+                title="Clear filter"
+              >
+                Clear
+              </button>
+            )}
+          </div>
+        </section>
 
-        {/* MAP + LIST side-by-side */}
-        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8">
+        {/* MAP + LIST side-by-side, aligned */}
+        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
             {/* Map (narrower, sticky) */}
             <div className="lg:col-span-4">
@@ -386,7 +459,6 @@ const ShortStay = () => {
                   <div className="text-muted-foreground">{t("Adjust Filters Or Check Later")}</div>
                 </div>
               ) : (
-                // NOTE: cards are lightweight; gaps tightened a bit
                 <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4 lg:gap-5">
                   {filteredProperties.map((property) => (
                     <PropertyCard key={property.id} property={property} />
