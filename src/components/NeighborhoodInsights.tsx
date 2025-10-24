@@ -16,12 +16,12 @@ export const NeighborhoodInsights = ({
   const { t } = useLanguage();
 
   const facilities = [
-    { icon: School, label: "Schools nearby", distance: "500m" },
-    { icon: Bus, label: "Public transport", distance: "200m" },
-    { icon: ShoppingCart, label: "Shopping centers", distance: "1km" }
+    { icon: School, label: t("schoolsNearby"), distance: "500m" },
+    { icon: Bus, label: t("publicTransport"), distance: "200m" },
+    { icon: ShoppingCart, label: t("shoppingCenters"), distance: "1km" }
   ];
 
-  const neighborhoodDescription = `Located in ${district || city} — a vibrant residential area with excellent connectivity and growing demand. This neighborhood offers easy access to amenities, schools, and transportation hubs, making it ideal for families and professionals alike.`;
+  const neighborhoodDescription = t("neighborhoodDescriptionTemplate").replace('{{location}}', district || city);
 
   return (
     <div className="space-y-6">

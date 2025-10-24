@@ -139,6 +139,29 @@ export const buyRentTranslations = {
     // Blog & Forms
     postComment: "Publier un Commentaire",
     
+    // WhyRentWithHolibayt descriptions
+    protectedPaymentsDesc: "Votre dépôt et loyer sont sécurisés jusqu'à l'emménagement",
+    verifiedOwnersDesc: "Tous les propriétaires subissent une vérification d'identité et de documents",
+    legalSupportRentDesc: "Assistance juridique pour les contrats de location et les litiges",
+    easyRefundsDesc: "Remboursement complet si la propriété ne correspond pas à l'annonce",
+    
+    // HostProfileSection
+    meetYourHost: "Rencontrez votre hôte",
+    meetTheSeller: "Rencontrez le vendeur",
+    meetYourLandlord: "Rencontrez votre propriétaire",
+    superhost: "Superhôte",
+    reviews: "avis",
+    memberSince: "Membre depuis",
+    contactHost: "Contacter l'hôte",
+    contactSeller: "Contacter le vendeur",
+    paymentProtectionNotice: "Pour protéger votre paiement, ne transférez jamais d'argent ou ne communiquez pas en dehors du site Web ou de l'application Holibayt.",
+    
+    // NeighborhoodInsights
+    schoolsNearby: "Écoles à proximité",
+    publicTransport: "Transport public",
+    shoppingCenters: "Centres commerciaux",
+    neighborhoodDescriptionTemplate: "Situé à {{location}} — une zone résidentielle dynamique avec une excellente connectivité et une demande croissante. Ce quartier offre un accès facile aux commodités, aux écoles et aux centres de transport, ce qui le rend idéal pour les familles et les professionnels.",
+    
     // Additional Missing Keys
     chooseFiles: "Choisir des Fichiers",
     fullyFurnished: "Entièrement Meublé",
@@ -895,6 +918,29 @@ export const buyRentTranslations = {
     // Blog & Forms
     postComment: "Post Comment",
     
+    // WhyRentWithHolibayt descriptions
+    protectedPaymentsDesc: "Your deposit and rent are held securely until move-in",
+    verifiedOwnersDesc: "All property owners undergo identity and document verification",
+    legalSupportRentDesc: "Legal assistance with rental contracts and disputes",
+    easyRefundsDesc: "Full refund if property doesn't match listing",
+    
+    // HostProfileSection
+    meetYourHost: "Meet your host",
+    meetTheSeller: "Meet the seller",
+    meetYourLandlord: "Meet your landlord",
+    superhost: "Superhost",
+    reviews: "reviews",
+    memberSince: "Member since",
+    contactHost: "Contact host",
+    contactSeller: "Contact seller",
+    paymentProtectionNotice: "To protect your payment, never transfer money or communicate outside of the Holibayt website or app.",
+    
+    // NeighborhoodInsights
+    schoolsNearby: "Schools nearby",
+    publicTransport: "Public transport",
+    shoppingCenters: "Shopping centers",
+    neighborhoodDescriptionTemplate: "Located in {{location}} — a vibrant residential area with excellent connectivity and growing demand. This neighborhood offers easy access to amenities, schools, and transportation hubs, making it ideal for families and professionals alike.",
+    
     // Additional Missing Keys
     chooseFiles: "Choose Files",
     fullyFurnished: "Fully Furnished",
@@ -1379,6 +1425,29 @@ export const buyRentTranslations = {
     
     // Blog & Forms
     postComment: "نشر تعليق",
+    
+    // WhyRentWithHolibayt descriptions
+    protectedPaymentsDesc: "يتم الاحتفاظ بالإيداع والإيجار بشكل آمن حتى الانتقال",
+    verifiedOwnersDesc: "يخضع جميع مالكي العقارات للتحقق من الهوية والمستندات",
+    legalSupportRentDesc: "مساعدة قانونية في عقود الإيجار والنزاعات",
+    easyRefundsDesc: "استرداد كامل إذا لم يطابق العقار القائمة",
+    
+    // HostProfileSection
+    meetYourHost: "تعرف على مضيفك",
+    meetTheSeller: "تعرف على البائع",
+    meetYourLandlord: "تعرف على مالك العقار",
+    superhost: "مضيف متميز",
+    reviews: "مراجعات",
+    memberSince: "عضو منذ",
+    contactHost: "اتصل بالمضيف",
+    contactSeller: "اتصل بالبائع",
+    paymentProtectionNotice: "لحماية دفعتك، لا تقم أبدًا بتحويل الأموال أو التواصل خارج موقع أو تطبيق Holibayt.",
+    
+    // NeighborhoodInsights
+    schoolsNearby: "مدارس قريبة",
+    publicTransport: "وسائل النقل العام",
+    shoppingCenters: "مراكز التسوق",
+    neighborhoodDescriptionTemplate: "يقع في {{location}} — منطقة سكنية نابضة بالحياة مع اتصال ممتاز وطلب متزايد. يوفر هذا الحي سهولة الوصول إلى المرافق والمدارس ومراكز النقل، مما يجعله مثاليًا للعائلات والمهنيين على حد سواء.",
     
     // Additional Missing Keys
     chooseFiles: "اختر الملفات",

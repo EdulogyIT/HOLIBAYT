@@ -78,7 +78,7 @@ export const HostProfileSection = ({ userId, onContactHost }: HostProfileSection
       <CardHeader>
         <CardTitle className="text-2xl font-playfair flex items-center gap-2">
           <Shield className="w-6 h-6 text-primary" />
-          Meet your host
+          {t("meetYourHost")}
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-6">
@@ -99,7 +99,7 @@ export const HostProfileSection = ({ userId, onContactHost }: HostProfileSection
               {hostProfile.is_superhost && (
                 <Badge className="bg-gradient-primary">
                   <Star className="w-3 h-3 mr-1" />
-                  Superhost
+                  {t("superhost")}
                 </Badge>
               )}
             </div>
@@ -111,13 +111,13 @@ export const HostProfileSection = ({ userId, onContactHost }: HostProfileSection
                   {hostProfile.average_rating > 0 ? hostProfile.average_rating.toFixed(1) : 'New'}
                 </span>
                 {hostProfile.total_reviews > 0 && (
-                  <span>({hostProfile.total_reviews} reviews)</span>
+                  <span>({hostProfile.total_reviews} {t("reviews")})</span>
                 )}
               </div>
               
               <div className="flex items-center gap-1">
                 <Calendar className="w-4 h-4" />
-                <span>Member since {memberSince}</span>
+                <span>{t("memberSince")} {memberSince}</span>
               </div>
             </div>
           </div>
@@ -131,13 +131,13 @@ export const HostProfileSection = ({ userId, onContactHost }: HostProfileSection
           size="lg"
         >
           <MessageCircle className="w-4 h-4 mr-2" />
-          Contact host
+          {t("contactHost")}
         </Button>
 
         {/* Safety Notice */}
         <div className="text-xs text-muted-foreground font-inter p-3 bg-muted/30 rounded-lg">
           <p>
-            <strong>To protect your payment, never transfer money or communicate outside of the Holibayt website or app.</strong>
+            <strong>{t("paymentProtectionNotice")}</strong>
           </p>
         </div>
       </CardContent>

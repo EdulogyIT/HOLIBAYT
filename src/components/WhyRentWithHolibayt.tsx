@@ -8,22 +8,22 @@ export const WhyRentWithHolibayt = () => {
     {
       icon: Shield,
       title: t("protectedPayments"),
-      description: "Your deposit and rent are held securely until move-in"
+      description: t("protectedPaymentsDesc")
     },
     {
       icon: CheckCircle2,
       title: t("verifiedOwners"),
-      description: "All property owners undergo identity and document verification"
+      description: t("verifiedOwnersDesc")
     },
     {
       icon: Scale,
       title: t("legalSupport"),
-      description: "Legal assistance with rental contracts and disputes"
+      description: t("legalSupportRentDesc")
     },
     {
       icon: DollarSign,
       title: t("easyRefunds"),
-      description: "Full refund if property doesn't match listing"
+      description: t("easyRefundsDesc")
     }
   ];
 
