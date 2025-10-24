@@ -17,7 +17,7 @@ import {
   Zap,
   CreditCard,
   Flame,
-  Sparkles,
+  Star, // ✅ use Star instead of Sparkles (older lucide versions always have this)
 } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -68,7 +68,7 @@ const num = (v: unknown) => {
   return Number.isFinite(n) ? n : 0;
 };
 
-// Safe helper for features
+// Safe helper for features: only return entries for plain objects
 const safeFeatureEntries = (features: unknown): [string, unknown][] => {
   if (features && typeof features === "object" && !Array.isArray(features)) {
     try {
@@ -86,11 +86,11 @@ const ShortStay = () => {
   const { t, currentLang } = useLanguage();
   const { formatPrice } = useCurrency();
   const { user } = useAuth();
-  const { wishlistIds, toggleWishlist } = useWishlist(user?.id);
+  const { wishlistIds, toggleWishlist } = useWishlist(user?.id ?? undefined);
   const [properties, setProperties] = useState<Property[]>([]);
   const [filteredProperties, setFilteredProperties] = useState<Property[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [currentCity, setCurrentCity] = useState<string>("Constantine"); // kept for filters, not shown in header
+  const [currentCity, setCurrentCity] = useState<string>(""); // keep but don't show
   const [selectedAmenity, setSelectedAmenity] = useState<string>("");
 
   useScrollToTop();
@@ -223,28 +223,43 @@ const ShortStay = () => {
     }
   };
 
-  // Icon-only badges shown on the image
+  // Icon-only badges shown on the image (safe icons only)
   const IconBadges = ({ p }: { p: Property }) => (
     <div className="absolute left-3 top-3 flex items-center gap-1.5">
       {p.is_verified && (
-        <span title="Verified host" className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-background/85 backdrop-blur border">
+        <span
+          title="Verified host"
+          className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-background/85 backdrop-blur border"
+        >
           <ShieldCheck className="h-4 w-4" />
         </span>
       )}
-      <span title="Instant booking" className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-background/85 backdrop-blur border">
+      <span
+        title="Instant booking"
+        className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-background/85 backdrop-blur border"
+      >
         <Zap className="h-4 w-4" />
       </span>
-      <span title="Holibayt Pay" className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-background/85 backdrop-blur border">
+      <span
+        title="Holibayt Pay"
+        className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-background/85 backdrop-blur border"
+      >
         <CreditCard className="h-4 w-4" />
       </span>
       {p.is_hot_deal && (
-        <span title="Hot deal" className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-background/85 backdrop-blur border">
+        <span
+          title="Hot deal"
+          className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-background/85 backdrop-blur border"
+        >
           <Flame className="h-4 w-4" />
         </span>
       )}
       {p.is_new && (
-        <span title="New" className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-background/85 backdrop-blur border">
-          <Sparkles className="h-4 w-4" />
+        <span
+          title="New"
+          className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-background/85 backdrop-blur border"
+        >
+          <Star className="h-4 w-4" />
         </span>
       )}
     </div>
@@ -269,11 +284,14 @@ const ShortStay = () => {
     const featureEntries = safeFeatureEntries(property.features);
 
     return (
-      <Card className="bg-transparent shadow-none hover:shadow-none cursor-pointer group" onClick={handleCardClick}>
+      <Card
+        className="bg-transparent shadow-none hover:shadow-none cursor-pointer group"
+        onClick={handleCardClick}
+      >
         {/* IMAGE: rounded, landscape */}
         <div className="relative w-full rounded-2xl overflow-hidden aspect-[4/3] md:aspect-[5/4]">
           <img
-            src={property.images?.[0] || "/placeholder-property.jpg"}
+            src={(Array.isArray(property.images) ? property.images[0] : undefined) || "/placeholder-property.jpg"}
             alt={property.title}
             className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-[1.03]"
             onError={(e) => {
@@ -335,7 +353,9 @@ const ShortStay = () => {
             )}
             <div className="flex items-center whitespace-nowrap">
               <Square className="h-4 w-4 mr-1" />
-              <span>{num(property.area)} {t("areaUnit")}</span>
+              <span>
+                {num(property.area)} {t("areaUnit")}
+              </span>
             </div>
           </div>
 
@@ -366,7 +386,7 @@ const ShortStay = () => {
       <main className="pt-20">
         <ShortStayHeroSearch onSearch={handleSearch} />
 
-        {/* Simple amenity chips (safe) */}
+        {/* Simple amenity chips */}
         <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
           <div className="flex gap-2 overflow-x-auto no-scrollbar py-2">
             {[
@@ -402,12 +422,12 @@ const ShortStay = () => {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
             <div className="lg:col-span-4">
               <div className="sticky top-24 h-[70vh] rounded-2xl overflow-hidden border bg-background">
-                <InteractivePropertyMarkerMap properties={filteredProperties} />
+                <InteractivePropertyMarkerMap properties={filteredProperties ?? []} />
               </div>
             </div>
 
             <div className="lg:col-span-8">
-              {/* Header — no city suffix */}
+              {/* Header — count only */}
               <div className="flex items-center justify-between mb-6 gap-4 flex-wrap">
                 <h2 className="text-2xl font-bold">
                   {filteredProperties.length} {t("properties") || "properties"}
@@ -450,7 +470,7 @@ const ShortStay = () => {
                       const maxArea = filters.maxArea ? num(filters.maxArea) : Infinity;
                       filtered = filtered.filter((p) => {
                         const area = num(p.area);
-                        return area >= minArea && area <= maxArea; // ✅ fixed syntax
+                        return area >= minArea && area <= maxArea;
                       });
                     }
 
