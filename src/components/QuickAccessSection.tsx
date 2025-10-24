@@ -417,22 +417,23 @@ const QuickAccessSection = () => {
               </TabsContent>
 
               <TabsContent value="short-stay" className="space-y-8 pt-6">
-                <div className="text-center">
-                  <h3 className="text-2xl md:text-3xl font-playfair font-bold text-foreground">
-                    {t("workflow.shortStay.title") || "Short Stay — Safe & Simple"}
-                  </h3>
-                  <p className="text-xs md:text-sm text-muted-foreground mt-1">
-                    {t("workflow.shortStay.subtitle") || "Verified hosts, escrow payments, protected payouts"}
-                  </p>
-                </div>
-                <ShortStayWorkflowDiagram />
-                <div className="flex justify-center">
-                  <Button size="lg" variant="outline" className="gap-2" onClick={() => navigate("/short-stay")}>
-                    {t("explore") || "Explore stays"}
-                    <ArrowRight className="w-4 h-4" />
-                  </Button>
-                </div>
-              </TabsContent>
+  <div className="text-center">
+    <h3 className="text-2xl md:text-3xl font-playfair font-bold text-foreground">
+      {t("workflow.shortStay.title") || "Short Stay — Safe & Simple"}
+    </h3>
+    {/* Subtitle removed */}
+  </div>
+
+  <ShortStayWorkflowDiagram />
+
+  <div className="flex justify-center">
+    <Button size="lg" variant="outline" className="gap-2" onClick={() => navigate("/short-stay")}>
+      {t("explore") || "Explore stays"}
+      <ArrowRight className="w-4 h-4" />
+    </Button>
+  </div>
+</TabsContent>
+
 
               <TabsContent value="rent" className="space-y-8 pt-6">
                 <RentWorkflowDiagram />
