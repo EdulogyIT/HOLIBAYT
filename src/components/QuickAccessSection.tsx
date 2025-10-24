@@ -23,7 +23,8 @@ import { useNavigate } from "react-router-dom";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 /** ---------------------------------------------------------
- *  Buy Workflow — same format as Rent (icon → layer → bullets)
+ /** ---------------------------------------------------------
+ *  Buy Workflow — desktop unchanged; mobile stacks bullets
  * -------------------------------------------------------- */
 const BuyWorkflowDiagram = () => {
   const top = [
@@ -66,14 +67,37 @@ const BuyWorkflowDiagram = () => {
         </h3>
       </div>
 
+      {/* ===== Mobile (stacked) ===== */}
+      <div className="md:hidden space-y-6">
+        {top.map((c, i) => {
+          const Icon = c.icon;
+          return (
+            <div key={i} className="rounded-lg border border-border bg-card p-4">
+              <div className="flex flex-col items-center text-center gap-3">
+                <Icon className="w-9 h-9 text-slate-800" />
+                <h4 className="font-playfair font-semibold text-base text-slate-900">
+                  {c.title}
+                </h4>
+              </div>
+              <ul className="mt-3 space-y-2 text-sm text-slate-700 list-disc pl-5">
+                {bullets[i].map((line, j) => (
+                  <li key={j}>{line}</li>
+                ))}
+              </ul>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* ===== Desktop (unchanged layout) ===== */}
       {/* Top row: icons + titles */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8 px-2">
+      <div className="hidden md:grid grid-cols-4 gap-8 px-2">
         {top.map((c, i) => {
           const Icon = c.icon;
           return (
             <div key={i} className="flex flex-col items-center gap-3 text-center">
-              <Icon className="w-9 h-9 md:w-12 md:h-12 text-slate-800" />
-              <h4 className="font-playfair font-semibold text-sm md:text-lg text-slate-900">
+              <Icon className="w-12 h-12 text-slate-800" />
+              <h4 className="font-playfair font-semibold text-lg text-slate-900">
                 {c.title}
               </h4>
             </div>
@@ -101,9 +125,9 @@ const BuyWorkflowDiagram = () => {
       </div>
 
       {/* Bullet rows */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 md:gap-8 px-2">
+      <div className="hidden md:grid grid-cols-4 gap-8 px-2">
         {bullets.map((list, i) => (
-          <ul key={i} className="space-y-2 text-[0.95rem] md:text-sm text-slate-700 list-disc pl-5 md:pl-0 md:list-none">
+          <ul key={i} className="space-y-2 text-sm text-slate-700 list-none">
             {list.map((line, j) => (
               <li key={j}>{line}</li>
             ))}
@@ -115,7 +139,7 @@ const BuyWorkflowDiagram = () => {
 };
 
 /** ---------------------------------------------------------
- *  Rent Workflow — as per screenshot
+ *  Rent Workflow — desktop unchanged; mobile stacks bullets
  * -------------------------------------------------------- */
 const RentWorkflowDiagram = () => {
   const top = [
@@ -160,13 +184,36 @@ const RentWorkflowDiagram = () => {
         </h3>
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8 px-2">
+      {/* Mobile (stacked) */}
+      <div className="md:hidden space-y-6">
+        {top.map((c, i) => {
+          const Icon = c.icon;
+          return (
+            <div key={i} className="rounded-lg border border-border bg-card p-4">
+              <div className="flex flex-col items-center text-center gap-3">
+                <Icon className="w-9 h-9 text-slate-800" />
+                <h4 className="font-playfair font-semibold text-base text-slate-900">
+                  {c.title}
+                </h4>
+              </div>
+              <ul className="mt-3 space-y-2 text-sm text-slate-700 list-disc pl-5">
+                {bullets[i].map((line, j) => (
+                  <li key={j}>{line}</li>
+                ))}
+              </ul>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Desktop (unchanged) */}
+      <div className="hidden md:grid grid-cols-4 gap-8 px-2">
         {top.map((c, i) => {
           const Icon = c.icon;
           return (
             <div key={i} className="flex flex-col items-center gap-3 text-center">
-              <Icon className="w-9 h-9 md:w-12 md:h-12 text-slate-800" />
-              <h4 className="font-playfair font-semibold text-sm md:text-lg text-slate-900">
+              <Icon className="w-12 h-12 text-slate-800" />
+              <h4 className="font-playfair font-semibold text-lg text-slate-900">
                 {c.title}
               </h4>
             </div>
@@ -192,9 +239,9 @@ const RentWorkflowDiagram = () => {
         ))}
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 md:gap-8 px-2">
+      <div className="hidden md:grid grid-cols-4 gap-8 px-2">
         {bullets.map((list, i) => (
-          <ul key={i} className="space-y-2 text-[0.95rem] md:text-sm text-slate-700 list-disc pl-5 md:pl-0 md:list-none">
+          <ul key={i} className="space-y-2 text-sm text-slate-700 list-none">
             {list.map((line, j) => (
               <li key={j}>{line}</li>
             ))}
@@ -206,10 +253,7 @@ const RentWorkflowDiagram = () => {
 };
 
 /** ---------------------------------------------------------
- *  Short Stay Workflow
- * -------------------------------------------------------- */
-/** ---------------------------------------------------------
- *  Short Stay Workflow — matches Buy & Rent structure
+ *  Short Stay Workflow — desktop unchanged; mobile stacks bullets
  * -------------------------------------------------------- */
 const ShortStayWorkflowDiagram = () => {
   const top = [
@@ -255,14 +299,36 @@ const ShortStayWorkflowDiagram = () => {
         </h3>
       </div>
 
-      {/* Top row: icons + titles */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8 px-2">
+      {/* Mobile (stacked) */}
+      <div className="md:hidden space-y-6">
+        {top.map((c, i) => {
+          const Icon = c.icon;
+          return (
+            <div key={i} className="rounded-lg border border-border bg-card p-4">
+              <div className="flex flex-col items-center text-center gap-3">
+                <Icon className="w-9 h-9 text-slate-800" />
+                <h4 className="font-playfair font-semibold text-base text-slate-900">
+                  {c.title}
+                </h4>
+              </div>
+              <ul className="mt-3 space-y-2 text-sm text-slate-700 list-disc pl-5">
+                {bullets[i].map((line, j) => (
+                  <li key={j}>{line}</li>
+                ))}
+              </ul>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Desktop (unchanged) */}
+      <div className="hidden md:grid grid-cols-4 gap-8 px-2">
         {top.map((c, i) => {
           const Icon = c.icon;
           return (
             <div key={i} className="flex flex-col items-center gap-3 text-center">
-              <Icon className="w-9 h-9 md:w-12 md:h-12 text-slate-800" />
-              <h4 className="font-playfair font-semibold text-sm md:text-lg text-slate-900">
+              <Icon className="w-12 h-12 text-slate-800" />
+              <h4 className="font-playfair font-semibold text-lg text-slate-900">
                 {c.title}
               </h4>
             </div>
@@ -270,7 +336,6 @@ const ShortStayWorkflowDiagram = () => {
         })}
       </div>
 
-      {/* Colored arrow bars */}
       <div className="hidden md:grid grid-cols-4 gap-6 items-center px-2">
         {bars.map((b, i) => (
           <div key={i} className="flex items-center">
@@ -289,13 +354,9 @@ const ShortStayWorkflowDiagram = () => {
         ))}
       </div>
 
-      {/* Bullet rows */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 md:gap-8 px-2">
+      <div className="hidden md:grid grid-cols-4 gap-8 px-2">
         {bullets.map((list, i) => (
-          <ul
-            key={i}
-            className="space-y-2 text-[0.95rem] md:text-sm text-slate-700 list-disc pl-5 md:pl-0 md:list-none"
-          >
+          <ul key={i} className="space-y-2 text-sm text-slate-700 list-none">
             {list.map((line, j) => (
               <li key={j}>{line}</li>
             ))}
@@ -305,6 +366,7 @@ const ShortStayWorkflowDiagram = () => {
     </div>
   );
 };
+
 
 
 /** ---------------------------------------------------------
