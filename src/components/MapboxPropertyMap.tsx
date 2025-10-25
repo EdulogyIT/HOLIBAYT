@@ -30,9 +30,9 @@ export const MapboxPropertyMap = ({ properties }: MapboxPropertyMapProps) => {
   const { formatPrice } = useCurrency();
   const navigate = useNavigate();
 
-  // 1) fetch token
+  // --- fetch token ---
   useEffect(() => {
-    const fetchToken = async () => {
+    const run = async () => {
       try {
         const { data, error } = await supabase.functions.invoke('get-mapbox-token');
         if (!error && data?.token) setMapboxToken(data.token);
@@ -41,10 +41,10 @@ export const MapboxPropertyMap = ({ properties }: MapboxPropertyMapProps) => {
         setMapboxToken('pk.eyJ1IjoibG92YWJsZSIsImEiOiJjbTRmYm0ycDMwYWVzMnBzaHo0aTg5enBkIn0.VhY5RN5gX_zc5SjGHLqKJQ');
       }
     };
-    fetchToken();
+    run();
   }, []);
 
-  // 2) init map
+  // --- init map ---
   useEffect(() => {
     if (!mapContainer.current || !mapboxToken || mapRef.current) return;
     mapboxgl.accessToken = mapboxToken;
@@ -52,12 +52,12 @@ export const MapboxPropertyMap = ({ properties }: MapboxPropertyMapProps) => {
     const map = new mapboxgl.Map({
       container: mapContainer.current,
       style: 'mapbox://styles/mapbox/streets-v12',
-      center: [3.0588, 36.7538],
+      center: [3.0588, 36.7538], // Algiers
       zoom: 5,
       cooperativeGestures: true,
     });
-
     map.addControl(new mapboxgl.NavigationControl(), 'top-right');
+
     mapRef.current = map;
 
     return () => {
@@ -68,7 +68,7 @@ export const MapboxPropertyMap = ({ properties }: MapboxPropertyMapProps) => {
     };
   }, [mapboxToken]);
 
-  // Helpers
+  // Fallback coords
   const getCityCoords = (city: string): { lat: number; lng: number } => {
     const coords: Record<string, { lat: number; lng: number }> = {
       Algiers: { lat: 36.7538, lng: 3.0588 },
@@ -85,27 +85,21 @@ export const MapboxPropertyMap = ({ properties }: MapboxPropertyMapProps) => {
     return coords[city] || { lat: 36.7538, lng: 3.0588 };
   };
 
-  // 3) build clustered source + layers, then render HTML price pills for unclustered points
+  // --- build/update source & layers, render price pills ---
   useEffect(() => {
     const map = mapRef.current;
     if (!map) return;
-    if (!properties || properties.length === 0) return;
 
-    // Remove old source/layers if re-running
-    if (map.getLayer('prop-clusters')) map.removeLayer('prop-clusters');
-    if (map.getLayer('prop-cluster-count')) map.removeLayer('prop-cluster-count');
-    if (map.getSource('props')) map.removeSource('props');
-
-    // GeoJSON
+    // Compose GeoJSON
     const fc: GeoJSON.FeatureCollection<GeoJSON.Point, any> = {
       type: 'FeatureCollection',
-      features: properties
+      features: (properties || [])
         .map(p => {
           const lat = p.latitude ?? getCityCoords(p.city).lat;
           const lng = p.longitude ?? getCityCoords(p.city).lng;
           if (lat == null || lng == null) return null;
-          const priceNum =
-            typeof p.price === 'number' ? p.price : parseFloat(String(p.price));
+
+          const priceNum = typeof p.price === 'number' ? p.price : parseFloat(String(p.price));
           const label = formatPrice(priceNum, p.price_type, p.price_currency || 'DZD');
 
           return {
@@ -124,102 +118,31 @@ export const MapboxPropertyMap = ({ properties }: MapboxPropertyMapProps) => {
         .filter(Boolean) as GeoJSON.Feature<GeoJSON.Point, any>[],
     };
 
-    map.addSource('props', {
-      type: 'geojson',
-      data: fc,
-      cluster: true,
-      clusterMaxZoom: 13,   // at >= 13 we’ll start showing individual price pills
-      clusterRadius: 55,
-    });
-
-    // Cluster bubbles (simple circle)
-    map.addLayer({
-      id: 'prop-clusters',
-      type: 'circle',
-      source: 'props',
-      filter: ['has', 'point_count'],
-      paint: {
-        'circle-color': '#FF385C',
-        'circle-radius': [
-          'step',
-          ['get', 'point_count'],
-          16, 10, 18, 25, 22, 50, 28
-        ],
-        'circle-stroke-width': 2,
-        'circle-stroke-color': '#ffffff'
-      },
-    });
-
-    // Cluster count label
-    map.addLayer({
-      id: 'prop-cluster-count',
-      type: 'symbol',
-      source: 'props',
-      filter: ['has', 'point_count'],
-      layout: {
-        'text-field': ['get', 'point_count_abbreviated'],
-        'text-font': ['DIN Offc Pro Medium', 'Arial Unicode MS Bold'],
-        'text-size': 12,
-      },
-      paint: {
-        'text-color': '#ffffff',
-      },
-    });
-
-    // Click cluster to zoom in (like Airbnb)
-    map.on('click', 'prop-clusters', (e) => {
-      const features = map.queryRenderedFeatures(e.point, { layers: ['prop-clusters'] });
-      const clusterId = features[0].properties?.cluster_id;
-      const src = map.getSource('props') as mapboxgl.GeoJSONSource;
-      if (!src) return;
-      src.getClusterExpansionZoom(clusterId, (err, zoom) => {
-        if (err) return;
-        map.easeTo({ center: (features[0].geometry as any).coordinates, zoom });
-      });
-    });
-
-    // Hover cursor on clusters
-    map.on('mouseenter', 'prop-clusters', () => (map.getCanvas().style.cursor = 'pointer'));
-    map.on('mouseleave', 'prop-clusters', () => (map.getCanvas().style.cursor = ''));
-
-    // Price pills for *unclustered* features only, rendered as auto-sized HTML markers
-    const refreshPricePills = () => {
+    // Helper that draws the HTML price pills for visible, unclustered points
+    const drawPricePills = () => {
       if (!map.isStyleLoaded()) return;
 
-      // Clear old
+      // Clear old pills
       htmlMarkersRef.current.forEach(m => m.remove());
       htmlMarkersRef.current = [];
 
-      // Visible unclustered features
-      const features = map.querySourceFeatures('props', {
-        sourceLayer: undefined,
+      const feats = map.querySourceFeatures('props', {
         filter: ['!', ['has', 'point_count']],
       }) as mapboxgl.MapboxGeoJSONFeature[];
 
-      features.forEach((f) => {
+      feats.forEach(f => {
         const [lng, lat] = (f.geometry as any).coordinates as [number, number];
         const { label, _id, title, location, image } = f.properties as any;
 
         const el = document.createElement('div');
-        el.className = 'price-pill';
         el.style.cssText = `
-          background: #FF385C;
-          color: #fff;
-          padding: 6px 10px;
-          border-radius: 999px;
-          font-weight: 700;
-          font-size: 12px;
-          white-space: nowrap;
-          box-shadow: 0 2px 10px rgba(0,0,0,0.25);
-          border: 2px solid #fff;
-          cursor: pointer;
-          transform: translateY(-4px);
-          transition: transform .15s ease;
+          background:#FF385C;color:#fff;padding:6px 10px;border-radius:999px;
+          font-weight:700;font-size:12px;white-space:nowrap;box-shadow:0 2px 10px rgba(0,0,0,.25);
+          border:2px solid #fff;cursor:pointer;transform:translateY(-4px);transition:transform .15s ease;
         `;
         el.textContent = label;
         el.onmouseenter = () => (el.style.transform = 'translateY(-4px) scale(1.06)');
         el.onmouseleave = () => (el.style.transform = 'translateY(-4px)');
-
         el.addEventListener('click', () => navigate(`/property/${_id}`));
 
         const popupHtml = `
@@ -240,24 +163,82 @@ export const MapboxPropertyMap = ({ properties }: MapboxPropertyMapProps) => {
       });
     };
 
-    // Fit bounds once
-    const bounds = new mapboxgl.LngLatBounds();
-    fc.features.forEach((ft) => {
-      const [lng, lat] = ft.geometry.coordinates;
-      bounds.extend([lng, lat]);
-    });
-    if (!bounds.isEmpty()) {
-      map.fitBounds(bounds, { padding: 50, maxZoom: 12 });
+    const ensureLayers = () => {
+      const existing = map.getSource('props') as mapboxgl.GeoJSONSource | undefined;
+      if (!existing) {
+        map.addSource('props', {
+          type: 'geojson',
+          data: fc,
+          cluster: true,
+          clusterMaxZoom: 13,
+          clusterRadius: 55,
+        });
+
+        map.addLayer({
+          id: 'prop-clusters',
+          type: 'circle',
+          source: 'props',
+          filter: ['has', 'point_count'],
+          paint: {
+            'circle-color': '#FF385C',
+            'circle-radius': ['step', ['get', 'point_count'], 16, 10, 18, 25, 22, 50, 28],
+            'circle-stroke-width': 2,
+            'circle-stroke-color': '#ffffff',
+          },
+        });
+
+        map.addLayer({
+          id: 'prop-cluster-count',
+          type: 'symbol',
+          source: 'props',
+          filter: ['has', 'point_count'],
+          layout: {
+            'text-field': ['get', 'point_count_abbreviated'],
+            'text-font': ['DIN Offc Pro Medium', 'Arial Unicode MS Bold'],
+            'text-size': 12,
+          },
+          paint: { 'text-color': '#ffffff' },
+        });
+
+        // Zoom into clusters on click
+        map.on('click', 'prop-clusters', (e) => {
+          const features = map.queryRenderedFeatures(e.point, { layers: ['prop-clusters'] });
+          const clusterId = features[0].properties?.cluster_id;
+          const src = map.getSource('props') as mapboxgl.GeoJSONSource;
+          src.getClusterExpansionZoom(clusterId, (err, zoom) => {
+            if (err) return;
+            map.easeTo({ center: (features[0].geometry as any).coordinates, zoom });
+          });
+        });
+
+        map.on('mouseenter', 'prop-clusters', () => (map.getCanvas().style.cursor = 'pointer'));
+        map.on('mouseleave', 'prop-clusters', () => (map.getCanvas().style.cursor = ''));
+      } else {
+        existing.setData(fc);
+      }
+    };
+
+    const applyAll = () => {
+      ensureLayers();
+      drawPricePills();
+
+      // Fit bounds to data once per update
+      const bounds = new mapboxgl.LngLatBounds();
+      fc.features.forEach(ft => bounds.extend(ft.geometry.coordinates as [number, number]));
+      if (!bounds.isEmpty()) map.fitBounds(bounds, { padding: 50, maxZoom: 12 });
+    };
+
+    if (!map.isStyleLoaded()) {
+      map.once('load', applyAll);
+    } else {
+      applyAll();
     }
 
-    // Refresh pills whenever view changes (zoom/pan/style load)
-    const refresh = () => refreshPricePills();
+    // Refresh pills on pan/zoom or data load
+    const refresh = () => drawPricePills();
     map.on('moveend', refresh);
-    map.on('data', refresh); // ensures first render after tiles load
-    // Also refresh if currency formatting function identity changes
-    // (not strictly necessary but keeps them in sync).
+    map.on('data', refresh);
 
-    // Cleanup listeners and HTML markers on re-render
     return () => {
       map.off('moveend', refresh);
       map.off('data', refresh);
