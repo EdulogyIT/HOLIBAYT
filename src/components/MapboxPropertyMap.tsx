@@ -23,10 +23,11 @@ interface MapboxPropertyMapProps {
   properties: Property[];
 }
 
-const CLUSTER_MAX_ZOOM = 10;  // lower -> uncluster sooner
-const CLUSTER_RADIUS   = 35;  // lower -> less merging
+/** Tune clustering just for the bubbles (pills are independent of this). */
+const CLUSTER_MAX_ZOOM = 10; // lower -> uncluster earlier
+const CLUSTER_RADIUS   = 35; // lower -> less merging
 
-// ---- Algeria helpers ----
+/** -------- Algeria helpers -------- */
 const norm = (s: string) =>
   (s || '').normalize('NFD').replace(/\p{Diacritic}/gu, '').toLowerCase().trim();
 
@@ -54,20 +55,41 @@ const DZ: Record<string, { lat: number; lng: number }> = {
 };
 const cityLL = (city: string) => DZ[norm(city)] || { lat: 36.7538, lng: 3.0588 };
 
+/** -------- tiny utils -------- */
+const groupBy = <T, K extends string | number>(arr: T[], key: (v: T) => K) => {
+  const out = new Map<K, T[]>();
+  for (const it of arr) {
+    const k = key(it);
+    out.set(k, [...(out.get(k) || []), it]);
+  }
+  return out;
+};
+
+/** Spread coincident points into a ring so all pills are clickable. */
+const spiderfy = (map: mapboxgl.Map, base: [number, number], n: number): [number, number][] => {
+  if (n <= 1) return [base];
+  const c = map.project({ lng: base[0], lat: base[1] });
+  const r = 26; // px
+  const pts: [number, number][] = [];
+  for (let i = 0; i < n; i++) {
+    const a = (2 * Math.PI * i) / n;
+    const p = map.unproject({ x: c.x + r * Math.cos(a), y: c.y + r * Math.sin(a) });
+    pts.push([p.lng, p.lat]);
+  }
+  return pts;
+};
+
 export const MapboxPropertyMap = ({ properties }: MapboxPropertyMapProps) => {
   const mapEl = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
-  const [isMapReady, setIsMapReady] = useState(false);  // <-- drives effects reliably
+  const [isMapReady, setIsMapReady] = useState(false);
+  const [token, setToken] = useState('');
   const layersAdded = useRef(false);
   const htmlMarkers = useRef<mapboxgl.Marker[]>([]);
-  const latestProps = useRef<Property[]>(properties);
-  const [token, setToken] = useState('');
   const { formatPrice } = useCurrency();
   const navigate = useNavigate();
 
-  latestProps.current = properties;
-
-  // token
+  /** Get Mapbox token */
   useEffect(() => {
     (async () => {
       try {
@@ -80,7 +102,7 @@ export const MapboxPropertyMap = ({ properties }: MapboxPropertyMapProps) => {
     })();
   }, []);
 
-  // init map
+  /** Init map */
   useEffect(() => {
     if (!token || !mapEl.current || map.current) return;
     mapboxgl.accessToken = token;
@@ -93,7 +115,7 @@ export const MapboxPropertyMap = ({ properties }: MapboxPropertyMapProps) => {
       cooperativeGestures: true,
     });
     m.addControl(new mapboxgl.NavigationControl(), 'top-right');
-    m.once('load', () => setIsMapReady(true));  // <-- trigger downstream effect
+    m.once('load', () => setIsMapReady(true));
     map.current = m;
 
     return () => {
@@ -106,56 +128,31 @@ export const MapboxPropertyMap = ({ properties }: MapboxPropertyMapProps) => {
     };
   }, [token]);
 
-  // helpers
-  const groupBy = <T, K extends string | number>(arr: T[], key: (v: T) => K) => {
-    const out = new Map<K, T[]>();
-    for (const it of arr) {
-      const k = key(it);
-      out.set(k, [...(out.get(k) || []), it]);
-    }
-    return out;
-  };
-
-  const spiderfy = (m: mapboxgl.Map, base: [number, number], n: number): [number, number][] => {
-    if (n <= 1) return [base];
-    const c = m.project({ lng: base[0], lat: base[1] });
-    const r = 26;
-    const pts: [number, number][] = [];
-    for (let i = 0; i < n; i++) {
-      const a = (2 * Math.PI * i) / n;
-      const p = m.unproject({ x: c.x + r * Math.cos(a), y: c.y + r * Math.sin(a) });
-      pts.push([p.lng, p.lat]);
-    }
-    return pts;
-  };
-
-  const toFC = (items: Property[]): GeoJSON.FeatureCollection<GeoJSON.Point, any> => ({
-    type: 'FeatureCollection',
-    features: items
-      .map(p => {
-        const lat = p.latitude ?? cityLL(p.city).lat;
-        const lng = p.longitude ?? cityLL(p.city).lng;
-        if (lat == null || lng == null) return null;
-        const priceNum = typeof p.price === 'number' ? p.price : parseFloat(String(p.price));
-        const label = formatPrice(priceNum, p.price_type, p.price_currency || 'DZD');
-        return {
-          type: 'Feature',
-          geometry: { type: 'Point', coordinates: [lng, lat] },
-          properties: { _id: p.id, title: p.title, location: p.location, image: p.images?.[0] ?? '', label, priceNum },
-        } as GeoJSON.Feature<GeoJSON.Point>;
-      })
-      .filter(Boolean) as GeoJSON.Feature<GeoJSON.Point, any>[],
-  });
-
-  // attach layers once when map is ready
+  /** Add cluster layers once (for the red circles with counts). Pills do NOT depend on this. */
   useEffect(() => {
     const m = map.current;
     if (!m || !isMapReady || layersAdded.current) return;
 
+    const toFC = (): GeoJSON.FeatureCollection<GeoJSON.Point, any> => ({
+      type: 'FeatureCollection',
+      features: properties
+        .map((p) => {
+          const lat = p.latitude ?? cityLL(p.city).lat;
+          const lng = p.longitude ?? cityLL(p.city).lng;
+          if (lat == null || lng == null) return null;
+          return {
+            type: 'Feature',
+            geometry: { type: 'Point', coordinates: [lng, lat] },
+            properties: {},
+          } as GeoJSON.Feature<GeoJSON.Point>;
+        })
+        .filter(Boolean) as GeoJSON.Feature<GeoJSON.Point, any>[],
+    });
+
     if (!m.getSource('props')) {
       m.addSource('props', {
         type: 'geojson',
-        data: toFC(latestProps.current),
+        data: toFC(),
         cluster: true,
         clusterMaxZoom: CLUSTER_MAX_ZOOM,
         clusterRadius: CLUSTER_RADIUS,
@@ -203,41 +200,113 @@ export const MapboxPropertyMap = ({ properties }: MapboxPropertyMapProps) => {
 
       layersAdded.current = true;
     }
-  }, [isMapReady]);
+  }, [isMapReady, properties]);
 
-  // update data + pills whenever properties change (or when map becomes ready)
+  /** Draw price pills IMMEDIATELY from `properties` (with spiderfy). */
   useEffect(() => {
     const m = map.current;
     if (!m || !isMapReady) return;
 
-    const fc = toFC(properties);
-    const src = m.getSource('props') as mapboxgl.GeoJSONSource | undefined;
-    if (src) src.setData(fc);
+    // update cluster source data (optional, for bubbles only)
+    const clusterSrc = m.getSource('props') as mapboxgl.GeoJSONSource | undefined;
+    if (clusterSrc) {
+      const fc: GeoJSON.FeatureCollection<GeoJSON.Point, any> = {
+        type: 'FeatureCollection',
+        features: properties
+          .map((p) => {
+            const lat = p.latitude ?? cityLL(p.city).lat;
+            const lng = p.longitude ?? cityLL(p.city).lng;
+            if (lat == null || lng == null) return null;
+            return {
+              type: 'Feature',
+              geometry: { type: 'Point', coordinates: [lng, lat] },
+              properties: {},
+            } as GeoJSON.Feature<GeoJSON.Point>;
+          })
+          .filter(Boolean) as any[],
+      };
+      clusterSrc.setData(fc);
+    }
 
-    // fit bounds
-    const b = new mapboxgl.LngLatBounds();
-    fc.features.forEach(f => b.extend(f.geometry.coordinates as [number, number]));
-    if (!b.isEmpty()) m.fitBounds(b, { padding: 50, maxZoom: 11 });
+    // clear existing pills
+    htmlMarkers.current.forEach(mm => mm.remove());
+    htmlMarkers.current = [];
 
-    // draw pills
-    const drawPills = () => {
+    // group properties by coordinate (rounded) and spiderfy coincident ones
+    const groups = groupBy(properties, (p) => {
+      const lat = p.latitude ?? cityLL(p.city).lat;
+      const lng = p.longitude ?? cityLL(p.city).lng;
+      return `${lng.toFixed(5)}|${lat.toFixed(5)}`;
+    });
+
+    for (const [, arr] of groups) {
+      const baseLng = arr[0].longitude ?? cityLL(arr[0].city).lng;
+      const baseLat = arr[0].latitude ?? cityLL(arr[0].city).lat;
+      const positions = spiderfy(m, [baseLng, baseLat], arr.length);
+
+      arr.forEach((p, i) => {
+        const [lng, lat] = positions[i];
+        const priceNum = typeof p.price === 'number' ? p.price : parseFloat(String(p.price));
+        const label = formatPrice(priceNum, p.price_type, p.price_currency || 'DZD');
+
+        const el = document.createElement('div');
+        el.style.cssText = `
+          background:#FF385C;color:#fff;padding:6px 10px;border-radius:999px;
+          font-weight:700;font-size:12px;white-space:nowrap;box-shadow:0 2px 10px rgba(0,0,0,.25);
+          border:2px solid #fff;cursor:pointer;transform:translateY(-4px);transition:transform .15s ease;
+        `;
+        el.textContent = label;
+        el.onmouseenter = () => (el.style.transform = 'translateY(-4px) scale(1.06)');
+        el.onmouseleave  = () => (el.style.transform = 'translateY(-4px)');
+        el.addEventListener('click', () => navigate(`/property/${p.id}`));
+
+        const popup = new mapboxgl.Popup({ offset: 12 }).setHTML(`
+          <div style="padding:8px;min-width:200px">
+            ${p.images?.[0] ? `<img src="${p.images[0]}" style="width:100%;height:120px;object-fit:cover;border-radius:8px;margin-bottom:8px" />` : ''}
+            <div style="font-weight:600;font-size:14px;margin-bottom:4px">${p.title ?? ''}</div>
+            <div style="font-size:12px;color:#666;margin-bottom:4px">${p.location ?? ''}</div>
+            <div style="font-weight:800;color:#FF385C">${label}</div>
+          </div>
+        `);
+
+        const marker = new mapboxgl.Marker({ element: el, anchor: 'bottom' })
+          .setLngLat([lng, lat])
+          .setPopup(popup)
+          .addTo(m);
+
+        htmlMarkers.current.push(marker);
+      });
+    }
+
+    // fit bounds to all markers
+    const bounds = new mapboxgl.LngLatBounds();
+    properties.forEach(p => {
+      const lat = p.latitude ?? cityLL(p.city).lat;
+      const lng = p.longitude ?? cityLL(p.city).lng;
+      if (lat != null && lng != null) bounds.extend([lng, lat]);
+    });
+    if (!bounds.isEmpty()) m.fitBounds(bounds, { padding: 50, maxZoom: 11 });
+
+    // optional: re-spiderfy after zoom changes so spacing feels similar
+    const onZoomEnd = () => {
+      // redraw pills to recompute spiderfy at new zoom
       htmlMarkers.current.forEach(mm => mm.remove());
       htmlMarkers.current = [];
-
-      const feats = m.querySourceFeatures('props', { filter: ['!', ['has', 'point_count']] }) as mapboxgl.MapboxGeoJSONFeature[];
-      const groups = groupBy(feats, f => {
-        const [lng, lat] = (f.geometry as any).coordinates as [number, number];
+      // re-run the same block (small wrapper):
+      const propsCopy = [...properties];
+      const groups2 = groupBy(propsCopy, (p) => {
+        const lat = p.latitude ?? cityLL(p.city).lat;
+        const lng = p.longitude ?? cityLL(p.city).lng;
         return `${lng.toFixed(5)}|${lat.toFixed(5)}`;
       });
-
-      for (const [, arr] of groups) {
-        const base = (arr[0].geometry as any).coordinates as [number, number];
-        const ring = spiderfy(m, base, arr.length);
-
-        arr.forEach((f, i) => {
-          const [lng, lat] = ring[i];
-          const { label, _id, title, location, image } = f.properties as any;
-
+      for (const [, arr] of groups2) {
+        const baseLng2 = arr[0].longitude ?? cityLL(arr[0].city).lng;
+        const baseLat2 = arr[0].latitude ?? cityLL(arr[0].city).lat;
+        const positions2 = spiderfy(m, [baseLng2, baseLat2], arr.length);
+        arr.forEach((p, i) => {
+          const [lng, lat] = positions2[i];
+          const priceNum = typeof p.price === 'number' ? p.price : parseFloat(String(p.price));
+          const label = formatPrice(priceNum, p.price_type, p.price_currency || 'DZD');
           const el = document.createElement('div');
           el.style.cssText = `
             background:#FF385C;color:#fff;padding:6px 10px;border-radius:999px;
@@ -245,36 +314,18 @@ export const MapboxPropertyMap = ({ properties }: MapboxPropertyMapProps) => {
             border:2px solid #fff;cursor:pointer;transform:translateY(-4px);transition:transform .15s ease;
           `;
           el.textContent = label;
-          el.onmouseenter = () => (el.style.transform = 'translateY(-4px) scale(1.06)');
-          el.onmouseleave = () => (el.style.transform = 'translateY(-4px)');
-          el.addEventListener('click', () => navigate(`/property/${_id}`));
-
-          const popup = new mapboxgl.Popup({ offset: 12 }).setHTML(`
-            <div style="padding:8px;min-width:200px">
-              ${image ? `<img src="${image}" style="width:100%;height:120px;object-fit:cover;border-radius:8px;margin-bottom:8px" />` : ''}
-              <div style="font-weight:600;font-size:14px;margin-bottom:4px">${title ?? ''}</div>
-              <div style="font-size:12px;color:#666;margin-bottom:4px">${location ?? ''}</div>
-              <div style="font-weight:800;color:#FF385C">${label}</div>
-            </div>
-          `);
-
+          el.addEventListener('click', () => navigate(`/property/${p.id}`));
           const marker = new mapboxgl.Marker({ element: el, anchor: 'bottom' })
             .setLngLat([lng, lat])
-            .setPopup(popup)
             .addTo(m);
-
           htmlMarkers.current.push(marker);
         });
       }
     };
 
-    drawPills();
-    const onMove = () => drawPills();
-    m.on('moveend', onMove);
-    m.on('zoomend', onMove);
+    m.on('zoomend', onZoomEnd);
     return () => {
-      m.off('moveend', onMove);
-      m.off('zoomend', onMove);
+      m.off('zoomend', onZoomEnd);
       htmlMarkers.current.forEach(mm => mm.remove());
       htmlMarkers.current = [];
     };
