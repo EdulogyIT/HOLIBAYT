@@ -22,6 +22,10 @@ interface MapboxPropertyMapProps {
   properties: Property[];
 }
 
+// 👉 tune these to taste
+const CLUSTER_MAX_ZOOM = 10;   // was 13 — lower = uncluster sooner
+const CLUSTER_RADIUS   = 35;   // was 55 — smaller = less aggressive merging
+
 export const MapboxPropertyMap = ({ properties }: MapboxPropertyMapProps) => {
   const mapContainer = useRef<HTMLDivElement>(null);
   const mapRef = useRef<mapboxgl.Map | null>(null);
@@ -30,9 +34,8 @@ export const MapboxPropertyMap = ({ properties }: MapboxPropertyMapProps) => {
   const { formatPrice } = useCurrency();
   const navigate = useNavigate();
 
-  // --- fetch token ---
   useEffect(() => {
-    const run = async () => {
+    (async () => {
       try {
         const { data, error } = await supabase.functions.invoke('get-mapbox-token');
         if (!error && data?.token) setMapboxToken(data.token);
@@ -40,11 +43,9 @@ export const MapboxPropertyMap = ({ properties }: MapboxPropertyMapProps) => {
       } catch {
         setMapboxToken('pk.eyJ1IjoibG92YWJsZSIsImEiOiJjbTRmYm0ycDMwYWVzMnBzaHo0aTg5enBkIn0.VhY5RN5gX_zc5SjGHLqKJQ');
       }
-    };
-    run();
+    })();
   }, []);
 
-  // --- init map ---
   useEffect(() => {
     if (!mapContainer.current || !mapboxToken || mapRef.current) return;
     mapboxgl.accessToken = mapboxToken;
@@ -52,14 +53,13 @@ export const MapboxPropertyMap = ({ properties }: MapboxPropertyMapProps) => {
     const map = new mapboxgl.Map({
       container: mapContainer.current,
       style: 'mapbox://styles/mapbox/streets-v12',
-      center: [3.0588, 36.7538], // Algiers
+      center: [3.0588, 36.7538],
       zoom: 5,
       cooperativeGestures: true,
     });
     map.addControl(new mapboxgl.NavigationControl(), 'top-right');
 
     mapRef.current = map;
-
     return () => {
       htmlMarkersRef.current.forEach(m => m.remove());
       htmlMarkersRef.current = [];
@@ -68,7 +68,6 @@ export const MapboxPropertyMap = ({ properties }: MapboxPropertyMapProps) => {
     };
   }, [mapboxToken]);
 
-  // Fallback coords
   const getCityCoords = (city: string): { lat: number; lng: number } => {
     const coords: Record<string, { lat: number; lng: number }> = {
       Algiers: { lat: 36.7538, lng: 3.0588 },
@@ -85,12 +84,10 @@ export const MapboxPropertyMap = ({ properties }: MapboxPropertyMapProps) => {
     return coords[city] || { lat: 36.7538, lng: 3.0588 };
   };
 
-  // --- build/update source & layers, render price pills ---
   useEffect(() => {
     const map = mapRef.current;
     if (!map) return;
 
-    // Compose GeoJSON
     const fc: GeoJSON.FeatureCollection<GeoJSON.Point, any> = {
       type: 'FeatureCollection',
       features: (properties || [])
@@ -98,38 +95,23 @@ export const MapboxPropertyMap = ({ properties }: MapboxPropertyMapProps) => {
           const lat = p.latitude ?? getCityCoords(p.city).lat;
           const lng = p.longitude ?? getCityCoords(p.city).lng;
           if (lat == null || lng == null) return null;
-
           const priceNum = typeof p.price === 'number' ? p.price : parseFloat(String(p.price));
           const label = formatPrice(priceNum, p.price_type, p.price_currency || 'DZD');
-
           return {
             type: 'Feature',
             geometry: { type: 'Point', coordinates: [lng, lat] },
-            properties: {
-              _id: p.id,
-              title: p.title,
-              location: p.location,
-              image: p.images?.[0] ?? '',
-              label,
-              priceNum,
-            },
+            properties: { _id: p.id, title: p.title, location: p.location, image: p.images?.[0] ?? '', label, priceNum },
           } as GeoJSON.Feature<GeoJSON.Point>;
         })
         .filter(Boolean) as GeoJSON.Feature<GeoJSON.Point, any>[],
     };
 
-    // Helper that draws the HTML price pills for visible, unclustered points
     const drawPricePills = () => {
       if (!map.isStyleLoaded()) return;
-
-      // Clear old pills
       htmlMarkersRef.current.forEach(m => m.remove());
       htmlMarkersRef.current = [];
 
-      const feats = map.querySourceFeatures('props', {
-        filter: ['!', ['has', 'point_count']],
-      }) as mapboxgl.MapboxGeoJSONFeature[];
-
+      const feats = map.querySourceFeatures('props', { filter: ['!', ['has', 'point_count']] }) as mapboxgl.MapboxGeoJSONFeature[];
       feats.forEach(f => {
         const [lng, lat] = (f.geometry as any).coordinates as [number, number];
         const { label, _id, title, location, image } = f.properties as any;
@@ -151,9 +133,7 @@ export const MapboxPropertyMap = ({ properties }: MapboxPropertyMapProps) => {
             <div style="font-weight:600;font-size:14px;margin-bottom:4px">${title ?? ''}</div>
             <div style="font-size:12px;color:#666;margin-bottom:4px">${location ?? ''}</div>
             <div style="font-weight:800;color:#FF385C">${label}</div>
-          </div>
-        `;
-
+          </div>`;
         const marker = new mapboxgl.Marker({ element: el, anchor: 'bottom' })
           .setLngLat([lng, lat])
           .setPopup(new mapboxgl.Popup({ offset: 12 }).setHTML(popupHtml))
@@ -164,14 +144,14 @@ export const MapboxPropertyMap = ({ properties }: MapboxPropertyMapProps) => {
     };
 
     const ensureLayers = () => {
-      const existing = map.getSource('props') as mapboxgl.GeoJSONSource | undefined;
-      if (!existing) {
+      const src = map.getSource('props') as mapboxgl.GeoJSONSource | undefined;
+      if (!src) {
         map.addSource('props', {
           type: 'geojson',
           data: fc,
           cluster: true,
-          clusterMaxZoom: 13,
-          clusterRadius: 55,
+          clusterMaxZoom: CLUSTER_MAX_ZOOM,
+          clusterRadius: CLUSTER_RADIUS,
         });
 
         map.addLayer({
@@ -200,12 +180,11 @@ export const MapboxPropertyMap = ({ properties }: MapboxPropertyMapProps) => {
           paint: { 'text-color': '#ffffff' },
         });
 
-        // Zoom into clusters on click
         map.on('click', 'prop-clusters', (e) => {
           const features = map.queryRenderedFeatures(e.point, { layers: ['prop-clusters'] });
           const clusterId = features[0].properties?.cluster_id;
-          const src = map.getSource('props') as mapboxgl.GeoJSONSource;
-          src.getClusterExpansionZoom(clusterId, (err, zoom) => {
+          const s = map.getSource('props') as mapboxgl.GeoJSONSource;
+          s.getClusterExpansionZoom(clusterId, (err, zoom) => {
             if (err) return;
             map.easeTo({ center: (features[0].geometry as any).coordinates, zoom });
           });
@@ -214,7 +193,7 @@ export const MapboxPropertyMap = ({ properties }: MapboxPropertyMapProps) => {
         map.on('mouseenter', 'prop-clusters', () => (map.getCanvas().style.cursor = 'pointer'));
         map.on('mouseleave', 'prop-clusters', () => (map.getCanvas().style.cursor = ''));
       } else {
-        existing.setData(fc);
+        src.setData(fc);
       }
     };
 
@@ -222,26 +201,22 @@ export const MapboxPropertyMap = ({ properties }: MapboxPropertyMapProps) => {
       ensureLayers();
       drawPricePills();
 
-      // Fit bounds to data once per update
       const bounds = new mapboxgl.LngLatBounds();
       fc.features.forEach(ft => bounds.extend(ft.geometry.coordinates as [number, number]));
-      if (!bounds.isEmpty()) map.fitBounds(bounds, { padding: 50, maxZoom: 12 });
+      if (!bounds.isEmpty()) map.fitBounds(bounds, { padding: 50, maxZoom: 11 }); // a touch closer than before
     };
 
-    if (!map.isStyleLoaded()) {
-      map.once('load', applyAll);
-    } else {
-      applyAll();
-    }
+    if (!map.isStyleLoaded()) map.once('load', applyAll);
+    else applyAll();
 
-    // Refresh pills on pan/zoom or data load
+    // 👉 refresh after each render pass so pills appear immediately
     const refresh = () => drawPricePills();
+    map.on('idle', refresh);
     map.on('moveend', refresh);
-    map.on('data', refresh);
 
     return () => {
+      map.off('idle', refresh);
       map.off('moveend', refresh);
-      map.off('data', refresh);
       htmlMarkersRef.current.forEach(m => m.remove());
       htmlMarkersRef.current = [];
     };
