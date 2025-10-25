@@ -14,9 +14,14 @@ import AIChatBox from "@/components/AIChatBox";
 import { useScrollToTop } from "@/hooks/useScrollToTop";
 import { supabase } from "@/integrations/supabase/client";
 import { TopRatedStays } from "@/components/TopRatedStays";
-import { InteractivePropertyMarkerMap } from "@/components/InteractivePropertyMarkerMap";
+import { MapboxPropertyMap } from "@/components/MapboxPropertyMap";
 import { DestinationsToExplore } from "@/components/DestinationsToExplore";
 import CitiesSection from "@/components/CitiesSection";
+import { useAuth } from "@/contexts/AuthContext";
+import { useWishlist } from "@/hooks/useWishlist";
+import { WishlistButton } from "@/components/WishlistButton";
+import useEmblaCarousel from 'embla-carousel-react';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import React from "react";
 
 /** ---------- Types ---------- */
@@ -78,6 +83,8 @@ const ShortStay = () => {
   const routerLocation = useLocation();
   const { t } = useLanguage();
   const { formatPrice } = useCurrency();
+  const { user } = useAuth();
+  const { wishlistIds, toggleWishlist } = useWishlist(user?.id);
 
   const [properties, setProperties] = useState<Property[]>([]);
   const [filteredProperties, setFilteredProperties] = useState<Property[]>([]);
@@ -130,38 +137,86 @@ const ShortStay = () => {
   };
 
   const PropertyCard = ({ property }: { property: Property }) => {
-    const firstImage =
-      (Array.isArray(property.images) && property.images[0]) ||
-      "/placeholder-property.jpg";
+    const images = property.images && property.images.length > 0 ? property.images : ["/placeholder-property.jpg"];
+    const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true });
+    const [currentIndex, setCurrentIndex] = React.useState(0);
+    const isInWishlist = wishlistIds.has(property.id);
+
+    React.useEffect(() => {
+      if (!emblaApi) return;
+      emblaApi.on('select', () => {
+        setCurrentIndex(emblaApi.selectedScrollSnap());
+      });
+    }, [emblaApi]);
 
     return (
       <div
         className="cursor-pointer group"
         onClick={() => navigate(`/property/${property.id}`)}
       >
-        {/* Image box only */}
         <Card className="bg-transparent shadow-none border-0">
           <div className="relative w-full rounded-2xl overflow-hidden aspect-[4/3] md:aspect-[5/4]">
-            <img
-              src={firstImage}
-              alt={property.title}
-              className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-[1.03]"
-              onError={(e) => {
-                (e.currentTarget as HTMLImageElement).src =
-                  "/placeholder-property.jpg";
-              }}
+            {/* Image carousel */}
+            <div className="embla w-full h-full" ref={emblaRef}>
+              <div className="embla__container flex h-full">
+                {images.map((img, i) => (
+                  <div key={i} className="embla__slide flex-[0_0_100%] min-w-0">
+                    <img
+                      src={img}
+                      alt={`${property.title} ${i+1}`}
+                      className="w-full h-full object-cover"
+                      onError={(e) => {
+                        (e.currentTarget as HTMLImageElement).src = "/placeholder-property.jpg";
+                      }}
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Navigation arrows */}
+            {images.length > 1 && (
+              <>
+                <button
+                  onClick={(e) => { e.stopPropagation(); emblaApi?.scrollPrev(); }}
+                  className="absolute left-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity bg-white/90 hover:bg-white rounded-full p-1.5 shadow-md z-10"
+                >
+                  <ChevronLeft className="h-4 w-4" />
+                </button>
+                <button
+                  onClick={(e) => { e.stopPropagation(); emblaApi?.scrollNext(); }}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity bg-white/90 hover:bg-white rounded-full p-1.5 shadow-md z-10"
+                >
+                  <ChevronRight className="h-4 w-4" />
+                </button>
+              </>
+            )}
+
+            {/* Image counter */}
+            {images.length > 1 && (
+              <div className="absolute top-3 left-3 bg-black/70 text-white text-xs px-2 py-1 rounded-md z-10">
+                {currentIndex + 1}/{images.length}
+              </div>
+            )}
+
+            {/* Wishlist button */}
+            <WishlistButton
+              isInWishlist={isInWishlist}
+              onToggle={() => toggleWishlist(property.id)}
             />
-            {/* Verified icon only */}
+
+            {/* Verified icon */}
             {property.is_verified && (
               <span
                 title="Verified host"
-                className="absolute left-3 top-3 inline-flex h-7 w-7 items-center justify-center rounded-full bg-background/85 backdrop-blur border"
+                className="absolute left-3 bottom-12 inline-flex h-7 w-7 items-center justify-center rounded-full bg-background/85 backdrop-blur border z-10"
               >
                 <ShieldCheck className="h-4 w-4" />
               </span>
             )}
+
             {/* Price badge */}
-            <div className="absolute bottom-3 right-3">
+            <div className="absolute bottom-3 right-3 z-10">
               <Badge variant="secondary" className="bg-background/80 text-foreground text-xs">
                 {property.price_type === "daily"
                   ? t("perNight")
@@ -216,7 +271,17 @@ const ShortStay = () => {
     <div className="min-h-screen bg-background">
       <Navigation />
       <main className="pt-20">
-        <ShortStayHeroSearch onSearch={() => {}} />
+        <ShortStayHeroSearch onSearch={(vals) => {
+          const qs = new URLSearchParams();
+          if (vals.location) qs.set("location", String(vals.location));
+          if (vals.checkIn) qs.set("checkIn", String(vals.checkIn));
+          if (vals.checkOut) qs.set("checkOut", String(vals.checkOut));
+          if (vals.adults) qs.set("adults", String(vals.adults));
+          if (vals.children) qs.set("children", String(vals.children));
+          if (vals.infants) qs.set("infants", String(vals.infants));
+          if (vals.pets) qs.set("pets", String(vals.pets));
+          navigate({ pathname: "/short-stay", search: qs.toString() });
+        }} />
 
         {/* Map + list */}
         <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6">
@@ -244,24 +309,8 @@ const ShortStay = () => {
                   </div>
                 }
               >
-                <div className="sticky top-28">
-                  {/* Frame */}
-                  <div className="map-frame rounded-2xl overflow-hidden ring-1 ring-border">
-                    {/* Fixed-height container the map must fill */}
-                    <div className="map-fit h-[520px] md:h-[560px] xl:h-[600px]">
-                      <InteractivePropertyMarkerMap
-                        properties={filteredProperties || []}
-                        className="h-full w-full block"
-                        // If supported by your component, these also ensure no legend:
-                        // @ts-ignore
-                        hideLegend
-                        // @ts-ignore
-                        showLegend={false}
-                        // @ts-ignore
-                        legend={false}
-                      />
-                    </div>
-                  </div>
+                <div className="sticky top-28 rounded-2xl overflow-hidden ring-1 ring-border h-[520px] md:h-[560px] xl:h-[600px]">
+                  <MapboxPropertyMap properties={filteredProperties || []} />
                 </div>
               </LocalErrorBoundary>
             </div>

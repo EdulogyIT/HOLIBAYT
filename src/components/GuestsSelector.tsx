@@ -14,13 +14,18 @@ interface GuestCounts {
 interface GuestsSelectorProps {
   value: GuestCounts;
   onChange: (value: GuestCounts) => void;
+  keepOpen?: boolean;
 }
 
-export const GuestsSelector = ({ value, onChange }: GuestsSelectorProps) => {
+export const GuestsSelector = ({ value, onChange, keepOpen = false }: GuestsSelectorProps) => {
   const { t } = useLanguage();
   const [open, setOpen] = useState(false);
 
-  const updateCount = (type: keyof GuestCounts, delta: number) => {
+  const updateCount = (type: keyof GuestCounts, delta: number, e?: React.MouseEvent) => {
+    if (e) {
+      e.stopPropagation();
+      e.preventDefault();
+    }
     const newValue = Math.max(0, value[type] + delta);
     if (type === 'adults' && newValue === 0) return; // At least 1 adult required
     onChange({ ...value, [type]: newValue });
@@ -89,10 +94,7 @@ export const GuestsSelector = ({ value, onChange }: GuestsSelectorProps) => {
                   variant="outline"
                   size="icon"
                   className="h-8 w-8 rounded-full"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    updateCount(type.key, -1);
-                  }}
+                  onClick={(e) => updateCount(type.key, -1, e)}
                   disabled={value[type.key] <= type.min}
                 >
                   <Minus className="h-4 w-4" />
@@ -102,10 +104,7 @@ export const GuestsSelector = ({ value, onChange }: GuestsSelectorProps) => {
                   variant="outline"
                   size="icon"
                   className="h-8 w-8 rounded-full"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    updateCount(type.key, 1);
-                  }}
+                  onClick={(e) => updateCount(type.key, 1, e)}
                   disabled={type.key === 'adults' && value[type.key] >= 16}
                 >
                   <Plus className="h-4 w-4" />
@@ -113,6 +112,16 @@ export const GuestsSelector = ({ value, onChange }: GuestsSelectorProps) => {
               </div>
             </div>
           ))}
+          {keepOpen && (
+            <div className="pt-4 mt-4 border-t">
+              <Button 
+                className="w-full" 
+                onClick={() => setOpen(false)}
+              >
+                {t('done') || 'Done'}
+              </Button>
+            </div>
+          )}
         </div>
       </PopoverContent>
     </Popover>
