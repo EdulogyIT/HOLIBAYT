@@ -7,30 +7,30 @@ export const WhyRentWithHolibayt = () => {
   const benefits = [
     {
       icon: Shield,
-      title: t("protectedPayments"),
-      description: t("protectedPaymentsDesc")
+      title: t("Protected Payments"),
+      description: t("Pay safely through our protected channels and escrow-like flows.")
     },
     {
       icon: CheckCircle2,
-      title: t("verifiedOwners"),
-      description: t("verifiedOwnersDesc")
+      title: t("Verified Owners"),
+      description: t("We verify ownership and documents before listings go live.")
     },
     {
       icon: Scale,
-      title: t("legalSupport"),
-      description: t("legalSupportRentDesc")
+      title: t("Legal Support"),
+      description: t("End-to-end legal guidance tailored for rentals and leases")
     },
     {
       icon: DollarSign,
-      title: t("easyRefunds"),
-      description: t("easyRefundsDesc")
+      title: t("Easy Refunds"),
+      description: t("Simple, transparent refund process with clear timelines.")
     }
   ];
 
   return (
     <div className="bg-gradient-to-br from-primary/5 via-background to-background border border-border rounded-xl p-8">
       <h2 className="text-2xl md:text-3xl font-bold mb-8 text-center">
-        {t("whyRentWithHolibayt")}
+        {t("Why Rent With Holibayt")}
       </h2>
       
       <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
