@@ -24,7 +24,6 @@ import useEmblaCarousel from 'embla-carousel-react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import React from "react";
 
-/** ---------- Types ---------- */
 interface Property {
   id: string;
   title: string;
@@ -41,43 +40,31 @@ interface Property {
   is_verified?: boolean;
 }
 
-/** ---------- Utils ---------- */
 const num = (v: unknown) => {
   if (typeof v === "number") return v;
   const n = parseInt(String(v ?? "").replace(/[^\d]/g, ""), 10);
   return Number.isFinite(n) ? n : 0;
 };
 
-/** ---------- Error Boundary ---------- */
 class LocalErrorBoundary extends React.Component<
   { children: React.ReactNode; fallback?: React.ReactNode },
   { hasError: boolean }
 > {
-  constructor(props: any) {
-    super(props);
-    this.state = { hasError: false };
-  }
-  static getDerivedStateFromError() {
-    return { hasError: true };
-  }
-  componentDidCatch(err: any) {
-    console.error("ShortStay ErrorBoundary caught:", err);
-  }
+  constructor(props: any) { super(props); this.state = { hasError: false }; }
+  static getDerivedStateFromError() { return { hasError: true }; }
+  componentDidCatch(err: any) { console.error("ShortStay ErrorBoundary caught:", err); }
   render() {
     if (this.state.hasError) {
-      return (
-        this.props.fallback ?? (
-          <div className="rounded-xl border p-6 text-sm text-muted-foreground">
-            Component failed to load.
-          </div>
-        )
+      return this.props.fallback ?? (
+        <div className="rounded-xl border p-6 text-sm text-muted-foreground">
+          Component failed to load.
+        </div>
       );
     }
     return this.props.children as any;
   }
 }
 
-/** ---------- Page ---------- */
 const ShortStay = () => {
   const navigate = useNavigate();
   const routerLocation = useLocation();
@@ -92,13 +79,8 @@ const ShortStay = () => {
 
   useScrollToTop();
 
-  useEffect(() => {
-    fetchProperties();
-  }, []);
-
-  useEffect(() => {
-    applyFiltersFromURL();
-  }, [properties, routerLocation.search]);
+  useEffect(() => { fetchProperties(); }, []);
+  useEffect(() => { applyFiltersFromURL(); }, [properties, routerLocation.search]);
 
   const fetchProperties = async () => {
     try {
@@ -144,37 +126,28 @@ const ShortStay = () => {
 
     React.useEffect(() => {
       if (!emblaApi) return;
-      emblaApi.on('select', () => {
-        setCurrentIndex(emblaApi.selectedScrollSnap());
-      });
+      emblaApi.on('select', () => setCurrentIndex(emblaApi.selectedScrollSnap()));
     }, [emblaApi]);
 
     return (
-      <div
-        className="cursor-pointer group"
-        onClick={() => navigate(`/property/${property.id}`)}
-      >
+      <div className="cursor-pointer group" onClick={() => navigate(`/property/${property.id}`)}>
         <Card className="bg-transparent shadow-none border-0">
           <div className="relative w-full rounded-2xl overflow-hidden aspect-[4/3] md:aspect-[5/4]">
-            {/* Image carousel */}
             <div className="embla w-full h-full" ref={emblaRef}>
               <div className="embla__container flex h-full">
                 {images.map((img, i) => (
                   <div key={i} className="embla__slide flex-[0_0_100%] min-w-0">
                     <img
                       src={img}
-                      alt={`${property.title} ${i+1}`}
+                      alt={`${property.title} ${i + 1}`}
                       className="w-full h-full object-cover"
-                      onError={(e) => {
-                        (e.currentTarget as HTMLImageElement).src = "/placeholder-property.jpg";
-                      }}
+                      onError={(e) => { (e.currentTarget as HTMLImageElement).src = "/placeholder-property.jpg"; }}
                     />
                   </div>
                 ))}
               </div>
             </div>
 
-            {/* Navigation arrows */}
             {images.length > 1 && (
               <>
                 <button
@@ -192,47 +165,30 @@ const ShortStay = () => {
               </>
             )}
 
-            {/* Image counter */}
             {images.length > 1 && (
               <div className="absolute top-3 left-3 bg-black/70 text-white text-xs px-2 py-1 rounded-md z-10">
                 {currentIndex + 1}/{images.length}
               </div>
             )}
 
-            {/* Wishlist button */}
-            <WishlistButton
-              isInWishlist={isInWishlist}
-              onToggle={() => toggleWishlist(property.id)}
-            />
+            <WishlistButton isInWishlist={isInWishlist} onToggle={() => toggleWishlist(property.id)} />
 
-            {/* Verified icon */}
             {property.is_verified && (
-              <span
-                title="Verified host"
-                className="absolute left-3 bottom-12 inline-flex h-7 w-7 items-center justify-center rounded-full bg-background/85 backdrop-blur border z-10"
-              >
+              <span title="Verified host" className="absolute left-3 bottom-12 inline-flex h-7 w-7 items-center justify-center rounded-full bg-background/85 backdrop-blur border z-10">
                 <ShieldCheck className="h-4 w-4" />
               </span>
             )}
 
-            {/* Price badge */}
             <div className="absolute bottom-3 right-3 z-10">
               <Badge variant="secondary" className="bg-background/80 text-foreground text-xs">
-                {property.price_type === "daily"
-                  ? t("perNight")
-                  : property.price_type === "weekly"
-                  ? t("perWeek")
-                  : t("perMonth")}
+                {property.price_type === "daily" ? t("perNight") : property.price_type === "weekly" ? t("perWeek") : t("perMonth")}
               </Badge>
             </div>
           </div>
         </Card>
 
-        {/* Info outside box */}
         <div className="mt-2">
-          <div className="text-[15px] sm:text-base font-semibold line-clamp-1">
-            {property.title}
-          </div>
+          <div className="text-[15px] sm:text-base font-semibold line-clamp-1">{property.title}</div>
           <div className="mt-0.5 flex items-center text-muted-foreground">
             <MapPin className="h-4 w-4 mr-1 flex-shrink-0" />
             <span className="text-[13px] line-clamp-1">
@@ -283,25 +239,10 @@ const ShortStay = () => {
           navigate({ pathname: "/short-stay", search: qs.toString() });
         }} />
 
-        {/* Map + list */}
         <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-            {/* Map column */}
+            {/* Map */}
             <div className="lg:col-span-4">
-              {/* Scoped CSS to nuke margins/paddings & legends inside the map container so it truly fills */}
-              <style>{`
-                .map-frame, .map-frame * { box-sizing: border-box; }
-                .map-fit, .map-fit > * { height: 100% !important; width: 100% !important; }
-                .map-fit :where(.mapboxgl-ctrl-legend,
-                                .mapboxgl-legend,
-                                .leaflet-control-legend,
-                                .leaflet-legend,
-                                [class*="legend"],
-                                [data-legend]) { display: none !important; }
-                .map-fit :where(.legend, .legend-card) { display: none !important; }
-                .map-fit :where(.mapboxgl-control-container) { margin: 0 !important; padding: 0 !important; }
-              `}</style>
-
               <LocalErrorBoundary
                 fallback={
                   <div className="sticky top-28 rounded-2xl ring-1 ring-border bg-background grid place-items-center h-[520px] md:h-[560px] xl:h-[600px]">
@@ -315,7 +256,7 @@ const ShortStay = () => {
               </LocalErrorBoundary>
             </div>
 
-            {/* Cards */}
+            {/* List */}
             <div className="lg:col-span-8">
               <div className="flex items-center justify-between mb-6 gap-4 flex-wrap">
                 <h2 className="text-2xl font-bold">
@@ -336,8 +277,8 @@ const ShortStay = () => {
                 </div>
               ) : (
                 <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4">
-                  {filteredProperties.map((property) => (
-                    <PropertyCard key={property.id} property={property} />
+                  {filteredProperties.map((p) => (
+                    <PropertyCard key={p.id} property={p} />
                   ))}
                 </div>
               )}
