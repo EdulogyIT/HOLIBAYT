@@ -1,3 +1,4 @@
+// src/components/MapboxPropertyMap.tsx
 import { useEffect, useRef, useState } from 'react';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
@@ -22,13 +23,11 @@ interface MapboxPropertyMapProps {
   properties: Property[];
 }
 
-/** ---- CLUSTER TUNING ----
- * lower max zoom + smaller radius => pills appear earlier
- */
+// tune for earlier pill visibility
 const CLUSTER_MAX_ZOOM = 10;
-const CLUSTER_RADIUS = 35;
+const CLUSTER_RADIUS   = 35;
 
-/** Normalize text for matching dictionary keys */
+// --- Algeria city helpers ---
 const norm = (s: string) =>
   (s || '')
     .normalize('NFD')
@@ -36,144 +35,111 @@ const norm = (s: string) =>
     .toLowerCase()
     .trim();
 
-/** Algeria city centroids (normalized keys) */
 const DZ_CITIES: Record<string, { lat: number; lng: number }> = {
-  // North coast & big cities
-  algiers: { lat: 36.7538, lng: 3.0588 },
-  alger: { lat: 36.7538, lng: 3.0588 },
-  oran: { lat: 35.6969, lng: -0.6331 },
-  constantine: { lat: 36.365, lng: 6.6147 },
-  annaba: { lat: 36.9, lng: 7.7667 },
-  bejaia: { lat: 36.7525, lng: 5.0556 },
-  "bejaia": { lat: 36.7525, lng: 5.0556 },
-  tiziouzou: { lat: 36.7169, lng: 4.0497 },
-  blida: { lat: 36.48, lng: 2.83 },
-  tipaza: { lat: 36.5897, lng: 2.4477 },
-  boumerdes: { lat: 36.7664, lng: 3.4772 },
-  jijel: { lat: 36.8167, lng: 5.7667 },
-  skikda: { lat: 36.8665, lng: 6.9063 },
-  mostaganem: { lat: 35.9312, lng: 0.0892 },
-  chlef: { lat: 36.1647, lng: 1.3317 },
-  tlemcen: { lat: 34.878, lng: -1.315 },
-  sidiBelAbbes: { lat: 35.1899, lng: -0.6417 },
-  temouchent: { lat: 35.2975, lng: -1.1404 },
-  relizane: { lat: 35.737, lng: 0.555 },
-  bouira: { lat: 36.38, lng: 3.9014 },
-  medea: { lat: 36.2642, lng: 2.7539 },
-  tiaret: { lat: 35.371, lng: 1.3169 },
-  tissemsilt: { lat: 35.6072, lng: 1.8115 },
-  msila: { lat: 35.7058, lng: 4.5418 },
-  "m'sila": { lat: 35.7058, lng: 4.5418 },
-  bejaiawilaya: { lat: 36.7525, lng: 5.0556 },
-
-  // East & high plateaus
-  setif: { lat: 36.1905, lng: 5.4139 },
-  batna: { lat: 35.5559, lng: 6.1741 },
-  biskra: { lat: 34.85, lng: 5.7333 },
-  khenchela: { lat: 35.4358, lng: 7.1433 },
-  tebessa: { lat: 35.4042, lng: 8.1242 },
-  soukAhras: { lat: 36.2848, lng: 7.9515 },
-  gharDaya: { lat: 32.489, lng: 3.6736 },
-
-  // Centre & south
-  djelfa: { lat: 34.6728, lng: 3.263 },
-  laghouat: { lat: 33.8, lng: 2.8833 },
-  bechar: { lat: 31.6111, lng: -2.2333 },
-  timgad: { lat: 35.4847, lng: 6.4676 },
-  adrar: { lat: 27.874, lng: -0.2939 },
-  tamanrasset: { lat: 22.785, lng: 5.5228 },
-  tamanrassetwilaya: { lat: 22.785, lng: 5.5228 },
-  illizi: { lat: 26.4833, lng: 8.4667 },
-  eloued: { lat: 33.3683, lng: 6.8676 },
-  ouargla: { lat: 31.95, lng: 5.3167 },
-  ghardaia: { lat: 32.489, lng: 3.6736 },
-  elbayadh: { lat: 33.6832, lng: 1.0193 },
-  naama: { lat: 33.2667, lng: -0.3167 },
-  saoura: { lat: 29.5, lng: -1.0 },
+  algiers:{lat:36.7538,lng:3.0588}, alger:{lat:36.7538,lng:3.0588},
+  oran:{lat:35.6969,lng:-0.6331}, constantine:{lat:36.365,lng:6.6147},
+  annaba:{lat:36.9,lng:7.7667}, bejaia:{lat:36.7525,lng:5.0556},
+  tiziouzou:{lat:36.7169,lng:4.0497}, blida:{lat:36.48,lng:2.83},
+  tipaza:{lat:36.5897,lng:2.4477}, boumerdes:{lat:36.7664,lng:3.4772},
+  jijel:{lat:36.8167,lng:5.7667}, skikda:{lat:36.8665,lng:6.9063},
+  mostaganem:{lat:35.9312,lng:0.0892}, chlef:{lat:36.1647,lng:1.3317},
+  tlemcen:{lat:34.878,lng:-1.315}, "sidi bel abbes":{lat:35.1899,lng:-0.6417},
+  relizane:{lat:35.737,lng:0.555}, bouira:{lat:36.38,lng:3.9014},
+  medea:{lat:36.2642,lng:2.7539}, tiaret:{lat:35.371,lng:1.3169},
+  tissemsilt:{lat:35.6072,lng:1.8115}, msila:{lat:35.7058,lng:4.5418},
+  setif:{lat:36.1905,lng:5.4139}, batna:{lat:35.5559,lng:6.1741},
+  biskra:{lat:34.85,lng:5.7333}, khenchela:{lat:35.4358,lng:7.1433},
+  tebessa:{lat:35.4042,lng:8.1242}, "souk ahras":{lat:36.2848,lng:7.9515},
+  djelfa:{lat:34.6728,lng:3.263}, laghouat:{lat:33.8,lng:2.8833},
+  bechar:{lat:31.6111,lng:-2.2333}, adrar:{lat:27.874,lng:-0.2939},
+  tamanrasset:{lat:22.785,lng:5.5228}, illizi:{lat:26.4833,lng:8.4667},
+  eloued:{lat:33.3683,lng:6.8676}, ouargla:{lat:31.95,lng:5.3167},
+  ghardaia:{lat:32.489,lng:3.6736}, elbayadh:{lat:33.6832,lng:1.0193},
+  naama:{lat:33.2667,lng:-0.3167}
 };
 
-/** Fallback to Algiers if we can't match */
-const getCityCoords = (city: string): { lat: number; lng: number } => {
-  const hit = DZ_CITIES[norm(city)];
-  return hit || { lat: 36.7538, lng: 3.0588 };
-};
+const getCityCoords = (city: string): { lat: number; lng: number } =>
+  DZ_CITIES[norm(city)] || { lat: 36.7538, lng: 3.0588 }; // default Algiers
 
 export const MapboxPropertyMap = ({ properties }: MapboxPropertyMapProps) => {
-  const mapContainer = useRef<HTMLDivElement>(null);
+  const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<mapboxgl.Map | null>(null);
+  const mapReadyRef = useRef(false);               // <-- guard for style load
+  const layersAddedRef = useRef(false);            // <-- ensure source/layers once
   const htmlMarkersRef = useRef<mapboxgl.Marker[]>([]);
-  const [mapboxToken, setMapboxToken] = useState<string>('');
+  const [token, setToken] = useState<string>('');
   const { formatPrice } = useCurrency();
   const navigate = useNavigate();
 
-  /** ---- Get Mapbox token ---- */
+  // token
   useEffect(() => {
     (async () => {
       try {
         const { data, error } = await supabase.functions.invoke('get-mapbox-token');
-        if (!error && data?.token) setMapboxToken(data.token);
-        else setMapboxToken('pk.eyJ1IjoibG92YWJsZSIsImEiOiJjbTRmYm0ycDMwYWVzMnBzaHo0aTg5enBkIn0.VhY5RN5gX_zc5SjGHLqKJQ');
+        if (!error && data?.token) setToken(data.token);
+        else setToken('pk.eyJ1IjoibG92YWJsZSIsImEiOiJjbTRmYm0ycDMwYWVzMnBzaHo0aTg5enBkIn0.VhY5RN5gX_zc5SjGHLqKJQ');
       } catch {
-        setMapboxToken('pk.eyJ1IjoibG92YWJsZSIsImEiOiJjbTRmYm0ycDMwYWVzMnBzaHo0aTg5enBkIn0.VhY5RN5gX_zc5SjGHLqKJQ');
+        setToken('pk.eyJ1IjoibG92YWJsZSIsImEiOiJjbTRmYm0ycDMwYWVzMnBzaHo0aTg5enBkIn0.VhY5RN5gX_zc5SjGHLqKJQ');
       }
     })();
   }, []);
 
-  /** ---- Init map ---- */
+  // init map
   useEffect(() => {
-    if (!mapContainer.current || !mapboxToken || mapRef.current) return;
-    mapboxgl.accessToken = mapboxToken;
+    if (!token || !mapContainerRef.current || mapRef.current) return;
+    mapboxgl.accessToken = token;
 
     const map = new mapboxgl.Map({
-      container: mapContainer.current,
+      container: mapContainerRef.current,
       style: 'mapbox://styles/mapbox/streets-v12',
-      center: [3.0588, 36.7538], // Algiers
+      center: [3.0588, 36.7538],
       zoom: 5,
       cooperativeGestures: true,
     });
     map.addControl(new mapboxgl.NavigationControl(), 'top-right');
 
+    const onLoad = () => { mapReadyRef.current = true; };
+    map.on('load', onLoad);
+
     mapRef.current = map;
 
     return () => {
+      map.off('load', onLoad);
       htmlMarkersRef.current.forEach(m => m.remove());
       htmlMarkersRef.current = [];
       map.remove();
       mapRef.current = null;
+      mapReadyRef.current = false;
+      layersAddedRef.current = false;
     };
-  }, [mapboxToken]);
+  }, [token]);
 
-  /** Group helper */
+  // helpers
   const groupBy = <T, K extends string | number>(arr: T[], key: (v: T) => K) => {
     const m = new Map<K, T[]>();
     for (const it of arr) {
       const k = key(it);
-      const g = m.get(k);
-      if (g) g.push(it);
-      else m.set(k, [it]);
+      m.set(k, [...(m.get(k) || []), it]);
     }
     return m;
   };
 
-  /** Spiderfy helper: spread coincident points into a ring */
-  const spiderfyPoints = (map: mapboxgl.Map, base: [number, number], count: number): [number, number][] => {
-    if (count <= 1) return [base];
-    const centerPx = map.project({ lng: base[0], lat: base[1] });
-    const radiusPx = 26;
+  const spiderfy = (map: mapboxgl.Map, base: [number, number], n: number): [number, number][] => {
+    if (n <= 1) return [base];
+    const c = map.project({ lng: base[0], lat: base[1] });
+    const r = 26;
     const out: [number, number][] = [];
-    for (let i = 0; i < count; i++) {
-      const angle = (2 * Math.PI * i) / count;
-      const p = { x: centerPx.x + radiusPx * Math.cos(angle), y: centerPx.y + radiusPx * Math.sin(angle) };
-      const lngLat = map.unproject(p);
-      out.push([lngLat.lng, lngLat.lat]);
+    for (let i = 0; i < n; i++) {
+      const a = (2 * Math.PI * i) / n;
+      const p = map.unproject({ x: c.x + r * Math.cos(a), y: c.y + r * Math.sin(a) });
+      out.push([p.lng, p.lat]);
     }
     return out;
   };
 
-  /** Build FeatureCollection from props (Algeria fallback if no lat/lng) */
-  const toFeatureCollection = (items: Property[]): GeoJSON.FeatureCollection<GeoJSON.Point, any> => ({
+  const toFC = (items: Property[]): GeoJSON.FeatureCollection<GeoJSON.Point, any> => ({
     type: 'FeatureCollection',
-    features: (items || [])
+    features: items
       .map((p) => {
         const lat = p.latitude ?? getCityCoords(p.city).lat;
         const lng = p.longitude ?? getCityCoords(p.city).lng;
@@ -198,16 +164,16 @@ export const MapboxPropertyMap = ({ properties }: MapboxPropertyMapProps) => {
       .filter(Boolean) as GeoJSON.Feature<GeoJSON.Point, any>[],
   });
 
-  /** ---- Add source/layers once; update data & pills whenever properties change ---- */
+  // data + rendering
   useEffect(() => {
     const map = mapRef.current;
-    if (!map) return;
+    if (!map || !mapReadyRef.current) return;
 
-    const fc = toFeatureCollection(properties);
+    const fc = toFC(properties);
 
-    const ensureSourceAndLayers = () => {
-      const src = map.getSource('props') as mapboxgl.GeoJSONSource | undefined;
-      if (!src) {
+    // 1) ensure source/layers
+    if (!layersAddedRef.current) {
+      if (!map.getSource('props')) {
         map.addSource('props', {
           type: 'geojson',
           data: fc,
@@ -242,13 +208,12 @@ export const MapboxPropertyMap = ({ properties }: MapboxPropertyMapProps) => {
           paint: { 'text-color': '#ffffff' },
         });
 
-        // Click cluster → zoom into it
         map.on('click', 'prop-clusters', (e) => {
           const feats = map.queryRenderedFeatures(e.point, { layers: ['prop-clusters'] });
           if (!feats.length) return;
-          const clusterId = feats[0].properties?.cluster_id;
-          const src2 = map.getSource('props') as mapboxgl.GeoJSONSource;
-          src2.getClusterExpansionZoom(clusterId, (err, zoom) => {
+          const clusterId = feats[0].properties?.cluster_id as number;
+          const src = map.getSource('props') as mapboxgl.GeoJSONSource;
+          src.getClusterExpansionZoom(clusterId, (err, zoom) => {
             if (err) return;
             map.easeTo({ center: (feats[0].geometry as any).coordinates, zoom });
           });
@@ -256,36 +221,40 @@ export const MapboxPropertyMap = ({ properties }: MapboxPropertyMapProps) => {
 
         map.on('mouseenter', 'prop-clusters', () => (map.getCanvas().style.cursor = 'pointer'));
         map.on('mouseleave', 'prop-clusters', () => (map.getCanvas().style.cursor = ''));
-      } else {
-        src.setData(fc);
+
+        layersAddedRef.current = true;
       }
-    };
+    }
 
-    const fitOnce = () => {
-      const b = new mapboxgl.LngLatBounds();
-      fc.features.forEach(ft => b.extend(ft.geometry.coordinates as [number, number]));
-      if (!b.isEmpty()) map.fitBounds(b, { padding: 50, maxZoom: 11 });
-    };
+    // 2) always setData with the latest FC
+    const src = map.getSource('props') as mapboxgl.GeoJSONSource | undefined;
+    if (src) src.setData(fc);
 
-    const drawPricePills = () => {
-      if (!map.isStyleLoaded()) return;
+    // 3) fit once per update (keeps things in view but not too tight)
+    const bounds = new mapboxgl.LngLatBounds();
+    fc.features.forEach(f => bounds.extend(f.geometry.coordinates as [number, number]));
+    if (!bounds.isEmpty()) map.fitBounds(bounds, { padding: 50, maxZoom: 11 });
 
-      // Remove old markers
+    // 4) draw price pills (with spiderfy)
+    const drawPills = () => {
+      if (!mapReadyRef.current) return;
+
+      // clear old
       htmlMarkersRef.current.forEach(m => m.remove());
       htmlMarkersRef.current = [];
 
-      // Visible, unclustered features
-      const feats = map.querySourceFeatures('props', { filter: ['!', ['has', 'point_count']] }) as mapboxgl.MapboxGeoJSONFeature[];
+      const feats = map.querySourceFeatures('props', {
+        filter: ['!', ['has', 'point_count']],
+      }) as mapboxgl.MapboxGeoJSONFeature[];
 
-      // Group by rounded coordinate to detect coincidences
-      const groups = groupBy(feats, f => {
+      const groups = groupBy(feats, (f) => {
         const [lng, lat] = (f.geometry as any).coordinates as [number, number];
         return `${lng.toFixed(5)}|${lat.toFixed(5)}`;
       });
 
       for (const [, arr] of groups) {
         const base = (arr[0].geometry as any).coordinates as [number, number];
-        const ring = spiderfyPoints(map, base as [number, number], arr.length);
+        const ring = spiderfy(map, base, arr.length);
 
         arr.forEach((f, i) => {
           const [lng, lat] = ring[i];
@@ -321,30 +290,20 @@ export const MapboxPropertyMap = ({ properties }: MapboxPropertyMapProps) => {
       }
     };
 
-    const applyAll = () => {
-      ensureSourceAndLayers();
-      fitOnce();
-      drawPricePills();
-    };
-
-    if (!map.isStyleLoaded()) {
-      map.once('load', applyAll);
-    } else {
-      applyAll();
-    }
-
-    // Refresh pills after data loads & after user interaction ends
-    const refresh = () => drawPricePills();
-    map.on('sourcedata', refresh);
-    map.on('moveend', refresh);
+    // draw once now, and keep fresh after user moves/zooms
+    drawPills();
+    const onMoveEnd = () => drawPills();
+    const onZoomEnd = () => drawPills();
+    map.on('moveend', onMoveEnd);
+    map.on('zoomend', onZoomEnd);
 
     return () => {
-      map.off('sourcedata', refresh);
-      map.off('moveend', refresh);
+      map.off('moveend', onMoveEnd);
+      map.off('zoomend', onZoomEnd);
       htmlMarkersRef.current.forEach(m => m.remove());
       htmlMarkersRef.current = [];
     };
   }, [properties, formatPrice, navigate]);
 
-  return <div ref={mapContainer} className="w-full h-full" />;
+  return <div ref={mapContainerRef} className="w-full h-full" />;
 };
