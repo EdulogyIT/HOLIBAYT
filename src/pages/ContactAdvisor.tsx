@@ -154,7 +154,7 @@ const ContactAdvisor = () => {
               {t('speakToAdvisor')}
             </h1>
             <p className="text-xl text-primary-foreground/90 font-inter mb-8 leading-relaxed">
-              Get personalized guidance from our certified property experts. We're here to help you make informed decisions with confidence.
+              {t('advisorHeroSubtitle')}
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
               <Button 
@@ -165,7 +165,7 @@ const ContactAdvisor = () => {
               >
                 <a href={`mailto:${generalSettings.support_email}`}>
                   <Mail className="h-5 w-5 mr-2" />
-                  Email Us
+                  {t('emailUs')}
                 </a>
               </Button>
               <Button 
@@ -175,7 +175,7 @@ const ContactAdvisor = () => {
                 onClick={() => window.open('tel:+213021999999')}
               >
                 <Phone className="h-5 w-5 mr-2" />
-                Call Now
+                {t('callNow')}
               </Button>
             </div>
           </div>

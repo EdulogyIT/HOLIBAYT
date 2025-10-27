@@ -42,22 +42,22 @@ export const PropertyThingsToKnow = ({
   // Build house rules from database or use defaults
   const houseRulesList = category === "short-stay" 
     ? [
-        { icon: CheckCircle2, text: "Check-in: After " + checkInTime, allowed: true },
-        { icon: CheckCircle2, text: "Check-out: Before " + checkOutTime, allowed: true },
+        { icon: CheckCircle2, text: t("checkInAfter") + " " + checkInTime, allowed: true },
+        { icon: CheckCircle2, text: t("checkOutBefore") + " " + checkOutTime, allowed: true },
         { icon: CheckCircle2, text: t("selfCheckInKeypad"), allowed: true },
-        { icon: houseRules?.smoking ? CheckCircle2 : XCircle, text: houseRules?.smoking ? "Smoking allowed" : "No smoking", allowed: houseRules?.smoking || false },
-        { icon: houseRules?.pets ? CheckCircle2 : XCircle, text: houseRules?.pets ? "Pets allowed" : "No pets", allowed: houseRules?.pets || false },
-        { icon: houseRules?.events ? CheckCircle2 : XCircle, text: houseRules?.events ? "Events allowed" : "No parties or events", allowed: houseRules?.events || false },
-        ...(houseRules?.quietHours ? [{ icon: Info, text: "Quiet hours: " + houseRules.quietHours, allowed: null }] : []),
+        { icon: houseRules?.smoking ? CheckCircle2 : XCircle, text: houseRules?.smoking ? t("smokingAllowed") : t("noSmoking"), allowed: houseRules?.smoking || false },
+        { icon: houseRules?.pets ? CheckCircle2 : XCircle, text: houseRules?.pets ? t("petsAllowed") : t("noPets"), allowed: houseRules?.pets || false },
+        { icon: houseRules?.events ? CheckCircle2 : XCircle, text: houseRules?.events ? t("eventsAllowed") : t("noPartiesOrEvents"), allowed: houseRules?.events || false },
+        ...(houseRules?.quietHours ? [{ icon: Info, text: t("quietHours") + " " + houseRules.quietHours, allowed: null }] : []),
       ]
     : category === "rent"
     ? [
-        { icon: CheckCircle2, text: "Long-term rental (6+ months)", allowed: true },
-        { icon: CheckCircle2, text: "Proof of income required", allowed: true },
-        { icon: CheckCircle2, text: "Security deposit required", allowed: true },
-        { icon: XCircle, text: "No subletting", allowed: false },
-        { icon: houseRules?.pets ? CheckCircle2 : Info, text: houseRules?.pets ? "Pets allowed" : "Pets negotiable with owner", allowed: houseRules?.pets || null },
-        { icon: houseRules?.smoking ? CheckCircle2 : XCircle, text: houseRules?.smoking ? "Smoking allowed" : "No smoking", allowed: houseRules?.smoking || false },
+        { icon: CheckCircle2, text: t("longTermRental"), allowed: true },
+        { icon: CheckCircle2, text: t("proofOfIncomeRequired"), allowed: true },
+        { icon: CheckCircle2, text: t("securityDepositRequired"), allowed: true },
+        { icon: XCircle, text: t("noSubletting"), allowed: false },
+        { icon: houseRules?.pets ? CheckCircle2 : Info, text: houseRules?.pets ? t("petsAllowed") : t("petsNegotiable"), allowed: houseRules?.pets || null },
+        { icon: houseRules?.smoking ? CheckCircle2 : XCircle, text: houseRules?.smoking ? t("smokingAllowed") : t("noSmoking"), allowed: houseRules?.smoking || false },
       ]
     : [
         { icon: CheckCircle2, text: t("ownershipDocsVerified"), allowed: true },
@@ -69,60 +69,60 @@ export const PropertyThingsToKnow = ({
   // Build safety features from database or use defaults
   const safetyPropertyList = category === "short-stay"
     ? [
-        ...(safetyFeatures?.securityCameras !== false ? ["Security cameras on property exterior"] : []),
-        ...(safetyFeatures?.smokeAlarm !== false ? ["Smoke alarm installed"] : []),
-        ...(safetyFeatures?.coAlarm !== false ? ["Carbon monoxide alarm"] : []),
-        ...(safetyFeatures?.firstAidKit !== false ? ["First aid kit available"] : []),
-        ...(safetyFeatures?.fireExtinguisher !== false ? ["Fire extinguisher available"] : []),
-        "Secure lockbox for keys"
+        ...(safetyFeatures?.securityCameras !== false ? [t("securityCamerasExterior")] : []),
+        ...(safetyFeatures?.smokeAlarm !== false ? [t("smokeAlarmInstalled")] : []),
+        ...(safetyFeatures?.coAlarm !== false ? [t("carbonMonoxideAlarm")] : []),
+        ...(safetyFeatures?.firstAidKit !== false ? [t("firstAidKitAvailable")] : []),
+        ...(safetyFeatures?.fireExtinguisher !== false ? [t("fireExtinguisherAvailable")] : []),
+        t("secureLockboxForKeys")
       ]
     : category === "rent"
     ? [
-        "24/7 building security (if applicable)",
-        "Secure entry system",
-        "Well-lit common areas",
-        ...(safetyFeatures?.smokeAlarm !== false ? ["Smoke detectors in all rooms"] : []),
-        "Emergency contact provided",
-        "Regular maintenance checks"
+        t("buildingSecurity247"),
+        t("secureEntrySystem"),
+        t("wellLitCommonAreas"),
+        ...(safetyFeatures?.smokeAlarm !== false ? [t("smokeDetectorsAllRooms")] : []),
+        t("emergencyContactProvided"),
+        t("regularMaintenanceChecks")
       ]
     : [
-        "Property verified by Holibayt team",
-        "Ownership documents checked",
-        "Legal status confirmed",
-        "No outstanding debts or liens",
-        "Property boundaries verified",
-        "Safe neighborhood assessment"
+        t("propertyVerifiedByHolibayt"),
+        t("ownershipDocsChecked"),
+        t("legalStatusConfirmed"),
+        t("noOutstandingDebts"),
+        t("propertyBoundariesVerified"),
+        t("safeNeighborhoodAssessment")
       ];
 
   const cancellationPolicies = {
     flexible: {
-      title: "Flexible Cancellation",
-      description: "Full refund if cancelled 24 hours before check-in",
+      title: t("flexibleCancellation"),
+      description: t("flexibleCancellationDesc"),
       details: [
-        "Free cancellation before 24 hours of check-in",
-        "50% refund if cancelled within 24 hours",
-        "No refund for no-shows",
-        "Cleaning fee is non-refundable"
+        t("flexibleDetail1"),
+        t("flexibleDetail2"),
+        t("flexibleDetail3"),
+        t("flexibleDetail4")
       ]
     },
     moderate: {
-      title: "Moderate Cancellation",
-      description: "Full refund if cancelled 5 days before check-in",
+      title: t("moderateCancellation"),
+      description: t("moderateCancellationDesc"),
       details: [
-        "Free cancellation up to 5 days before check-in",
-        "50% refund if cancelled within 5 days",
-        "No refund within 48 hours of check-in",
-        "Service fees are non-refundable"
+        t("moderateDetail1"),
+        t("moderateDetail2"),
+        t("moderateDetail3"),
+        t("moderateDetail4")
       ]
     },
     strict: {
-      title: "Strict Cancellation",
-      description: "50% refund if cancelled 7+ days before check-in",
+      title: t("strictCancellation"),
+      description: t("strictCancellationDesc"),
       details: [
-        "50% refund up to 7 days before check-in",
-        "No refund if cancelled within 7 days",
-        "No refund for no-shows",
-        "All fees are non-refundable"
+        t("strictDetail1"),
+        t("strictDetail2"),
+        t("strictDetail3"),
+        t("strictDetail4")
       ]
     }
   };

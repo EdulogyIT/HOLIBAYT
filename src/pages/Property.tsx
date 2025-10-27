@@ -311,7 +311,7 @@ const Property = () => {
         {property.user_id && (
           <Card className="shadow-lg">
             <CardHeader>
-              <CardTitle className="text-2xl">Meet Your Host</CardTitle>
+              <CardTitle className="text-2xl">{t('meetYourHost')}</CardTitle>
             </CardHeader>
             <CardContent>
               <HostProfileSection 

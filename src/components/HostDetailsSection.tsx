@@ -87,7 +87,7 @@ export const HostDetailsSection = ({ userId, onContactHost }: HostDetailsSection
   return (
     <Card className="border-2 shadow-lg">
       <CardHeader>
-        <CardTitle className="text-2xl font-playfair">About the Host</CardTitle>
+        <CardTitle className="text-2xl font-playfair">{t('aboutTheHost')}</CardTitle>
       </CardHeader>
       <CardContent className="space-y-8">
         {/* Host Header with Avatar */}
@@ -105,7 +105,7 @@ export const HostDetailsSection = ({ userId, onContactHost }: HostDetailsSection
             {hostProfile.is_superhost && (
               <Badge className="bg-gradient-primary">
                 <Star className="w-3 h-3 mr-1 fill-white" />
-                Superhost
+                {t('superhost')}
               </Badge>
             )}
           </div>
@@ -117,20 +117,20 @@ export const HostDetailsSection = ({ userId, onContactHost }: HostDetailsSection
             <div className="text-3xl font-bold font-playfair">
               {hostProfile.total_reviews || 0}
             </div>
-            <div className="text-sm text-muted-foreground mt-1">Reviews</div>
+            <div className="text-sm text-muted-foreground mt-1">{t('reviews')}</div>
           </div>
           <div className="text-center border-x">
             <div className="text-3xl font-bold font-playfair flex items-center justify-center gap-1">
               {hostProfile.average_rating.toFixed(1)}
               <Star className="w-5 h-5 fill-primary text-primary" />
             </div>
-            <div className="text-sm text-muted-foreground mt-1">Rating</div>
+            <div className="text-sm text-muted-foreground mt-1">{t('rating')}</div>
           </div>
           <div className="text-center">
             <div className="text-3xl font-bold font-playfair">
               {monthsHosting}
             </div>
-            <div className="text-sm text-muted-foreground mt-1">Months hosting</div>
+            <div className="text-sm text-muted-foreground mt-1">{t('monthsHosting')}</div>
           </div>
         </div>
 
@@ -140,9 +140,9 @@ export const HostDetailsSection = ({ userId, onContactHost }: HostDetailsSection
             <div className="flex items-start gap-3">
               <Shield className="w-6 h-6 text-primary flex-shrink-0 mt-1" />
               <div>
-                <h4 className="font-semibold mb-2">{hostProfile.name} is a Superhost</h4>
+                <h4 className="font-semibold mb-2">{hostProfile.name} {t('isSuperhost')}</h4>
                 <p className="text-sm text-muted-foreground">
-                  Superhosts are experienced, highly rated hosts who are committed to providing great stays for guests.
+                  {t('superhostDescription')}
                 </p>
               </div>
             </div>
@@ -151,15 +151,15 @@ export const HostDetailsSection = ({ userId, onContactHost }: HostDetailsSection
 
         {/* Host Details */}
         <div className="space-y-4">
-          <h4 className="font-semibold text-lg">Host Details</h4>
+          <h4 className="font-semibold text-lg">{t('hostDetails')}</h4>
           
           <div className="space-y-3">
             <div className="flex items-start gap-3">
               <Clock className="w-5 h-5 text-muted-foreground flex-shrink-0 mt-0.5" />
               <div>
-                <div className="font-medium">Response rate: {hostProfile.response_rate}%</div>
+                <div className="font-medium">{t('responseRate')} {hostProfile.response_rate}%</div>
                 <div className="text-sm text-muted-foreground">
-                  Responds {hostProfile.response_time}
+                  {t('responds')} {hostProfile.response_time}
                 </div>
               </div>
             </div>
@@ -167,7 +167,7 @@ export const HostDetailsSection = ({ userId, onContactHost }: HostDetailsSection
             <div className="flex items-start gap-3">
               <Globe className="w-5 h-5 text-muted-foreground flex-shrink-0 mt-0.5" />
               <div>
-                <div className="font-medium">Languages</div>
+                <div className="font-medium">{t('languages')}</div>
                 <div className="text-sm text-muted-foreground">
                   {hostProfile.languages.join(', ')}
                 </div>
@@ -177,7 +177,7 @@ export const HostDetailsSection = ({ userId, onContactHost }: HostDetailsSection
             <div className="flex items-start gap-3">
               <MapPin className="w-5 h-5 text-muted-foreground flex-shrink-0 mt-0.5" />
               <div>
-                <div className="font-medium">Lives in {hostProfile.location}</div>
+                <div className="font-medium">{t('livesIn')} {hostProfile.location}</div>
               </div>
             </div>
           </div>
@@ -190,18 +190,17 @@ export const HostDetailsSection = ({ userId, onContactHost }: HostDetailsSection
           size="lg"
         >
           <MessageCircle className="w-4 h-4 mr-2" />
-          Message Host
+          {t('messageHost')}
         </Button>
 
         {/* Safety Notice */}
         <div className="text-xs text-muted-foreground font-inter p-4 bg-muted/30 rounded-lg border">
           <p className="font-semibold mb-2">
             <Shield className="w-4 h-4 inline mr-1" />
-            To protect your payment
+            {t('toProtectYourPayment')}
           </p>
           <p>
-            Never transfer money or communicate outside of the Holibayt website or app. 
-            Keep all communications and transactions on our platform for your safety.
+            {t('paymentSafetyWarning')}
           </p>
         </div>
       </CardContent>

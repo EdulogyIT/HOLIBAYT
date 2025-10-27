@@ -18,22 +18,22 @@ export const HolibaytPayExplainer = ({ category }: HolibaytPayExplainerProps) =>
   };
 
   const buyContent = {
-    title: getTitleOrFormatted("Holibayt Pay Explainer"),
-    description: getTitleOrFormatted("Funds Held Safely"),
+    title: t("holibaytPayExplainerTitle"),
+    description: t("fundsHeldSafely"),
     features: [
-      getTitleOrFormatted("Escrow Protection Feature"),
-      getTitleOrFormatted("Verified Documents Feature"),
-      getTitleOrFormatted("Transaction Transparency Feature")
+      t("escrowProtection"),
+      t("verifiedDocuments"),
+      t("transactionTransparency")
     ]
   };
 
   const rentContent = {
-    title: getTitleOrFormatted("Holibayt Pay Protection"),
-    description: getTitleOrFormatted("rentDepositHeldSecurely"),
+    title: t("holibaytPayExplainerTitle"),
+    description: t("rentDepositHeldSecurely"),
     features: [
-      getTitleOrFormatted("Refunds Available"),
-      getTitleOrFormatted("No Hidden Fees"),
-      getTitleOrFormatted("Secure Payment Processing Feature")
+      t("refundsAvailable"),
+      t("noHiddenFees"),
+      t("securePaymentProcessing")
     ]
   };
 
@@ -63,7 +63,7 @@ export const HolibaytPayExplainer = ({ category }: HolibaytPayExplainerProps) =>
             onClick={() => navigate("/holibayt-pay")}
             className="mt-4 hover:-translate-y-0.5 transition-transform text-sm sm:text-base w-full sm:w-auto"
           >
-            {t('learnMore')} about Holibayt Pay™
+            {t('learnMore')} {t('aboutHolibaytPay')}
             <ArrowRight className="w-4 h-4 ml-2" />
           </Button>
         </div>
