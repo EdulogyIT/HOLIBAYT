@@ -27,35 +27,37 @@ import { useLanguage } from "@/contexts/LanguageContext";
  *  Buy Workflow — desktop unchanged; mobile stacks bullets
  * -------------------------------------------------------- */
 const BuyWorkflowDiagram = () => {
+  const { t } = useLanguage();
+  
   const top = [
-    { icon: FileCheck, title: "Find a Verified Property" },
-    { icon: Lock, title: "Secure Deposit via Holibayt Pay*" },
-    { icon: Scale, title: "Legal Support & Insurance with Holibayt Protect*" },
-    { icon: FileSignature, title: "Transaction Finalized" },
+    { icon: FileCheck, title: t("buyStep1Title") },
+    { icon: Lock, title: t("buyStep2Title") },
+    { icon: Scale, title: t("buyStep3Title") },
+    { icon: FileSignature, title: t("buyStep4Title") },
   ];
 
   const bars = [
-    { label: "Trust Layer", hex: "#0f766e", textClass: "text-white" },
-    { label: "Security Layer", hex: "#115e59", textClass: "text-white" },
-    { label: "Protection Layer", hex: "#f59e0b", textClass: "text-slate-900" },
-    { label: "Transparency Layer", hex: "#94a3b8", textClass: "text-slate-900" },
+    { label: t("trustLayer"), hex: "#0f766e", textClass: "text-white" },
+    { label: t("securityLayer"), hex: "#115e59", textClass: "text-white" },
+    { label: t("protectionLayer"), hex: "#f59e0b", textClass: "text-slate-900" },
+    { label: t("transparencyLayer"), hex: "#94a3b8", textClass: "text-slate-900" },
   ];
 
   const bullets = [
-    ["Every property and seller verified through Holibayt Verify™"],
+    [t("buyStep1Detail1")],
     [
-      "Buyer’s deposit locked in Holibayt Pay™ escrow",
-      "Release only after due diligence and document validation",
-      "Transparent, milestone-based transaction flow",
+      t("buyStep2Detail1"),
+      t("buyStep2Detail2"),
+      t("buyStep2Detail3"),
     ],
     [
-      "Legal assistance provided by certified notaries",
-      "Transaction backed by Holibayt Protect™ and Holibayt Insurance™",
-      "Covers fraud, contract disputes, or documentation errors",
+      t("buyStep3Detail1"),
+      t("buyStep3Detail2"),
+      t("buyStep3Detail3"),
     ],
     [
-      "Ownership officially transferred and confirmed",
-      "Funds released to seller through Holibayt Pay™",
+      t("buyStep4Detail1"),
+      t("buyStep4Detail2"),
     ],
   ];
 
@@ -63,7 +65,7 @@ const BuyWorkflowDiagram = () => {
     <div className="space-y-8 md:space-y-10 mx-auto max-w-[34rem] md:max-w-none">
       <div className="text-center px-2">
         <h3 className="text-2xl sm:text-3xl md:text-4xl font-playfair font-bold text-foreground leading-tight">
-          Buy — Verified. Secured. Guaranteed.
+          {t("buyWorkflowTitle")}
         </h3>
       </div>
 
@@ -142,37 +144,39 @@ const BuyWorkflowDiagram = () => {
  *  Rent Workflow — desktop unchanged; mobile stacks bullets
  * -------------------------------------------------------- */
 const RentWorkflowDiagram = () => {
+  const { t } = useLanguage();
+  
   const top = [
-    { icon: Home, title: "Find a Verified Property" },
-    { icon: FileSignature, title: "Sign & Secure with Holibayt Pay™ (Escrow)" },
-    { icon: ShieldCheck, title: "Move in Protected with Holibayt Protect™" },
-    { icon: DollarSign, title: "Monthly Payouts Released" },
+    { icon: Home, title: t("rentStep1Title") },
+    { icon: FileSignature, title: t("rentStep2Title") },
+    { icon: ShieldCheck, title: t("rentStep3Title") },
+    { icon: DollarSign, title: t("rentStep4Title") },
   ];
 
   const bars = [
-    { label: "Trust Layer", hex: "#0f766e", textClass: "text-white" },
-    { label: "Security Layer", hex: "#115e59", textClass: "text-white" },
-    { label: "Protection Layer", hex: "#f59e0b", textClass: "text-slate-900" },
-    { label: "Transparency Layer", hex: "#94a3b8", textClass: "text-slate-900" },
+    { label: t("trustLayer"), hex: "#0f766e", textClass: "text-white" },
+    { label: t("securityLayer"), hex: "#115e59", textClass: "text-white" },
+    { label: t("protectionLayer"), hex: "#f59e0b", textClass: "text-slate-900" },
+    { label: t("transparencyLayer"), hex: "#94a3b8", textClass: "text-slate-900" },
   ];
 
   const bullets = [
     [
-      "Verified listings, landlords & tenants",
-      "ID (KYC) and property verification via Holibayt Verify™",
+      t("rentStep1Detail1"),
+      t("rentStep1Detail2"),
     ],
     [
-      "Tenant pays first month’s rent + deposit into Holibayt Pay™ escrow account",
-      "Owner’s listing commitment secured (property availability guaranteed)",
+      t("rentStep2Detail1"),
+      t("rentStep2Detail2"),
     ],
     [
-      "Deposit and contract secured by Holibayt Protect™",
-      "Damage or dispute coverage with Holibayt Insurance™",
-      "24/7 mediation and assistance for both parties",
+      t("rentStep3Detail1"),
+      t("rentStep3Detail2"),
+      t("rentStep3Detail3"),
     ],
     [
-      "Owner receives payment each month automatically after verification",
-      "Holibayt Pay™ manages all transactions securely",
+      t("rentStep4Detail1"),
+      t("rentStep4Detail2"),
     ],
   ];
 
@@ -180,7 +184,7 @@ const RentWorkflowDiagram = () => {
     <div className="space-y-8 md:space-y-10 mx-auto max-w-[34rem] md:max-w-none">
       <div className="text-center px-2">
         <h3 className="text-2xl sm:text-3xl md:text-4xl font-playfair font-bold text-foreground leading-tight">
-          Rent — Secure Long-Term Rentals, Simplified.
+          {t("rentWorkflowTitle")}
         </h3>
       </div>
 
@@ -256,38 +260,40 @@ const RentWorkflowDiagram = () => {
  *  Short Stay Workflow — desktop unchanged; mobile stacks bullets
  * -------------------------------------------------------- */
 const ShortStayWorkflowDiagram = () => {
+  const { t } = useLanguage();
+
   const top = [
-    { icon: Search, title: "Find a Verified Stay" },
-    { icon: CreditCard, title: "Book Safely via Holibayt Pay™" },
-    { icon: ShieldCheck, title: "Stay Protected with Holibayt Protect™" },
-    { icon: HandCoins, title: "Payout Released" },
+    { icon: Search, title: t("shortStayStep1Title") },
+    { icon: CreditCard, title: t("shortStayStep2Title") },
+    { icon: ShieldCheck, title: t("shortStayStep3Title") },
+    { icon: HandCoins, title: t("shortStayStep4Title") },
   ];
 
   const bars = [
-    { label: "Trust Layer", hex: "#0f766e", textClass: "text-white" },
-    { label: "Security Layer", hex: "#115e59", textClass: "text-white" },
-    { label: "Protection Layer", hex: "#f59e0b", textClass: "text-slate-900" },
-    { label: "Transparency Layer", hex: "#94a3b8", textClass: "text-slate-900" },
+    { label: t("trustLayer"), hex: "#0f766e", textClass: "text-white" },
+    { label: t("securityLayer"), hex: "#115e59", textClass: "text-white" },
+    { label: t("protectionLayer"), hex: "#f59e0b", textClass: "text-slate-900" },
+    { label: t("transparencyLayer"), hex: "#94a3b8", textClass: "text-slate-900" },
   ];
 
   const bullets = [
     [
-      "All listings, hosts, and guests verified through Holibayt Verify™",
-      "Identity & property validation (KYC + ownership check)",
+      t("shortStayStep1Detail1"),
+      t("shortStayStep1Detail2"),
     ],
     [
-      "Guest payment locked in Holibayt Pay™ escrow until check-in",
-      "Owner commitment secured—no last-minute cancellations",
-      "Flexible or strict cancellation policies applied automatically",
+      t("shortStayStep2Detail1"),
+      t("shortStayStep2Detail2"),
+      t("shortStayStep2Detail3"),
     ],
     [
-      "Guest deposit and property covered under Holibayt Protect™",
-      "Assistance and mediation available 24/7",
-      "Holibayt Insurance™ covers damages or unforeseen events",
+      t("shortStayStep3Detail1"),
+      t("shortStayStep3Detail2"),
+      t("shortStayStep3Detail3"),
     ],
     [
-      "Payment released to host after successful stay confirmation",
-      "Both parties rated and verified again for future stays",
+      t("shortStayStep4Detail1"),
+      t("shortStayStep4Detail2"),
     ],
   ];
 
@@ -295,7 +301,7 @@ const ShortStayWorkflowDiagram = () => {
     <div className="space-y-8 md:space-y-10 mx-auto max-w-[34rem] md:max-w-none">
       <div className="text-center px-2">
         <h3 className="text-2xl sm:text-3xl md:text-4xl font-playfair font-bold text-foreground leading-tight">
-          Short Stay — Verified. Secured. Protected.
+          {t("shortStayWorkflowTitle")}
         </h3>
       </div>
 

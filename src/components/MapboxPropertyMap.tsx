@@ -73,7 +73,7 @@ const spiderfy = (map: mapboxgl.Map, base: [number, number], n: number): [number
   const pts: [number, number][] = [];
   for (let i = 0; i < n; i++) {
     const a = (2 * Math.PI * i) / n;
-    const p = map.unproject({ x: c.x + r * Math.cos(a), y: c.y + r * Math.sin(a) });
+    const p = map.unproject([c.x + r * Math.cos(a), c.y + r * Math.sin(a)]);
     pts.push([p.lng, p.lat]);
   }
   return pts;
