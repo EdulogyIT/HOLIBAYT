@@ -85,10 +85,16 @@ export const GuestsSelector = ({ value, onChange, keepOpen = false }: GuestsSele
         className="w-80 p-4 bg-background z-[100]" 
         align="center" 
         collisionPadding={10}
-        onInteractOutside={(e) => {
-          // Prevent closing when clicking inside the popover if keepOpen is true
+        onPointerDownOutside={(e) => {
+          // Prevent closing when keepOpen is true
           if (keepOpen) {
             e.preventDefault();
+          }
+        }}
+        onEscapeKeyDown={(e) => {
+          // Allow ESC key to close even when keepOpen is true
+          if (keepOpen) {
+            setOpen(false);
           }
         }}
       >

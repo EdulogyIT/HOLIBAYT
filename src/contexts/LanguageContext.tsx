@@ -2284,7 +2284,27 @@ const allTranslations = {
       rejectionReason: 'Rejection Reason',
       approved: 'Approved',
       rejected: 'Rejected',
-      requiresChanges: 'Requires Changes'
+      requiresChanges: 'Requires Changes',
+      title: 'Admin',
+      operationsHub: 'Holibayt Operations Hub — Your performance, growth, and host activity at a glance.',
+      addNewProperty: 'Add New Property',
+      verifyHosts: 'Verify Hosts',
+      reviewPayments: 'Review Payments',
+      platformGMV: 'Platform GMV',
+      avgBookingValue: 'Avg Booking Value',
+      conversionRate: 'Conversion Rate',
+      verificationPending: 'Verification Pending',
+      actionRequired: 'Action Required',
+      avgResponseTime: 'Avg Response Time',
+      loading: 'Loading...',
+      noPropertiesYet: 'No properties yet',
+      superhosts: 'Superhosts',
+      commissions: 'Commissions',
+      blogs: 'Blogs',
+      testimonials: 'Testimonials',
+      lawyers: 'Lawyers',
+      lawyerRequests: 'Lawyer Requests',
+      documentTemplates: 'Document Templates'
     },
     
     // Workflow translations

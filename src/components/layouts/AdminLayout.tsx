@@ -46,19 +46,19 @@ export const AdminLayout = ({ children }: AdminLayoutProps) => {
   const isMobile = useIsMobile();
 
   const adminMenuItems = [
-    { title: t('Dashboard'), url: '/admin', icon: LayoutDashboard },
-    { title: t('Properties'), url: '/admin/properties', icon: Building2 },
-    { title: t('Hosts Guests'), url: '/admin/users', icon: Users },
-    { title: t('Kyc Verification'), url: '/admin/kyc', icon: ShieldCheck },
-    { title: t('Superhosts'), url: '/admin/superhosts', icon: Users },
-    { title: t('Commissions'), url: '/admin/commissions', icon: Calendar },
-    { title: t('Messages'), url: '/admin/messages', icon: MessageSquare },
-    { title: t('Blogs'), url: '/admin/blogs', icon: FileText },
-    { title: t('Testimonials'), url: '/admin/testimonials', icon: Star },
-    { title: t('Lawyers'), url: '/admin/lawyers', icon: Scale },
-    { title: t('Lawyer Requests'), url: '/admin/lawyer-requests', icon: Gavel },
-    { title: t('Document Templates'), url: '/admin/document-templates', icon: FileText },
-    { title: t('Settings'), url: '/admin/settings', icon: Settings },
+    { title: t('admin.dashboard'), url: '/admin', icon: LayoutDashboard },
+    { title: t('admin.properties'), url: '/admin/properties', icon: Building2 },
+    { title: t('admin.hostsGuests'), url: '/admin/users', icon: Users },
+    { title: t('admin.kycVerification'), url: '/admin/kyc', icon: ShieldCheck },
+    { title: t('admin.superhosts'), url: '/admin/superhosts', icon: Users },
+    { title: t('admin.commissions'), url: '/admin/commissions', icon: Calendar },
+    { title: t('admin.messages'), url: '/admin/messages', icon: MessageSquare },
+    { title: t('admin.blogs'), url: '/admin/blogs', icon: FileText },
+    { title: t('admin.testimonials'), url: '/admin/testimonials', icon: Star },
+    { title: t('admin.lawyers'), url: '/admin/lawyers', icon: Scale },
+    { title: t('admin.lawyerRequests'), url: '/admin/lawyer-requests', icon: Gavel },
+    { title: t('admin.documentTemplates'), url: '/admin/document-templates', icon: FileText },
+    { title: t('admin.settings'), url: '/admin/settings', icon: Settings },
   ];
 
   const handleLogout = () => {
