@@ -12,6 +12,7 @@ interface DateRangePickerProps {
   allowPast?: boolean;
   className?: string;
   disabledDates?: Date[];
+  onClose?: () => void;
 }
 
 const localeMap = {
@@ -26,6 +27,7 @@ export function DateRangePicker({
   allowPast = true,
   className,
   disabledDates = [],
+  onClose,
 }: DateRangePickerProps) {
   const { currentLang, t } = useLanguage();
   const today = new Date();
@@ -115,7 +117,7 @@ export function DateRangePicker({
         }}
       />
 
-      {/* Clear + range preview */}
+      {/* Clear + Done buttons + range preview */}
       <div className="mt-3 sm:mt-4 flex justify-between items-center">
         <Button
           variant="ghost"
@@ -126,12 +128,24 @@ export function DateRangePicker({
           {t("clear")}
         </Button>
 
-        {value?.from && (
-          <div className="text-xs text-muted-foreground">
-            {value.from.toLocaleDateString()}{" "}
-            {value.to && `- ${value.to.toLocaleDateString()}`}
-          </div>
-        )}
+        <div className="flex items-center gap-2">
+          {value?.from && (
+            <div className="text-xs text-muted-foreground">
+              {value.from.toLocaleDateString()}{" "}
+              {value.to && `- ${value.to.toLocaleDateString()}`}
+            </div>
+          )}
+          {onClose && (
+            <Button
+              variant="default"
+              size="sm"
+              onClick={onClose}
+              className="text-sm"
+            >
+              {t("done")}
+            </Button>
+          )}
+        </div>
       </div>
     </div>
   );

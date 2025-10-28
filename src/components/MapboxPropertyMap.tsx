@@ -65,11 +65,12 @@ const groupBy = <T, K extends string | number>(arr: T[], key: (v: T) => K) => {
   return out;
 };
 
-/** Spread coincident points into a ring so all pills are clickable. */
+/** Spread coincident points into a ring so all pills are clickable. Dynamic radius based on count. */
 const spiderfy = (map: mapboxgl.Map, base: [number, number], n: number): [number, number][] => {
   if (n <= 1) return [base];
   const c = map.project({ lng: base[0], lat: base[1] });
-  const r = 26; // px
+  // Dynamic radius: scale based on count (26px base + 8px per property beyond 3, cap at 120px)
+  const r = Math.min(26 + Math.max(0, n - 3) * 8, 120);
   const pts: [number, number][] = [];
   for (let i = 0; i < n; i++) {
     const a = (2 * Math.PI * i) / n;
@@ -86,6 +87,8 @@ export const MapboxPropertyMap = ({ properties }: MapboxPropertyMapProps) => {
   const [token, setToken] = useState('');
   const layersAdded = useRef(false);
   const htmlMarkers = useRef<mapboxgl.Marker[]>([]);
+  const zoomLevelRef = useRef(5);
+  const zoomTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const { formatPrice } = useCurrency();
   const navigate = useNavigate();
 
@@ -113,12 +116,15 @@ export const MapboxPropertyMap = ({ properties }: MapboxPropertyMapProps) => {
       center: [3.0588, 36.7538],
       zoom: 5,
       cooperativeGestures: true,
+      dragRotate: false,
+      touchPitch: false,
     });
     m.addControl(new mapboxgl.NavigationControl(), 'top-right');
     m.once('load', () => setIsMapReady(true));
     map.current = m;
 
     return () => {
+      if (zoomTimeoutRef.current) clearTimeout(zoomTimeoutRef.current);
       htmlMarkers.current.forEach(mm => mm.remove());
       htmlMarkers.current = [];
       m.remove();
@@ -287,44 +293,59 @@ export const MapboxPropertyMap = ({ properties }: MapboxPropertyMapProps) => {
     });
     if (!bounds.isEmpty()) m.fitBounds(bounds, { padding: 50, maxZoom: 11 });
 
-    // optional: re-spiderfy after zoom changes so spacing feels similar
+    // Debounced zoom handler: only re-spiderfy on significant zoom changes
     const onZoomEnd = () => {
-      // redraw pills to recompute spiderfy at new zoom
-      htmlMarkers.current.forEach(mm => mm.remove());
-      htmlMarkers.current = [];
-      // re-run the same block (small wrapper):
-      const propsCopy = [...properties];
-      const groups2 = groupBy(propsCopy, (p) => {
-        const lat = p.latitude ?? cityLL(p.city).lat;
-        const lng = p.longitude ?? cityLL(p.city).lng;
-        return `${lng.toFixed(5)}|${lat.toFixed(5)}`;
-      });
-      for (const [, arr] of groups2) {
-        const baseLng2 = arr[0].longitude ?? cityLL(arr[0].city).lng;
-        const baseLat2 = arr[0].latitude ?? cityLL(arr[0].city).lat;
-        const positions2 = spiderfy(m, [baseLng2, baseLat2], arr.length);
-        arr.forEach((p, i) => {
-          const [lng, lat] = positions2[i];
-          const priceNum = typeof p.price === 'number' ? p.price : parseFloat(String(p.price));
-          const label = formatPrice(priceNum, p.price_type, p.price_currency || 'DZD');
-          const el = document.createElement('div');
-          el.style.cssText = `
-            background:#FF385C;color:#fff;padding:6px 10px;border-radius:999px;
-            font-weight:700;font-size:12px;white-space:nowrap;box-shadow:0 2px 10px rgba(0,0,0,.25);
-            border:2px solid #fff;cursor:pointer;transform:translateY(-4px);transition:transform .15s ease;
-          `;
-          el.textContent = label;
-          el.addEventListener('click', () => navigate(`/property/${p.id}`));
-          const marker = new mapboxgl.Marker({ element: el, anchor: 'bottom' })
-            .setLngLat([lng, lat])
-            .addTo(m);
-          htmlMarkers.current.push(marker);
-        });
-      }
+      if (zoomTimeoutRef.current) clearTimeout(zoomTimeoutRef.current);
+      zoomTimeoutRef.current = setTimeout(() => {
+        const currentZoom = Math.floor(m.getZoom());
+        const lastZoom = zoomLevelRef.current;
+        // Only re-spiderfy if zoom crossed integer boundaries
+        if (Math.abs(currentZoom - lastZoom) >= 1) {
+          zoomLevelRef.current = currentZoom;
+          
+          // redraw pills to recompute spiderfy at new zoom
+          htmlMarkers.current.forEach(mm => mm.remove());
+          htmlMarkers.current = [];
+          
+          const propsCopy = [...properties];
+          const groups2 = groupBy(propsCopy, (p) => {
+            const lat = p.latitude ?? cityLL(p.city).lat;
+            const lng = p.longitude ?? cityLL(p.city).lng;
+            return `${lng.toFixed(5)}|${lat.toFixed(5)}`;
+          });
+          
+          for (const [, arr] of groups2) {
+            const baseLng2 = arr[0].longitude ?? cityLL(arr[0].city).lng;
+            const baseLat2 = arr[0].latitude ?? cityLL(arr[0].city).lat;
+            const positions2 = spiderfy(m, [baseLng2, baseLat2], arr.length);
+            
+            arr.forEach((p, i) => {
+              const [lng, lat] = positions2[i];
+              const priceNum = typeof p.price === 'number' ? p.price : parseFloat(String(p.price));
+              const label = formatPrice(priceNum, p.price_type, p.price_currency || 'DZD');
+              const el = document.createElement('div');
+              el.style.cssText = `
+                background:#FF385C;color:#fff;padding:6px 10px;border-radius:999px;
+                font-weight:700;font-size:12px;white-space:nowrap;box-shadow:0 2px 10px rgba(0,0,0,.25);
+                border:2px solid #fff;cursor:pointer;transform:translateY(-4px);transition:transform .15s ease;
+              `;
+              el.textContent = label;
+              el.onmouseenter = () => (el.style.transform = 'translateY(-4px) scale(1.06)');
+              el.onmouseleave  = () => (el.style.transform = 'translateY(-4px)');
+              el.addEventListener('click', () => navigate(`/property/${p.id}`));
+              const marker = new mapboxgl.Marker({ element: el, anchor: 'bottom' })
+                .setLngLat([lng, lat])
+                .addTo(m);
+              htmlMarkers.current.push(marker);
+            });
+          }
+        }
+      }, 200);
     };
 
     m.on('zoomend', onZoomEnd);
     return () => {
+      if (zoomTimeoutRef.current) clearTimeout(zoomTimeoutRef.current);
       m.off('zoomend', onZoomEnd);
       htmlMarkers.current.forEach(mm => mm.remove());
       htmlMarkers.current = [];

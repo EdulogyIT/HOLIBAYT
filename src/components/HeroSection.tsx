@@ -21,6 +21,8 @@ const HeroSection = () => {
   const { getCurrencySymbol, formatPrice } = useCurrency();
   const navigate = useNavigate();
   const [selectedMode, setSelectedMode] = useState<'buy' | 'rent' | 'stay'>('stay');
+  const [isCheckInOpen, setIsCheckInOpen] = useState(false);
+  const [isCheckOutOpen, setIsCheckOutOpen] = useState(false);
   
   // Form states for validation
   const [formData, setFormData] = useState({
@@ -199,7 +201,7 @@ const HeroSection = () => {
         return (
           <div className="flex flex-col sm:flex-row flex-1 gap-2 sm:gap-3">
             <div className="flex-1">
-              <Popover>
+              <Popover open={isCheckInOpen} onOpenChange={setIsCheckInOpen}>
                 <PopoverTrigger asChild>
                 <Button
                     variant="outline"
@@ -223,6 +225,7 @@ const HeroSection = () => {
       value={formData.dateRange}
       onChange={(range) => updateFormField('dateRange', range)}
       allowPast={false}
+      onClose={() => setIsCheckInOpen(false)}
     />
   </div>
 </PopoverContent>
@@ -231,7 +234,7 @@ const HeroSection = () => {
               </Popover>
             </div>
             <div className="flex-1">
-              <Popover>
+              <Popover open={isCheckOutOpen} onOpenChange={setIsCheckOutOpen}>
                 <PopoverTrigger asChild>
                 <Button
                     variant="outline"
@@ -256,6 +259,7 @@ const HeroSection = () => {
       value={formData.dateRange}
       onChange={(range) => updateFormField('dateRange', range)}
       allowPast={false}
+      onClose={() => setIsCheckOutOpen(false)}
     />
   </div>
 </PopoverContent>

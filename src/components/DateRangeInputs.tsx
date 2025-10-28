@@ -22,12 +22,13 @@ export function DateRangeInputs({
   className 
 }: DateRangeInputsProps) {
   const { t } = useLanguage();
-  const [isOpen, setIsOpen] = useState(false);
+  const [isCheckInOpen, setIsCheckInOpen] = useState(false);
+  const [isCheckOutOpen, setIsCheckOutOpen] = useState(false);
 
   return (
     <div className={cn("flex gap-2", className)}>
       {/* From Date Input */}
-      <Popover open={isOpen} onOpenChange={setIsOpen}>
+      <Popover open={isCheckInOpen} onOpenChange={setIsCheckInOpen}>
         <PopoverTrigger asChild>
           <Button
             variant="outline"
@@ -45,17 +46,15 @@ export function DateRangeInputs({
             value={value}
             onChange={(range) => {
               onChange(range);
-              if (range?.from && range?.to) {
-                setIsOpen(false);
-              }
             }}
             allowPast={allowPast}
+            onClose={() => setIsCheckInOpen(false)}
           />
         </PopoverContent>
       </Popover>
 
       {/* To Date Input */}
-      <Popover open={isOpen} onOpenChange={setIsOpen}>
+      <Popover open={isCheckOutOpen} onOpenChange={setIsCheckOutOpen}>
         <PopoverTrigger asChild>
           <Button
             variant="outline"
@@ -74,11 +73,9 @@ export function DateRangeInputs({
             value={value}
             onChange={(range) => {
               onChange(range);
-              if (range?.from && range?.to) {
-                setIsOpen(false);
-              }
             }}
             allowPast={allowPast}
+            onClose={() => setIsCheckOutOpen(false)}
           />
         </PopoverContent>
       </Popover>

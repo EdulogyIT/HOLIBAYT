@@ -40,6 +40,9 @@ const ShortStayHeroSearch: React.FC<ShortStayHeroSearchProps> = ({ onSearch }) =
   const navigate = useNavigate();
   const routerLocation = useRouterLocation();
   const [isScrolled, setIsScrolled] = useState(false);
+  const [isCheckInOpen, setIsCheckInOpen] = useState(false);
+  const [isCheckOutOpen, setIsCheckOutOpen] = useState(false);
+  const [isCompactCheckInOpen, setIsCompactCheckInOpen] = useState(false);
 
   const [formData, setFormData] = useState<{
     location: string;
@@ -140,7 +143,7 @@ const ShortStayHeroSearch: React.FC<ShortStayHeroSearchProps> = ({ onSearch }) =
         {/* GuestsSelector now stays open until Done */}
         {compact ? (
           <>
-            <Popover>
+            <Popover open={isCompactCheckInOpen} onOpenChange={setIsCompactCheckInOpen}>
               <PopoverTrigger asChild>
                 <Button
                   type="button"
@@ -166,6 +169,7 @@ const ShortStayHeroSearch: React.FC<ShortStayHeroSearchProps> = ({ onSearch }) =
                   value={formData.dateRange}
                   onChange={(range) => updateFormField("dateRange", range)}
                   allowPast={false}
+                  onClose={() => setIsCompactCheckInOpen(false)}
                 />
               </PopoverContent>
             </Popover>
@@ -206,7 +210,7 @@ const ShortStayHeroSearch: React.FC<ShortStayHeroSearchProps> = ({ onSearch }) =
 
             <div className="flex flex-col sm:flex-row gap-4">
               <div className="flex-1">
-                <Popover>
+                <Popover open={isCheckInOpen} onOpenChange={setIsCheckInOpen}>
                   <PopoverTrigger asChild>
                     <Button
                       type="button"
@@ -229,13 +233,14 @@ const ShortStayHeroSearch: React.FC<ShortStayHeroSearchProps> = ({ onSearch }) =
                       value={formData.dateRange}
                       onChange={(range) => updateFormField("dateRange", range)}
                       allowPast={false}
+                      onClose={() => setIsCheckInOpen(false)}
                     />
                   </PopoverContent>
                 </Popover>
               </div>
 
               <div className="flex-1">
-                <Popover>
+                <Popover open={isCheckOutOpen} onOpenChange={setIsCheckOutOpen}>
                   <PopoverTrigger asChild>
                     <Button
                       type="button"
@@ -259,6 +264,7 @@ const ShortStayHeroSearch: React.FC<ShortStayHeroSearchProps> = ({ onSearch }) =
                       value={formData.dateRange}
                       onChange={(range) => updateFormField("dateRange", range)}
                       allowPast={false}
+                      onClose={() => setIsCheckOutOpen(false)}
                     />
                   </PopoverContent>
                 </Popover>
