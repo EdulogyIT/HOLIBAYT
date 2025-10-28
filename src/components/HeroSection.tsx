@@ -268,10 +268,11 @@ const HeroSection = () => {
               </Popover>
             </div>
             <div className="flex-1">
-              <GuestsSelector
-                value={formData.travelers}
-                onChange={(value) => updateFormField('travelers', value)}
-              />
+                <GuestsSelector
+                  value={formData.travelers}
+                  onChange={(value) => updateFormField('travelers', value)}
+                  keepOpen={true}
+                />
             </div>
           </div>
         );

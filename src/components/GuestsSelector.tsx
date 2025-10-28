@@ -81,7 +81,17 @@ export const GuestsSelector = ({ value, onChange, keepOpen = false }: GuestsSele
           </div>
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-80 p-4 bg-background z-[100]" align="center" collisionPadding={10}>
+      <PopoverContent 
+        className="w-80 p-4 bg-background z-[100]" 
+        align="center" 
+        collisionPadding={10}
+        onInteractOutside={(e) => {
+          // Prevent closing when clicking inside the popover if keepOpen is true
+          if (keepOpen) {
+            e.preventDefault();
+          }
+        }}
+      >
         <div className="space-y-4">
           {guestTypes.map((type) => (
             <div key={type.key} className="flex items-center justify-between">
