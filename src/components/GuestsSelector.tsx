@@ -61,7 +61,7 @@ export const GuestsSelector = ({ value, onChange, keepOpen = false }: GuestsSele
   ];
 
   return (
-    <Popover open={open} onOpenChange={setOpen}>
+    <Popover open={open} onOpenChange={setOpen} modal={false}>
       <PopoverTrigger asChild>
         <Button 
           variant="outline" 
@@ -91,11 +91,15 @@ export const GuestsSelector = ({ value, onChange, keepOpen = false }: GuestsSele
             e.preventDefault();
           }
         }}
-        onEscapeKeyDown={(e) => {
-          // Allow ESC key to close even when keepOpen is true
+        onInteractOutside={(e) => {
+          // Prevent ALL outside interactions from closing when keepOpen is true
           if (keepOpen) {
-            setOpen(false);
+            e.preventDefault();
           }
+        }}
+        onEscapeKeyDown={(e) => {
+          // Allow ESC key to close
+          setOpen(false);
         }}
       >
         <div className="space-y-4">

@@ -234,14 +234,14 @@ export default function AdminUsers() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-foreground">{t('User Management')}</h1>
+          <h1 className="text-3xl font-bold text-foreground">{t('admin.userManagement')}</h1>
           <p className="text-muted-foreground mt-2">
-            {t('Manage Users Hosts')}
+            {t('admin.manageUsersHosts')}
           </p>
         </div>
         <Button>
           <User className="h-4 w-4 mr-2" />
-          {t('New User')}
+          {t('admin.newUser')}
         </Button>
       </div>
 
@@ -249,45 +249,45 @@ export default function AdminUsers() {
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">{t('Total Users')}</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('admin.totalUsers')}</CardTitle>
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{totalUsers}</div>
-            <p className="text-xs text-muted-foreground">{t('Registered Users')}</p>
+            <p className="text-xs text-muted-foreground">{t('admin.registeredUsers')}</p>
           </CardContent>
         </Card>
         
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">{t('Active Hosts')}</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('admin.activeHosts')}</CardTitle>
             <UserCheck className="h-4 w-4 text-blue-600" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{activeHosts}</div>
-            <p className="text-xs text-muted-foreground">{t('Properties Published')}</p>
+            <p className="text-xs text-muted-foreground">{t('admin.propertiesPublished')}</p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Verified Accounts</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('admin.verifiedAccounts')}</CardTitle>
             <Shield className="h-4 w-4 text-green-600" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{verifiedUsers}</div>
-            <p className="text-xs text-muted-foreground">{((verifiedUsers/totalUsers)*100).toFixed(0)}% of total</p>
+            <p className="text-xs text-muted-foreground">{((verifiedUsers/totalUsers)*100).toFixed(0)}% {t('admin.ofTotal')}</p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">{t('Pending')}</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('admin.pending')}</CardTitle>
             <UserX className="h-4 w-4 text-yellow-600" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{pendingUsers}</div>
-            <p className="text-xs text-muted-foreground">{t('KYC Verifications')}</p>
+            <p className="text-xs text-muted-foreground">{t('admin.kycVerifications')}</p>
           </CardContent>
         </Card>
       </div>
@@ -299,7 +299,7 @@ export default function AdminUsers() {
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
               <Input
-                placeholder={t('Search By Name Email')}
+                placeholder={t('admin.searchByNameEmail')}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="pl-10"
@@ -311,10 +311,10 @@ export default function AdminUsers() {
                 <SelectValue placeholder={t('Role')} />
               </SelectTrigger>
               <SelectContent className="bg-background border border-input shadow-lg z-[9999]" sideOffset={5}>
-                <SelectItem value="all" className="cursor-pointer hover:bg-accent">{t('AllRoles')}</SelectItem>
-                <SelectItem value="user" className="cursor-pointer hover:bg-accent">{t('Users')}</SelectItem>
-                <SelectItem value="host" className="cursor-pointer hover:bg-accent">{t('Hosts') || 'Hosts'}</SelectItem>
-                <SelectItem value="admin" className="cursor-pointer hover:bg-accent">Admins</SelectItem>
+                <SelectItem value="all" className="cursor-pointer hover:bg-accent">{t('admin.allRoles')}</SelectItem>
+                <SelectItem value="user" className="cursor-pointer hover:bg-accent">{t('admin.users')}</SelectItem>
+                <SelectItem value="host" className="cursor-pointer hover:bg-accent">{t('admin.hostsGuests')}</SelectItem>
+                <SelectItem value="admin" className="cursor-pointer hover:bg-accent">{t('admin.admins')}</SelectItem>
               </SelectContent>
             </Select>
 
@@ -323,10 +323,10 @@ export default function AdminUsers() {
                 <SelectValue placeholder={t('Status')} />
               </SelectTrigger>
               <SelectContent className="bg-background border border-input shadow-lg z-[9999]" position="popper" sideOffset={5}>
-                <SelectItem value="all" className="cursor-pointer hover:bg-accent">{t('All Statuses')}</SelectItem>
-                <SelectItem value="active" className="cursor-pointer hover:bg-accent">{t('Active')}</SelectItem>
-                <SelectItem value="pending" className="cursor-pointer hover:bg-accent">{t('Pending')}</SelectItem>
-                <SelectItem value="suspended" className="cursor-pointer hover:bg-accent">{t('Suspended')}</SelectItem>
+                <SelectItem value="all" className="cursor-pointer hover:bg-accent">{t('admin.allStatuses')}</SelectItem>
+                <SelectItem value="active" className="cursor-pointer hover:bg-accent">{t('admin.active')}</SelectItem>
+                <SelectItem value="pending" className="cursor-pointer hover:bg-accent">{t('admin.pending')}</SelectItem>
+                <SelectItem value="suspended" className="cursor-pointer hover:bg-accent">{t('admin.suspended')}</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -336,7 +336,7 @@ export default function AdminUsers() {
       {/* Users Table */}
       <Card>
         <CardHeader>
-          <CardTitle>{t('Users')} ({filteredUsers.length})</CardTitle>
+          <CardTitle>{t('admin.users')} ({filteredUsers.length})</CardTitle>
         </CardHeader>
         <CardContent className="overflow-x-auto">
           <Table className="min-w-full">
@@ -402,20 +402,20 @@ export default function AdminUsers() {
                       <div className="space-y-1 text-sm">
                       <div className="flex items-center">
                         <Calendar className="h-3 w-3 mr-1 text-muted-foreground" />
-                        {t('Joined')}: {user.joinDate}
+                        {t('admin.joined')}: {user.joinDate}
                       </div>
                       <div className="text-muted-foreground">
-                        {t('Last Activity')}: {user.lastActive}
+                        {t('admin.lastActivity')}: {user.lastActive}
                       </div>
                     </div>
                   </TableCell>
                   <TableCell className="hidden lg:table-cell">
                     <div className="space-y-1 text-sm">
                       {user.propertyCount && (
-                        <div>{user.propertyCount} {t('Properties')}</div>
+                        <div>{user.propertyCount} {t('admin.properties')}</div>
                       )}
                       {user.bookingCount !== undefined && (
-                        <div>{user.bookingCount} {t('Bookings')}</div>
+                        <div>{user.bookingCount} {t('admin.bookings')}</div>
                       )}
                     </div>
                   </TableCell>

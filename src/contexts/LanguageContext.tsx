@@ -988,6 +988,15 @@ const allTranslations = {
     author5: 'Leila Benaissa',
     author6: 'Mohamed Kaci',
 
+    // Why Buy With Holibayt
+    verifiedOwnership: "Propriété Vérifiée",
+    verifiedOwnershipDesc: "Le titre et la propriété de chaque bien sont soigneusement vérifiés par notre équipe.",
+    escrowPayment: "Paiement Sécurisé",
+    escrowPaymentDesc: "Vos fonds sont conservés en toute sécurité jusqu'à ce que toutes les conditions soient remplies.",
+    legalSupportDesc: "Obtenez des conseils juridiques complets de professionnels de confiance",
+    noHiddenFeesDesc: "Nous offrons une tarification totalement transparente sans surprises.",
+    whyBuyWithHolibayt: "Pourquoi Acheter Avec Holibayt",
+
     // Host dashboard translations
     host: {
       dashboard: 'Tableau de bord',
@@ -1128,7 +1137,14 @@ const allTranslations = {
       lawyerRequests: 'Demandes d\'avocat',
       documentTemplates: 'Modèles de documents',
       quickAccessCtas: 'Accès rapide',
-      newInsights: 'Nouvelles Perspectives'
+      newInsights: 'Nouvelles Perspectives',
+      registeredUsers: 'Utilisateurs enregistrés',
+      verifiedAccounts: 'Comptes vérifiés',
+      joined: 'Rejoint',
+      lastActivity: 'Dernière activité',
+      bookings: 'Réservations',
+      admins: 'Admins',
+      kycVerifications: 'Vérifications KYC'
     },
     
     // Workflow translations
@@ -2172,6 +2188,15 @@ const allTranslations = {
     author5: 'Leila Benaissa',
     author6: 'Mohamed Kaci',
 
+    // Why Buy With Holibayt
+    verifiedOwnership: "Verified Ownership",
+    verifiedOwnershipDesc: "Every property's title and ownership are carefully verified by our team.",
+    escrowPayment: "Escrow Payment",
+    escrowPaymentDesc: "Your funds are securely held in escrow until all conditions are met.",
+    legalSupportDesc: "Get complete legal guidance from trusted professionals",
+    noHiddenFeesDesc: "We provide fully transparent pricing with no surprises.",
+    whyBuyWithHolibayt: "Why Buy With Holibayt",
+
     // Host dashboard translations
     host: {
       dashboard: 'Dashboard',
@@ -2304,7 +2329,14 @@ const allTranslations = {
       testimonials: 'Testimonials',
       lawyers: 'Lawyers',
       lawyerRequests: 'Lawyer Requests',
-      documentTemplates: 'Document Templates'
+      documentTemplates: 'Document Templates',
+      registeredUsers: 'Registered Users',
+      verifiedAccounts: 'Verified Accounts',
+      joined: 'Joined',
+      lastActivity: 'Last Activity',
+      bookings: 'Bookings',
+      admins: 'Admins',
+      kycVerifications: 'KYC Verifications'
     },
     
     // Workflow translations
@@ -3295,6 +3327,15 @@ const allTranslations = {
     author5: 'ليلى بن عيسى',
     author6: 'محمد قاسي',
     
+    // Why Buy With Holibayt
+    verifiedOwnership: "ملكية موثقة",
+    verifiedOwnershipDesc: "يتم التحقق بعناية من ملكية كل عقار من قبل فريقنا.",
+    escrowPayment: "دفع آمن",
+    escrowPaymentDesc: "يتم الاحتفاظ بأموالك بشكل آمن حتى يتم استيفاء جميع الشروط.",
+    legalSupportDesc: "احصل على إرشادات قانونية كاملة من محترفين موثوقين",
+    noHiddenFeesDesc: "نقدم أسعاراً شفافة تماماً دون مفاجآت.",
+    whyBuyWithHolibayt: "لماذا تشتري مع هوليبايت",
+    
     callBtn: 'اتصال',
     sendMessageBtn: 'أرسل رسالة',
 
@@ -3413,7 +3454,14 @@ const allTranslations = {
       lawyerRequests: 'طلبات المحامين',
       documentTemplates: 'قوالب المستندات',
       quickAccessCtas: 'وصول سريع',
-      newInsights: 'رؤى جديدة'
+      newInsights: 'رؤى جديدة',
+      registeredUsers: 'المستخدمين المسجلين',
+      verifiedAccounts: 'الحسابات الموثقة',
+      joined: 'انضم',
+      lastActivity: 'آخر نشاط',
+      bookings: 'الحجوزات',
+      admins: 'المشرفين',
+      kycVerifications: 'التحقق من الهوية'
     },
 
     // Host dashboard translations
