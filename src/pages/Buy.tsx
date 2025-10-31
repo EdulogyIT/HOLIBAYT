@@ -16,8 +16,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { MapboxPropertyMap } from "@/components/MapboxPropertyMap";
 import CitiesSection from "@/components/CitiesSection";
 import { useAuth } from "@/contexts/AuthContext";
-import { useWishlist } from "@/hooks/useWishlist";
+import { useWishlist, setAuthModalCallback } from "@/hooks/useWishlist";
 import { WishlistButton } from "@/components/WishlistButton";
+import { AuthenticationModal } from "@/components/AuthenticationModal";
 import useEmblaCarousel from 'embla-carousel-react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import React from "react";
@@ -83,12 +84,17 @@ const Buy = () => {
   const { formatPrice } = useCurrency();
   const { user } = useAuth();
   const { wishlistIds, toggleWishlist } = useWishlist(user?.id);
+  const [authModalOpen, setAuthModalOpen] = React.useState(false);
 
   const [properties, setProperties] = useState<Property[]>([]);
   const [filteredProperties, setFilteredProperties] = useState<Property[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useScrollToTop();
+
+  React.useEffect(() => {
+    setAuthModalCallback(() => setAuthModalOpen(true));
+  }, []);
 
   useEffect(() => {
     fetchProperties();
@@ -349,12 +355,12 @@ const Buy = () => {
                       );
                     }
 
-                    if (filters.bedrooms !== "all") {
-                      filtered = filtered.filter((p) => p.bedrooms === filters.bedrooms);
+                    if (filters.bedrooms > 0) {
+                      filtered = filtered.filter((p) => num(p.bedrooms) >= filters.bedrooms);
                     }
 
-                    if (filters.bathrooms !== "all") {
-                      filtered = filtered.filter((p) => p.bathrooms === filters.bathrooms);
+                    if (filters.bathrooms > 0) {
+                      filtered = filtered.filter((p) => num(p.bathrooms) >= filters.bathrooms);
                     }
 
                     if (filters.minPrice[0] > 0 || filters.maxPrice[0] < 5_000_000_000) {

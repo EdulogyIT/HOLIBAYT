@@ -2,6 +2,13 @@ import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 
+// Callback for showing auth modal when user is not logged in
+let authModalCallback: (() => void) | null = null;
+
+export const setAuthModalCallback = (callback: () => void) => {
+  authModalCallback = callback;
+};
+
 export const useWishlist = (userId: string | undefined) => {
   const [wishlistIds, setWishlistIds] = useState<Set<string>>(new Set());
   const [loading, setLoading] = useState(true);
@@ -35,7 +42,12 @@ export const useWishlist = (userId: string | undefined) => {
 
   const toggleWishlist = async (propertyId: string) => {
     if (!userId) {
-      toast.error('Please login to add to wishlist');
+      // Trigger auth modal if callback is set, otherwise show toast
+      if (authModalCallback) {
+        authModalCallback();
+      } else {
+        toast.error('Please login to add to wishlist');
+      }
       return;
     }
 

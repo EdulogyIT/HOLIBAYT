@@ -68,8 +68,8 @@ export function DateRangePicker({
         locale={locale}
         weekStartsOn={0}
         showOutsideDays
-        /** IMPORTANT: dropdown only (no chevrons) */
-        captionLayout="dropdown"
+        /** Use buttons on mobile (1 month) for arrow navigation, dropdown on desktop (2 months) */
+        captionLayout={months === 1 ? "buttons" : "dropdown"}
         fromYear={1900}
         toYear={2100}
         disabled={disabledMatcher}

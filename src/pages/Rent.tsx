@@ -1,4 +1,3 @@
-// src/pages/Rent.tsx
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import RentHeroSearch from "@/components/RentHeroSearch";
@@ -16,8 +15,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { MapboxPropertyMap } from "@/components/MapboxPropertyMap";
 import CitiesSection from "@/components/CitiesSection";
 import { useAuth } from "@/contexts/AuthContext";
-import { useWishlist } from "@/hooks/useWishlist";
+import { useWishlist, setAuthModalCallback } from "@/hooks/useWishlist";
 import { WishlistButton } from "@/components/WishlistButton";
+import { AuthenticationModal } from "@/components/AuthenticationModal";
 import useEmblaCarousel from 'embla-carousel-react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import React from "react";
@@ -83,12 +83,17 @@ const Rent = () => {
   const { formatPrice } = useCurrency();
   const { user } = useAuth();
   const { wishlistIds, toggleWishlist } = useWishlist(user?.id);
+  const [authModalOpen, setAuthModalOpen] = React.useState(false);
 
   const [properties, setProperties] = useState<Property[]>([]);
   const [filteredProperties, setFilteredProperties] = useState<Property[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useScrollToTop();
+
+  React.useEffect(() => {
+    setAuthModalCallback(() => setAuthModalOpen(true));
+  }, []);
 
   useEffect(() => {
     fetchProperties();
@@ -357,6 +362,7 @@ const Rent = () => {
         <AIChatBox />
       </main>
       <Footer />
+      <AuthenticationModal isOpen={authModalOpen} onClose={() => setAuthModalOpen(false)} />
     </div>
   );
 };

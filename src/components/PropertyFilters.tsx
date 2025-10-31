@@ -21,9 +21,9 @@ interface FilterState {
   freeParking: boolean;
   selfCheckIn: boolean;
   pool: boolean;
-  bedrooms: number | string;
+  bedrooms: number;
   beds: number;
-  bathrooms: number | string;
+  bathrooms: number;
   amenities: string[];
   instantBook: boolean;
   petsAllowed: boolean;
@@ -55,9 +55,9 @@ export const PropertyFilters = ({ onFilterChange, listingType = "shortStay", pro
     freeParking: false,
     selfCheckIn: false,
     pool: false,
-    bedrooms: "all",
+    bedrooms: 0,
     beds: 0,
-    bathrooms: "all",
+    bathrooms: 0,
     amenities: [],
     instantBook: false,
     petsAllowed: false,
@@ -192,12 +192,7 @@ export const PropertyFilters = ({ onFilterChange, listingType = "shortStay", pro
       
       <DialogContent className="max-w-3xl max-h-[90vh] p-0 gap-0">
         <DialogHeader className="border-b p-6 pb-4">
-          <div className="flex items-center justify-between">
-            <DialogTitle className="text-xl font-semibold">{t("filters.filters") || "Filters"}</DialogTitle>
-            <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full" onClick={() => setIsOpen(false)}>
-              <X className="h-4 w-4" />
-            </Button>
-          </div>
+          <DialogTitle className="text-xl font-semibold">{t("filters.filters") || "Filters"}</DialogTitle>
         </DialogHeader>
 
         <ScrollArea className="flex-1 max-h-[calc(90vh-140px)]">
