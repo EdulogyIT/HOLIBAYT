@@ -136,44 +136,44 @@ export const PropertyFilters = ({ onFilterChange, listingType = "shortStay", pro
   };
 
   const recommendedFilters = [
-    { key: "guestFavorite" as const, label: t("filters.guestFavorites") || "Guest favorites", icon: Award },
-    { key: "freeParking" as const, label: t("filters.freeParking") || "Free parking", icon: Car },
-    { key: "selfCheckIn" as const, label: t("filters.selfCheckIn") || "Self check-in", icon: Key },
-    { key: "pool" as const, label: t("filters.pool") || "Pool", icon: Waves },
+    { key: "guestFavorite" as const, label: t("guestFavorites") || "Guest favorites", icon: Award },
+    { key: "freeParking" as const, label: t("freeParking") || "Free parking", icon: Car },
+    { key: "selfCheckIn" as const, label: t("selfCheckIn") || "Self check-in", icon: Key },
+    { key: "pool" as const, label: t("pool") || "Pool", icon: Waves },
   ];
 
   const essentialAmenities = [
-    { key: "wifi", label: t("filters.wifi") || "Wifi", icon: Wifi },
-    { key: "airConditioning", label: t("filters.airConditioning") || "Air conditioning", icon: Wind },
-    { key: "washer", label: t("filters.washer") || "Washer", icon: WashingMachine },
-    { key: "tv", label: t("filters.tv") || "TV", icon: Tv },
-    { key: "kitchen", label: t("filters.kitchen") || "Kitchen", icon: ChefHat },
+    { key: "wifi", label: t("wifi") || "Wifi", icon: Wifi },
+    { key: "airConditioning", label: t("airConditioning") || "Air conditioning", icon: Wind },
+    { key: "washer", label: t("washer") || "Washer", icon: WashingMachine },
+    { key: "tv", label: t("tv") || "TV", icon: Tv },
+    { key: "kitchen", label: t("kitchen") || "Kitchen", icon: ChefHat },
   ];
 
   const additionalAmenities = [
-    { key: "dryer", label: t("filters.dryer") || "Dryer" },
-    { key: "heating", label: t("filters.heating") || "Heating" },
-    { key: "workspace", label: t("filters.workspace") || "Dedicated workspace" },
-    { key: "hairDryer", label: t("filters.hairDryer") || "Hair dryer" },
-    { key: "iron", label: t("filters.iron") || "Iron" },
+    { key: "dryer", label: t("dryer") || "Dryer" },
+    { key: "heating", label: t("heating") || "Heating" },
+    { key: "workspace", label: t("workspace") || "Dedicated workspace" },
+    { key: "hairDryer", label: t("hairDryer") || "Hair dryer" },
+    { key: "iron", label: t("iron") || "Iron" },
   ];
 
   const featureAmenities = [
-    { key: "pool", label: t("filters.pool") || "Pool" },
-    { key: "freeParking", label: t("filters.freeParking") || "Free parking" },
-    { key: "evCharger", label: t("filters.evCharger") || "EV charger" },
-    { key: "crib", label: t("filters.crib") || "Crib" },
-    { key: "kingBed", label: t("filters.kingBed") || "King bed" },
-    { key: "gym", label: t("filters.gym") || "Gym" },
-    { key: "bbq", label: t("filters.bbq") || "BBQ grill" },
-    { key: "breakfast", label: t("filters.breakfast") || "Breakfast" },
-    { key: "fireplace", label: t("filters.fireplace") || "Fireplace" },
-    { key: "smokingAllowed", label: t("filters.smokingAllowed") || "Smoking allowed" },
+    { key: "pool", label: t("pool") || "Pool" },
+    { key: "freeParking", label: t("freeParking") || "Free parking" },
+    { key: "evCharger", label: t("evCharger") || "EV charger" },
+    { key: "crib", label: t("crib") || "Crib" },
+    { key: "kingBed", label: t("kingBed") || "King bed" },
+    { key: "gym", label: t("gym") || "Gym" },
+    { key: "bbq", label: t("bbq") || "BBQ grill" },
+    { key: "breakfast", label: t("breakfast") || "Breakfast" },
+    { key: "fireplace", label: t("fireplace") || "Fireplace" },
+    { key: "smokingAllowed", label: t("smokingAllowed") || "Smoking allowed" },
   ];
 
   const safetyAmenities = [
-    { key: "smokeAlarm", label: t("filters.smokeAlarm") || "Smoke alarm" },
-    { key: "coAlarm", label: t("filters.carbonMonoxideAlarm") || "Carbon monoxide alarm" },
+    { key: "smokeAlarm", label: t("smokeAlarm") || "Smoke alarm" },
+    { key: "coAlarm", label: t("carbonMonoxideAlarm") || "Carbon monoxide alarm" },
   ];
 
   return (
@@ -181,7 +181,7 @@ export const PropertyFilters = ({ onFilterChange, listingType = "shortStay", pro
       <DialogTrigger asChild>
         <Button variant="outline" className="gap-2">
           <SlidersHorizontal className="h-4 w-4" />
-          <span>{t("filters.filters") || "Filters"}</span>
+          <span>{t("filters") || "Filters"}</span>
           {getActiveFiltersCount() > 0 && (
             <Badge variant="default" className="ml-1 h-5 min-w-5 rounded-full px-1.5">
               {getActiveFiltersCount()}
@@ -192,14 +192,14 @@ export const PropertyFilters = ({ onFilterChange, listingType = "shortStay", pro
       
       <DialogContent className="max-w-3xl max-h-[90vh] p-0 gap-0">
         <DialogHeader className="border-b p-6 pb-4">
-          <DialogTitle className="text-xl font-semibold">{t("filters.filters") || "Filters"}</DialogTitle>
+          <DialogTitle className="text-xl font-semibold">{t("filters") || "Filters"}</DialogTitle>
         </DialogHeader>
 
         <ScrollArea className="flex-1 max-h-[calc(90vh-140px)]">
           <div className="p-6 space-y-8">
             {/* Recommendations */}
             <div className="space-y-4">
-              <h3 className="font-semibold text-lg">{t("filters.ourRecommendations") || "Our recommendations"}</h3>
+              <h3 className="font-semibold text-lg">{t("ourRecommendations") || "Our recommendations"}</h3>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                 {recommendedFilters.map((filter) => {
                   const Icon = filter.icon;
@@ -223,7 +223,7 @@ export const PropertyFilters = ({ onFilterChange, listingType = "shortStay", pro
 
             {/* Property Type */}
             <div className="space-y-4">
-              <h3 className="font-semibold text-lg">{t("filters.propertyType") || "Property type"}</h3>
+              <h3 className="font-semibold text-lg">{t("propertyType") || "Property type"}</h3>
               <div className="flex gap-3">
                 {(["all", "room", "entire"] as const).map((type) => (
                   <Button
@@ -233,9 +233,9 @@ export const PropertyFilters = ({ onFilterChange, listingType = "shortStay", pro
                     onClick={() => updateFilter("propertyType", type)}
                     className="flex-1"
                   >
-                    {type === "all" ? t("filters.allTypes") || "All types" : 
-                     type === "room" ? t("filters.room") || "Room" : 
-                     t("filters.entirePlace") || "Entire place"}
+                    {type === "all" ? t("allTypes") || "All types" : 
+                     type === "room" ? t("room") || "Room" : 
+                     t("entirePlace") || "Entire place"}
                   </Button>
                 ))}
               </div>
@@ -243,8 +243,8 @@ export const PropertyFilters = ({ onFilterChange, listingType = "shortStay", pro
 
             {/* Price Range */}
             <div className="space-y-4">
-              <h3 className="font-semibold text-lg">{t("filters.priceRange") || "Price range"}</h3>
-              <p className="text-sm text-muted-foreground">{t("filters.priceDesc") || "Nightly prices before fees and taxes"}</p>
+              <h3 className="font-semibold text-lg">{t("priceRange") || "Price range"}</h3>
+              <p className="text-sm text-muted-foreground">{t("priceDesc") || "Nightly prices before fees and taxes"}</p>
               
               <div className="h-20 bg-primary/5 rounded-lg flex items-end justify-around px-2 pb-2">
                 {[...Array(20)].map((_, i) => (
@@ -266,7 +266,7 @@ export const PropertyFilters = ({ onFilterChange, listingType = "shortStay", pro
 
               <div className="flex gap-4">
                 <div className="flex-1">
-                  <label className="text-sm font-medium mb-2 block">{t("filters.minimum") || "Minimum"}</label>
+                  <label className="text-sm font-medium mb-2 block">{t("minimum") || "Minimum"}</label>
                   <Input
                     type="number"
                     value={filters.minPrice}
@@ -275,7 +275,7 @@ export const PropertyFilters = ({ onFilterChange, listingType = "shortStay", pro
                   />
                 </div>
                 <div className="flex-1">
-                  <label className="text-sm font-medium mb-2 block">{t("filters.maximum") || "Maximum"}</label>
+                  <label className="text-sm font-medium mb-2 block">{t("maximum") || "Maximum"}</label>
                   <Input
                     type="number"
                     value={filters.maxPrice}
@@ -288,14 +288,14 @@ export const PropertyFilters = ({ onFilterChange, listingType = "shortStay", pro
 
             {/* Bedrooms and Beds */}
             <div className="space-y-4">
-              <h3 className="font-semibold text-lg">{t("filters.bedsAndBaths") || "Rooms and beds"}</h3>
+              <h3 className="font-semibold text-lg">{t("bedsAndBaths") || "Rooms and beds"}</h3>
               
               {(["bedrooms", "beds", "bathrooms"] as const).map((item) => (
                 <div key={item} className="flex items-center justify-between">
-                  <span className="text-sm font-medium">{t(`filters.${item}`) || item}</span>
+                  <span className="text-sm font-medium">{t(item) || item}</span>
                   <div className="flex items-center gap-3">
                     <span className="text-sm text-muted-foreground min-w-[40px]">
-                      {filters[item] === 0 ? t("filters.any") || "Any" : filters[item]}
+                      {filters[item] === 0 ? t("any") || "Any" : filters[item]}
                     </span>
                     <div className="flex items-center gap-2">
                       <Button
@@ -325,10 +325,10 @@ export const PropertyFilters = ({ onFilterChange, listingType = "shortStay", pro
 
             {/* Amenities */}
             <div className="space-y-4">
-              <h3 className="font-semibold text-lg">{t("filters.amenities") || "Amenities"}</h3>
+              <h3 className="font-semibold text-lg">{t("amenities") || "Amenities"}</h3>
               
               <div className="space-y-3">
-                <h4 className="text-sm font-semibold">{t("filters.essential") || "Essential"}</h4>
+                <h4 className="text-sm font-semibold">{t("essential") || "Essential"}</h4>
                 <div className="flex flex-wrap gap-2">
                   {essentialAmenities.map((amenity) => {
                     const isActive = filters.amenities.includes(amenity.key);
@@ -353,7 +353,7 @@ export const PropertyFilters = ({ onFilterChange, listingType = "shortStay", pro
               {showAllAmenities && (
                 <>
                   <div className="space-y-3">
-                    <h4 className="text-sm font-semibold">{t("filters.basics") || "Basics"}</h4>
+                    <h4 className="text-sm font-semibold">{t("basics") || "Basics"}</h4>
                     <div className="flex flex-wrap gap-2">
                       {additionalAmenities.map((amenity) => {
                         const isActive = filters.amenities.includes(amenity.key);
@@ -373,7 +373,7 @@ export const PropertyFilters = ({ onFilterChange, listingType = "shortStay", pro
                   </div>
 
                   <div className="space-y-3">
-                    <h4 className="text-sm font-semibold">{t("filters.features") || "Features"}</h4>
+                    <h4 className="text-sm font-semibold">{t("features") || "Features"}</h4>
                     <div className="flex flex-wrap gap-2">
                       {featureAmenities.map((amenity) => {
                         const isActive = filters.amenities.includes(amenity.key);
@@ -393,7 +393,7 @@ export const PropertyFilters = ({ onFilterChange, listingType = "shortStay", pro
                   </div>
 
                   <div className="space-y-3">
-                    <h4 className="text-sm font-semibold">{t("filters.safety") || "Safety"}</h4>
+                    <h4 className="text-sm font-semibold">{t("safety") || "Safety"}</h4>
                     <div className="flex flex-wrap gap-2">
                       {safetyAmenities.map((amenity) => {
                         const isActive = filters.amenities.includes(amenity.key);
@@ -422,11 +422,11 @@ export const PropertyFilters = ({ onFilterChange, listingType = "shortStay", pro
               >
                 {showAllAmenities ? (
                   <>
-                    {t("filters.showLess") || "Show less"} <ChevronUp className="ml-1 h-4 w-4" />
+                    {t("showLess") || "Show less"} <ChevronUp className="ml-1 h-4 w-4" />
                   </>
                 ) : (
                   <>
-                    {t("filters.showMore") || "Show more"} <ChevronDown className="ml-1 h-4 w-4" />
+                    {t("showMore") || "Show more"} <ChevronDown className="ml-1 h-4 w-4" />
                   </>
                 )}
               </Button>
@@ -434,78 +434,63 @@ export const PropertyFilters = ({ onFilterChange, listingType = "shortStay", pro
 
             {/* Booking Options */}
             <div className="space-y-4">
-              <h3 className="font-semibold text-lg">{t("filters.bookingOptions") || "Booking options"}</h3>
-              <div className="flex flex-wrap gap-2">
-                <Button
-                  type="button"
-                  variant={filters.instantBook ? "default" : "outline"}
-                  size="sm"
-                  onClick={() => updateFilter("instantBook", !filters.instantBook)}
-                  className="gap-2"
-                >
-                  <Zap className="h-4 w-4" />
-                  {t("filters.instantBook") || "Instant Book"}
-                </Button>
-                <Button
-                  type="button"
-                  variant={filters.selfCheckIn ? "default" : "outline"}
-                  size="sm"
-                  onClick={() => updateFilter("selfCheckIn", !filters.selfCheckIn)}
-                  className="gap-2"
-                >
-                  <Key className="h-4 w-4" />
-                  {t("filters.selfCheckIn") || "Self check-in"}
-                </Button>
-                <Button
-                  type="button"
-                  variant={filters.petsAllowed ? "default" : "outline"}
-                  size="sm"
-                  onClick={() => updateFilter("petsAllowed", !filters.petsAllowed)}
-                  className="gap-2"
-                >
-                  <PawPrint className="h-4 w-4" />
-                  {t("filters.petsAllowed") || "Pets allowed"}
-                </Button>
+              <h3 className="font-semibold text-lg">{t("bookingOptions") || "Booking options"}</h3>
+              <div className="space-y-3">
+                <label className="flex items-center gap-3 cursor-pointer">
+                  <Checkbox
+                    checked={filters.instantBook}
+                    onCheckedChange={(checked) => updateFilter("instantBook", checked)}
+                  />
+                  <span className="text-sm">{t("instantBook") || "Instant book"}</span>
+                </label>
+                <label className="flex items-center gap-3 cursor-pointer">
+                  <Checkbox
+                    checked={filters.selfCheckIn}
+                    onCheckedChange={(checked) => updateFilter("selfCheckIn", checked)}
+                  />
+                  <span className="text-sm">{t("selfCheckIn") || "Self check-in"}</span>
+                </label>
+                <label className="flex items-center gap-3 cursor-pointer">
+                  <Checkbox
+                    checked={filters.petsAllowed}
+                    onCheckedChange={(checked) => updateFilter("petsAllowed", checked)}
+                  />
+                  <span className="text-sm">{t("petsAllowed") || "Pets allowed"}</span>
+                </label>
               </div>
             </div>
 
-            {/* Accordion Sections */}
-            <Accordion type="multiple" className="w-full">
+            {/* Accessibility */}
+            <Accordion type="single" collapsible className="w-full">
               <AccordionItem value="accessibility">
-                <AccordionTrigger className="text-lg font-semibold">
-                  {t("filters.accessibility") || "Accessibility features"}
-                </AccordionTrigger>
+                <AccordionTrigger>{t("accessibility") || "Accessibility features"}</AccordionTrigger>
                 <AccordionContent>
                   <div className="space-y-3 pt-2">
                     {["stepFreeAccess", "wideEntrance", "accessibleBathroom", "elevator"].map((feature) => (
-                      <div key={feature} className="flex items-center gap-3">
+                      <label key={feature} className="flex items-center gap-3 cursor-pointer">
                         <Checkbox
                           checked={filters.accessibility.includes(feature)}
                           onCheckedChange={() => toggleArrayFilter("accessibility", feature)}
                         />
-                        <label className="text-sm cursor-pointer">
-                          {t(`filters.${feature}`) || feature}
-                        </label>
-                      </div>
+                        <span className="text-sm">{t(feature) || feature}</span>
+                      </label>
                     ))}
                   </div>
                 </AccordionContent>
               </AccordionItem>
 
-              <AccordionItem value="language">
-                <AccordionTrigger className="text-lg font-semibold">
-                  {t("filters.hostLanguage") || "Host language"}
-                </AccordionTrigger>
+              <AccordionItem value="hostLanguage">
+                <AccordionTrigger>{t("hostLanguage") || "Host language"}</AccordionTrigger>
                 <AccordionContent>
                   <div className="space-y-3 pt-2">
-                    {["English", "French", "Arabic", "Spanish", "German"].map((lang) => (
-                      <div key={lang} className="flex items-center gap-3">
+                    {["English", "French", "Arabic", "Spanish"].map((language) => (
+                      <label key={language} className="flex items-center gap-3 cursor-pointer">
                         <Checkbox
-                          checked={filters.hostLanguages.includes(lang)}
-                          onCheckedChange={() => toggleArrayFilter("hostLanguages", lang)}
+                          checked={filters.hostLanguages.includes(language)}
+                          onCheckedChange={() => toggleArrayFilter("hostLanguages", language)}
                         />
-                        <label className="text-sm cursor-pointer">{lang}</label>
-                      </div>
+                        <span className="text-sm">{language}</span>
+                      </label>
                     ))}
                   </div>
                 </AccordionContent>
@@ -514,13 +499,12 @@ export const PropertyFilters = ({ onFilterChange, listingType = "shortStay", pro
           </div>
         </ScrollArea>
 
-        <div className="border-t p-6 flex items-center justify-between bg-background">
-          <Button type="button" variant="ghost" onClick={clearFilters} className="font-semibold">
-            {t("filters.clearAll") || "Clear all"}
+        <div className="flex items-center justify-between border-t p-4">
+          <Button variant="ghost" onClick={clearFilters}>
+            {t("clearAll") || "Clear all"}
           </Button>
-          <Button type="button" size="lg" onClick={applyFilters} className="px-8">
-            {t("filters.showProperties") || "Show"} {propertyCount > 0 && `${propertyCount} `}
-            {t("filters.properties") || "properties"}
+          <Button onClick={applyFilters}>
+            {t("showProperties") || "Show"} {propertyCount} {t("properties") || "properties"}
           </Button>
         </div>
       </DialogContent>

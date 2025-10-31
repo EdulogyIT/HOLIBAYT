@@ -18,8 +18,9 @@ import { MapboxPropertyMap } from "@/components/MapboxPropertyMap";
 import { DestinationsToExplore } from "@/components/DestinationsToExplore";
 import CitiesSection from "@/components/CitiesSection";
 import { useAuth } from "@/contexts/AuthContext";
-import { useWishlist } from "@/hooks/useWishlist";
+import { useWishlist, setAuthModalCallback } from "@/hooks/useWishlist";
 import { WishlistButton } from "@/components/WishlistButton";
+import { AuthenticationModal } from "@/components/AuthenticationModal";
 import useEmblaCarousel from 'embla-carousel-react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import React from "react";
@@ -30,10 +31,11 @@ interface Property {
   location: string;
   city: string;
   price: string | number;
+  price_per_night?: number;
   price_type: "daily" | "weekly" | "monthly";
   price_currency?: string;
-  bedrooms?: string;
-  bathrooms?: string;
+  bedrooms?: string | number;
+  bathrooms?: string | number;
   area: string | number;
   images: string[] | null;
   property_type: string;
@@ -72,6 +74,7 @@ const ShortStay = () => {
   const { formatPrice } = useCurrency();
   const { user } = useAuth();
   const { wishlistIds, toggleWishlist } = useWishlist(user?.id);
+  const [authModalOpen, setAuthModalOpen] = useState(false);
 
   const [properties, setProperties] = useState<Property[]>([]);
   const [filteredProperties, setFilteredProperties] = useState<Property[]>([]);
@@ -79,7 +82,11 @@ const ShortStay = () => {
 
   useScrollToTop();
 
-  useEffect(() => { fetchProperties(); }, []);
+  useEffect(() => { 
+    fetchProperties();
+    setAuthModalCallback(() => setAuthModalOpen(true));
+  }, []);
+  
   useEffect(() => { applyFiltersFromURL(); }, [properties, routerLocation.search]);
 
   const fetchProperties = async () => {
@@ -115,6 +122,30 @@ const ShortStay = () => {
           (p.location || "").toLowerCase().includes(l)
       );
     }
+    setFilteredProperties(filtered);
+  };
+
+  const handleFilterChange = (filters: any) => {
+    let filtered = [...properties];
+    
+    // Price range filter
+    if (filters.minPrice > 0 || filters.maxPrice < 50000) {
+      filtered = filtered.filter(p => {
+        const price = num(p.price_per_night || p.price || 0);
+        return price >= filters.minPrice && price <= filters.maxPrice;
+      });
+    }
+    
+    // Bedrooms filter
+    if (filters.bedrooms > 0) {
+      filtered = filtered.filter(p => num(p.bedrooms) >= filters.bedrooms);
+    }
+    
+    // Bathrooms filter
+    if (filters.bathrooms > 0) {
+      filtered = filtered.filter(p => num(p.bathrooms) >= filters.bathrooms);
+    }
+    
     setFilteredProperties(filtered);
   };
 
@@ -241,28 +272,17 @@ const ShortStay = () => {
 
         <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-            {/* Map */}
-            <div className="lg:col-span-4">
-              <LocalErrorBoundary
-                fallback={
-                  <div className="sticky top-28 rounded-2xl ring-1 ring-border bg-background grid place-items-center h-[520px] md:h-[560px] xl:h-[600px]">
-                    Map unavailable
-                  </div>
-                }
-              >
-                <div className="sticky top-28 rounded-2xl overflow-hidden ring-1 ring-border h-[520px] md:h-[560px] xl:h-[600px]">
-                  <MapboxPropertyMap properties={filteredProperties || []} />
-                </div>
-              </LocalErrorBoundary>
-            </div>
-
             {/* List */}
             <div className="lg:col-span-8">
               <div className="flex items-center justify-between mb-6 gap-4 flex-wrap">
                 <h2 className="text-2xl font-bold">
                   {filteredProperties.length} {t("properties") || "properties"}
                 </h2>
-                <PropertyFilters onFilterChange={() => {}} listingType="shortStay" />
+                <PropertyFilters 
+                  onFilterChange={handleFilterChange} 
+                  listingType="shortStay"
+                  propertyCount={filteredProperties.length}
+                />
               </div>
 
               {isLoading ? (
@@ -283,6 +303,21 @@ const ShortStay = () => {
                 </div>
               )}
             </div>
+
+            {/* Map */}
+            <div className="lg:col-span-4">
+              <LocalErrorBoundary
+                fallback={
+                  <div className="sticky top-28 rounded-2xl ring-1 ring-border bg-background grid place-items-center h-[520px] md:h-[560px] xl:h-[600px]">
+                    Map unavailable
+                  </div>
+                }
+              >
+                <div className="sticky top-28 rounded-2xl overflow-hidden ring-1 ring-border h-[520px] md:h-[560px] xl:h-[600px]">
+                  <MapboxPropertyMap properties={filteredProperties || []} />
+                </div>
+              </LocalErrorBoundary>
+            </div>
           </div>
         </section>
 
@@ -292,6 +327,7 @@ const ShortStay = () => {
         <AIChatBox />
       </main>
       <Footer />
+      <AuthenticationModal isOpen={authModalOpen} onClose={() => setAuthModalOpen(false)} />
     </div>
   );
 };
