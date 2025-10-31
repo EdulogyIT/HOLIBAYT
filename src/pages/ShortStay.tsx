@@ -271,7 +271,7 @@ const ShortStay = () => {
         }} />
 
         <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+          <div className="grid grid-cols-1 lg:grid-cols-[60%_40%] gap-6 items-start">
             {/* Property Cards - LEFT */}
             <div className="order-1">
               <div className="flex items-center justify-between mb-6 gap-4 flex-wrap">
@@ -296,7 +296,7 @@ const ShortStay = () => {
                   <div className="text-muted-foreground">{t("Adjust Filters Or Check Later")}</div>
                 </div>
               ) : (
-                <div className="grid grid-cols-1 gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
                   {filteredProperties.map((p) => (
                     <PropertyCard key={p.id} property={p} />
                   ))}
@@ -305,15 +305,15 @@ const ShortStay = () => {
             </div>
 
             {/* Map - RIGHT */}
-            <div className="order-2">
+            <div className="order-2 h-screen">
               <LocalErrorBoundary
                 fallback={
-                  <div className="sticky top-28 rounded-2xl ring-1 ring-border bg-background grid place-items-center h-[520px] md:h-[560px] xl:h-[600px]">
+                  <div className="sticky top-24 rounded-2xl ring-1 ring-border bg-background grid place-items-center h-[calc(100vh-7rem)]">
                     Map unavailable
                   </div>
                 }
               >
-                <div className="sticky top-28 rounded-2xl overflow-hidden ring-1 ring-border h-[520px] md:h-[560px] xl:h-[600px]">
+                <div className="sticky top-24 rounded-2xl overflow-hidden ring-1 ring-border h-[calc(100vh-7rem)]">
                   <MapboxPropertyMap properties={filteredProperties || []} />
                 </div>
               </LocalErrorBoundary>

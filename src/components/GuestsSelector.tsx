@@ -85,8 +85,12 @@ export const GuestsSelector = ({ value, onChange, keepOpen = false }: GuestsSele
         className="w-80 p-4 bg-background z-[100]" 
         align="center" 
         collisionPadding={10}
-        onEscapeKeyDown={() => {
-          setOpen(false);
+        onEscapeKeyDown={() => setOpen(false)}
+        onInteractOutside={(e) => {
+          const target = e.target as HTMLElement;
+          if (target.closest('[data-guest-control]')) {
+            e.preventDefault();
+          }
         }}
       >
         <div className="space-y-4">
@@ -104,6 +108,7 @@ export const GuestsSelector = ({ value, onChange, keepOpen = false }: GuestsSele
                   className="h-8 w-8 rounded-full"
                   onClick={(e) => updateCount(type.key, -1, e)}
                   disabled={value[type.key] <= type.min}
+                  data-guest-control
                 >
                   <Minus className="h-4 w-4" />
                 </Button>
@@ -115,6 +120,7 @@ export const GuestsSelector = ({ value, onChange, keepOpen = false }: GuestsSele
                   className="h-8 w-8 rounded-full"
                   onClick={(e) => updateCount(type.key, 1, e)}
                   disabled={type.key === 'adults' && value[type.key] >= 16}
+                  data-guest-control
                 >
                   <Plus className="h-4 w-4" />
                 </Button>

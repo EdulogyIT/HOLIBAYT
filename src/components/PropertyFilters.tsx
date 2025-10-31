@@ -92,6 +92,11 @@ export const PropertyFilters = ({ onFilterChange, listingType = "shortStay", pro
     updateFilter(key, newArray);
   };
 
+  const getLabel = (key: string, fallback: string) => {
+    const translated = t(key);
+    return translated === key ? fallback : translated;
+  };
+
   const clearFilters = () => {
     const defaultFilters: FilterState = {
       minPrice: 0,
@@ -136,10 +141,10 @@ export const PropertyFilters = ({ onFilterChange, listingType = "shortStay", pro
   };
 
   const recommendedFilters = [
-    { key: "guestFavorite" as const, label: t("guestFavorites") || "Guest Favorites", icon: Award },
-    { key: "freeParking" as const, label: t("freeParking") || "Free Parking", icon: Car },
-    { key: "selfCheckIn" as const, label: t("selfCheckIn") || "Self Check-In", icon: Key },
-    { key: "pool" as const, label: t("pool") || "Pool", icon: Waves },
+    { key: "guestFavorite" as const, label: getLabel("guestFavorites", "Guest Favorites"), icon: Award },
+    { key: "freeParking" as const, label: getLabel("freeParking", "Free Parking"), icon: Car },
+    { key: "selfCheckIn" as const, label: getLabel("selfCheckIn", "Self Check-In"), icon: Key },
+    { key: "pool" as const, label: getLabel("pool", "Pool"), icon: Waves },
   ];
 
   const essentialAmenities = [
@@ -247,9 +252,23 @@ export const PropertyFilters = ({ onFilterChange, listingType = "shortStay", pro
               <p className="text-sm text-muted-foreground">{t("priceDesc") || "Nightly prices before fees and taxes"}</p>
               
               <div className="h-20 bg-primary/5 rounded-lg flex items-end justify-around px-2 pb-2">
-                {[...Array(20)].map((_, i) => (
-                  <div key={i} className="w-2 bg-primary/30 rounded-t" style={{ height: `${Math.random() * 60 + 20}%` }} />
-                ))}
+                {[...Array(20)].map((_, i) => {
+                  const bucketSize = getMaxPrice() / 20;
+                  const bucketMin = i * bucketSize;
+                  const bucketMax = (i + 1) * bucketSize;
+                  const isInRange = bucketMax >= filters.minPrice && bucketMin <= filters.maxPrice;
+                  const heightPercent = Math.random() * 60 + 20;
+                  
+                  return (
+                    <div 
+                      key={i} 
+                      className={`w-2 rounded-t transition-all duration-300 ${
+                        isInRange ? 'bg-primary' : 'bg-primary/20'
+                      }`}
+                      style={{ height: `${heightPercent}%` }} 
+                    />
+                  );
+                })}
               </div>
 
               <Slider
@@ -293,9 +312,9 @@ export const PropertyFilters = ({ onFilterChange, listingType = "shortStay", pro
               {(["bedrooms", "beds", "bathrooms"] as const).map((item) => (
                 <div key={item} className="flex items-center justify-between">
                   <span className="text-sm font-medium">
-                    {item === "bedrooms" ? (t("bedrooms") || "Bedrooms") : 
-                     item === "beds" ? (t("beds") || "Beds") : 
-                     (t("bathrooms") || "Bathrooms")}
+                    {item === "bedrooms" ? "Bedrooms" : 
+                     item === "beds" ? "Beds" : 
+                     "Bathrooms"}
                   </span>
                   <div className="flex items-center gap-3">
                     <span className="text-sm text-muted-foreground min-w-[40px]">
