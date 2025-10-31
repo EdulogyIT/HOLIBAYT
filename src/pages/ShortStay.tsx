@@ -8,7 +8,7 @@ import { MapPin, Bed, Bath, Square, Loader2, ShieldCheck } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useCurrency } from "@/contexts/CurrencyContext";
-import PropertyFilters from "@/components/PropertyFilters";
+import { PropertyFilters } from "@/components/PropertyFilters";
 import { useState, useEffect } from "react";
 import AIChatBox from "@/components/AIChatBox";
 import { useScrollToTop } from "@/hooks/useScrollToTop";
@@ -175,9 +175,16 @@ const ShortStay = () => {
                       onError={(e) => { (e.currentTarget as HTMLImageElement).src = "/placeholder-property.jpg"; }}
                     />
                   </div>
-                ))}
-              </div>
+            ))}
+          </div>
+
+          {/* Map Section - RIGHT on desktop */}
+          <div className="order-2 lg:order-2">
+            <div className="sticky top-20 h-[600px] md:h-[700px] xl:h-[800px]">
+              <MapboxPropertyMap properties={filteredProperties} />
             </div>
+          </div>
+        </div>
 
             {images.length > 1 && (
               <>

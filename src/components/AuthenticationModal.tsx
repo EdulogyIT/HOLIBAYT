@@ -24,16 +24,22 @@ export const AuthenticationModal = ({ isOpen, onClose }: AuthenticationModalProp
     navigate("/auth/login");
   };
 
-  const handleSocialLogin = (provider: 'google' | 'apple' | 'facebook') => {
-    if (provider === 'google') {
-      supabase.auth.signInWithOAuth({
-        provider: 'google',
+  const handleSocialLogin = async (provider: 'google' | 'apple' | 'facebook') => {
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: provider as 'google' | 'apple' | 'facebook',
         options: {
           redirectTo: `${window.location.origin}/`,
         },
       });
-    } else {
-      toast.info(`${provider} login coming soon`);
+      
+      if (error) {
+        console.error(`${provider} login error:`, error);
+        toast.error(`Failed to sign in with ${provider}`);
+      }
+    } catch (err) {
+      console.error(`${provider} login exception:`, err);
+      toast.error(`An error occurred during ${provider} login`);
     }
   };
 

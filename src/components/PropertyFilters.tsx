@@ -136,15 +136,15 @@ export const PropertyFilters = ({ onFilterChange, listingType = "shortStay", pro
   };
 
   const recommendedFilters = [
-    { key: "guestFavorite" as const, label: t("guestFavorites") || "Guest favorites", icon: Award },
-    { key: "freeParking" as const, label: t("freeParking") || "Free parking", icon: Car },
-    { key: "selfCheckIn" as const, label: t("selfCheckIn") || "Self check-in", icon: Key },
+    { key: "guestFavorite" as const, label: t("guestFavorites") || "Guest Favorites", icon: Award },
+    { key: "freeParking" as const, label: t("freeParking") || "Free Parking", icon: Car },
+    { key: "selfCheckIn" as const, label: t("selfCheckIn") || "Self Check-In", icon: Key },
     { key: "pool" as const, label: t("pool") || "Pool", icon: Waves },
   ];
 
   const essentialAmenities = [
     { key: "wifi", label: t("wifi") || "Wifi", icon: Wifi },
-    { key: "airConditioning", label: t("airConditioning") || "Air conditioning", icon: Wind },
+    { key: "airConditioning", label: t("airConditioning") || "Air Conditioning", icon: Wind },
     { key: "washer", label: t("washer") || "Washer", icon: WashingMachine },
     { key: "tv", label: t("tv") || "TV", icon: Tv },
     { key: "kitchen", label: t("kitchen") || "Kitchen", icon: ChefHat },
@@ -153,27 +153,27 @@ export const PropertyFilters = ({ onFilterChange, listingType = "shortStay", pro
   const additionalAmenities = [
     { key: "dryer", label: t("dryer") || "Dryer" },
     { key: "heating", label: t("heating") || "Heating" },
-    { key: "workspace", label: t("workspace") || "Dedicated workspace" },
-    { key: "hairDryer", label: t("hairDryer") || "Hair dryer" },
+    { key: "workspace", label: t("workspace") || "Dedicated Workspace" },
+    { key: "hairDryer", label: t("hairDryer") || "Hair Dryer" },
     { key: "iron", label: t("iron") || "Iron" },
   ];
 
   const featureAmenities = [
     { key: "pool", label: t("pool") || "Pool" },
-    { key: "freeParking", label: t("freeParking") || "Free parking" },
-    { key: "evCharger", label: t("evCharger") || "EV charger" },
+    { key: "freeParking", label: t("freeParking") || "Free Parking" },
+    { key: "evCharger", label: t("evCharger") || "EV Charger" },
     { key: "crib", label: t("crib") || "Crib" },
-    { key: "kingBed", label: t("kingBed") || "King bed" },
+    { key: "kingBed", label: t("kingBed") || "King Bed" },
     { key: "gym", label: t("gym") || "Gym" },
-    { key: "bbq", label: t("bbq") || "BBQ grill" },
+    { key: "bbq", label: t("bbq") || "BBQ Grill" },
     { key: "breakfast", label: t("breakfast") || "Breakfast" },
     { key: "fireplace", label: t("fireplace") || "Fireplace" },
-    { key: "smokingAllowed", label: t("smokingAllowed") || "Smoking allowed" },
+    { key: "smokingAllowed", label: t("smokingAllowed") || "Smoking Allowed" },
   ];
 
   const safetyAmenities = [
-    { key: "smokeAlarm", label: t("smokeAlarm") || "Smoke alarm" },
-    { key: "coAlarm", label: t("carbonMonoxideAlarm") || "Carbon monoxide alarm" },
+    { key: "smokeAlarm", label: t("smokeAlarm") || "Smoke Alarm" },
+    { key: "coAlarm", label: t("carbonMonoxideAlarm") || "Carbon Monoxide Alarm" },
   ];
 
   return (
@@ -199,7 +199,7 @@ export const PropertyFilters = ({ onFilterChange, listingType = "shortStay", pro
           <div className="p-6 space-y-8">
             {/* Recommendations */}
             <div className="space-y-4">
-              <h3 className="font-semibold text-lg">{t("ourRecommendations") || "Our recommendations"}</h3>
+              <h3 className="font-semibold text-lg">{t("ourRecommendations") || "Our Recommendations"}</h3>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                 {recommendedFilters.map((filter) => {
                   const Icon = filter.icon;
@@ -223,7 +223,7 @@ export const PropertyFilters = ({ onFilterChange, listingType = "shortStay", pro
 
             {/* Property Type */}
             <div className="space-y-4">
-              <h3 className="font-semibold text-lg">{t("propertyType") || "Property type"}</h3>
+              <h3 className="font-semibold text-lg">{t("propertyType") || "Property Type"}</h3>
               <div className="flex gap-3">
                 {(["all", "room", "entire"] as const).map((type) => (
                   <Button
@@ -233,9 +233,9 @@ export const PropertyFilters = ({ onFilterChange, listingType = "shortStay", pro
                     onClick={() => updateFilter("propertyType", type)}
                     className="flex-1"
                   >
-                    {type === "all" ? t("allTypes") || "All types" : 
+                    {type === "all" ? t("allTypes") || "All Types" : 
                      type === "room" ? t("room") || "Room" : 
-                     t("entirePlace") || "Entire place"}
+                     t("entirePlace") || "Entire Place"}
                   </Button>
                 ))}
               </div>
@@ -243,7 +243,7 @@ export const PropertyFilters = ({ onFilterChange, listingType = "shortStay", pro
 
             {/* Price Range */}
             <div className="space-y-4">
-              <h3 className="font-semibold text-lg">{t("priceRange") || "Price range"}</h3>
+              <h3 className="font-semibold text-lg">{t("priceRange") || "Price Range"}</h3>
               <p className="text-sm text-muted-foreground">{t("priceDesc") || "Nightly prices before fees and taxes"}</p>
               
               <div className="h-20 bg-primary/5 rounded-lg flex items-end justify-around px-2 pb-2">
@@ -288,11 +288,11 @@ export const PropertyFilters = ({ onFilterChange, listingType = "shortStay", pro
 
             {/* Bedrooms and Beds */}
             <div className="space-y-4">
-              <h3 className="font-semibold text-lg">{t("bedsAndBaths") || "Rooms and beds"}</h3>
+              <h3 className="font-semibold text-lg">{t("bedsAndBaths") || "Rooms and Beds"}</h3>
               
               {(["bedrooms", "beds", "bathrooms"] as const).map((item) => (
                 <div key={item} className="flex items-center justify-between">
-                  <span className="text-sm font-medium">{t(item) || item}</span>
+                  <span className="text-sm font-medium capitalize">{t(item) || item.charAt(0).toUpperCase() + item.slice(1)}</span>
                   <div className="flex items-center gap-3">
                     <span className="text-sm text-muted-foreground min-w-[40px]">
                       {filters[item] === 0 ? t("any") || "Any" : filters[item]}
@@ -422,11 +422,11 @@ export const PropertyFilters = ({ onFilterChange, listingType = "shortStay", pro
               >
                 {showAllAmenities ? (
                   <>
-                    {t("showLess") || "Show less"} <ChevronUp className="ml-1 h-4 w-4" />
+                    {t("showLess") || "Show Less"} <ChevronUp className="ml-1 h-4 w-4" />
                   </>
                 ) : (
                   <>
-                    {t("showMore") || "Show more"} <ChevronDown className="ml-1 h-4 w-4" />
+                    {t("showMore") || "Show More"} <ChevronDown className="ml-1 h-4 w-4" />
                   </>
                 )}
               </Button>
@@ -434,82 +434,36 @@ export const PropertyFilters = ({ onFilterChange, listingType = "shortStay", pro
 
             {/* Booking Options */}
             <div className="space-y-4">
-              <h3 className="font-semibold text-lg">{t("bookingOptions") || "Booking options"}</h3>
+              <h3 className="font-semibold text-lg">{t("bookingOptions") || "Booking Options"}</h3>
               <div className="space-y-3">
                 <label className="flex items-center gap-3 cursor-pointer">
                   <Checkbox
                     checked={filters.instantBook}
                     onCheckedChange={(checked) => updateFilter("instantBook", checked)}
                   />
-                  <span className="text-sm">{t("instantBook") || "Instant book"}</span>
-                </label>
-                <label className="flex items-center gap-3 cursor-pointer">
-                  <Checkbox
-                    checked={filters.selfCheckIn}
-                    onCheckedChange={(checked) => updateFilter("selfCheckIn", checked)}
-                  />
-                  <span className="text-sm">{t("selfCheckIn") || "Self check-in"}</span>
+                  <span className="text-sm">{t("instantBook") || "Instant Book"}</span>
                 </label>
                 <label className="flex items-center gap-3 cursor-pointer">
                   <Checkbox
                     checked={filters.petsAllowed}
                     onCheckedChange={(checked) => updateFilter("petsAllowed", checked)}
                   />
-                  <span className="text-sm">{t("petsAllowed") || "Pets allowed"}</span>
+                  <span className="text-sm">{t("petsAllowed") || "Pets Allowed"}</span>
                 </label>
               </div>
             </div>
-
-            {/* Accessibility */}
-            <Accordion type="single" collapsible className="w-full">
-              <AccordionItem value="accessibility">
-                <AccordionTrigger>{t("accessibility") || "Accessibility features"}</AccordionTrigger>
-                <AccordionContent>
-                  <div className="space-y-3 pt-2">
-                    {["stepFreeAccess", "wideEntrance", "accessibleBathroom", "elevator"].map((feature) => (
-                      <label key={feature} className="flex items-center gap-3 cursor-pointer">
-                        <Checkbox
-                          checked={filters.accessibility.includes(feature)}
-                          onCheckedChange={() => toggleArrayFilter("accessibility", feature)}
-                        />
-                        <span className="text-sm">{t(feature) || feature}</span>
-                      </label>
-                    ))}
-                  </div>
-                </AccordionContent>
-              </AccordionItem>
-
-              <AccordionItem value="hostLanguage">
-                <AccordionTrigger>{t("hostLanguage") || "Host language"}</AccordionTrigger>
-                <AccordionContent>
-                  <div className="space-y-3 pt-2">
-                    {["English", "French", "Arabic", "Spanish"].map((language) => (
-                      <label key={language} className="flex items-center gap-3 cursor-pointer">
-                        <Checkbox
-                          checked={filters.hostLanguages.includes(language)}
-                          onCheckedChange={() => toggleArrayFilter("hostLanguages", language)}
-                        />
-                        <span className="text-sm">{language}</span>
-                      </label>
-                    ))}
-                  </div>
-                </AccordionContent>
-              </AccordionItem>
-            </Accordion>
           </div>
         </ScrollArea>
 
-        <div className="flex items-center justify-between border-t p-4">
+        <div className="border-t p-6 flex items-center justify-between">
           <Button variant="ghost" onClick={clearFilters}>
-            {t("clearAll") || "Clear all"}
+            {t("clearAll") || "Clear All"}
           </Button>
           <Button onClick={applyFilters}>
-            {t("showProperties") || "Show"} {propertyCount} {t("properties") || "properties"}
+            {t("showProperties") || "Show"} {propertyCount > 0 && `${propertyCount} `}{t("properties") || "properties"}
           </Button>
         </div>
       </DialogContent>
     </Dialog>
   );
 };
-
-export default PropertyFilters;

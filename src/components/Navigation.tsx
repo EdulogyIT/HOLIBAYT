@@ -16,7 +16,11 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
-const Navigation = () => {
+interface NavigationProps {
+  onLoginClick?: () => void;
+}
+
+const Navigation = ({ onLoginClick }: NavigationProps = {}) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const { currentLang, setCurrentLang, t } = useLanguage();
@@ -117,10 +121,29 @@ const Navigation = () => {
 
             {!isAuthenticated ? (
               <>
-                <Button variant="ghost" className="font-inter font-medium text-sm lg:text-base px-3 lg:px-4" onClick={() => setIsLoginModalOpen(true)}>
+                <Button 
+                  variant="ghost" 
+                  className="font-inter font-medium text-sm lg:text-base px-3 lg:px-4" 
+                  onClick={() => {
+                    if (onLoginClick && window.location.pathname === '/') {
+                      onLoginClick();
+                    } else {
+                      setIsLoginModalOpen(true);
+                    }
+                  }}
+                >
                   {t('login')}
                 </Button>
-                <Button className="bg-gradient-primary font-inter font-medium hover:shadow-elegant text-sm lg:text-base px-3 lg:px-4" onClick={() => setIsLoginModalOpen(true)}>
+                <Button 
+                  className="bg-gradient-primary font-inter font-medium hover:shadow-elegant text-sm lg:text-base px-3 lg:px-4" 
+                  onClick={() => {
+                    if (onLoginClick && window.location.pathname === '/') {
+                      onLoginClick();
+                    } else {
+                      setIsLoginModalOpen(true);
+                    }
+                  }}
+                >
                   {t('publishProperty')}
                 </Button>
               </>
@@ -279,16 +302,31 @@ const Navigation = () => {
 
                 {!isAuthenticated ? (
                   <>
-                    <Button variant="ghost" className="font-inter font-medium justify-start" onClick={() => {
-                      setIsLoginModalOpen(true);
-                      setIsMenuOpen(false);
-                    }}>
+                    <Button 
+                      variant="ghost" 
+                      className="font-inter font-medium justify-start" 
+                      onClick={() => {
+                        if (onLoginClick && window.location.pathname === '/') {
+                          onLoginClick();
+                        } else {
+                          setIsLoginModalOpen(true);
+                        }
+                        setIsMenuOpen(false);
+                      }}
+                    >
                       {t('login')}
                     </Button>
-                    <Button className="bg-gradient-primary font-inter font-medium hover:shadow-elegant justify-start" onClick={() => {
-                      setIsLoginModalOpen(true);
-                      setIsMenuOpen(false);
-                    }}>
+                    <Button 
+                      className="bg-gradient-primary font-inter font-medium hover:shadow-elegant justify-start" 
+                      onClick={() => {
+                        if (onLoginClick && window.location.pathname === '/') {
+                          onLoginClick();
+                        } else {
+                          setIsLoginModalOpen(true);
+                        }
+                        setIsMenuOpen(false);
+                      }}
+                    >
                       {t('publishProperty')}
                     </Button>
                   </>

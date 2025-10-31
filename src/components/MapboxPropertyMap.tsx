@@ -119,7 +119,36 @@ export const MapboxPropertyMap = ({ properties }: MapboxPropertyMapProps) => {
       dragRotate: false,
       touchPitch: false,
     });
-    m.addControl(new mapboxgl.NavigationControl(), 'top-right');
+    const navControl = new mapboxgl.NavigationControl({
+      visualizePitch: true,
+      showCompass: true,
+      showZoom: true,
+    });
+    
+    m.addControl(navControl, 'top-right');
+    
+    // Add custom styling for better visibility
+    const style = document.createElement('style');
+    style.textContent = `
+      .mapboxgl-ctrl-group {
+        background: white !important;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.2) !important;
+        border-radius: 8px !important;
+      }
+      .mapboxgl-ctrl-zoom-in,
+      .mapboxgl-ctrl-zoom-out,
+      .mapboxgl-ctrl-compass {
+        width: 36px !important;
+        height: 36px !important;
+        font-size: 18px !important;
+        font-weight: bold !important;
+      }
+      .mapboxgl-ctrl-icon {
+        filter: contrast(1.2) !important;
+      }
+    `;
+    document.head.appendChild(style);
+    
     m.once('load', () => setIsMapReady(true));
     map.current = m;
 
