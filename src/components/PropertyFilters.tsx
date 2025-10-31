@@ -1,772 +1,533 @@
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Checkbox } from "@/components/ui/checkbox";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Slider } from "@/components/ui/slider";
-import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
-import { Filter, Minus, Plus, Wifi, Utensils, Waves, Wind, Flame, Key, Zap, PawPrint, Award, Crown } from "lucide-react";
 import { useState } from "react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Slider } from "@/components/ui/slider";
+import { Input } from "@/components/ui/input";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { 
+  SlidersHorizontal, Award, Car, Key, Waves, Zap, PawPrint, 
+  Wifi, Wind, Tv, ChefHat, WashingMachine, X, ChevronDown, ChevronUp
+} from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { Separator } from "@/components/ui/separator";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Badge } from "@/components/ui/badge";
 
 interface FilterState {
-  location: string;
-  propertyType: string;
-  minPrice: number[];
-  maxPrice: number[];
-  bedrooms: string;
-  bathrooms: string;
-  minArea: string;
-  maxArea: string;
-
-  // NEW FILTERS - COMMON
-  bhkType: string[];
-  furnishing: string[];
-  parking: string[];
-
-  // RENT SPECIFIC
-  showVisitProperties: boolean;
-  availability: string;
-  preferredTenants: string[];
-  showLeaseOnly: boolean;
-
-  // BUY SPECIFIC
-  propertyStatus: string;
-  newBuilderProjects: boolean;
-
-  // SHORT STAY SPECIFIC
+  minPrice: number;
+  maxPrice: number;
+  propertyType: "all" | "room" | "entire" | string;
+  guestFavorite: boolean;
+  freeParking: boolean;
+  selfCheckIn: boolean;
+  pool: boolean;
+  bedrooms: number | string;
+  beds: number;
+  bathrooms: number | string;
   amenities: string[];
-  bookingOptions: string[];
-  standoutStays: string[];
-  accessibilityFeatures: string[];
+  instantBook: boolean;
+  petsAllowed: boolean;
+  luxuryStay: boolean;
+  accessibility: string[];
   hostLanguages: string[];
-
-  // NEW: Personalized Services (Short Stay)
-  personalizedServices: string[];
-
-  // LEGACY
-  verifiedOnly?: boolean;
-  financingAvailable?: boolean;
-  newBuild?: boolean;
-  instantBooking?: boolean;
-  depositRequired?: boolean;
+  propertyTypes: string[];
+  location?: string;
+  minArea?: string;
+  maxArea?: string;
 }
 
 interface PropertyFiltersProps {
   onFilterChange: (filters: FilterState) => void;
-  listingType: 'buy' | 'rent' | 'shortStay';
+  listingType?: "buy" | "rent" | "shortStay";
+  propertyCount?: number;
 }
 
-const PropertyFilters = ({ onFilterChange, listingType }: PropertyFiltersProps) => {
+export const PropertyFilters = ({ onFilterChange, listingType = "shortStay", propertyCount = 0 }: PropertyFiltersProps) => {
   const { t } = useLanguage();
   const [isOpen, setIsOpen] = useState(false);
+  const [showAllAmenities, setShowAllAmenities] = useState(false);
+  
   const [filters, setFilters] = useState<FilterState>({
-    location: "",
+    minPrice: 0,
+    maxPrice: listingType === "shortStay" ? 50000 : listingType === "rent" ? 100000 : 50000000,
     propertyType: "all",
-    minPrice: [0],
-    maxPrice: listingType === 'buy' ? [5000000] : listingType === 'rent' ? [100000] : [50000],
+    guestFavorite: false,
+    freeParking: false,
+    selfCheckIn: false,
+    pool: false,
     bedrooms: "all",
+    beds: 0,
     bathrooms: "all",
+    amenities: [],
+    instantBook: false,
+    petsAllowed: false,
+    luxuryStay: false,
+    accessibility: [],
+    hostLanguages: [],
+    propertyTypes: [],
+    location: "",
     minArea: "",
     maxArea: "",
-
-    bhkType: [],
-    furnishing: [],
-    parking: [],
-
-    showVisitProperties: false,
-    availability: "all",
-    preferredTenants: [],
-    showLeaseOnly: false,
-
-    propertyStatus: "all",
-    newBuilderProjects: false,
-
-    amenities: [],
-    bookingOptions: [],
-    standoutStays: [],
-    accessibilityFeatures: [],
-    hostLanguages: [],
-
-    // NEW
-    personalizedServices: [],
-
-    verifiedOnly: false,
-    financingAvailable: false,
-    newBuild: false,
-    instantBooking: false,
-    depositRequired: false
   });
 
-  const [bedroomCount, setBedroomCount] = useState(0);
-  const [bathroomCount, setBathroomCount] = useState(0);
-
-  const handleFilterChange = (key: keyof FilterState, value: any) => {
-    const newFilters = { ...filters, [key]: value };
-    setFilters(newFilters);
-    onFilterChange(newFilters);
+  const getMaxPrice = () => {
+    switch (listingType) {
+      case "shortStay": return 50000;
+      case "rent": return 100000;
+      case "buy": return 50000000;
+      default: return 50000;
+    }
   };
 
-  const toggleArrayFilter = (key: keyof FilterState, value: string) => {
-    const currentArray = filters[key] as string[];
+  const updateFilter = (key: keyof FilterState, value: any) => {
+    const newFilters = { ...filters, [key]: value };
+    setFilters(newFilters);
+  };
+
+  const toggleArrayFilter = (key: "amenities" | "accessibility" | "hostLanguages" | "propertyTypes", value: string) => {
+    const currentArray = filters[key];
     const newArray = currentArray.includes(value)
-      ? currentArray.filter(v => v !== value)
+      ? currentArray.filter(item => item !== value)
       : [...currentArray, value];
-    handleFilterChange(key, newArray);
+    updateFilter(key, newArray);
   };
 
   const clearFilters = () => {
-    const clearedFilters: FilterState = {
-      location: "",
+    const defaultFilters: FilterState = {
+      minPrice: 0,
+      maxPrice: getMaxPrice(),
       propertyType: "all",
-      minPrice: [0],
-      maxPrice: listingType === 'buy' ? [5000000] : listingType === 'rent' ? [100000] : [50000],
-      bedrooms: "all",
-      bathrooms: "all",
-      minArea: "",
-      maxArea: "",
-
-      bhkType: [],
-      furnishing: [],
-      parking: [],
-
-      showVisitProperties: false,
-      availability: "all",
-      preferredTenants: [],
-      showLeaseOnly: false,
-
-      propertyStatus: "all",
-      newBuilderProjects: false,
-
+      guestFavorite: false,
+      freeParking: false,
+      selfCheckIn: false,
+      pool: false,
+      bedrooms: 0,
+      beds: 0,
+      bathrooms: 0,
       amenities: [],
-      bookingOptions: [],
-      standoutStays: [],
-      accessibilityFeatures: [],
+      instantBook: false,
+      petsAllowed: false,
+      luxuryStay: false,
+      accessibility: [],
       hostLanguages: [],
-
-      // NEW
-      personalizedServices: [],
-
-      verifiedOnly: false,
-      financingAvailable: false,
-      newBuild: false,
-      instantBooking: false,
-      depositRequired: false
+      propertyTypes: [],
     };
-    setFilters(clearedFilters);
-    onFilterChange(clearedFilters);
-    setBedroomCount(0);
-    setBathroomCount(0);
+    setFilters(defaultFilters);
   };
 
   const getActiveFiltersCount = () => {
     let count = 0;
-    if (filters.location) count++;
-    if (filters.propertyType && filters.propertyType !== "all") count++;
-    if (filters.bedrooms && filters.bedrooms !== "all") count++;
-    if (filters.bathrooms && filters.bathrooms !== "all") count++;
-    if (filters.minArea) count++;
-    if (filters.maxArea) count++;
-    if (filters.minPrice[0] > 0) count++;
-    if (filters.bhkType.length > 0) count++;
-    if (filters.furnishing.length > 0) count++;
-    if (filters.parking.length > 0) count++;
-    if (filters.showVisitProperties) count++;
-    if (filters.availability !== "all") count++;
-    if (filters.preferredTenants.length > 0) count++;
-    if (filters.showLeaseOnly) count++;
-    if (filters.propertyStatus !== "all") count++;
-    if (filters.newBuilderProjects) count++;
+    if (filters.minPrice > 0 || filters.maxPrice < getMaxPrice()) count++;
+    if (filters.propertyType !== "all") count++;
+    if (filters.guestFavorite || filters.freeParking || filters.selfCheckIn || filters.pool) count++;
+    if (filters.bedrooms > 0 || filters.beds > 0 || filters.bathrooms > 0) count++;
     if (filters.amenities.length > 0) count++;
-    if (filters.bookingOptions.length > 0) count++;
-    if (filters.standoutStays.length > 0) count++;
-    if (filters.accessibilityFeatures.length > 0) count++;
+    if (filters.instantBook || filters.petsAllowed) count++;
+    if (filters.luxuryStay) count++;
+    if (filters.accessibility.length > 0) count++;
     if (filters.hostLanguages.length > 0) count++;
-    // NEW
-    if (filters.personalizedServices.length > 0) count++;
+    if (filters.propertyTypes.length > 0) count++;
     return count;
   };
 
-  const getPriceLabel = () => {
-    switch (listingType) {
-      case 'buy':
-        return 'Prix (DA)';
-      case 'rent':
-        return 'Loyer mensuel (DA)';
-      case 'shortStay':
-        return 'Prix par nuit (DA)';
-      default:
-        return 'Prix (DA)';
-    }
+  const applyFilters = () => {
+    onFilterChange(filters);
+    setIsOpen(false);
   };
 
-  const getMaxPrice = () => {
-    switch (listingType) {
-      case 'buy':
-        return 10000000;
-      case 'rent':
-        return 200000;
-      case 'shortStay':
-        return 100000;
-      default:
-        return 5000000;
-    }
-  };
-
-  const incrementBedrooms = () => {
-    const newCount = bedroomCount + 1;
-    setBedroomCount(newCount);
-    handleFilterChange('bedrooms', newCount === 0 ? 'all' : newCount.toString());
-  };
-
-  const decrementBedrooms = () => {
-    const newCount = Math.max(0, bedroomCount - 1);
-    setBedroomCount(newCount);
-    handleFilterChange('bedrooms', newCount === 0 ? 'all' : newCount.toString());
-  };
-
-  const incrementBathrooms = () => {
-    const newCount = bathroomCount + 1;
-    setBathroomCount(newCount);
-    handleFilterChange('bathrooms', newCount === 0 ? 'all' : newCount.toString());
-  };
-
-  const decrementBathrooms = () => {
-    const newCount = Math.max(0, bathroomCount - 1);
-    setBathroomCount(newCount);
-    handleFilterChange('bathrooms', newCount === 0 ? 'all' : newCount.toString());
-  };
-
-  const propertyTypes = [
-    { value: 'all', label: t('allTypes') || 'All Types' },
-    { value: 'apartment', label: t('apartment') || 'Apartment' },
-    { value: 'villa', label: t('villaFilter') || 'Independent House/Villa' },
-    { value: 'gated', label: 'Gated Community Villa' },
-    { value: 'standalone', label: 'Standalone Building' },
+  const recommendedFilters = [
+    { key: "guestFavorite" as const, label: t("filters.guestFavorites") || "Guest favorites", icon: Award },
+    { key: "freeParking" as const, label: t("filters.freeParking") || "Free parking", icon: Car },
+    { key: "selfCheckIn" as const, label: t("filters.selfCheckIn") || "Self check-in", icon: Key },
+    { key: "pool" as const, label: t("filters.pool") || "Pool", icon: Waves },
   ];
 
-  const bhkTypes = ['1 RK', '1 BHK', '2 BHK', '3 BHK', '4 BHK', '4+ BHK'];
-
-  const amenitiesData = [
-    { value: 'wifi', label: 'Wifi', icon: Wifi },
-    { value: 'kitchen', label: 'Kitchen', icon: Utensils },
-    { value: 'washingMachine', label: 'Washer', icon: Waves },
-    { value: 'dryer', label: 'Dryer', icon: Wind },
-    { value: 'ac', label: 'Air conditioning', icon: Flame },
-    { value: 'heating', label: 'Heating', icon: Flame },
+  const essentialAmenities = [
+    { key: "wifi", label: t("filters.wifi") || "Wifi", icon: Wifi },
+    { key: "airConditioning", label: t("filters.airConditioning") || "Air conditioning", icon: Wind },
+    { key: "washer", label: t("filters.washer") || "Washer", icon: WashingMachine },
+    { key: "tv", label: t("filters.tv") || "TV", icon: Tv },
+    { key: "kitchen", label: t("filters.kitchen") || "Kitchen", icon: ChefHat },
   ];
 
-  // NEW: Personalized Services options (short stay)
-  const personalizedServicesData = [
-    { value: 'housekeeper', label: 'Housekeeper' },
-    { value: 'cook', label: 'Cook' },
-    { value: 'privateDriver', label: 'Private Driver' },
-    { value: 'tourGuide', label: 'Tour Guide' },
-    { value: 'bodyguard', label: 'Bodyguard' },
-    { value: 'ritualSlaughtererHalal', label: 'Ritual Slaughterer (Halal)' },
+  const additionalAmenities = [
+    { key: "dryer", label: t("filters.dryer") || "Dryer" },
+    { key: "heating", label: t("filters.heating") || "Heating" },
+    { key: "workspace", label: t("filters.workspace") || "Dedicated workspace" },
+    { key: "hairDryer", label: t("filters.hairDryer") || "Hair dryer" },
+    { key: "iron", label: t("filters.iron") || "Iron" },
   ];
 
-  const FiltersContent = () => (
-    <div className="space-y-6 py-4">
-      {/* BHK Type - FOR RENT & BUY ONLY */}
-      {(listingType === 'rent' || listingType === 'buy') && (
-        <>
-          <div className="space-y-3">
-            <Label className="text-base font-semibold">BHK Type</Label>
-            <div className="flex flex-wrap gap-2">
-              {bhkTypes.map((bhk) => (
-                <Button
-                  key={bhk}
-                  variant={filters.bhkType.includes(bhk) ? "default" : "outline"}
-                  onClick={() => toggleArrayFilter('bhkType', bhk)}
-                  size="sm"
-                  className="rounded-full"
-                >
-                  {bhk}
-                </Button>
-              ))}
-            </div>
-          </div>
-          <Separator />
-        </>
-      )}
+  const featureAmenities = [
+    { key: "pool", label: t("filters.pool") || "Pool" },
+    { key: "freeParking", label: t("filters.freeParking") || "Free parking" },
+    { key: "evCharger", label: t("filters.evCharger") || "EV charger" },
+    { key: "crib", label: t("filters.crib") || "Crib" },
+    { key: "kingBed", label: t("filters.kingBed") || "King bed" },
+    { key: "gym", label: t("filters.gym") || "Gym" },
+    { key: "bbq", label: t("filters.bbq") || "BBQ grill" },
+    { key: "breakfast", label: t("filters.breakfast") || "Breakfast" },
+    { key: "fireplace", label: t("filters.fireplace") || "Fireplace" },
+    { key: "smokingAllowed", label: t("filters.smokingAllowed") || "Smoking allowed" },
+  ];
 
-      {/* Visit Properties - RENT ONLY */}
-      {listingType === 'rent' && (
-        <>
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Label className="font-normal">Show properties where owner is hosting a visit</Label>
-              <Badge variant="secondary" className="text-xs">New</Badge>
-            </div>
-            <Checkbox
-              checked={filters.showVisitProperties}
-              onCheckedChange={(checked) => handleFilterChange('showVisitProperties', checked)}
-            />
-          </div>
-          <Separator />
-        </>
-      )}
-
-      {/* Availability - RENT ONLY */}
-      {listingType === 'rent' && (
-        <>
-          <div className="space-y-3">
-            <Label className="text-base font-semibold">Availability</Label>
-            <RadioGroup value={filters.availability} onValueChange={(value) => handleFilterChange('availability', value)}>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="immediate" id="immediate" />
-                <Label htmlFor="immediate" className="font-normal cursor-pointer">Immediate</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="within15" id="within15" />
-                <Label htmlFor="within15" className="font-normal cursor-pointer">Within 15 Days</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="within30" id="within30" />
-                <Label htmlFor="within30" className="font-normal cursor-pointer">Within 30 Days</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="after30" id="after30" />
-                <Label htmlFor="after30" className="font-normal cursor-pointer">After 30 Days</Label>
-              </div>
-            </RadioGroup>
-          </div>
-          <Separator />
-        </>
-      )}
-
-      {/* Preferred Tenants - RENT ONLY */}
-      {listingType === 'rent' && (
-        <>
-          <div className="space-y-3">
-            <Label className="text-base font-semibold">Preferred Tenants</Label>
-            <div className="space-y-2">
-              {['Family', 'Company', 'Bachelor Male', 'Bachelor Female'].map(tenant => (
-                <div key={tenant} className="flex items-center space-x-2">
-                  <Checkbox
-                    checked={filters.preferredTenants.includes(tenant)}
-                    onCheckedChange={() => toggleArrayFilter('preferredTenants', tenant)}
-                    id={tenant}
-                  />
-                  <Label htmlFor={tenant} className="font-normal cursor-pointer">{tenant}</Label>
-                </div>
-              ))}
-            </div>
-          </div>
-          <Separator />
-        </>
-      )}
-
-      {/* Type of place */}
-      <div className="space-y-3">
-        <Label className="text-base font-semibold">{t('propertyType') || 'Property Type'}</Label>
-        <div className="space-y-2">
-          {propertyTypes.map((type) => (
-            <div key={type.value} className="flex items-center space-x-2">
-              <Checkbox
-                checked={filters.propertyType === type.value}
-                onCheckedChange={() => handleFilterChange('propertyType', type.value)}
-                id={type.value}
-              />
-              <Label htmlFor={type.value} className="font-normal cursor-pointer">{type.label}</Label>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      <Separator />
-
-      {/* Furnishing - RENT & BUY */}
-      {(listingType === 'rent' || listingType === 'buy') && (
-        <>
-          <div className="space-y-3">
-            <Label className="text-base font-semibold">Furnishing</Label>
-            <div className="space-y-2">
-              {['Full', 'Semi', 'None'].map(furn => (
-                <div key={furn} className="flex items-center space-x-2">
-                  <Checkbox
-                    checked={filters.furnishing.includes(furn)}
-                    onCheckedChange={() => toggleArrayFilter('furnishing', furn)}
-                    id={furn}
-                  />
-                  <Label htmlFor={furn} className="font-normal cursor-pointer">{furn}</Label>
-                </div>
-              ))}
-            </div>
-          </div>
-          <Separator />
-        </>
-      )}
-
-      {/* Price Range */}
-      <div className="space-y-4">
-        <Label className="text-base font-semibold">{getPriceLabel()}</Label>
-        <div className="grid grid-cols-2 gap-4">
-          <div className="space-y-2">
-            <Label className="text-sm text-muted-foreground">{t('minPrice') || 'Minimum'}</Label>
-            <Input
-              type="number"
-              value={filters.minPrice[0]}
-              onChange={(e) => handleFilterChange('minPrice', [parseInt(e.target.value) || 0])}
-              placeholder="0"
-            />
-          </div>
-          <div className="space-y-2">
-            <Label className="text-sm text-muted-foreground">{t('maxPrice') || 'Maximum'}</Label>
-            <Input
-              type="number"
-              value={filters.maxPrice[0]}
-              onChange={(e) => handleFilterChange('maxPrice', [parseInt(e.target.value) || getMaxPrice()])}
-              placeholder={getMaxPrice().toString()}
-            />
-          </div>
-        </div>
-        <Slider
-          min={0}
-          max={getMaxPrice()}
-          step={listingType === 'buy' ? 50000 : listingType === 'rent' ? 5000 : 1000}
-          value={[filters.minPrice[0], filters.maxPrice[0]]}
-          onValueChange={(value) => {
-            handleFilterChange('minPrice', [value[0]]);
-            handleFilterChange('maxPrice', [value[1]]);
-          }}
-          className="w-full"
-        />
-        <div className="flex justify-between text-sm text-muted-foreground">
-          <span>{filters.minPrice[0].toLocaleString()} DA</span>
-          <span>{filters.maxPrice[0].toLocaleString()} DA</span>
-        </div>
-      </div>
-
-      <Separator />
-
-      {/* Parking - RENT & BUY */}
-      {(listingType === 'rent' || listingType === 'buy') && (
-        <>
-          <div className="space-y-3">
-            <Label className="text-base font-semibold">Parking</Label>
-            <div className="space-y-2">
-              <div className="flex items-center space-x-2">
-                <Checkbox
-                  checked={filters.parking.includes('2wheeler')}
-                  onCheckedChange={() => toggleArrayFilter('parking', '2wheeler')}
-                  id="2wheeler"
-                />
-                <Label htmlFor="2wheeler" className="font-normal cursor-pointer">2 Wheeler</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <Checkbox
-                  checked={filters.parking.includes('4wheeler')}
-                  onCheckedChange={() => toggleArrayFilter('parking', '4wheeler')}
-                  id="4wheeler"
-                />
-                <Label htmlFor="4wheeler" className="font-normal cursor-pointer">4 Wheeler</Label>
-              </div>
-            </div>
-          </div>
-          <Separator />
-        </>
-      )}
-
-      {/* Rooms and beds */}
-      <div className="space-y-4">
-        <Label className="text-base font-semibold">{t('Rooms And Beds') || 'Rooms and beds'}</Label>
-
-        <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <Label>{t('bedrooms') || 'Bedrooms'}</Label>
-            <div className="flex items-center gap-3">
-              <Button
-                variant="outline"
-                size="icon"
-                onClick={decrementBedrooms}
-                disabled={bedroomCount === 0}
-                className="h-8 w-8 rounded-full"
-              >
-                <Minus className="h-4 w-4" />
-              </Button>
-              <span className="w-8 text-center">{bedroomCount === 0 ? 'Any' : bedroomCount}</span>
-              <Button
-                variant="outline"
-                size="icon"
-                onClick={incrementBedrooms}
-                className="h-8 w-8 rounded-full"
-              >
-                <Plus className="h-4 w-4" />
-              </Button>
-            </div>
-          </div>
-
-          <div className="flex items-center justify-between">
-            <Label>{t('bathrooms') || 'Bathrooms'}</Label>
-            <div className="flex items-center gap-3">
-              <Button
-                variant="outline"
-                size="icon"
-                onClick={decrementBathrooms}
-                disabled={bathroomCount === 0}
-                className="h-8 w-8 rounded-full"
-              >
-                <Minus className="h-4 w-4" />
-              </Button>
-              <span className="w-8 text-center">{bathroomCount === 0 ? 'Any' : bathroomCount}</span>
-              <Button
-                variant="outline"
-                size="icon"
-                onClick={incrementBathrooms}
-                className="h-8 w-8 rounded-full"
-              >
-                <Plus className="h-4 w-4" />
-              </Button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <Separator />
-
-      {/* Area */}
-      <div className="space-y-4">
-        <Label className="text-base font-semibold">{t('area') || 'Area'}</Label>
-        <div className="grid grid-cols-2 gap-4">
-          <div className="space-y-2">
-            <Label className="text-sm text-muted-foreground">{t('minArea') || 'Min (m²)'}</Label>
-            <Input
-              type="number"
-              placeholder="50"
-              value={filters.minArea}
-              onChange={(e) => handleFilterChange('minArea', e.target.value)}
-            />
-          </div>
-          <div className="space-y-2">
-            <Label className="text-sm text-muted-foreground">{t('maxArea') || 'Max (m²)'}</Label>
-            <Input
-              type="number"
-              placeholder="200"
-              value={filters.maxArea}
-              onChange={(e) => handleFilterChange('maxArea', e.target.value)}
-            />
-          </div>
-        </div>
-      </div>
-
-      <Separator />
-
-      {/* Location */}
-      <div className="space-y-3">
-        <Label className="text-base font-semibold">{t('location') || 'Location'}</Label>
-        <Input
-          placeholder={t('cityOrDistrict') || 'City or District'}
-          value={filters.location}
-          onChange={(e) => handleFilterChange('location', e.target.value)}
-        />
-      </div>
-
-      {/* Amenities - SHORT STAY ONLY */}
-      {listingType === 'shortStay' && (
-        <>
-          <Separator />
-          <div className="space-y-4">
-            <Label className="text-base font-semibold">Amenities</Label>
-            <div className="grid grid-cols-2 gap-3">
-              {amenitiesData.map((amenity) => (
-                <div key={amenity.value} className="flex items-center space-x-2">
-                  <Checkbox
-                    checked={filters.amenities.includes(amenity.value)}
-                    onCheckedChange={() => toggleArrayFilter('amenities', amenity.value)}
-                    id={amenity.value}
-                  />
-                  <amenity.icon className="h-4 w-4" />
-                  <Label htmlFor={amenity.value} className="font-normal cursor-pointer text-sm">{amenity.label}</Label>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <Separator />
-
-          {/* NEW: Personalized Services */}
-          <div className="space-y-3">
-            <Label className="text-base font-semibold">Types of Personalized Services</Label>
-            <div className="space-y-2">
-              {personalizedServicesData.map(svc => (
-                <div key={svc.value} className="flex items-center space-x-2">
-                  <Checkbox
-                    checked={filters.personalizedServices.includes(svc.value)}
-                    onCheckedChange={() => toggleArrayFilter('personalizedServices', svc.value)}
-                    id={svc.value}
-                  />
-                  <Label htmlFor={svc.value} className="font-normal cursor-pointer">{svc.label}</Label>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <Separator />
-
-          {/* Booking Options */}
-          <div className="space-y-3">
-            <Label className="text-base font-semibold">Booking options</Label>
-            <div className="space-y-2">
-              <div className="flex items-center space-x-2">
-                <Checkbox
-                  checked={filters.bookingOptions.includes('instantBook')}
-                  onCheckedChange={() => toggleArrayFilter('bookingOptions', 'instantBook')}
-                  id="instantBook"
-                />
-                <Zap className="h-4 w-4" />
-                <Label htmlFor="instantBook" className="font-normal cursor-pointer">{t('instantBooking')}</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <Checkbox
-                  checked={filters.bookingOptions.includes('selfCheckIn')}
-                  onCheckedChange={() => toggleArrayFilter('bookingOptions', 'selfCheckIn')}
-                  id="selfCheckIn"
-                />
-                <Key className="h-4 w-4" />
-                <Label htmlFor="selfCheckIn" className="font-normal cursor-pointer">{t('selfCheckIn')}</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <Checkbox
-                  checked={filters.bookingOptions.includes('pets')}
-                  onCheckedChange={() => toggleArrayFilter('bookingOptions', 'pets')}
-                  id="pets"
-                />
-                <PawPrint className="h-4 w-4" />
-                <Label htmlFor="pets" className="font-normal cursor-pointer">Allows pets</Label>
-              </div>
-            </div>
-          </div>
-
-          <Separator />
-
-          {/* Standout Stays */}
-          <div className="space-y-3">
-            <Label className="text-base font-semibold">Standout stays</Label>
-            <div className="space-y-2">
-              <div className="flex items-center space-x-2">
-                <Checkbox
-                  checked={filters.standoutStays.includes('guestFavourite')}
-                  onCheckedChange={() => toggleArrayFilter('standoutStays', 'guestFavourite')}
-                  id="guestFavourite"
-                />
-                <Award className="h-4 w-4" />
-                <Label htmlFor="guestFavourite" className="font-normal cursor-pointer">{t('guestFavourite')}</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <Checkbox
-                  checked={filters.standoutStays.includes('luxe')}
-                  onCheckedChange={() => toggleArrayFilter('standoutStays', 'luxe')}
-                  id="luxe"
-                />
-                <Crown className="h-4 w-4" />
-                <Label htmlFor="luxe" className="font-normal cursor-pointer">Luxe</Label>
-              </div>
-            </div>
-          </div>
-        </>
-      )}
-
-      {/* Show Only Lease Properties - RENT ONLY */}
-      {listingType === 'rent' && (
-        <>
-          <Separator />
-          <div className="flex items-center space-x-2">
-            <Checkbox
-              checked={filters.showLeaseOnly}
-              onCheckedChange={(checked) => handleFilterChange('showLeaseOnly', checked)}
-              id="showLeaseOnly"
-            />
-            <Label htmlFor="showLeaseOnly" className="font-normal cursor-pointer">Show Only Lease Properties</Label>
-          </div>
-        </>
-      )}
-    </div>
-  );
-
-  const PremiumFiltersContent = () => (
-    <div className="space-y-6 py-4">
-      {/* New Builder Projects - BUY ONLY */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <Label className="font-normal">New Builder Projects</Label>
-          <Badge variant="secondary" className="text-xs">Offer</Badge>
-        </div>
-        <Checkbox
-          checked={filters.newBuilderProjects}
-          onCheckedChange={(checked) => handleFilterChange('newBuilderProjects', checked)}
-        />
-      </div>
-
-      <Separator />
-
-      {/* Property Status - BUY ONLY */}
-      <div className="space-y-3">
-        <Label className="text-base font-semibold">Property Status</Label>
-        <RadioGroup value={filters.propertyStatus} onValueChange={(value) => handleFilterChange('propertyStatus', value)}>
-          <div className="flex items-center space-x-2">
-            <RadioGroupItem value="underConstruction" id="underConstruction" />
-            <Label htmlFor="underConstruction" className="font-normal cursor-pointer">Under Construction</Label>
-          </div>
-          <div className="flex items-center space-x-2">
-            <RadioGroupItem value="ready" id="ready" />
-            <Label htmlFor="ready" className="font-normal cursor-pointer">Ready</Label>
-          </div>
-        </RadioGroup>
-      </div>
-    </div>
-  );
+  const safetyAmenities = [
+    { key: "smokeAlarm", label: t("filters.smokeAlarm") || "Smoke alarm" },
+    { key: "coAlarm", label: t("filters.carbonMonoxideAlarm") || "Carbon monoxide alarm" },
+  ];
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" className="flex items-center gap-2">
-          <Filter className="h-4 w-4" />
-          {t('filters') || 'Filters'}
+        <Button variant="outline" className="gap-2">
+          <SlidersHorizontal className="h-4 w-4" />
+          <span>{t("filters.filters") || "Filters"}</span>
           {getActiveFiltersCount() > 0 && (
-            <Badge variant="secondary" className="ml-1">
+            <Badge variant="default" className="ml-1 h-5 min-w-5 rounded-full px-1.5">
               {getActiveFiltersCount()}
             </Badge>
           )}
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-w-[95vw] sm:max-w-2xl max-h-[85vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle className="text-2xl font-bold">
-            {t("filters")}
-          </DialogTitle>
+      
+      <DialogContent className="max-w-3xl max-h-[90vh] p-0 gap-0">
+        <DialogHeader className="border-b p-6 pb-4">
+          <div className="flex items-center justify-between">
+            <DialogTitle className="text-xl font-semibold">{t("filters.filters") || "Filters"}</DialogTitle>
+            <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full" onClick={() => setIsOpen(false)}>
+              <X className="h-4 w-4" />
+            </Button>
+          </div>
         </DialogHeader>
 
-        {/* Tabs for Buy page only */}
-        {listingType === 'buy' ? (
-          <Tabs defaultValue="filters" className="w-full">
-            <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="filters">Filters</TabsTrigger>
-              <TabsTrigger value="premium">Premium Filters</TabsTrigger>
-            </TabsList>
-            <TabsContent value="filters">
-              <FiltersContent />
-            </TabsContent>
-            <TabsContent value="premium">
-              <PremiumFiltersContent />
-            </TabsContent>
-          </Tabs>
-        ) : (
-          <FiltersContent />
-        )}
+        <ScrollArea className="flex-1 max-h-[calc(90vh-140px)]">
+          <div className="p-6 space-y-8">
+            {/* Recommendations */}
+            <div className="space-y-4">
+              <h3 className="font-semibold text-lg">{t("filters.ourRecommendations") || "Our recommendations"}</h3>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                {recommendedFilters.map((filter) => {
+                  const Icon = filter.icon;
+                  const isActive = filters[filter.key];
+                  return (
+                    <button
+                      key={filter.key}
+                      type="button"
+                      onClick={() => updateFilter(filter.key, !isActive)}
+                      className={`flex flex-col items-center gap-2 p-4 rounded-xl border-2 transition-all hover:border-primary/50 ${
+                        isActive ? "border-primary bg-primary/5" : "border-border"
+                      }`}
+                    >
+                      <Icon className="h-6 w-6" />
+                      <span className="text-xs text-center font-medium">{filter.label}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
 
-        <DialogFooter className="flex-row justify-between items-center border-t pt-4">
-          <Button variant="ghost" onClick={clearFilters} className="text-sm underline">
-            {t('clearAll') || 'Clear All'}
+            {/* Property Type */}
+            <div className="space-y-4">
+              <h3 className="font-semibold text-lg">{t("filters.propertyType") || "Property type"}</h3>
+              <div className="flex gap-3">
+                {(["all", "room", "entire"] as const).map((type) => (
+                  <Button
+                    key={type}
+                    type="button"
+                    variant={filters.propertyType === type ? "default" : "outline"}
+                    onClick={() => updateFilter("propertyType", type)}
+                    className="flex-1"
+                  >
+                    {type === "all" ? t("filters.allTypes") || "All types" : 
+                     type === "room" ? t("filters.room") || "Room" : 
+                     t("filters.entirePlace") || "Entire place"}
+                  </Button>
+                ))}
+              </div>
+            </div>
+
+            {/* Price Range */}
+            <div className="space-y-4">
+              <h3 className="font-semibold text-lg">{t("filters.priceRange") || "Price range"}</h3>
+              <p className="text-sm text-muted-foreground">{t("filters.priceDesc") || "Nightly prices before fees and taxes"}</p>
+              
+              <div className="h-20 bg-primary/5 rounded-lg flex items-end justify-around px-2 pb-2">
+                {[...Array(20)].map((_, i) => (
+                  <div key={i} className="w-2 bg-primary/30 rounded-t" style={{ height: `${Math.random() * 60 + 20}%` }} />
+                ))}
+              </div>
+
+              <Slider
+                min={0}
+                max={getMaxPrice()}
+                step={listingType === "buy" ? 1000000 : listingType === "rent" ? 1000 : 500}
+                value={[filters.minPrice, filters.maxPrice]}
+                onValueChange={(value) => {
+                  updateFilter("minPrice", value[0]);
+                  updateFilter("maxPrice", value[1]);
+                }}
+                className="my-4"
+              />
+
+              <div className="flex gap-4">
+                <div className="flex-1">
+                  <label className="text-sm font-medium mb-2 block">{t("filters.minimum") || "Minimum"}</label>
+                  <Input
+                    type="number"
+                    value={filters.minPrice}
+                    onChange={(e) => updateFilter("minPrice", parseInt(e.target.value) || 0)}
+                    placeholder="0"
+                  />
+                </div>
+                <div className="flex-1">
+                  <label className="text-sm font-medium mb-2 block">{t("filters.maximum") || "Maximum"}</label>
+                  <Input
+                    type="number"
+                    value={filters.maxPrice}
+                    onChange={(e) => updateFilter("maxPrice", parseInt(e.target.value) || getMaxPrice())}
+                    placeholder={getMaxPrice().toString()}
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Bedrooms and Beds */}
+            <div className="space-y-4">
+              <h3 className="font-semibold text-lg">{t("filters.bedsAndBaths") || "Rooms and beds"}</h3>
+              
+              {(["bedrooms", "beds", "bathrooms"] as const).map((item) => (
+                <div key={item} className="flex items-center justify-between">
+                  <span className="text-sm font-medium">{t(`filters.${item}`) || item}</span>
+                  <div className="flex items-center gap-3">
+                    <span className="text-sm text-muted-foreground min-w-[40px]">
+                      {filters[item] === 0 ? t("filters.any") || "Any" : filters[item]}
+                    </span>
+                    <div className="flex items-center gap-2">
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="icon"
+                        className="h-8 w-8 rounded-full"
+                        onClick={() => updateFilter(item, Math.max(0, filters[item] - 1))}
+                        disabled={filters[item] === 0}
+                      >
+                        -
+                      </Button>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="icon"
+                        className="h-8 w-8 rounded-full"
+                        onClick={() => updateFilter(item, filters[item] + 1)}
+                      >
+                        +
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Amenities */}
+            <div className="space-y-4">
+              <h3 className="font-semibold text-lg">{t("filters.amenities") || "Amenities"}</h3>
+              
+              <div className="space-y-3">
+                <h4 className="text-sm font-semibold">{t("filters.essential") || "Essential"}</h4>
+                <div className="flex flex-wrap gap-2">
+                  {essentialAmenities.map((amenity) => {
+                    const isActive = filters.amenities.includes(amenity.key);
+                    const Icon = amenity.icon;
+                    return (
+                      <Button
+                        key={amenity.key}
+                        type="button"
+                        variant={isActive ? "default" : "outline"}
+                        size="sm"
+                        onClick={() => toggleArrayFilter("amenities", amenity.key)}
+                        className="gap-2"
+                      >
+                        <Icon className="h-4 w-4" />
+                        {amenity.label}
+                      </Button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {showAllAmenities && (
+                <>
+                  <div className="space-y-3">
+                    <h4 className="text-sm font-semibold">{t("filters.basics") || "Basics"}</h4>
+                    <div className="flex flex-wrap gap-2">
+                      {additionalAmenities.map((amenity) => {
+                        const isActive = filters.amenities.includes(amenity.key);
+                        return (
+                          <Button
+                            key={amenity.key}
+                            type="button"
+                            variant={isActive ? "default" : "outline"}
+                            size="sm"
+                            onClick={() => toggleArrayFilter("amenities", amenity.key)}
+                          >
+                            {amenity.label}
+                          </Button>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  <div className="space-y-3">
+                    <h4 className="text-sm font-semibold">{t("filters.features") || "Features"}</h4>
+                    <div className="flex flex-wrap gap-2">
+                      {featureAmenities.map((amenity) => {
+                        const isActive = filters.amenities.includes(amenity.key);
+                        return (
+                          <Button
+                            key={amenity.key}
+                            type="button"
+                            variant={isActive ? "default" : "outline"}
+                            size="sm"
+                            onClick={() => toggleArrayFilter("amenities", amenity.key)}
+                          >
+                            {amenity.label}
+                          </Button>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  <div className="space-y-3">
+                    <h4 className="text-sm font-semibold">{t("filters.safety") || "Safety"}</h4>
+                    <div className="flex flex-wrap gap-2">
+                      {safetyAmenities.map((amenity) => {
+                        const isActive = filters.amenities.includes(amenity.key);
+                        return (
+                          <Button
+                            key={amenity.key}
+                            type="button"
+                            variant={isActive ? "default" : "outline"}
+                            size="sm"
+                            onClick={() => toggleArrayFilter("amenities", amenity.key)}
+                          >
+                            {amenity.label}
+                          </Button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </>
+              )}
+
+              <Button
+                type="button"
+                variant="link"
+                className="p-0 h-auto font-semibold"
+                onClick={() => setShowAllAmenities(!showAllAmenities)}
+              >
+                {showAllAmenities ? (
+                  <>
+                    {t("filters.showLess") || "Show less"} <ChevronUp className="ml-1 h-4 w-4" />
+                  </>
+                ) : (
+                  <>
+                    {t("filters.showMore") || "Show more"} <ChevronDown className="ml-1 h-4 w-4" />
+                  </>
+                )}
+              </Button>
+            </div>
+
+            {/* Booking Options */}
+            <div className="space-y-4">
+              <h3 className="font-semibold text-lg">{t("filters.bookingOptions") || "Booking options"}</h3>
+              <div className="flex flex-wrap gap-2">
+                <Button
+                  type="button"
+                  variant={filters.instantBook ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => updateFilter("instantBook", !filters.instantBook)}
+                  className="gap-2"
+                >
+                  <Zap className="h-4 w-4" />
+                  {t("filters.instantBook") || "Instant Book"}
+                </Button>
+                <Button
+                  type="button"
+                  variant={filters.selfCheckIn ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => updateFilter("selfCheckIn", !filters.selfCheckIn)}
+                  className="gap-2"
+                >
+                  <Key className="h-4 w-4" />
+                  {t("filters.selfCheckIn") || "Self check-in"}
+                </Button>
+                <Button
+                  type="button"
+                  variant={filters.petsAllowed ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => updateFilter("petsAllowed", !filters.petsAllowed)}
+                  className="gap-2"
+                >
+                  <PawPrint className="h-4 w-4" />
+                  {t("filters.petsAllowed") || "Pets allowed"}
+                </Button>
+              </div>
+            </div>
+
+            {/* Accordion Sections */}
+            <Accordion type="multiple" className="w-full">
+              <AccordionItem value="accessibility">
+                <AccordionTrigger className="text-lg font-semibold">
+                  {t("filters.accessibility") || "Accessibility features"}
+                </AccordionTrigger>
+                <AccordionContent>
+                  <div className="space-y-3 pt-2">
+                    {["stepFreeAccess", "wideEntrance", "accessibleBathroom", "elevator"].map((feature) => (
+                      <div key={feature} className="flex items-center gap-3">
+                        <Checkbox
+                          checked={filters.accessibility.includes(feature)}
+                          onCheckedChange={() => toggleArrayFilter("accessibility", feature)}
+                        />
+                        <label className="text-sm cursor-pointer">
+                          {t(`filters.${feature}`) || feature}
+                        </label>
+                      </div>
+                    ))}
+                  </div>
+                </AccordionContent>
+              </AccordionItem>
+
+              <AccordionItem value="language">
+                <AccordionTrigger className="text-lg font-semibold">
+                  {t("filters.hostLanguage") || "Host language"}
+                </AccordionTrigger>
+                <AccordionContent>
+                  <div className="space-y-3 pt-2">
+                    {["English", "French", "Arabic", "Spanish", "German"].map((lang) => (
+                      <div key={lang} className="flex items-center gap-3">
+                        <Checkbox
+                          checked={filters.hostLanguages.includes(lang)}
+                          onCheckedChange={() => toggleArrayFilter("hostLanguages", lang)}
+                        />
+                        <label className="text-sm cursor-pointer">{lang}</label>
+                      </div>
+                    ))}
+                  </div>
+                </AccordionContent>
+              </AccordionItem>
+            </Accordion>
+          </div>
+        </ScrollArea>
+
+        <div className="border-t p-6 flex items-center justify-between bg-background">
+          <Button type="button" variant="ghost" onClick={clearFilters} className="font-semibold">
+            {t("filters.clearAll") || "Clear all"}
           </Button>
-          <Button onClick={() => setIsOpen(false)} className="px-8">
-            {t('Show Results') || 'Show Results'}
+          <Button type="button" size="lg" onClick={applyFilters} className="px-8">
+            {t("filters.showProperties") || "Show"} {propertyCount > 0 && `${propertyCount} `}
+            {t("filters.properties") || "properties"}
           </Button>
-        </DialogFooter>
+        </div>
       </DialogContent>
     </Dialog>
   );

@@ -111,6 +111,7 @@ export const GuestsSelector = ({ value, onChange, keepOpen = false }: GuestsSele
               </div>
               <div className="flex items-center gap-3">
                 <Button
+                  type="button"
                   variant="outline"
                   size="icon"
                   className="h-8 w-8 rounded-full"
@@ -121,6 +122,7 @@ export const GuestsSelector = ({ value, onChange, keepOpen = false }: GuestsSele
                 </Button>
                 <span className="w-8 text-center font-medium">{value[type.key]}</span>
                 <Button
+                  type="button"
                   variant="outline"
                   size="icon"
                   className="h-8 w-8 rounded-full"
