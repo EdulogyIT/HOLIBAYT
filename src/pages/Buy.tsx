@@ -199,16 +199,9 @@ const Buy = () => {
                       }}
                     />
                   </div>
-            ))}
-          </div>
-
-          {/* Map Section - RIGHT */}
-          <div className="order-2 lg:order-2">
-            <div className="sticky top-20 h-[600px] md:h-[700px] xl:h-[800px]">
-              <MapboxPropertyMap properties={filteredProperties} />
+                ))}
+              </div>
             </div>
-          </div>
-        </div>
 
             {/* Navigation arrows */}
             {images.length > 1 && (
@@ -305,38 +298,11 @@ const Buy = () => {
       <main className="pt-20">
         <BuyHeroSearch onSearch={handleSearch} />
 
-        {/* Map + list: identical layout to Short Stay */}
+        {/* Map + list: 50/50 layout */}
         <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-            {/* Map column */}
-            <div className="lg:col-span-4">
-              <style>{`
-                .map-frame, .map-frame * { box-sizing: border-box; }
-                .map-fit, .map-fit > * { height: 100% !important; width: 100% !important; }
-                .map-fit :where(.mapboxgl-ctrl-legend,
-                                .mapboxgl-legend,
-                                .leaflet-control-legend,
-                                .leaflet-legend,
-                                [class*="legend"],
-                                [data-legend]) { display: none !important; }
-                .map-fit :where(.mapboxgl-control-container) { margin: 0 !important; padding: 0 !important; }
-              `}</style>
-
-              <LocalErrorBoundary
-                fallback={
-                  <div className="sticky top-28 rounded-2xl ring-1 ring-border bg-background grid place-items-center h-[520px] md:h-[560px] xl:h-[600px]">
-                    Map unavailable
-                  </div>
-                }
-              >
-                <div className="sticky top-28 rounded-2xl overflow-hidden ring-1 ring-border h-[520px] md:h-[560px] xl:h-[600px]">
-                  <MapboxPropertyMap properties={filteredProperties || []} />
-                </div>
-              </LocalErrorBoundary>
-            </div>
-
-            {/* Cards column */}
-            <div className="lg:col-span-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+            {/* Cards column - LEFT */}
+            <div className="order-1">
               {/* Header — count only */}
               <div className="flex items-center justify-between mb-6 gap-4 flex-wrap">
                 <h2 className="text-2xl font-bold">
@@ -411,6 +377,21 @@ const Buy = () => {
                   ))}
                 </div>
               )}
+            </div>
+
+            {/* Map column - RIGHT */}
+            <div className="order-2">
+              <LocalErrorBoundary
+                fallback={
+                  <div className="sticky top-28 rounded-2xl ring-1 ring-border bg-background grid place-items-center h-[520px] md:h-[560px] xl:h-[600px]">
+                    Map unavailable
+                  </div>
+                }
+              >
+                <div className="sticky top-28 rounded-2xl overflow-hidden ring-1 ring-border h-[520px] md:h-[560px] xl:h-[600px]">
+                  <MapboxPropertyMap properties={filteredProperties || []} />
+                </div>
+              </LocalErrorBoundary>
             </div>
           </div>
         </section>

@@ -175,16 +175,9 @@ const ShortStay = () => {
                       onError={(e) => { (e.currentTarget as HTMLImageElement).src = "/placeholder-property.jpg"; }}
                     />
                   </div>
-            ))}
-          </div>
-
-          {/* Map Section - RIGHT on desktop */}
-          <div className="order-2 lg:order-2">
-            <div className="sticky top-20 h-[600px] md:h-[700px] xl:h-[800px]">
-              <MapboxPropertyMap properties={filteredProperties} />
+                ))}
+              </div>
             </div>
-          </div>
-        </div>
 
             {images.length > 1 && (
               <>
@@ -278,9 +271,9 @@ const ShortStay = () => {
         }} />
 
         <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-            {/* List */}
-            <div className="lg:col-span-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+            {/* Property Cards - LEFT */}
+            <div className="order-1">
               <div className="flex items-center justify-between mb-6 gap-4 flex-wrap">
                 <h2 className="text-2xl font-bold">
                   {filteredProperties.length} {t("properties") || "properties"}
@@ -311,8 +304,8 @@ const ShortStay = () => {
               )}
             </div>
 
-            {/* Map */}
-            <div className="lg:col-span-4">
+            {/* Map - RIGHT */}
+            <div className="order-2">
               <LocalErrorBoundary
                 fallback={
                   <div className="sticky top-28 rounded-2xl ring-1 ring-border bg-background grid place-items-center h-[520px] md:h-[560px] xl:h-[600px]">
