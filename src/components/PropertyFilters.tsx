@@ -292,7 +292,11 @@ export const PropertyFilters = ({ onFilterChange, listingType = "shortStay", pro
               
               {(["bedrooms", "beds", "bathrooms"] as const).map((item) => (
                 <div key={item} className="flex items-center justify-between">
-                  <span className="text-sm font-medium capitalize">{t(item) || item.charAt(0).toUpperCase() + item.slice(1)}</span>
+                  <span className="text-sm font-medium">
+                    {item === "bedrooms" ? (t("bedrooms") || "Bedrooms") : 
+                     item === "beds" ? (t("beds") || "Beds") : 
+                     (t("bathrooms") || "Bathrooms")}
+                  </span>
                   <div className="flex items-center gap-3">
                     <span className="text-sm text-muted-foreground min-w-[40px]">
                       {filters[item] === 0 ? t("any") || "Any" : filters[item]}

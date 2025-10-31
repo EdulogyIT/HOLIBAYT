@@ -306,7 +306,29 @@ const Rent = () => {
                 <h2 className="text-2xl font-bold">
                   {filteredProperties.length} {t("properties") || "properties"}
                 </h2>
-                <PropertyFilters onFilterChange={() => {}} listingType="rent" />
+                <PropertyFilters 
+                  onFilterChange={(filters) => {
+                    let filtered = properties;
+
+                    if (filters.minPrice > 0 || filters.maxPrice < 100000) {
+                      filtered = filtered.filter(p => {
+                        const price = num(p.price);
+                        return price >= filters.minPrice && price <= filters.maxPrice;
+                      });
+                    }
+
+                    if (filters.bedrooms > 0) {
+                      filtered = filtered.filter((p) => num(p.bedrooms) >= filters.bedrooms);
+                    }
+
+                    if (filters.bathrooms > 0) {
+                      filtered = filtered.filter((p) => num(p.bathrooms) >= filters.bathrooms);
+                    }
+
+                    setFilteredProperties(filtered);
+                  }} 
+                  listingType="rent" 
+                />
               </div>
 
               {isLoading ? (
@@ -322,7 +344,7 @@ const Rent = () => {
                   <div className="text-muted-foreground">{t("Adjust Filters Or Check Later")}</div>
                 </div>
               ) : (
-                <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4">
+                <div className="grid grid-cols-1 gap-6">
                   {filteredProperties.map((property) => (
                     <PropertyCard key={property.id} property={property} />
                   ))}

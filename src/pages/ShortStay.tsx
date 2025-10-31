@@ -296,7 +296,7 @@ const ShortStay = () => {
                   <div className="text-muted-foreground">{t("Adjust Filters Or Check Later")}</div>
                 </div>
               ) : (
-                <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4">
+                <div className="grid grid-cols-1 gap-6">
                   {filteredProperties.map((p) => (
                     <PropertyCard key={p.id} property={p} />
                   ))}
@@ -322,7 +322,17 @@ const ShortStay = () => {
         </section>
 
         <TopRatedStays />
-        <DestinationsToExplore onDestinationClick={() => {}} />
+        <DestinationsToExplore onDestinationClick={(destination) => {
+          // Filter properties by amenity
+          const filtered = properties.filter(p => {
+            // Check if property has the amenity
+            return p[destination.value as keyof Property] === true;
+          });
+          setFilteredProperties(filtered);
+          
+          // Scroll to properties section
+          window.scrollTo({ top: 500, behavior: 'smooth' });
+        }} />
         <CitiesSection />
         <AIChatBox />
       </main>

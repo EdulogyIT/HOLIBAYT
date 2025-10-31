@@ -85,17 +85,7 @@ export const GuestsSelector = ({ value, onChange, keepOpen = false }: GuestsSele
         className="w-80 p-4 bg-background z-[100]" 
         align="center" 
         collisionPadding={10}
-        onPointerDownOutside={(e) => {
-          if (keepOpen) {
-            e.preventDefault();
-          }
-        }}
-        onInteractOutside={(e) => {
-          if (keepOpen) {
-            e.preventDefault();
-          }
-        }}
-        onEscapeKeyDown={(e) => {
+        onEscapeKeyDown={() => {
           setOpen(false);
         }}
       >
