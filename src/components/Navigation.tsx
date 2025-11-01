@@ -104,7 +104,7 @@ const Navigation = ({ onLoginClick }: NavigationProps = {}) => {
                   <Globe className="h-4 w-4 lg:h-5 lg:w-5" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="bg-background border border-border z-[100000]">
+              <DropdownMenuContent align="end" className="bg-background border border-border shadow-lg z-50">
                 {languages.map((lang) => (
                   <DropdownMenuItem 
                     key={lang.code}
@@ -174,7 +174,7 @@ const Navigation = ({ onLoginClick }: NavigationProps = {}) => {
                       <span className="hidden lg:inline">{user?.name}</span>
                     </Button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="w-56 z-[100000]">
+                  <DropdownMenuContent align="end" className="w-56 bg-background border shadow-lg z-50">
                     <DropdownMenuItem onClick={() => navigate('/profile')} className="min-h-[44px]">
                       <User className="h-4 w-4 mr-2" />
                       {t('myProfile')}
@@ -281,7 +281,7 @@ const Navigation = ({ onLoginClick }: NavigationProps = {}) => {
                       {languages.find(l => l.code === currentLang)?.name}
                     </Button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent className="bg-background border border-border z-[100000]">
+                  <DropdownMenuContent className="bg-background border border-border shadow-lg z-50">
                     {languages.map((lang) => (
                       <DropdownMenuItem 
                         key={lang.code}

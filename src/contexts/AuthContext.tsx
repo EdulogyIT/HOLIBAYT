@@ -57,6 +57,15 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         return false;
       }
 
+      // Check for returnTo parameter in URL or localStorage
+      const urlParams = new URLSearchParams(window.location.search);
+      const returnTo = urlParams.get('returnTo') || localStorage.getItem('returnTo');
+      
+      if (returnTo) {
+        localStorage.removeItem('returnTo');
+        window.location.href = returnTo;
+      }
+
       return true;
     } catch (error) {
       console.error('Login error:', error);
@@ -96,6 +105,13 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   const loginWithGoogle = async (): Promise<void> => {
     try {
+      // Store returnTo before OAuth redirect
+      const urlParams = new URLSearchParams(window.location.search);
+      const returnTo = urlParams.get('returnTo');
+      if (returnTo) {
+        localStorage.setItem('returnTo', returnTo);
+      }
+
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
@@ -115,6 +131,13 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   const loginWithFacebook = async (): Promise<void> => {
     try {
+      // Store returnTo before OAuth redirect
+      const urlParams = new URLSearchParams(window.location.search);
+      const returnTo = urlParams.get('returnTo');
+      if (returnTo) {
+        localStorage.setItem('returnTo', returnTo);
+      }
+
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'facebook',
         options: {

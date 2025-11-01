@@ -61,8 +61,36 @@ export const HostProfileSection = ({ userId, onContactHost }: HostProfileSection
     }
   };
 
-  if (isLoading || !hostProfile) {
-    return null;
+  if (isLoading) {
+    return (
+      <Card className="border-2 shadow-lg">
+        <CardHeader>
+          <CardTitle className="text-2xl font-playfair">{t("meetYourHost")}</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex items-center space-x-4">
+            <div className="w-20 h-20 rounded-full bg-muted animate-pulse" />
+            <div className="space-y-2 flex-1">
+              <div className="h-4 bg-muted rounded w-1/3 animate-pulse" />
+              <div className="h-3 bg-muted rounded w-1/2 animate-pulse" />
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  if (!hostProfile) {
+    return (
+      <Card className="border-2 shadow-lg">
+        <CardHeader>
+          <CardTitle className="text-2xl font-playfair">{t("meetYourHost")}</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p className="text-muted-foreground">{t("hostInformationUnavailable") || "Host information is currently unavailable."}</p>
+        </CardContent>
+      </Card>
+    );
   }
 
   const memberSince = new Date(hostProfile.created_at).getFullYear();
