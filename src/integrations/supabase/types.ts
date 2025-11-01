@@ -1072,6 +1072,100 @@ export type Database = {
         }
         Relationships: []
       }
+      pricing_fees: {
+        Row: {
+          cleaning_fee: number | null
+          created_at: string | null
+          extra_guest_fee: number | null
+          extra_guest_threshold: number | null
+          id: string
+          pet_fee: number | null
+          property_id: string
+          security_deposit: number | null
+          tax_rate: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          cleaning_fee?: number | null
+          created_at?: string | null
+          extra_guest_fee?: number | null
+          extra_guest_threshold?: number | null
+          id?: string
+          pet_fee?: number | null
+          property_id: string
+          security_deposit?: number | null
+          tax_rate?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          cleaning_fee?: number | null
+          created_at?: string | null
+          extra_guest_fee?: number | null
+          extra_guest_threshold?: number | null
+          id?: string
+          pet_fee?: number | null
+          property_id?: string
+          security_deposit?: number | null
+          tax_rate?: number | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pricing_fees_property_id_fkey"
+            columns: ["property_id"]
+            isOneToOne: true
+            referencedRelation: "properties"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      pricing_rules: {
+        Row: {
+          conditions: Json | null
+          created_at: string | null
+          discount_percent: number
+          end_date: string | null
+          id: string
+          is_active: boolean | null
+          property_id: string
+          rule_type: string
+          start_date: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          conditions?: Json | null
+          created_at?: string | null
+          discount_percent: number
+          end_date?: string | null
+          id?: string
+          is_active?: boolean | null
+          property_id: string
+          rule_type: string
+          start_date?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          conditions?: Json | null
+          created_at?: string | null
+          discount_percent?: number
+          end_date?: string | null
+          id?: string
+          is_active?: boolean | null
+          property_id?: string
+          rule_type?: string
+          start_date?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pricing_rules_property_id_fkey"
+            columns: ["property_id"]
+            isOneToOne: false
+            referencedRelation: "properties"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -1346,6 +1440,7 @@ export type Database = {
           season_name: string | null
           start_date: string
           updated_at: string | null
+          weekend_multiplier: number | null
         }
         Insert: {
           created_at?: string | null
@@ -1356,6 +1451,7 @@ export type Database = {
           season_name?: string | null
           start_date: string
           updated_at?: string | null
+          weekend_multiplier?: number | null
         }
         Update: {
           created_at?: string | null
@@ -1366,6 +1462,7 @@ export type Database = {
           season_name?: string | null
           start_date?: string
           updated_at?: string | null
+          weekend_multiplier?: number | null
         }
         Relationships: [
           {

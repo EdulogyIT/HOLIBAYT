@@ -6,7 +6,7 @@ import { useCurrency } from '@/contexts/CurrencyContext';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
-import { Calendar, Users, CreditCard, MapPin, Home } from 'lucide-react';
+import { Calendar, Users, CreditCard, MapPin, Home, Loader2 } from 'lucide-react';
 import { format, differenceInDays } from 'date-fns';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
@@ -15,6 +15,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
+import { calculateBookingPrice } from '@/utils/pricingCalculator';
 
 interface Property {
   id: string;
@@ -42,17 +43,26 @@ export default function BookingConfirm() {
   const [isProcessing, setIsProcessing] = useState(false);
   const [specialRequests, setSpecialRequests] = useState('');
   const [contactPhone, setContactPhone] = useState('');
+  const [pricingBreakdown, setPricingBreakdown] = useState<any>(null);
+  const [pricingLoading, setPricingLoading] = useState(false);
 
   // Get booking context from URL
   const checkInDate = searchParams.get('checkIn') ? new Date(searchParams.get('checkIn')!) : undefined;
   const checkOutDate = searchParams.get('checkOut') ? new Date(searchParams.get('checkOut')!) : undefined;
   const guestsCount = parseInt(searchParams.get('guests') || '1');
+  const petsCount = parseInt(searchParams.get('pets') || '0');
 
   useEffect(() => {
     if (propertyId) {
       fetchProperty();
     }
   }, [propertyId]);
+
+  useEffect(() => {
+    if (property && checkInDate && checkOutDate && guestsCount) {
+      calculatePricing();
+    }
+  }, [property, checkInDate, checkOutDate, guestsCount, petsCount]);
 
   const fetchProperty = async () => {
     try {
@@ -76,40 +86,36 @@ export default function BookingConfirm() {
     }
   };
 
-  // Calculate pricing
-  const calculatePricing = () => {
-    if (!property || !checkInDate || !checkOutDate) return null;
+  // Calculate pricing using comprehensive calculator
+  const calculatePricing = async () => {
+    if (!property || !checkInDate || !checkOutDate) return;
 
-    const basePrice = Number(property.price) || 0;
-    let dailyPrice = basePrice;
-
-    if (property.price_type === 'monthly') {
-      dailyPrice = basePrice / 30.44;
-    } else if (property.price_type === 'weekly') {
-      dailyPrice = basePrice / 7;
+    setPricingLoading(true);
+    try {
+      const breakdown = await calculateBookingPrice(
+        property.id,
+        checkInDate,
+        checkOutDate,
+        guestsCount,
+        petsCount
+      );
+      setPricingBreakdown(breakdown);
+    } catch (error) {
+      console.error('Error calculating pricing:', error);
+      toast({
+        variant: 'destructive',
+        title: 'Pricing Error',
+        description: 'Unable to calculate pricing. Please try again.',
+      });
+    } finally {
+      setPricingLoading(false);
     }
-
-    const nights = Math.max(1, differenceInDays(checkOutDate, checkInDate));
-    const subtotal = dailyPrice * nights;
-    const bookingFee = Math.round(subtotal * 0.05 * 100) / 100;
-    const securityDeposit = Math.round(subtotal * 0.2 * 100) / 100;
-    const total = subtotal + bookingFee;
-
-    return {
-      dailyPrice,
-      nights,
-      subtotal,
-      bookingFee,
-      securityDeposit,
-      total,
-    };
   };
 
-  const pricing = calculatePricing();
   const propertyCurrency = property?.price_currency || 'EUR';
 
   const handlePayBooking = async () => {
-    if (!property || !checkInDate || !checkOutDate || !pricing) return;
+    if (!property || !checkInDate || !checkOutDate || !pricingBreakdown) return;
 
     setIsProcessing(true);
     try {
@@ -117,7 +123,7 @@ export default function BookingConfirm() {
         body: {
           propertyId: property.id,
           paymentType: 'booking_fee',
-          amount: pricing.total,
+          amount: pricingBreakdown.total,
           currency: propertyCurrency,
           description: `Booking fee for ${property.title}`,
           bookingData: {
@@ -278,10 +284,10 @@ export default function BookingConfirm() {
                       onClick={handlePayBooking}
                       size="lg"
                       className="w-full"
-                      disabled={isProcessing || !pricing}
+                      disabled={isProcessing || !pricingBreakdown || pricingLoading}
                     >
                       <CreditCard className="w-4 h-4 mr-2" />
-                      {isProcessing ? 'Processing...' : `Pay ${formatPrice(pricing?.total || 0, undefined, propertyCurrency)}`}
+                      {isProcessing ? 'Processing...' : pricingLoading ? 'Calculating...' : `Pay ${formatPrice(pricingBreakdown?.total || 0, undefined, propertyCurrency)}`}
                     </Button>
                   </CardContent>
                 </Card>
@@ -324,27 +330,107 @@ export default function BookingConfirm() {
                     </div>
                   </div>
 
-                  {pricing && (
+                  {pricingBreakdown && !pricingLoading && (
                     <>
                       <Separator />
-                      <div className="space-y-2">
+                      <div className="space-y-3">
+                        {/* Base Pricing */}
                         <div className="flex justify-between text-sm">
                           <span>
-                            {formatPrice(pricing.dailyPrice, undefined, propertyCurrency)} × {pricing.nights} night{pricing.nights !== 1 ? 's' : ''}
+                            {formatPrice(pricingBreakdown.basePrice, undefined, propertyCurrency)} × {pricingBreakdown.nights} night{pricingBreakdown.nights !== 1 ? 's' : ''}
                           </span>
-                          <span>{formatPrice(pricing.subtotal, undefined, propertyCurrency)}</span>
+                          <span>{formatPrice(pricingBreakdown.subtotal + (pricingBreakdown.savings || 0), undefined, propertyCurrency)}</span>
                         </div>
+
+                        {/* Discounts */}
+                        {pricingBreakdown.lengthOfStayDiscount && (
+                          <div className="flex justify-between text-sm text-green-600">
+                            <span>Length of stay discount ({pricingBreakdown.lengthOfStayDiscount.percent}%)</span>
+                            <span>-{formatPrice(pricingBreakdown.lengthOfStayDiscount.amount, undefined, propertyCurrency)}</span>
+                          </div>
+                        )}
+                        {pricingBreakdown.earlyBirdDiscount && (
+                          <div className="flex justify-between text-sm text-green-600">
+                            <span>Early bird discount ({pricingBreakdown.earlyBirdDiscount.percent}%)</span>
+                            <span>-{formatPrice(pricingBreakdown.earlyBirdDiscount.amount, undefined, propertyCurrency)}</span>
+                          </div>
+                        )}
+                        {pricingBreakdown.lastMinuteDiscount && (
+                          <div className="flex justify-between text-sm text-green-600">
+                            <span>Last minute discount ({pricingBreakdown.lastMinuteDiscount.percent}%)</span>
+                            <span>-{formatPrice(pricingBreakdown.lastMinuteDiscount.amount, undefined, propertyCurrency)}</span>
+                          </div>
+                        )}
+                        {pricingBreakdown.promotionalDiscount && (
+                          <div className="flex justify-between text-sm text-green-600">
+                            <span>Promotional discount ({pricingBreakdown.promotionalDiscount.percent}%)</span>
+                            <span>-{formatPrice(pricingBreakdown.promotionalDiscount.amount, undefined, propertyCurrency)}</span>
+                          </div>
+                        )}
+
+                        {/* Fees */}
+                        {pricingBreakdown.cleaningFee > 0 && (
+                          <div className="flex justify-between text-sm">
+                            <span>Cleaning fee</span>
+                            <span>{formatPrice(pricingBreakdown.cleaningFee, undefined, propertyCurrency)}</span>
+                          </div>
+                        )}
+                        {pricingBreakdown.extraGuestFee > 0 && (
+                          <div className="flex justify-between text-sm">
+                            <span>Extra guest fee</span>
+                            <span>{formatPrice(pricingBreakdown.extraGuestFee, undefined, propertyCurrency)}</span>
+                          </div>
+                        )}
+                        {pricingBreakdown.petFee > 0 && (
+                          <div className="flex justify-between text-sm">
+                            <span>Pet fee</span>
+                            <span>{formatPrice(pricingBreakdown.petFee, undefined, propertyCurrency)}</span>
+                          </div>
+                        )}
                         <div className="flex justify-between text-sm">
-                          <span>Booking fee</span>
-                          <span>{formatPrice(pricing.bookingFee, undefined, propertyCurrency)}</span>
+                          <span>Service fee</span>
+                          <span>{formatPrice(pricingBreakdown.serviceFee, undefined, propertyCurrency)}</span>
                         </div>
+                        {pricingBreakdown.taxAmount > 0 && (
+                          <div className="flex justify-between text-sm">
+                            <span>Taxes ({pricingBreakdown.taxRate}%)</span>
+                            <span>{formatPrice(pricingBreakdown.taxAmount, undefined, propertyCurrency)}</span>
+                          </div>
+                        )}
                       </div>
+
+                      {/* Total Savings Badge */}
+                      {pricingBreakdown.savings > 0 && (
+                        <div className="p-2 bg-green-50 dark:bg-green-900/20 rounded-lg">
+                          <p className="text-sm text-green-700 dark:text-green-400 font-medium text-center">
+                            You're saving {formatPrice(pricingBreakdown.savings, undefined, propertyCurrency)}!
+                          </p>
+                        </div>
+                      )}
+
                       <Separator />
                       <div className="flex justify-between font-semibold text-lg">
                         <span>Total</span>
-                        <span>{formatPrice(pricing.total, undefined, propertyCurrency)}</span>
+                        <span>{formatPrice(pricingBreakdown.total, undefined, propertyCurrency)}</span>
                       </div>
+
+                      {/* Security Deposit (separate) */}
+                      {pricingBreakdown.securityDeposit > 0 && (
+                        <div className="p-3 bg-muted/50 rounded-lg">
+                          <div className="flex justify-between text-sm">
+                            <span className="font-medium">Security Deposit (refundable)</span>
+                            <span className="font-medium">{formatPrice(pricingBreakdown.securityDeposit, undefined, propertyCurrency)}</span>
+                          </div>
+                          <p className="text-xs text-muted-foreground mt-1">Held in escrow, refunded after checkout</p>
+                        </div>
+                      )}
                     </>
+                  )}
+
+                  {pricingLoading && (
+                    <div className="flex items-center justify-center py-4">
+                      <Loader2 className="h-6 w-6 animate-spin" />
+                    </div>
                   )}
                 </CardContent>
               </Card>

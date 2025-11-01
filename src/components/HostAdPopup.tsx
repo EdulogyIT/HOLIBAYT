@@ -43,6 +43,8 @@ export const HostAdPopup = () => {
 
   const fetchFeaturedHost = async () => {
     try {
+      console.log('[HostAdPopup] Fetching featured host...');
+      
       const { data, error } = await supabase
         .from('profiles')
         .select('*')
@@ -50,20 +52,27 @@ export const HostAdPopup = () => {
         .eq('is_superhost', true)
         .order('average_rating', { ascending: false })
         .limit(1)
-        .single();
+        .maybeSingle();
 
-      if (error) throw error;
+      if (error) {
+        console.error('[HostAdPopup] Error fetching host:', error);
+        return;
+      }
       
       if (data) {
+        console.log('[HostAdPopup] Featured host found:', data.name);
         setHost(data);
         // Show popup after 3 seconds
         setTimeout(() => {
+          console.log('[HostAdPopup] Opening popup...');
           setOpen(true);
           localStorage.setItem('hostAdLastShown', new Date().toDateString());
         }, 3000);
+      } else {
+        console.log('[HostAdPopup] No featured host found with has_host_ad=true and is_superhost=true');
       }
     } catch (error) {
-      console.error('Error fetching featured host:', error);
+      console.error('[HostAdPopup] Unexpected error:', error);
     }
   };
 

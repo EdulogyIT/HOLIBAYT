@@ -6,6 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Badge } from '@/components/ui/badge';
+import { Switch } from '@/components/ui/switch';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -13,6 +14,8 @@ import { useToast } from '@/hooks/use-toast';
 import { Calendar as CalendarIcon, Plus, Trash2, DollarSign } from 'lucide-react';
 import { format } from 'date-fns';
 import { useParams } from 'react-router-dom';
+import { PricingRulesSection } from '@/components/host/PricingRulesSection';
+import { PricingFeesSection } from '@/components/host/PricingFeesSection';
 
 interface SeasonalPrice {
   id?: string;
@@ -20,6 +23,7 @@ interface SeasonalPrice {
   end_date: string;
   price_per_night: number;
   season_name: string;
+  weekend_multiplier?: number;
 }
 
 export const HostPricingManagement = () => {
@@ -29,14 +33,17 @@ export const HostPricingManagement = () => {
   const { toast } = useToast();
   const [basePrice, setBasePrice] = useState('');
   const [seasonalPrices, setSeasonalPrices] = useState<SeasonalPrice[]>([]);
+  const [pricingRules, setPricingRules] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [weekendMultiplier, setWeekendMultiplier] = useState(1.0);
   
   // New seasonal price form
   const [newSeason, setNewSeason] = useState<SeasonalPrice>({
     start_date: '',
     end_date: '',
     price_per_night: 0,
-    season_name: ''
+    season_name: '',
+    weekend_multiplier: 1.0
   });
   const [dateRange, setDateRange] = useState<{ from: Date | undefined; to: Date | undefined }>({
     from: undefined,
@@ -70,6 +77,16 @@ export const HostPricingManagement = () => {
 
       if (seasonError) throw seasonError;
       setSeasonalPrices(seasonal || []);
+
+      // Fetch pricing rules
+      const { data: rules, error: rulesError } = await supabase
+        .from('pricing_rules')
+        .select('*')
+        .eq('property_id', propertyId)
+        .order('created_at', { ascending: false });
+
+      if (rulesError) throw rulesError;
+      setPricingRules(rules || []);
     } catch (error) {
       console.error('Error fetching pricing:', error);
       toast({
@@ -123,7 +140,8 @@ export const HostPricingManagement = () => {
           start_date: format(dateRange.from, 'yyyy-MM-dd'),
           end_date: format(dateRange.to, 'yyyy-MM-dd'),
           price_per_night: newSeason.price_per_night,
-          season_name: newSeason.season_name
+          season_name: newSeason.season_name,
+          weekend_multiplier: newSeason.weekend_multiplier || 1.0
         });
 
       if (error) throw error;
@@ -138,7 +156,8 @@ export const HostPricingManagement = () => {
         start_date: '',
         end_date: '',
         price_per_night: 0,
-        season_name: ''
+        season_name: '',
+        weekend_multiplier: 1.0
       });
       setDateRange({ from: undefined, to: undefined });
 
@@ -279,6 +298,20 @@ export const HostPricingManagement = () => {
               />
             </div>
 
+            <div className="space-y-2">
+              <Label>{t('weekendMultiplier') || 'Weekend Multiplier'}</Label>
+              <Input
+                type="number"
+                min="1"
+                max="3"
+                step="0.1"
+                value={newSeason.weekend_multiplier || 1.0}
+                onChange={(e) => setNewSeason({ ...newSeason, weekend_multiplier: parseFloat(e.target.value) || 1.0 })}
+                placeholder="1.0"
+              />
+              <p className="text-xs text-muted-foreground">Multiply weekend rates (1.0 = no change, 1.5 = 50% more)</p>
+            </div>
+
             <Button onClick={handleAddSeasonalPrice} className="w-full">
               <Plus className="h-4 w-4 mr-2" />
               {t('addSeasonalPrice') || 'Add Seasonal Price'}
@@ -321,6 +354,16 @@ export const HostPricingManagement = () => {
         </CardContent>
       </Card>
 
+      {/* Pricing Rules - Discounts */}
+      <PricingRulesSection
+        propertyId={propertyId!}
+        rules={pricingRules}
+        onUpdate={fetchPricingData}
+      />
+
+      {/* Fees and Charges */}
+      <PricingFeesSection propertyId={propertyId!} />
+
       <Card>
         <CardHeader>
           <CardTitle>{t('pricingTips') || 'Pricing Tips'}</CardTitle>
@@ -330,6 +373,8 @@ export const HostPricingManagement = () => {
           <p>• {t('pricingTip2') || 'Increase prices during peak seasons and holidays'}</p>
           <p>• {t('pricingTip3') || 'Offer discounts for longer stays (weekly/monthly)'}</p>
           <p>• {t('pricingTip4') || 'Consider local events when setting seasonal pricing'}</p>
+          <p>• {t('pricingTip5') || 'Use weekend multipliers to optimize Friday-Sunday rates'}</p>
+          <p>• {t('pricingTip6') || 'Early bird discounts encourage advance bookings'}</p>
         </CardContent>
       </Card>
     </div>
