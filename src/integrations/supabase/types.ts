@@ -1336,6 +1336,47 @@ export type Database = {
         }
         Relationships: []
       }
+      property_seasonal_pricing: {
+        Row: {
+          created_at: string | null
+          end_date: string
+          id: string
+          price_per_night: number
+          property_id: string
+          season_name: string | null
+          start_date: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          end_date: string
+          id?: string
+          price_per_night: number
+          property_id: string
+          season_name?: string | null
+          start_date: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          end_date?: string
+          id?: string
+          price_per_night?: number
+          property_id?: string
+          season_name?: string | null
+          start_date?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "property_seasonal_pricing_property_id_fkey"
+            columns: ["property_id"]
+            isOneToOne: false
+            referencedRelation: "properties"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       property_views: {
         Row: {
           created_at: string | null

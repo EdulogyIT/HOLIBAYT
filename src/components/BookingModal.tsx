@@ -15,6 +15,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { DateRangePicker } from './DateRangePicker';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
+import { useNavigate } from 'react-router-dom';
 
 interface BookingModalProps {
   property: {
@@ -39,6 +40,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({ property, trigger })
   const { formatPrice, currentCurrency } = useCurrency();
   const { isAuthenticated } = useAuth();
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   // Fetch booked dates when modal opens
   useEffect(() => {
@@ -262,12 +264,81 @@ export const BookingModal: React.FC<BookingModalProps> = ({ property, trigger })
     </Button>
   );
 
+  // Allow booking without auth - navigate to confirm page
+  const handleBookNowClick = () => {
+    if (!dateRange?.from || !dateRange?.to) {
+      toast({
+        title: "Select dates",
+        description: "Please select check-in and check-out dates first",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    // Navigate to booking confirmation page with context
+    const params = new URLSearchParams({
+      checkIn: format(dateRange.from, 'yyyy-MM-dd'),
+      checkOut: format(dateRange.to, 'yyyy-MM-dd'),
+      guests: guestsCount.toString(),
+    });
+    navigate(`/booking/confirm/${property.id}?${params.toString()}`);
+  };
+
   if (!isAuthenticated) {
     return (
-      <Button size="lg" className="w-full" onClick={() => alert('Please log in to make a booking')}>
-        <Calendar className="w-4 h-4 mr-2" />
-        Book Now
-      </Button>
+      <div className="space-y-4">
+        <div>
+          <Label>Select Dates</Label>
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button
+                variant="outline"
+                className={cn(
+                  "w-full justify-start text-left font-normal",
+                  !dateRange?.from && "text-muted-foreground"
+                )}
+              >
+                <Calendar className="mr-2 h-4 w-4" />
+                {dateRange?.from ? (
+                  dateRange.to ? (
+                    `${format(dateRange.from, "MMM dd, yyyy")} - ${format(dateRange.to, "MMM dd, yyyy")}`
+                  ) : (
+                    format(dateRange.from, "MMM dd, yyyy")
+                  )
+                ) : (
+                  "Select check-in and check-out dates"
+                )}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0" align="start">
+              <DateRangePicker
+                value={dateRange}
+                onChange={setDateRange}
+                allowPast={false}
+                disabledDates={bookedDates}
+              />
+            </PopoverContent>
+          </Popover>
+        </div>
+        <div>
+          <Label htmlFor="guests-unauth">Number of Guests</Label>
+          <div className="flex items-center gap-2">
+            <Users className="w-4 h-4 text-gray-500" />
+            <Input
+              id="guests-unauth"
+              type="number"
+              min="1"
+              max="20"
+              value={guestsCount}
+              onChange={(e) => setGuestsCount(parseInt(e.target.value) || 1)}
+            />
+          </div>
+        </div>
+        <Button size="lg" className="w-full" onClick={handleBookNowClick}>
+          <Calendar className="w-4 h-4 mr-2" />
+          Book Now
+        </Button>
+      </div>
     );
   }
 

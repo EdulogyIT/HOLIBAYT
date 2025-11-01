@@ -59,6 +59,7 @@ import PaymentSuccess from "./pages/PaymentSuccess";
 import PaymentCancelled from "./pages/PaymentCancelled";
 import BookingSuccess from "./pages/BookingSuccess";
 import BookingCancel from "./pages/BookingCancel";
+import BookingConfirm from "./pages/BookingConfirm";
 
 import Lawyers from "./pages/Lawyers";
 import LegalProcess from "./pages/LegalProcess";
@@ -105,8 +106,10 @@ const App = () => (
           <Route path="/booking/cancel" element={<MaintenanceMode><BookingCancel /></MaintenanceMode>} />
 
           {/* Auth routes (you may want to allow login/register even in maintenance) */}
+          <Route path="/auth/login" element={<LoginPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
+          <Route path="/booking/confirm/:propertyId" element={<MaintenanceMode><BookingConfirm /></MaintenanceMode>} />
           <Route path="/sign-agreement/:agreementId" element={<ProtectedRoute requireAuth><MaintenanceMode><SignAgreement /></MaintenanceMode></ProtectedRoute>} />
 
           {/* Protected routes */}

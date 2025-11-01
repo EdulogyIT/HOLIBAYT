@@ -18,6 +18,7 @@ import { TopRatedStays } from "@/components/TopRatedStays";
 import { MapboxPropertyMap } from "@/components/MapboxPropertyMap";
 import { DestinationsToExplore } from "@/components/DestinationsToExplore";
 import CitiesSection from "@/components/CitiesSection";
+import { HostAdsCarousel } from "@/components/HostAdsCarousel";
 import { useAuth } from "@/contexts/AuthContext";
 import { useWishlist, setAuthModalCallback } from "@/hooks/useWishlist";
 import { WishlistButton } from "@/components/WishlistButton";
@@ -374,6 +375,7 @@ const ShortStay = () => {
         </section>
 
         <TopRatedStays />
+        <HostAdsCarousel />
         <DestinationsToExplore onDestinationClick={(destination) => {
           // Filter properties by amenity
           const filtered = properties.filter(p => {
