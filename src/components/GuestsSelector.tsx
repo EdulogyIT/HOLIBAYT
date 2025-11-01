@@ -64,8 +64,9 @@ export const GuestsSelector = ({ value, onChange, keepOpen = false }: GuestsSele
     <Popover 
       open={open} 
       onOpenChange={(newOpen) => {
-        // Only allow closing if keepOpen is false OR if user explicitly closes
-        if (!keepOpen || !newOpen) {
+        // When keepOpen is true, allow opening but prevent auto-closing
+        // (closing is handled explicitly by Done button)
+        if (!keepOpen || newOpen) {
           setOpen(newOpen);
         }
       }}
