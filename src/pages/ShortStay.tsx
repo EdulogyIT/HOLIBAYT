@@ -4,7 +4,8 @@ import Footer from "@/components/Footer";
 import ShortStayHeroSearch from "@/components/ShortStayHeroSearch";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { MapPin, Bed, Bath, Square, Loader2, ShieldCheck } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { MapPin, Bed, Bath, Square, Loader2, ShieldCheck, X } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useCurrency } from "@/contexts/CurrencyContext";
@@ -80,6 +81,7 @@ const ShortStay = () => {
   const [properties, setProperties] = useState<Property[]>([]);
   const [filteredProperties, setFilteredProperties] = useState<Property[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [hasActiveFilters, setHasActiveFilters] = useState(false);
 
   useScrollToTop();
 
@@ -115,6 +117,8 @@ const ShortStay = () => {
     const location = (urlParams.get("location") || "").trim();
 
     let filtered = [...properties];
+    const hasFilters = location || urlParams.toString().length > 0;
+    
     if (location) {
       const l = location.toLowerCase();
       filtered = filtered.filter(
@@ -124,6 +128,7 @@ const ShortStay = () => {
       );
     }
     setFilteredProperties(filtered);
+    setHasActiveFilters(hasFilters && filtered.length !== properties.length);
   };
 
   const handleFilterChange = (filters: any) => {
@@ -148,6 +153,13 @@ const ShortStay = () => {
     }
     
     setFilteredProperties(filtered);
+    setHasActiveFilters(filtered.length !== properties.length);
+  };
+
+  const clearAllFilters = () => {
+    setFilteredProperties(properties);
+    setHasActiveFilters(false);
+    navigate({ pathname: "/short-stay", search: "" });
   };
 
   const PropertyCard = ({ property }: { property: Property }) => {
@@ -288,9 +300,22 @@ const ShortStay = () => {
             {/* Property Cards - LEFT */}
             <div className="order-1">
               <div className="flex items-center justify-between mb-6 gap-4 flex-wrap">
-                <h2 className="text-2xl font-bold">
-                  {filteredProperties.length} {t("properties") || "properties"}
-                </h2>
+                <div className="flex items-center gap-3">
+                  <h2 className="text-2xl font-bold">
+                    {filteredProperties.length} {t("properties") || "properties"}
+                  </h2>
+                  {hasActiveFilters && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={clearAllFilters}
+                      className="flex items-center gap-2"
+                    >
+                      <X className="h-4 w-4" />
+                      {t("clearFilters") || "Clear filters"}
+                    </Button>
+                  )}
+                </div>
                 <PropertyFilters 
                   onFilterChange={handleFilterChange} 
                   listingType="shortStay"
@@ -356,6 +381,7 @@ const ShortStay = () => {
             return p[destination.value as keyof Property] === true;
           });
           setFilteredProperties(filtered);
+          setHasActiveFilters(true);
           
           // Scroll to properties section
           window.scrollTo({ top: 500, behavior: 'smooth' });

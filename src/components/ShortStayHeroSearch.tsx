@@ -336,7 +336,7 @@ const ShortStayHeroSearch: React.FC<ShortStayHeroSearchProps> = ({ onSearch, onF
       {/* Sticky Search Bar - works on all screens now */}
       <div
         className={cn(
-          "fixed top-0 left-0 right-0 z-50 transition-all duration-300 bg-white/95 backdrop-blur-md shadow-lg border-b border-border/50",
+          "fixed top-16 left-0 right-0 z-50 transition-all duration-300 bg-white/95 backdrop-blur-md shadow-lg border-b border-border/50",
           isScrolled ? "translate-y-0 opacity-100" : "-translate-y-full opacity-0"
         )}
       >

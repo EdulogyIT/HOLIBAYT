@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Search, DollarSign, Key, Home } from "lucide-react";
+import { Search, DollarSign, Key, Home, SlidersHorizontal } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useNavigate, useLocation as useRouterLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
@@ -18,9 +18,10 @@ type SearchVals = {
 
 type RentHeroSearchProps = {
   onSearch?: (vals: SearchVals) => void;
+  onFilterClick?: () => void;
 };
 
-const RentHeroSearch: React.FC<RentHeroSearchProps> = ({ onSearch }) => {
+const RentHeroSearch: React.FC<RentHeroSearchProps> = ({ onSearch, onFilterClick }) => {
   const { t } = useLanguage();
   const navigate = useNavigate();
   const routerLocation = useRouterLocation();
@@ -144,6 +145,19 @@ const RentHeroSearch: React.FC<RentHeroSearchProps> = ({ onSearch }) => {
           <Search className={cn("mr-2", compact ? "h-4 w-4" : "h-5 w-5")} />
           {t("search")}
         </Button>
+
+        {/* Filters Button - Only in compact/sticky mode */}
+        {compact && onFilterClick && (
+          <Button
+            type="button"
+            variant="outline"
+            onClick={onFilterClick}
+            className="h-12 px-3 sm:px-4 border-2 flex-shrink-0"
+          >
+            <SlidersHorizontal className="h-4 w-4" />
+            <span className="hidden sm:inline ml-2">{t("filters")}</span>
+          </Button>
+        )}
       </form>
     );
   };

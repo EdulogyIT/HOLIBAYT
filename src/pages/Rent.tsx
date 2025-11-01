@@ -88,6 +88,7 @@ const Rent = () => {
   const [properties, setProperties] = useState<Property[]>([]);
   const [filteredProperties, setFilteredProperties] = useState<Property[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
 
   useScrollToTop();
 
@@ -304,7 +305,7 @@ const Rent = () => {
     <div className="min-h-screen bg-background">
       <Navigation />
       <main className="pt-20">
-        <RentHeroSearch onSearch={handleSearch} />
+        <RentHeroSearch onSearch={handleSearch} onFilterClick={() => setIsFilterModalOpen(true)} />
 
         {/* Map + list: 60/40 layout */}
         <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6">
@@ -315,7 +316,9 @@ const Rent = () => {
                 <h2 className="text-2xl font-bold">
                   {filteredProperties.length} {t("properties") || "properties"}
                 </h2>
-                <PropertyFilters 
+                <PropertyFilters
+                  isModalOpen={isFilterModalOpen}
+                  onModalClose={() => setIsFilterModalOpen(false)}
                   onFilterChange={(filters) => {
                     let filtered = properties;
 
