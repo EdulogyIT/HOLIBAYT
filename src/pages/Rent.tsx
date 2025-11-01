@@ -369,10 +369,15 @@ const Rent = () => {
                     <div className="flex flex-col items-center justify-center h-full text-center">
                       <MapPin className="h-12 w-12 text-muted-foreground mb-4" />
                       <h3 className="text-lg font-semibold mb-2">Map Unavailable</h3>
-                      <p className="text-sm text-muted-foreground max-w-xs">
-                        The interactive map cannot be displayed on this device. 
-                        Please use the list view to browse properties.
+                      <p className="text-sm text-muted-foreground max-w-md mb-4">
+                        The interactive map cannot be displayed. This may be due to device limitations or browser settings.
                       </p>
+                      <div className="text-xs text-muted-foreground space-y-1">
+                        <p className="font-medium mb-2">Try these steps:</p>
+                        <p>• Enable hardware acceleration in browser settings</p>
+                        <p>• Use Chrome, Firefox, or Safari</p>
+                        <p>• Update to the latest browser version</p>
+                      </div>
                     </div>
                   </div>
                 }

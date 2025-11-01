@@ -5,6 +5,7 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 import { supabase } from '@/integrations/supabase/client';
 import { useCurrency } from '@/contexts/CurrencyContext';
 import { useNavigate } from 'react-router-dom';
+import { MapPin } from 'lucide-react';
 
 interface Property {
   id: string;
@@ -85,6 +86,7 @@ export const MapboxPropertyMap = ({ properties }: MapboxPropertyMapProps) => {
   const map = useRef<mapboxgl.Map | null>(null);
   const [isMapReady, setIsMapReady] = useState(false);
   const [token, setToken] = useState('');
+  const [mapError, setMapError] = useState<string | null>(null);
   const layersAdded = useRef(false);
   const htmlMarkers = useRef<mapboxgl.Marker[]>([]);
   const zoomLevelRef = useRef(5);
@@ -114,8 +116,9 @@ export const MapboxPropertyMap = ({ properties }: MapboxPropertyMapProps) => {
       
       // Check if browser supports WebGL
       if (!mapboxgl.supported()) {
-        console.error('WebGL not supported');
-        throw new Error('WebGL not supported');
+        console.warn('WebGL not supported - map will not render');
+        setMapError('Your device does not support WebGL, which is required for interactive maps. This may be due to hardware limitations or browser settings.');
+        return;
       }
 
       const m = new mapboxgl.Map({
@@ -171,7 +174,7 @@ export const MapboxPropertyMap = ({ properties }: MapboxPropertyMapProps) => {
       };
     } catch (error) {
       console.error('Map initialization failed:', error);
-      throw error; // Let error boundary catch it
+      setMapError('Failed to initialize map. Please try refreshing the page or use a different browser.');
     }
   }, [token]);
 
@@ -340,6 +343,23 @@ export const MapboxPropertyMap = ({ properties }: MapboxPropertyMapProps) => {
       htmlMarkers.current = [];
     };
   }, [properties, isMapReady, formatPrice, navigate]);
+
+  // Show error fallback if map failed to initialize
+  if (mapError) {
+    return (
+      <div className="w-full h-full flex flex-col items-center justify-center p-8 text-center bg-muted/30">
+        <MapPin className="h-12 w-12 text-muted-foreground mb-4" />
+        <h3 className="text-lg font-semibold mb-2">Map Unavailable</h3>
+        <p className="text-sm text-muted-foreground max-w-md mb-4">{mapError}</p>
+        <div className="text-xs text-muted-foreground max-w-md space-y-1">
+          <p className="font-medium mb-2">Troubleshooting steps:</p>
+          <p>• Enable hardware acceleration in your browser settings</p>
+          <p>• Try using Chrome, Firefox, or Safari</p>
+          <p>• Update your browser to the latest version</p>
+        </div>
+      </div>
+    );
+  }
 
   return <div ref={mapEl} className="w-full h-full" />;
 };
