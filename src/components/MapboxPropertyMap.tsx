@@ -361,5 +361,16 @@ export const MapboxPropertyMap = ({ properties }: MapboxPropertyMapProps) => {
     );
   }
 
-  return <div ref={mapEl} className="w-full h-full" />;
+  return (
+    <div className="relative w-full h-full">
+      <div ref={mapEl} className="w-full h-full" />
+      {properties.length > 0 && (
+        <div className="absolute top-4 left-1/2 -translate-x-1/2 z-10 bg-background/95 backdrop-blur-md px-4 py-2 rounded-full shadow-lg border border-border">
+          <p className="text-sm font-semibold text-foreground">
+            {properties.length} {properties.length === 1 ? 'property' : 'properties'}
+          </p>
+        </div>
+      )}
+    </div>
+  );
 };

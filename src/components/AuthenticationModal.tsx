@@ -60,7 +60,7 @@ export const AuthenticationModal = ({ isOpen, onClose }: AuthenticationModalProp
         <div className="p-6">
           <DialogHeader className="mb-6">
             <DialogTitle className="text-xl font-semibold">
-              {t('loginOrSignup') || 'Login or Sign Up'}
+              {t('loginOrSignup') || 'Log in or sign up'}
             </DialogTitle>
           </DialogHeader>
 

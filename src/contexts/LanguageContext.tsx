@@ -975,9 +975,9 @@ const allTranslations = {
     whyChooseDesc: "Découvrez pourquoi des milliers d'utilisateurs nous font confiance pour leurs projets immobiliers.",
 
     // Service CTAs
-    exploreBuy: "Découvrir Achat",
-    exploreRent: "Découvrir Location",
-    exploreShortStay: "Découvrir Court séjour",
+    exploreBuy: "Commencer",
+    exploreRent: "Commencer",
+    exploreShortStay: "Commencer",
 
     // Buy bullets
     buy_feat_verified: "Tous nos biens et utilisateurs sont vérifiés",
@@ -2239,9 +2239,9 @@ const allTranslations = {
     whyChooseDesc: "Discover why thousands of users trust us for their real-estate projects.",
 
     // Service CTAs
-    exploreBuy: "Explore Buy",
-    exploreRent: "Explore Rent", 
-    exploreShortStay: "Explore Short Stay",
+    exploreBuy: "Start",
+    exploreRent: "Start", 
+    exploreShortStay: "Start",
 
     // Buy bullets
     buy_feat_verified: "All properties & users verified",
@@ -3438,9 +3438,9 @@ const allTranslations = {
     whyChooseDesc: "اكتشف لماذا يثق بنا الآلاف في مشاريعهم العقارية.",
 
     // Service CTAs
-    exploreBuy: "استكشف شراء",
-    exploreRent: "استكشف إيجار",
-    exploreShortStay: "استكشف إقامة قصيرة",
+    exploreBuy: "ابدأ",
+    exploreRent: "ابدأ",
+    exploreShortStay: "ابدأ",
 
     // Buy bullets
     buy_feat_verified: "جميع عقاراتنا ومستخدمينا موثّقون",
