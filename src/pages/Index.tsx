@@ -1,4 +1,3 @@
-import { useState } from "react";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import HeroSection from "@/components/HeroSection";
@@ -9,11 +8,9 @@ import WhyChooseSection from "@/components/WhyChooseSection";
 import TestimonialsCarousel from "@/components/TestimonialsCarousel";
 import AIChatBox from "@/components/AIChatBox";
 import SEOHead from "@/components/SEOHead";
-import { AuthenticationModal } from "@/components/AuthenticationModal";
 import { HostAdsCarousel } from "@/components/HostAdsCarousel";
 
 const Index = () => {
-  const [authModalOpen, setAuthModalOpen] = useState(false);
   const schema = {
     "@context": "https://schema.org",
     "@type": "RealEstateAgent",
@@ -46,7 +43,7 @@ const Index = () => {
         schema={schema}
         canonicalUrl="https://holibayt.com"
       />
-      <Navigation onLoginClick={() => setAuthModalOpen(true)} />
+      <Navigation />
       <main>
         <HeroSection />
         <div className="py-1">
@@ -70,10 +67,6 @@ const Index = () => {
       </main>
       <Footer />
       <AIChatBox />
-      <AuthenticationModal 
-        isOpen={authModalOpen} 
-        onClose={() => setAuthModalOpen(false)} 
-      />
     </div>
   );
 };
