@@ -117,8 +117,9 @@ serve(async (req) => {
       console.log("[CREATE-PAYMENT] Host Stripe account:", hostStripeAccountId || "Not connected");
     }
 
-    // Initialize Stripe
-    console.log("[CREATE-PAYMENT] Initializing Stripe...");
+    // Initialize Stripe with live mode
+    console.log("[CREATE-PAYMENT] Initializing Stripe in LIVE MODE...");
+    console.log("[CREATE-PAYMENT] Stripe key prefix:", STRIPE_SECRET_KEY.substring(0, 8));
     const stripe = new Stripe(STRIPE_SECRET_KEY, { 
       apiVersion: "2024-06-20"
     });

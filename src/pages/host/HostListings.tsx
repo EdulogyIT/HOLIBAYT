@@ -234,6 +234,17 @@ const HostListings = () => {
                       </Button>
                     )}
 
+                    {property.category === 'short-stay' && (
+                      <Button
+                        size="sm"
+                        variant="secondary"
+                        className="flex-1 min-w-[120px]"
+                        onClick={() => navigate(`/host/pricing/${property.id}`)}
+                      >
+                        <span className="text-xs sm:text-sm">💰 {t('host.pricing')}</span>
+                      </Button>
+                    )}
+
                     <Button
                       size="sm"
                       variant="outline"

@@ -1,0 +1,339 @@
+import { useState, useEffect } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Calendar } from '@/components/ui/calendar';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Badge } from '@/components/ui/badge';
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/contexts/AuthContext';
+import { useLanguage } from '@/contexts/LanguageContext';
+import { useToast } from '@/hooks/use-toast';
+import { Calendar as CalendarIcon, Plus, Trash2, DollarSign } from 'lucide-react';
+import { format } from 'date-fns';
+import { useParams } from 'react-router-dom';
+
+interface SeasonalPrice {
+  id?: string;
+  start_date: string;
+  end_date: string;
+  price_per_night: number;
+  season_name: string;
+}
+
+export const HostPricingManagement = () => {
+  const { propertyId } = useParams();
+  const { user } = useAuth();
+  const { t } = useLanguage();
+  const { toast } = useToast();
+  const [basePrice, setBasePrice] = useState('');
+  const [seasonalPrices, setSeasonalPrices] = useState<SeasonalPrice[]>([]);
+  const [loading, setLoading] = useState(true);
+  
+  // New seasonal price form
+  const [newSeason, setNewSeason] = useState<SeasonalPrice>({
+    start_date: '',
+    end_date: '',
+    price_per_night: 0,
+    season_name: ''
+  });
+  const [dateRange, setDateRange] = useState<{ from: Date | undefined; to: Date | undefined }>({
+    from: undefined,
+    to: undefined
+  });
+
+  useEffect(() => {
+    if (propertyId) {
+      fetchPricingData();
+    }
+  }, [propertyId]);
+
+  const fetchPricingData = async () => {
+    try {
+      // Fetch base price
+      const { data: property, error: propError } = await supabase
+        .from('properties')
+        .select('price')
+        .eq('id', propertyId)
+        .single();
+
+      if (propError) throw propError;
+      setBasePrice(property?.price || '');
+
+      // Fetch seasonal pricing
+      const { data: seasonal, error: seasonError } = await supabase
+        .from('property_seasonal_pricing')
+        .select('*')
+        .eq('property_id', propertyId)
+        .order('start_date', { ascending: true });
+
+      if (seasonError) throw seasonError;
+      setSeasonalPrices(seasonal || []);
+    } catch (error) {
+      console.error('Error fetching pricing:', error);
+      toast({
+        variant: 'destructive',
+        title: t('error') || 'Error',
+        description: 'Failed to load pricing data'
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleUpdateBasePrice = async () => {
+    try {
+      const { error } = await supabase
+        .from('properties')
+        .update({ price: basePrice })
+        .eq('id', propertyId);
+
+      if (error) throw error;
+
+      toast({
+        title: t('success') || 'Success',
+        description: 'Base price updated successfully'
+      });
+    } catch (error) {
+      console.error('Error updating base price:', error);
+      toast({
+        variant: 'destructive',
+        title: t('error') || 'Error',
+        description: 'Failed to update base price'
+      });
+    }
+  };
+
+  const handleAddSeasonalPrice = async () => {
+    if (!dateRange.from || !dateRange.to || !newSeason.price_per_night || !newSeason.season_name) {
+      toast({
+        variant: 'destructive',
+        title: t('error') || 'Error',
+        description: 'Please fill in all fields'
+      });
+      return;
+    }
+
+    try {
+      const { error } = await supabase
+        .from('property_seasonal_pricing')
+        .insert({
+          property_id: propertyId,
+          start_date: format(dateRange.from, 'yyyy-MM-dd'),
+          end_date: format(dateRange.to, 'yyyy-MM-dd'),
+          price_per_night: newSeason.price_per_night,
+          season_name: newSeason.season_name
+        });
+
+      if (error) throw error;
+
+      toast({
+        title: t('success') || 'Success',
+        description: 'Seasonal pricing added successfully'
+      });
+
+      // Reset form
+      setNewSeason({
+        start_date: '',
+        end_date: '',
+        price_per_night: 0,
+        season_name: ''
+      });
+      setDateRange({ from: undefined, to: undefined });
+
+      // Refresh data
+      fetchPricingData();
+    } catch (error) {
+      console.error('Error adding seasonal price:', error);
+      toast({
+        variant: 'destructive',
+        title: t('error') || 'Error',
+        description: 'Failed to add seasonal pricing'
+      });
+    }
+  };
+
+  const handleDeleteSeasonalPrice = async (id: string) => {
+    try {
+      const { error } = await supabase
+        .from('property_seasonal_pricing')
+        .delete()
+        .eq('id', id);
+
+      if (error) throw error;
+
+      toast({
+        title: t('success') || 'Success',
+        description: 'Seasonal pricing deleted successfully'
+      });
+
+      fetchPricingData();
+    } catch (error) {
+      console.error('Error deleting seasonal price:', error);
+      toast({
+        variant: 'destructive',
+        title: t('error') || 'Error',
+        description: 'Failed to delete seasonal pricing'
+      });
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-6">
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <DollarSign className="h-5 w-5" />
+            {t('basePricing') || 'Base Pricing'}
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div>
+            <Label htmlFor="basePrice">{t('basePrice') || 'Base Price per Night'}</Label>
+            <div className="flex gap-2 mt-2">
+              <Input
+                id="basePrice"
+                type="number"
+                value={basePrice}
+                onChange={(e) => setBasePrice(e.target.value)}
+                placeholder="Enter base price"
+              />
+              <Button onClick={handleUpdateBasePrice}>
+                {t('update') || 'Update'}
+              </Button>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <CalendarIcon className="h-5 w-5" />
+            {t('seasonalPricing') || 'Seasonal Pricing'}
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          <div className="space-y-4 p-4 bg-muted/30 rounded-lg">
+            <h4 className="font-medium">{t('addNewSeason') || 'Add New Season'}</h4>
+            
+            <div className="space-y-2">
+              <Label>{t('seasonName') || 'Season Name'}</Label>
+              <Input
+                value={newSeason.season_name}
+                onChange={(e) => setNewSeason({ ...newSeason, season_name: e.target.value })}
+                placeholder="e.g., Summer, Weekend, Ramadan"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label>{t('dateRange') || 'Date Range'}</Label>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button variant="outline" className="w-full justify-start text-left font-normal">
+                    <CalendarIcon className="mr-2 h-4 w-4" />
+                    {dateRange.from ? (
+                      dateRange.to ? (
+                        <>
+                          {format(dateRange.from, 'LLL dd, y')} - {format(dateRange.to, 'LLL dd, y')}
+                        </>
+                      ) : (
+                        format(dateRange.from, 'LLL dd, y')
+                      )
+                    ) : (
+                      <span>{t('pickDateRange') || 'Pick a date range'}</span>
+                    )}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="start">
+                  <Calendar
+                    mode="range"
+                    selected={dateRange}
+                    onSelect={(range) => {
+                      if (range) {
+                        setDateRange({ from: range.from, to: range.to });
+                      }
+                    }}
+                    numberOfMonths={2}
+                  />
+                </PopoverContent>
+              </Popover>
+            </div>
+
+            <div className="space-y-2">
+              <Label>{t('pricePerNight') || 'Price per Night'}</Label>
+              <Input
+                type="number"
+                value={newSeason.price_per_night || ''}
+                onChange={(e) => setNewSeason({ ...newSeason, price_per_night: parseFloat(e.target.value) || 0 })}
+                placeholder="Enter price"
+              />
+            </div>
+
+            <Button onClick={handleAddSeasonalPrice} className="w-full">
+              <Plus className="h-4 w-4 mr-2" />
+              {t('addSeasonalPrice') || 'Add Seasonal Price'}
+            </Button>
+          </div>
+
+          <div className="space-y-3">
+            <h4 className="font-medium">{t('currentSeasons') || 'Current Seasons'}</h4>
+            {seasonalPrices.length === 0 ? (
+              <p className="text-sm text-muted-foreground">{t('noSeasonalPricing') || 'No seasonal pricing configured'}</p>
+            ) : (
+              <div className="space-y-2">
+                {seasonalPrices.map((season) => (
+                  <div
+                    key={season.id}
+                    className="flex items-center justify-between p-3 bg-muted/30 rounded-lg"
+                  >
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2 mb-1">
+                        <Badge variant="secondary">{season.season_name}</Badge>
+                        <span className="font-semibold text-primary">{season.price_per_night} / night</span>
+                      </div>
+                      <p className="text-sm text-muted-foreground">
+                        {format(new Date(season.start_date), 'MMM dd, yyyy')} - {format(new Date(season.end_date), 'MMM dd, yyyy')}
+                      </p>
+                    </div>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => season.id && handleDeleteSeasonalPrice(season.id)}
+                      className="text-destructive hover:text-destructive"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>{t('pricingTips') || 'Pricing Tips'}</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-2 text-sm text-muted-foreground">
+          <p>• {t('pricingTip1') || 'Set competitive base prices to attract more bookings'}</p>
+          <p>• {t('pricingTip2') || 'Increase prices during peak seasons and holidays'}</p>
+          <p>• {t('pricingTip3') || 'Offer discounts for longer stays (weekly/monthly)'}</p>
+          <p>• {t('pricingTip4') || 'Consider local events when setting seasonal pricing'}</p>
+        </CardContent>
+      </Card>
+    </div>
+  );
+};
+
+export default HostPricingManagement;

@@ -9,6 +9,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { useToast } from '@/hooks/use-toast';
 import { Link } from 'react-router-dom';
 import { Separator } from '@/components/ui/separator';
+import { supabase } from '@/integrations/supabase/client';
 
 export default function LoginPage() {
   const [formData, setFormData] = useState({ email: '', password: '' });
@@ -28,37 +29,48 @@ export default function LoginPage() {
     setIsLoading(true);
 
     const success = await login(formData.email, formData.password);
+    setIsLoading(false);
 
     if (success) {
-      setTimeout(() => {
-        toast({
-          title: t('loginSuccess'),
-          description: t('loginSuccessDesc'),
-        });
-        navigate(returnTo, { replace: true });
-      }, 500);
+      // Navigate to returnTo URL if provided, otherwise to index
+      const redirectPath = returnTo || '/';
+      navigate(redirectPath);
     } else {
       toast({
-        title: 'Login Failed',
-        description: 'Invalid email or password',
-        variant: 'destructive',
+        variant: "destructive",
+        title: t("loginFailed") || "Login Failed",
+        description: t("invalidCredentials") || "Invalid email or password.",
       });
     }
-
-    setIsLoading(false);
   };
 
   const handleGoogleLogin = async () => {
     setIsSocialLoading(true);
     try {
-      await loginWithGoogle();
-      // Supabase will handle the redirect after OAuth
-    } catch (error: any) {
-      toast({
-        title: 'Login Failed',
-        description: error.message || 'Google login failed',
-        variant: 'destructive',
+      const redirectUrl = returnTo ? `${window.location.origin}${returnTo}` : `${window.location.origin}/`;
+      
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: redirectUrl,
+        },
       });
+
+      if (error) {
+        toast({
+          variant: "destructive",
+          title: t("loginFailed") || "Login Failed",
+          description: error.message,
+        });
+      }
+    } catch (error) {
+      console.error("Google login error:", error);
+      toast({
+        variant: "destructive",
+        title: t("loginFailed") || "Login Failed",
+        description: t("googleLoginFailed") || "Could not complete Google login.",
+      });
+    } finally {
       setIsSocialLoading(false);
     }
   };
@@ -66,14 +78,30 @@ export default function LoginPage() {
   const handleFacebookLogin = async () => {
     setIsSocialLoading(true);
     try {
-      await loginWithFacebook();
-      // Supabase will handle the redirect after OAuth
-    } catch (error: any) {
-      toast({
-        title: 'Login Failed',
-        description: error.message || 'Facebook login failed',
-        variant: 'destructive',
+      const redirectUrl = returnTo ? `${window.location.origin}${returnTo}` : `${window.location.origin}/`;
+      
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'facebook',
+        options: {
+          redirectTo: redirectUrl,
+        },
       });
+
+      if (error) {
+        toast({
+          variant: "destructive",
+          title: t("loginFailed") || "Login Failed",
+          description: error.message,
+        });
+      }
+    } catch (error) {
+      console.error("Facebook login error:", error);
+      toast({
+        variant: "destructive",
+        title: t("loginFailed") || "Login Failed",
+        description: t("facebookLoginFailed") || "Could not complete Facebook login.",
+      });
+    } finally {
       setIsSocialLoading(false);
     }
   };

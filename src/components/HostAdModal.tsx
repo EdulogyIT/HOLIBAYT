@@ -13,6 +13,7 @@ import { Card } from "@/components/ui/card";
 import { Star, Award, MapPin, ShieldCheck, MessageCircle, Briefcase, Heart, Smile, PawPrint } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
+import { useCurrency } from "@/contexts/CurrencyContext";
 
 interface HostProfile {
   id: string;
@@ -35,6 +36,8 @@ interface Property {
   title: string;
   images: string[];
   price: string;
+  price_type: string;
+  price_currency?: string;
   location: string;
   category: string;
 }
@@ -50,6 +53,7 @@ export const HostAdModal = ({ hostId, isOpen, onClose }: HostAdModalProps) => {
   const [properties, setProperties] = useState<Property[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
+  const { formatPrice } = useCurrency();
 
   useEffect(() => {
     if (isOpen && hostId) {
@@ -73,7 +77,7 @@ export const HostAdModal = ({ hostId, isOpen, onClose }: HostAdModalProps) => {
       // Fetch host properties
       const { data: propertiesData, error: propertiesError } = await supabase
         .from("properties")
-        .select("id, title, images, price, location, category")
+        .select("id, title, images, price, price_type, price_currency, location, category")
         .eq("user_id", hostId)
         .eq("status", "active")
         .limit(6);
@@ -272,7 +276,7 @@ export const HostAdModal = ({ hostId, isOpen, onClose }: HostAdModalProps) => {
                         <MapPin className="w-4 h-4" />
                         {property.location}
                       </div>
-                      <p className="font-bold">{property.price}</p>
+                      <p className="font-bold">{formatPrice(property.price, property.price_type, property.price_currency)}</p>
                     </div>
                   </Card>
                 ))}

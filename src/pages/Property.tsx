@@ -12,7 +12,7 @@ import { useScrollToTop } from "@/hooks/useScrollToTop";
 import { useEffect, useState } from "react";
 import { Navigation as NavigationIcon } from "lucide-react";
 import PropertyDatePicker from "@/components/PropertyDatePicker";
-import { BookingModal } from "@/components/BookingModal";
+import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Loader2 } from "lucide-react";
 import ScheduleVisitModal from "@/components/ScheduleVisitModal";
@@ -27,6 +27,8 @@ import { PropertyShareButton } from "@/components/PropertyShareButton";
 import { HostDetailsSection } from "@/components/HostDetailsSection";
 import { NeighborhoodInsights } from "@/components/NeighborhoodInsights";
 import GooglePropertyMap from "@/components/GooglePropertyMap";
+import { PropertyAvailabilityCalendar } from "@/components/PropertyAvailabilityCalendar";
+import { GuestsSelector } from "@/components/GuestsSelector";
 
 interface Property {
   id: string;
@@ -66,6 +68,7 @@ interface Property {
 
 const Property = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
   const { t, currentLang } = useLanguage();
   const { formatPrice } = useCurrency();
   const [property, setProperty] = useState<Property | null>(null);
@@ -79,6 +82,7 @@ const Property = () => {
     checkIn: undefined,
     checkOut: undefined
   });
+  const [guestCounts, setGuestCounts] = useState({ adults: 1, children: 0, infants: 0, pets: 0 });
   
   useScrollToTop();
 
@@ -498,26 +502,34 @@ const Property = () => {
                 <CardContent className="space-y-4">
                   {property.category === 'short-stay' && (
                     <>
-                      <PropertyDatePicker 
-                        onDateChange={(dates) => setSelectedDates(dates)}
+                      <PropertyAvailabilityCalendar
                         propertyId={property.id}
+                        basePrice={property.price}
+                        priceType={property.price_type}
+                        currency={property.price_currency}
+                        onDateSelect={(dates) => setSelectedDates(dates)}
                       />
-                      <BookingModal
-                        property={{
-                          id: property.id,
-                          title: property.title,
-                          price: property.price,
-                          price_type: property.price_type,
-                          price_currency: property.price_currency,
-                          category: property.category
+                      <GuestsSelector
+                        value={guestCounts}
+                        onChange={setGuestCounts}
+                        keepOpen={false}
+                      />
+                      <Button 
+                        size="lg" 
+                        className="w-full"
+                        onClick={() => {
+                          const params = new URLSearchParams();
+                          if (selectedDates.checkIn) params.set('checkIn', selectedDates.checkIn.toISOString());
+                          if (selectedDates.checkOut) params.set('checkOut', selectedDates.checkOut.toISOString());
+                          params.set('guests', (guestCounts.adults + guestCounts.children + guestCounts.infants).toString());
+                          if (guestCounts.pets > 0) params.set('pets', guestCounts.pets.toString());
+                          navigate(`/booking/confirm/${property.id}?${params.toString()}`);
                         }}
-                        trigger={
-                          <Button size="lg" className="w-full">
-                            <Calendar className="w-4 h-4 mr-2" />
-                            {t('bookNow')}
-                          </Button>
-                        }
-                      />
+                        disabled={!selectedDates.checkIn || !selectedDates.checkOut}
+                      >
+                        <Calendar className="w-4 h-4 mr-2" />
+                        {t('bookNow')}
+                      </Button>
                     </>
                   )}
 

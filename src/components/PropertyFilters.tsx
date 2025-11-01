@@ -294,8 +294,12 @@ export const PropertyFilters = ({
                 step={listingType === "buy" ? 1000000 : listingType === "rent" ? 1000 : 500}
                 value={[filters.minPrice, filters.maxPrice]}
                 onValueChange={(value) => {
-                  updateFilter("minPrice", value[0]);
-                  updateFilter("maxPrice", value[1]);
+                  const newFilters = {
+                    ...filters,
+                    minPrice: value[0],
+                    maxPrice: value[1]
+                  };
+                  setFilters(newFilters);
                 }}
                 className="my-4"
               />
