@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input';
 import { MapPin } from 'lucide-react';
 import { searchLocations } from '@/data/algerianLocations';
 import { cn } from '@/lib/utils';
+import { useLocation } from 'react-router-dom'; // ⭐ NEW
 
 interface LocationAutocompleteProps {
   value: string;
@@ -24,6 +25,22 @@ export default function LocationAutocomplete({
   const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0, width: 0 });
   const wrapperRef = useRef<HTMLDivElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const location = useLocation(); // ⭐ NEW
+
+  // ⭐ NEW: close suggestions whenever the route changes
+  useEffect(() => {
+    if (showSuggestions) setShowSuggestions(false);
+  }, [location.pathname, location.search]); // pathname is enough; search included for safety
+
+  // ⭐ NEW: close on Escape key
+  useEffect(() => {
+    if (!showSuggestions) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setShowSuggestions(false);
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [showSuggestions]);
 
   // Close on outside click
   useEffect(() => {
@@ -49,19 +66,17 @@ export default function LocationAutocomplete({
       let left = rect.left;
       const width = rect.width; // match input width
 
-      // Clamp left so right edge never overflows viewport
       const maxLeft = Math.max(margin, window.innerWidth - width - margin);
       left = Math.min(left, maxLeft);
       left = Math.max(margin, left);
 
       setDropdownPosition({
-        top: rect.bottom + 8, // fixed coords: viewport-based
+        top: rect.bottom + 8,
         left,
         width,
       });
     };
 
-    // Run now and on next frame
     updatePosition();
     requestAnimationFrame(updatePosition);
 
@@ -92,7 +107,6 @@ export default function LocationAutocomplete({
 
   const handleFocus = () => {
     if (value.trim().length === 0) {
-      // Popular destinations on empty
       setSuggestions([
         { name: 'Algiers Centre', type: 'district', region: 'Alger' },
         { name: 'Oran', type: 'city', region: 'Oran' },
@@ -128,7 +142,6 @@ export default function LocationAutocomplete({
         onChange={(e) => handleInputChange(e.target.value)}
         onFocus={handleFocus}
         className={cn(
-          // match your hero input height; keep fully fluid
           'pl-10 pr-3 bg-background border border-input truncate h-12 sm:h-14',
           className
         )}
