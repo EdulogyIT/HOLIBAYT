@@ -3,7 +3,6 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useAuth } from "@/contexts/AuthContext";
@@ -55,7 +54,7 @@ const LoginModal = ({ open, onOpenChange }: LoginModalProps) => {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-md w-full mx-4">
         <DialogHeader>
           <DialogTitle className="text-2xl text-center">{t('login')}</DialogTitle>
           <DialogDescription className="text-muted-foreground text-center">
@@ -63,7 +62,7 @@ const LoginModal = ({ open, onOpenChange }: LoginModalProps) => {
           </DialogDescription>
         </DialogHeader>
         
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-5">
           <div className="space-y-2">
             <Label htmlFor="email">{t('email')}</Label>
             <Input
@@ -73,6 +72,7 @@ const LoginModal = ({ open, onOpenChange }: LoginModalProps) => {
               value={formData.email}
               onChange={(e) => handleInputChange("email", e.target.value)}
               required
+              className="h-11"
             />
           </div>
           
@@ -85,6 +85,7 @@ const LoginModal = ({ open, onOpenChange }: LoginModalProps) => {
               value={formData.password}
               onChange={(e) => handleInputChange("password", e.target.value)}
               required
+              className="h-11"
             />
           </div>
 
@@ -97,18 +98,16 @@ const LoginModal = ({ open, onOpenChange }: LoginModalProps) => {
             </button>
           </div>
 
-          <Button type="submit" className="w-full bg-gradient-primary hover:shadow-elegant" disabled={isLoading}>
+          <Button type="submit" className="w-full h-12 bg-gradient-primary hover:shadow-elegant" disabled={isLoading}>
             {isLoading ? 'Logging in...' : t('login')}
           </Button>
         </form>
 
-        <Separator className="my-6" />
-
-        <div className="text-center">
+        <div className="text-center mt-6">
           <p className="text-sm text-muted-foreground">
             {t('noAccount')}{" "}
             <button 
-              className="text-primary hover:underline"
+              className="text-primary hover:underline font-medium"
               onClick={() => {
                 onOpenChange(false);
                 navigate('/register');
@@ -117,7 +116,6 @@ const LoginModal = ({ open, onOpenChange }: LoginModalProps) => {
               {t('createAccount')}
             </button>
           </p>
-          
         </div>
       </DialogContent>
     </Dialog>

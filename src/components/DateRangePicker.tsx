@@ -5,6 +5,7 @@ import "react-day-picker/dist/style.css";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { cn } from "@/lib/utils";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 interface DateRangePickerProps {
   value?: { from?: Date; to?: Date };
@@ -76,17 +77,26 @@ export function DateRangePicker({
         /** responsive months */
         numberOfMonths={months}
         className="pointer-events-auto"
+        components={{
+          IconLeft: ({ ...props }) => <ChevronLeft className="h-4 w-4" />,
+          IconRight: ({ ...props }) => <ChevronRight className="h-4 w-4" />,
+        }}
         classNames={{
           months:
             "flex flex-col sm:flex-row gap-3 sm:gap-4 sm:space-y-0",
           month: "space-y-3 w-full",
-          caption: "flex justify-start pt-1 pb-3 items-center",
-          caption_label: "sr-only",
+          caption: "flex justify-center pt-1 pb-3 relative items-center",
+          caption_label: months === 1 ? "text-sm font-medium" : "sr-only",
           caption_dropdowns: "flex gap-2 w-full",
           vhidden: "hidden",
-          /** nav classes are kept but not rendered because captionLayout='dropdown' */
-          nav: "hidden",
-          nav_button: "hidden",
+          nav: "flex items-center gap-1",
+          nav_button: cn(
+            "inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors",
+            "h-8 w-8 bg-transparent p-0 opacity-70 hover:opacity-100 hover:bg-accent",
+            "disabled:pointer-events-none disabled:opacity-50"
+          ),
+          nav_button_previous: "absolute left-1",
+          nav_button_next: "absolute right-1",
           table: "w-full border-collapse",
           head_row: "flex justify-around mb-2",
           head_cell: "text-muted-foreground w-10 font-medium text-sm text-center",
