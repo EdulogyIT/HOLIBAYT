@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { MapPin } from 'lucide-react';
 import { searchLocations } from '@/data/algerianLocations';
 import { cn } from '@/lib/utils';
-import { useLocation } from 'react-router-dom'; // ⭐ NEW
+import { useLocation } from 'react-router-dom';
 
 interface LocationAutocompleteProps {
   value: string;
@@ -25,34 +25,46 @@ export default function LocationAutocomplete({
   const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0, width: 0 });
   const wrapperRef = useRef<HTMLDivElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
-  const location = useLocation(); // ⭐ NEW
+  const route = useLocation();
 
-  // ⭐ NEW: close suggestions whenever the route changes
+  // --- Close on route change (clicking any navbar link) ---
   useEffect(() => {
-    if (showSuggestions) setShowSuggestions(false);
-  }, [location.pathname, location.search]); // pathname is enough; search included for safety
+    setShowSuggestions(false);
+  }, [route.pathname, route.search]);
 
-  // ⭐ NEW: close on Escape key
+  // --- Close on Esc ---
   useEffect(() => {
     if (!showSuggestions) return;
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setShowSuggestions(false);
-    };
+    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && setShowSuggestions(false);
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
   }, [showSuggestions]);
 
-  // Close on outside click
+  // --- Close on any outside pointer (capture) so it runs before navigation handlers ---
   useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
+    const onPointerDownCapture = (event: Event) => {
+      if (!showSuggestions) return;
       const target = event.target as Node;
-      const isInsideWrapper = wrapperRef.current?.contains(target);
-      const isInsideDropdown = dropdownRef.current?.contains(target);
-      if (!isInsideWrapper && !isInsideDropdown) setShowSuggestions(false);
-    }
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
+      const insideInput = !!wrapperRef.current?.contains(target);
+      const insideDropdown = !!dropdownRef.current?.contains(target);
+      if (!insideInput && !insideDropdown) setShowSuggestions(false);
+    };
+    // capture phase ensures this fires even if other components stop propagation
+    window.addEventListener('pointerdown', onPointerDownCapture, { capture: true });
+    return () => window.removeEventListener('pointerdown', onPointerDownCapture, { capture: true } as any);
+  }, [showSuggestions]);
+
+  // --- Close on wheel/scroll & window blur (safety) ---
+  useEffect(() => {
+    if (!showSuggestions) return;
+    const close = () => setShowSuggestions(false);
+    window.addEventListener('wheel', close, { passive: true });
+    window.addEventListener('blur', close);
+    return () => {
+      window.removeEventListener('wheel', close);
+      window.removeEventListener('blur', close);
+    };
+  }, [showSuggestions]);
 
   // Position & size the dropdown to match the input
   useEffect(() => {
@@ -62,9 +74,8 @@ export default function LocationAutocomplete({
     const updatePosition = () => {
       if (!wrapperRef.current) return;
       const rect = wrapperRef.current.getBoundingClientRect();
-
       let left = rect.left;
-      const width = rect.width; // match input width
+      const width = rect.width;
 
       const maxLeft = Math.max(margin, window.innerWidth - width - margin);
       left = Math.min(left, maxLeft);
@@ -141,17 +152,14 @@ export default function LocationAutocomplete({
         value={value}
         onChange={(e) => handleInputChange(e.target.value)}
         onFocus={handleFocus}
-        className={cn(
-          'pl-10 pr-3 bg-background border border-input truncate h-12 sm:h-14',
-          className
-        )}
+        className={cn('pl-10 pr-3 bg-background border border-input truncate h-12 sm:h-14', className)}
       />
 
       {showSuggestions && suggestions.length > 0 &&
         createPortal(
           <div
             ref={dropdownRef}
-            className="fixed bg-card border border-border rounded-xl shadow-2xl z-[100000] max-h-[60vh] overflow-y-auto backdrop-blur-sm"
+            className="fixed bg-card border border-border rounded-xl shadow-2xl z-[40] max-h-[60vh] overflow-y-auto backdrop-blur-sm" // z lowered under navbar (z-50)
             style={{
               top: `${dropdownPosition.top}px`,
               left: `${dropdownPosition.left}px`,
@@ -192,7 +200,7 @@ export default function LocationAutocomplete({
       {showSuggestions && value.trim().length >= 2 && suggestions.length === 0 &&
         createPortal(
           <div
-            className="fixed bg-card border border-border rounded-xl shadow-2xl z-[100000] p-4 text-center text-muted-foreground"
+            className="fixed bg-card border border-border rounded-xl shadow-2xl z-[40] p-4 text-center text-muted-foreground"
             style={{
               top: `${dropdownPosition.top}px`,
               left: `${dropdownPosition.left}px`,
