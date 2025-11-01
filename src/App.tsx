@@ -10,6 +10,7 @@ import { HostLayout } from "@/components/layouts/HostLayout";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { MaintenanceMode } from "@/components/MaintenanceMode";
 import { PlatformSettingsProvider } from "@/contexts/PlatformSettingsContext";
+import { AppInstallBanner } from "@/components/AppInstallBanner";
 
 // Pages
 import Index from "./pages/Index";
@@ -77,6 +78,7 @@ const App = () => (
         <ErrorBoundary>
           <Toaster />
           <Sonner />
+          <AppInstallBanner />
 
         <Routes>
           {/* ✅ All public routes wrapped in MaintenanceMode */}

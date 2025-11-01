@@ -255,6 +255,13 @@ const Buy = () => {
 
         {/* Info outside the box */}
         <div className="mt-2">
+          {/* Price first on mobile */}
+          <div className="mb-2 md:hidden">
+            <div className="text-xl font-bold">
+              {formatPrice(num(property.price), undefined, property.price_currency)}
+            </div>
+          </div>
+
           <div className="text-[15px] sm:text-base font-semibold line-clamp-1">
             {property.title}
           </div>
@@ -266,7 +273,9 @@ const Buy = () => {
               {(property.location || "").trim()}
             </span>
           </div>
-          <div className="mt-1 text-lg md:text-xl font-bold">
+          
+          {/* Price on desktop (original position) */}
+          <div className="mt-1 text-lg md:text-xl font-bold hidden md:block">
             {formatPrice(num(property.price), undefined, property.price_currency)}
           </div>
           <div className="mt-1.5 flex items-center gap-4 text-muted-foreground text-xs">
