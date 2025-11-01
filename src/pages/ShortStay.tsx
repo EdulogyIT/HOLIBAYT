@@ -75,6 +75,7 @@ const ShortStay = () => {
   const { user } = useAuth();
   const { wishlistIds, toggleWishlist } = useWishlist(user?.id);
   const [authModalOpen, setAuthModalOpen] = useState(false);
+  const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
 
   const [properties, setProperties] = useState<Property[]>([]);
   const [filteredProperties, setFilteredProperties] = useState<Property[]>([]);
@@ -258,17 +259,20 @@ const ShortStay = () => {
     <div className="min-h-screen bg-background">
       <Navigation />
       <main className="pt-20">
-        <ShortStayHeroSearch onSearch={(vals) => {
-          const qs = new URLSearchParams();
-          if (vals.location) qs.set("location", String(vals.location));
-          if (vals.checkIn) qs.set("checkIn", String(vals.checkIn));
-          if (vals.checkOut) qs.set("checkOut", String(vals.checkOut));
-          if (vals.adults) qs.set("adults", String(vals.adults));
-          if (vals.children) qs.set("children", String(vals.children));
-          if (vals.infants) qs.set("infants", String(vals.infants));
-          if (vals.pets) qs.set("pets", String(vals.pets));
-          navigate({ pathname: "/short-stay", search: qs.toString() });
-        }} />
+        <ShortStayHeroSearch 
+          onSearch={(vals) => {
+            const qs = new URLSearchParams();
+            if (vals.location) qs.set("location", String(vals.location));
+            if (vals.checkIn) qs.set("checkIn", String(vals.checkIn));
+            if (vals.checkOut) qs.set("checkOut", String(vals.checkOut));
+            if (vals.adults) qs.set("adults", String(vals.adults));
+            if (vals.children) qs.set("children", String(vals.children));
+            if (vals.infants) qs.set("infants", String(vals.infants));
+            if (vals.pets) qs.set("pets", String(vals.pets));
+            navigate({ pathname: "/short-stay", search: qs.toString() });
+          }}
+          onFilterClick={() => setIsFilterModalOpen(true)}
+        />
 
         <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6">
           <div className="grid grid-cols-1 lg:grid-cols-[60%_40%] gap-6 items-start">
@@ -282,6 +286,8 @@ const ShortStay = () => {
                   onFilterChange={handleFilterChange} 
                   listingType="shortStay"
                   propertyCount={filteredProperties.length}
+                  isModalOpen={isFilterModalOpen}
+                  onModalClose={() => setIsFilterModalOpen(false)}
                 />
               </div>
 

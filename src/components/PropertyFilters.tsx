@@ -40,11 +40,28 @@ interface PropertyFiltersProps {
   onFilterChange: (filters: FilterState) => void;
   listingType?: "buy" | "rent" | "shortStay";
   propertyCount?: number;
+  isModalOpen?: boolean;
+  onModalClose?: () => void;
 }
 
-export const PropertyFilters = ({ onFilterChange, listingType = "shortStay", propertyCount = 0 }: PropertyFiltersProps) => {
+export const PropertyFilters = ({ 
+  onFilterChange, 
+  listingType = "shortStay", 
+  propertyCount = 0,
+  isModalOpen,
+  onModalClose 
+}: PropertyFiltersProps) => {
   const { t } = useLanguage();
   const [isOpen, setIsOpen] = useState(false);
+  
+  // Sync external modal state with internal state
+  const modalOpen = isModalOpen !== undefined ? isModalOpen : isOpen;
+  const handleOpenChange = (open: boolean) => {
+    if (onModalClose && !open) {
+      onModalClose();
+    }
+    setIsOpen(open);
+  };
   const [showAllAmenities, setShowAllAmenities] = useState(false);
   
   const [filters, setFilters] = useState<FilterState>({
@@ -137,7 +154,7 @@ export const PropertyFilters = ({ onFilterChange, listingType = "shortStay", pro
 
   const applyFilters = () => {
     onFilterChange(filters);
-    setIsOpen(false);
+    handleOpenChange(false);
   };
 
   const recommendedFilters = [
@@ -182,7 +199,7 @@ export const PropertyFilters = ({ onFilterChange, listingType = "shortStay", pro
   ];
 
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+    <Dialog open={modalOpen} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
         <Button variant="outline" className="gap-2">
           <SlidersHorizontal className="h-4 w-4" />

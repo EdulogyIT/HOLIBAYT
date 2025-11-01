@@ -92,8 +92,11 @@ export function DateRangePicker({
           nav: "flex items-center gap-1",
           nav_button: cn(
             "inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors",
-            "h-8 w-8 bg-transparent p-0 opacity-70 hover:opacity-100 hover:bg-accent",
-            "disabled:pointer-events-none disabled:opacity-50"
+            "h-10 w-10 sm:h-8 sm:w-8", // Larger touch targets on mobile
+            "bg-background/80 backdrop-blur border border-input", // Better visibility
+            "opacity-100 hover:bg-accent hover:border-accent", // Always visible with hover state
+            "disabled:pointer-events-none disabled:opacity-50",
+            "shadow-sm" // Add depth
           ),
           nav_button_previous: "absolute left-1",
           nav_button_next: "absolute right-1",

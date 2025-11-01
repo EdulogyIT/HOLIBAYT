@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { format } from "date-fns";
-import { Search, Calendar, Bed, Home } from "lucide-react";
+import { Search, Calendar, Bed, Home, SlidersHorizontal } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useNavigate, useLocation as useRouterLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
@@ -27,6 +27,7 @@ type SearchVals = {
 
 type ShortStayHeroSearchProps = {
   onSearch?: (vals: SearchVals) => void;
+  onFilterClick?: () => void;
 };
 
 const parseISODate = (s?: string | null) => {
@@ -35,7 +36,7 @@ const parseISODate = (s?: string | null) => {
   return Number.isNaN(d.getTime()) ? undefined : d;
 };
 
-const ShortStayHeroSearch: React.FC<ShortStayHeroSearchProps> = ({ onSearch }) => {
+const ShortStayHeroSearch: React.FC<ShortStayHeroSearchProps> = ({ onSearch, onFilterClick }) => {
   const { t } = useLanguage();
   const navigate = useNavigate();
   const routerLocation = useRouterLocation();
@@ -128,7 +129,12 @@ const ShortStayHeroSearch: React.FC<ShortStayHeroSearchProps> = ({ onSearch }) =
     return (
       <form
         onSubmit={onSubmit}
-        className={cn("flex gap-3", compact ? "flex-row items-center" : "flex-col gap-4")}
+        className={cn(
+          "flex gap-2",
+          compact 
+            ? "flex-col sm:flex-row items-stretch sm:items-center" // Stack on mobile
+            : "flex-col gap-4"
+        )}
       >
         <LocationAutocomplete
           value={formData.location}
@@ -136,31 +142,36 @@ const ShortStayHeroSearch: React.FC<ShortStayHeroSearchProps> = ({ onSearch }) =
           placeholder={t("stayDestination")}
           className={cn(
             "font-inter pr-3",
-            compact ? "h-12 text-sm flex-1 min-w-[200px]" : "h-14 text-base flex-1 lg:min-w-[300px]"
+            compact 
+              ? "h-12 text-sm w-full sm:flex-1 sm:min-w-[180px]" // Full width on mobile, flexible on desktop
+              : "h-14 text-base flex-1 lg:min-w-[300px]"
           )}
         />
 
-        {/* GuestsSelector now stays open until Done */}
+        {/* Compact: Date + Guests + Search + Filters in one row on mobile */}
         {compact ? (
-          <>
+          <div className={cn(
+            "flex gap-2",
+            "flex-row items-center" // Always horizontal for these controls
+          )}>
             <Popover open={isCompactCheckInOpen} onOpenChange={setIsCompactCheckInOpen}>
               <PopoverTrigger asChild>
                 <Button
                   type="button"
                   variant="outline"
                   className={cn(
-                    "justify-start text-left font-inter h-12 text-sm w-auto min-w-[170px] bg-background border border-input",
+                    "justify-start text-left font-inter h-12 text-sm flex-1 sm:min-w-[140px] bg-background border border-input",
                     !formData.dateRange?.from && "text-muted-foreground"
                   )}
                 >
-                  <Calendar className="mr-2 h-4 w-4" />
-                  <span className="truncate">
+                  <Calendar className="mr-1 sm:mr-2 h-4 w-4 flex-shrink-0" />
+                  <span className="truncate text-xs sm:text-sm">
                     {formData.dateRange?.from && formData.dateRange?.to
                       ? `${format(formData.dateRange.from, "MMM dd")} - ${format(
                           formData.dateRange.to,
                           "MMM dd"
                         )}`
-                      : "Add Dates"}
+                      : "Dates"}
                   </span>
                 </Button>
               </PopoverTrigger>
@@ -174,14 +185,41 @@ const ShortStayHeroSearch: React.FC<ShortStayHeroSearchProps> = ({ onSearch }) =
               </PopoverContent>
             </Popover>
 
-            <div className="w-auto min-w-[150px]">
+            <div className="w-auto">
               <GuestsSelector
                 value={formData.guests}
                 onChange={(guests) => updateFormField("guests", guests)}
-                keepOpen // <-- ensure selector stays open until Done
+                keepOpen
               />
             </div>
-          </>
+
+            <Button
+              type="submit"
+              disabled={!isFormValid()}
+              className={cn(
+                "font-inter font-semibold transition-all duration-300 h-12 px-3 sm:px-6 text-sm flex-shrink-0",
+                isFormValid()
+                  ? "bg-gradient-primary hover:shadow-elegant text-white"
+                  : "bg-gray-300 text-gray-500 cursor-not-allowed"
+              )}
+            >
+              <Search className="h-4 w-4 sm:mr-2" />
+              <span className="hidden sm:inline">{t("search")}</span>
+            </Button>
+
+            {/* Filters Button - Sticky with search bar */}
+            {onFilterClick && (
+              <Button
+                type="button"
+                variant="outline"
+                onClick={onFilterClick}
+                className="h-12 px-3 sm:px-4 border-2 flex-shrink-0"
+              >
+                <SlidersHorizontal className="h-4 w-4" />
+                <span className="hidden sm:inline ml-2">{t("filters")}</span>
+              </Button>
+            )}
+          </div>
         ) : (
           <>
             <div className="flex flex-col lg:flex-row gap-4">
@@ -273,20 +311,22 @@ const ShortStayHeroSearch: React.FC<ShortStayHeroSearchProps> = ({ onSearch }) =
           </>
         )}
 
-        <Button
-          type="submit"
-          disabled={!isFormValid()}
-          className={cn(
-            "font-inter font-semibold transition-all duration-300",
-            compact ? "h-12 px-6 text-sm w-auto flex-shrink-0" : "h-14 px-8 text-base min-w-[140px]",
-            isFormValid()
-              ? "bg-gradient-primary hover:shadow-elegant text-white"
-              : "bg-gray-300 text-gray-500 cursor-not-allowed"
-          )}
-        >
-          <Search className={cn("mr-2", compact ? "h-4 w-4" : "h-5 w-5")} />
-          {t("search")}
-        </Button>
+        {/* Non-compact: Full search button */}
+        {!compact && (
+          <Button
+            type="submit"
+            disabled={!isFormValid()}
+            className={cn(
+              "font-inter font-semibold transition-all duration-300 h-14 px-8 text-base min-w-[140px]",
+              isFormValid()
+                ? "bg-gradient-primary hover:shadow-elegant text-white"
+                : "bg-gray-300 text-gray-500 cursor-not-allowed"
+            )}
+          >
+            <Search className="mr-2 h-5 w-5" />
+            {t("search")}
+          </Button>
+        )}
       </form>
     );
   };
