@@ -33,21 +33,18 @@ const Navigation = ({ onLoginClick }: NavigationProps = {}) => {
     { code: "AR", name: "العربية", flag: "🇩🇿" }
   ];
 
-
   const handleLanguageChange = (lang: 'FR' | 'EN' | 'AR') => {
     setCurrentLang(lang);
-    setIsMenuOpen(false); // Close mobile menu when changing language
+    setIsMenuOpen(false);
   };
 
   const handleLogout = async () => {
-    console.log('[Navigation] Logout button clicked');
     await logout();
-    console.log('[Navigation] Logout completed, navigating to home');
     navigate('/');
   };
 
   return (
-    <nav key={currentLang} className="fixed top-0 w-full bg-background/80 backdrop-blur-md border-b border-border z-50">
+    <nav key={currentLang} className="fixed top-0 w-full bg-background/80 backdrop-blur-md border-b border-border z-[200] pointer-events-auto">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
@@ -94,17 +91,14 @@ const Navigation = ({ onLoginClick }: NavigationProps = {}) => {
 
           {/* Language & Currency Switchers & CTA Buttons */}
           <div className="hidden md:flex items-center space-x-2 lg:space-x-4">
-            {/* Currency Selector */}
             <CurrencySelector />
-            
-            {/* Language Switcher */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="icon" className="font-inter h-9 w-9 lg:h-10 lg:w-10">
                   <Globe className="h-4 w-4 lg:h-5 lg:w-5" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="bg-background border border-border shadow-lg z-50">
+              <DropdownMenuContent align="end" className="bg-background border border-border shadow-lg z-[210]">
                 {languages.map((lang) => (
                   <DropdownMenuItem 
                     key={lang.code}
@@ -149,7 +143,6 @@ const Navigation = ({ onLoginClick }: NavigationProps = {}) => {
               </>
             ) : (
               <>
-                {/* Become a Host CTA for logged-in non-hosts */}
                 {!hasRole('host') && !hasRole('admin') && (
                   <Button 
                     className="bg-gradient-primary font-inter font-medium hover:shadow-elegant"
@@ -159,7 +152,6 @@ const Navigation = ({ onLoginClick }: NavigationProps = {}) => {
                   </Button>
                 )}
 
-                {/* Notification Bell */}
                 <NotificationBell />
 
                 <DropdownMenu>
@@ -174,7 +166,7 @@ const Navigation = ({ onLoginClick }: NavigationProps = {}) => {
                       <span className="hidden lg:inline">{user?.name}</span>
                     </Button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="w-56 bg-background border shadow-lg z-50">
+                  <DropdownMenuContent align="end" className="w-56 bg-background border shadow-lg z-[210]">
                     <DropdownMenuItem onClick={() => navigate('/profile')} className="min-h-[44px]">
                       <User className="h-4 w-4 mr-2" />
                       {t('myProfile')}
@@ -247,29 +239,29 @@ const Navigation = ({ onLoginClick }: NavigationProps = {}) => {
         {isMenuOpen && (
           <div className="md:hidden py-4 border-t border-border max-h-[calc(100vh-80px)] overflow-y-auto">
             <div className="flex flex-col space-y-3">
-                  <Link to="/" className="text-foreground hover:text-primary transition-colors font-inter font-medium py-2 min-h-[44px] flex items-center" onClick={() => setIsMenuOpen(false)}>
-                    {t('home')}
-                  </Link>
-                  <Link to="/buy" className="text-foreground hover:text-primary transition-colors font-inter font-medium py-2 min-h-[44px] flex items-center" onClick={() => setIsMenuOpen(false)}>
-                    {t('buy')}
-                  </Link>
-                  <Link to="/short-stay" className="text-foreground hover:text-primary transition-colors font-inter font-medium py-2 min-h-[44px] flex items-center" onClick={() => setIsMenuOpen(false)}>
-                    {t('shortStay')}
-                  </Link>
-                  <Link to="/rent" className="text-foreground hover:text-primary transition-colors font-inter font-medium py-2 min-h-[44px] flex items-center" onClick={() => setIsMenuOpen(false)}>
-                    {t('rent')}
-                  </Link>
-                  <Link to="/holibayt-pay" className="text-foreground hover:text-primary transition-colors font-inter font-medium py-2 min-h-[44px] flex items-center" onClick={() => setIsMenuOpen(false)}>
-                    {t('holibaytPayBrand')}
-                  </Link>
-                  <Link to="/about" className="text-foreground hover:text-primary transition-colors font-inter font-medium py-2 min-h-[44px] flex items-center" onClick={() => setIsMenuOpen(false)}>
-                    {t('about')}
-                  </Link>
-                  <Link to="/blog" className="text-foreground hover:text-primary transition-colors font-inter font-medium py-2 min-h-[44px] flex items-center" onClick={() => setIsMenuOpen(false)}>
-                    {t('blog')}
-                  </Link>
+              <Link to="/" className="text-foreground hover:text-primary transition-colors font-inter font-medium py-2 min-h-[44px] flex items-center" onClick={() => setIsMenuOpen(false)}>
+                {t('home')}
+              </Link>
+              <Link to="/buy" className="text-foreground hover:text-primary transition-colors font-inter font-medium py-2 min-h-[44px] flex items-center" onClick={() => setIsMenuOpen(false)}>
+                {t('buy')}
+              </Link>
+              <Link to="/short-stay" className="text-foreground hover:text-primary transition-colors font-inter font-medium py-2 min-h-[44px] flex items-center" onClick={() => setIsMenuOpen(false)}>
+                {t('shortStay')}
+              </Link>
+              <Link to="/rent" className="text-foreground hover:text-primary transition-colors font-inter font-medium py-2 min-h-[44px] flex items-center" onClick={() => setIsMenuOpen(false)}>
+                {t('rent')}
+              </Link>
+              <Link to="/holibayt-pay" className="text-foreground hover:text-primary transition-colors font-inter font-medium py-2 min-h-[44px] flex items-center" onClick={() => setIsMenuOpen(false)}>
+                {t('holibaytPayBrand')}
+              </Link>
+              <Link to="/about" className="text-foreground hover:text-primary transition-colors font-inter font-medium py-2 min-h-[44px] flex items-center" onClick={() => setIsMenuOpen(false)}>
+                {t('about')}
+              </Link>
+              <Link to="/blog" className="text-foreground hover:text-primary transition-colors font-inter font-medium py-2 min-h-[44px] flex items-center" onClick={() => setIsMenuOpen(false)}>
+                {t('blog')}
+              </Link>
+
               <div className="flex flex-col space-y-2 pt-4 border-t border-border">
-                {/* Currency Selector Mobile */}
                 <div className="flex items-center min-h-[44px]">
                   <CurrencySelector />
                 </div>
@@ -281,7 +273,7 @@ const Navigation = ({ onLoginClick }: NavigationProps = {}) => {
                       {languages.find(l => l.code === currentLang)?.name}
                     </Button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent className="bg-background border border-border shadow-lg z-50">
+                  <DropdownMenuContent className="bg-background border border-border shadow-lg z-[210]">
                     {languages.map((lang) => (
                       <DropdownMenuItem 
                         key={lang.code}
@@ -298,7 +290,6 @@ const Navigation = ({ onLoginClick }: NavigationProps = {}) => {
                     ))}
                   </DropdownMenuContent>
                 </DropdownMenu>
-
 
                 {!isAuthenticated ? (
                   <>
@@ -374,15 +365,15 @@ const Navigation = ({ onLoginClick }: NavigationProps = {}) => {
                         {t('myBookings')}
                       </Button>
                     )}
-                     {hasRole('host') && (
-                       <Button variant="ghost" className="font-inter font-medium justify-start" onClick={() => {
-                         navigate('/host/listings');
-                         setIsMenuOpen(false);
-                       }}>
-                         <Home className="h-4 w-4 mr-2" />
-                         {t('publishProperty')}
-                       </Button>
-                     )}
+                    {hasRole('host') && (
+                      <Button variant="ghost" className="font-inter font-medium justify-start" onClick={() => {
+                        navigate('/host/listings');
+                        setIsMenuOpen(false);
+                      }}>
+                        <Home className="h-4 w-4 mr-2" />
+                        {t('publishProperty')}
+                      </Button>
+                    )}
                     {hasRole('admin') && (
                       <Button variant="ghost" className="font-inter font-medium justify-start" onClick={() => {
                         navigate('/admin');
