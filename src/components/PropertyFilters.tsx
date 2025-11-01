@@ -204,7 +204,7 @@ export const PropertyFilters = ({ onFilterChange, listingType = "shortStay", pro
           <div className="p-6 space-y-8">
             {/* Recommendations */}
             <div className="space-y-4">
-              <h3 className="font-semibold text-lg">{t("ourRecommendations") || "Our Recommendations"}</h3>
+              <h3 className="font-semibold text-lg">{getLabel("ourRecommendations", "Our Recommendations")}</h3>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                 {recommendedFilters.map((filter) => {
                   const Icon = filter.icon;
@@ -228,7 +228,7 @@ export const PropertyFilters = ({ onFilterChange, listingType = "shortStay", pro
 
             {/* Property Type */}
             <div className="space-y-4">
-              <h3 className="font-semibold text-lg">{t("propertyType") || "Property Type"}</h3>
+              <h3 className="font-semibold text-lg">{getLabel("propertyType", "Property Type")}</h3>
               <div className="flex gap-3">
                 {(["all", "room", "entire"] as const).map((type) => (
                   <Button
@@ -238,9 +238,9 @@ export const PropertyFilters = ({ onFilterChange, listingType = "shortStay", pro
                     onClick={() => updateFilter("propertyType", type)}
                     className="flex-1"
                   >
-                    {type === "all" ? t("allTypes") || "All Types" : 
-                     type === "room" ? t("room") || "Room" : 
-                     t("entirePlace") || "Entire Place"}
+                    {type === "all" ? getLabel("allTypes", "All Types") : 
+                     type === "room" ? getLabel("room", "Room") : 
+                     getLabel("entirePlace", "Entire Place")}
                   </Button>
                 ))}
               </div>
@@ -248,8 +248,8 @@ export const PropertyFilters = ({ onFilterChange, listingType = "shortStay", pro
 
             {/* Price Range */}
             <div className="space-y-4">
-              <h3 className="font-semibold text-lg">{t("priceRange") || "Price Range"}</h3>
-              <p className="text-sm text-muted-foreground">{t("priceDesc") || "Nightly prices before fees and taxes"}</p>
+              <h3 className="font-semibold text-lg">{getLabel("priceRange", "Price Range")}</h3>
+              <p className="text-sm text-muted-foreground">{getLabel("priceDescription", "Drag the slider to set your budget range")}</p>
               
               <div className="h-20 bg-primary/5 rounded-lg flex items-end justify-around px-2 pb-2">
                 {[...Array(20)].map((_, i) => {
@@ -285,7 +285,7 @@ export const PropertyFilters = ({ onFilterChange, listingType = "shortStay", pro
 
               <div className="flex gap-4">
                 <div className="flex-1">
-                  <label className="text-sm font-medium mb-2 block">{t("minimum") || "Minimum"}</label>
+                  <label className="text-sm font-medium mb-2 block">{getLabel("minimum", "Minimum")}</label>
                   <Input
                     type="number"
                     value={filters.minPrice}
@@ -294,7 +294,7 @@ export const PropertyFilters = ({ onFilterChange, listingType = "shortStay", pro
                   />
                 </div>
                 <div className="flex-1">
-                  <label className="text-sm font-medium mb-2 block">{t("maximum") || "Maximum"}</label>
+                  <label className="text-sm font-medium mb-2 block">{getLabel("maximum", "Maximum")}</label>
                   <Input
                     type="number"
                     value={filters.maxPrice}
@@ -307,18 +307,18 @@ export const PropertyFilters = ({ onFilterChange, listingType = "shortStay", pro
 
             {/* Bedrooms and Beds */}
             <div className="space-y-4">
-              <h3 className="font-semibold text-lg">{t("bedsAndBaths") || "Rooms and Beds"}</h3>
+              <h3 className="font-semibold text-lg">{getLabel("roomsAndBeds", "Rooms and Beds")}</h3>
               
               {(["bedrooms", "beds", "bathrooms"] as const).map((item) => (
                 <div key={item} className="flex items-center justify-between">
                   <span className="text-sm font-medium">
-                    {item === "bedrooms" ? "Bedrooms" : 
-                     item === "beds" ? "Beds" : 
-                     "Bathrooms"}
+                    {item === "bedrooms" ? getLabel("bedrooms", "Bedrooms") : 
+                     item === "beds" ? getLabel("beds", "Beds") : 
+                     getLabel("bathrooms", "Bathrooms")}
                   </span>
                   <div className="flex items-center gap-3">
                     <span className="text-sm text-muted-foreground min-w-[40px]">
-                      {filters[item] === 0 ? t("any") || "Any" : filters[item]}
+                      {filters[item] === 0 ? getLabel("any", "Any") : filters[item]}
                     </span>
                     <div className="flex items-center gap-2">
                       <Button
@@ -348,10 +348,10 @@ export const PropertyFilters = ({ onFilterChange, listingType = "shortStay", pro
 
             {/* Amenities */}
             <div className="space-y-4">
-              <h3 className="font-semibold text-lg">{t("amenities") || "Amenities"}</h3>
+              <h3 className="font-semibold text-lg">{getLabel("amenities", "Amenities")}</h3>
               
               <div className="space-y-3">
-                <h4 className="text-sm font-semibold">{t("essential") || "Essential"}</h4>
+                <h4 className="text-sm font-semibold">{getLabel("essential", "Essential")}</h4>
                 <div className="flex flex-wrap gap-2">
                   {essentialAmenities.map((amenity) => {
                     const isActive = filters.amenities.includes(amenity.key);
@@ -376,7 +376,7 @@ export const PropertyFilters = ({ onFilterChange, listingType = "shortStay", pro
               {showAllAmenities && (
                 <>
                   <div className="space-y-3">
-                    <h4 className="text-sm font-semibold">{t("basics") || "Basics"}</h4>
+                    <h4 className="text-sm font-semibold">{getLabel("basics", "Basics")}</h4>
                     <div className="flex flex-wrap gap-2">
                       {additionalAmenities.map((amenity) => {
                         const isActive = filters.amenities.includes(amenity.key);
@@ -396,7 +396,7 @@ export const PropertyFilters = ({ onFilterChange, listingType = "shortStay", pro
                   </div>
 
                   <div className="space-y-3">
-                    <h4 className="text-sm font-semibold">{t("features") || "Features"}</h4>
+                    <h4 className="text-sm font-semibold">{getLabel("features", "Features")}</h4>
                     <div className="flex flex-wrap gap-2">
                       {featureAmenities.map((amenity) => {
                         const isActive = filters.amenities.includes(amenity.key);
@@ -416,7 +416,7 @@ export const PropertyFilters = ({ onFilterChange, listingType = "shortStay", pro
                   </div>
 
                   <div className="space-y-3">
-                    <h4 className="text-sm font-semibold">{t("safety") || "Safety"}</h4>
+                    <h4 className="text-sm font-semibold">{getLabel("safety", "Safety")}</h4>
                     <div className="flex flex-wrap gap-2">
                       {safetyAmenities.map((amenity) => {
                         const isActive = filters.amenities.includes(amenity.key);
@@ -445,11 +445,11 @@ export const PropertyFilters = ({ onFilterChange, listingType = "shortStay", pro
               >
                 {showAllAmenities ? (
                   <>
-                    {t("showLess") || "Show Less"} <ChevronUp className="ml-1 h-4 w-4" />
+                    {getLabel("showLess", "Show Less")} <ChevronUp className="ml-1 h-4 w-4" />
                   </>
                 ) : (
                   <>
-                    {t("showMore") || "Show More"} <ChevronDown className="ml-1 h-4 w-4" />
+                    {getLabel("showMore", "Show More")} <ChevronDown className="ml-1 h-4 w-4" />
                   </>
                 )}
               </Button>
@@ -457,21 +457,21 @@ export const PropertyFilters = ({ onFilterChange, listingType = "shortStay", pro
 
             {/* Booking Options */}
             <div className="space-y-4">
-              <h3 className="font-semibold text-lg">{t("bookingOptions") || "Booking Options"}</h3>
+              <h3 className="font-semibold text-lg">{getLabel("bookingOptions", "Booking Options")}</h3>
               <div className="space-y-3">
                 <label className="flex items-center gap-3 cursor-pointer">
                   <Checkbox
                     checked={filters.instantBook}
                     onCheckedChange={(checked) => updateFilter("instantBook", checked)}
                   />
-                  <span className="text-sm">{t("instantBook") || "Instant Book"}</span>
+                  <span className="text-sm">{getLabel("instantBook", "Instant Book")}</span>
                 </label>
                 <label className="flex items-center gap-3 cursor-pointer">
                   <Checkbox
                     checked={filters.petsAllowed}
                     onCheckedChange={(checked) => updateFilter("petsAllowed", checked)}
                   />
-                  <span className="text-sm">{t("petsAllowed") || "Pets Allowed"}</span>
+                  <span className="text-sm">{getLabel("petsAllowed", "Pets Allowed")}</span>
                 </label>
               </div>
             </div>
@@ -480,10 +480,10 @@ export const PropertyFilters = ({ onFilterChange, listingType = "shortStay", pro
 
         <div className="border-t p-6 flex items-center justify-between">
           <Button variant="ghost" onClick={clearFilters}>
-            {t("clearAll") || "Clear All"}
+            {getLabel("clearAll", "Clear All")}
           </Button>
-          <Button onClick={applyFilters}>
-            {t("showProperties") || "Show"} {propertyCount > 0 && `${propertyCount} `}{t("properties") || "properties"}
+          <Button onClick={applyFilters} className="flex-1 max-w-xs">
+            {getLabel("showProperties", "Show Properties")} ({propertyCount})
           </Button>
         </div>
       </DialogContent>

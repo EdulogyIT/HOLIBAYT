@@ -62,6 +62,7 @@ interface FormData {
   petsAllowedShortStay: boolean;
   isGuestFavourite: boolean;
   isLuxeProperty: boolean;
+  roomType: string; // "entirePlace" | "room"
   accessibilityFeatures: {
     entrance: string[];
     bedroom: string[];
@@ -166,6 +167,7 @@ const PublishPropertySteps = ({ onSubmit, isSubmitting = false }: PublishPropert
     petsAllowedShortStay: false,
     isGuestFavourite: false,
     isLuxeProperty: false,
+    roomType: "entirePlace",
     accessibilityFeatures: {
       entrance: [],
       bedroom: [],
