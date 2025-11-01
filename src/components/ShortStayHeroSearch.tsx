@@ -57,11 +57,8 @@ const ShortStayHeroSearch: React.FC<ShortStayHeroSearchProps> = ({ onSearch, onF
     guests: { adults: 1, children: 0, infants: 0, pets: 0 },
   });
 
-  // Scroll detection for sticky bar
   useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 200); // adjust threshold if you want later
-    };
+    const handleScroll = () => setIsScrolled(window.scrollY > 200);
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
@@ -131,9 +128,7 @@ const ShortStayHeroSearch: React.FC<ShortStayHeroSearchProps> = ({ onSearch, onF
         onSubmit={onSubmit}
         className={cn(
           "flex gap-2",
-          compact 
-            ? "flex-col sm:flex-row items-stretch sm:items-center" // Stack on mobile
-            : "flex-col gap-4"
+          compact ? "flex-col sm:flex-row items-stretch sm:items-center" : "flex-col gap-4"
         )}
       >
         <LocationAutocomplete
@@ -142,18 +137,12 @@ const ShortStayHeroSearch: React.FC<ShortStayHeroSearchProps> = ({ onSearch, onF
           placeholder={t("stayDestination")}
           className={cn(
             "font-inter pr-3",
-            compact 
-              ? "h-12 text-sm w-full sm:flex-1 sm:min-w-[180px]" // Full width on mobile, flexible on desktop
-              : "h-14 text-base flex-1 lg:min-w-[300px]"
+            compact ? "h-12 text-sm w-full sm:flex-1 sm:min-w-[180px]" : "h-14 text-base flex-1 lg:min-w[300px]"
           )}
         />
 
-        {/* Compact: Date + Guests + Search + Filters in one row on mobile */}
         {compact ? (
-          <div className={cn(
-            "flex gap-2",
-            "flex-row items-center" // Always horizontal for these controls
-          )}>
+          <div className={cn("flex gap-2", "flex-row items-center")}>
             <Popover open={isCompactCheckInOpen} onOpenChange={setIsCompactCheckInOpen}>
               <PopoverTrigger asChild>
                 <Button
@@ -167,10 +156,7 @@ const ShortStayHeroSearch: React.FC<ShortStayHeroSearchProps> = ({ onSearch, onF
                   <Calendar className="mr-1 sm:mr-2 h-4 w-4 flex-shrink-0" />
                   <span className="truncate text-xs sm:text-sm">
                     {formData.dateRange?.from && formData.dateRange?.to
-                      ? `${format(formData.dateRange.from, "MMM dd")} - ${format(
-                          formData.dateRange.to,
-                          "MMM dd"
-                        )}`
+                      ? `${format(formData.dateRange.from, "MMM dd")} - ${format(formData.dateRange.to, "MMM dd")}`
                       : "Dates"}
                   </span>
                 </Button>
@@ -198,16 +184,13 @@ const ShortStayHeroSearch: React.FC<ShortStayHeroSearchProps> = ({ onSearch, onF
               disabled={!isFormValid()}
               className={cn(
                 "font-inter font-semibold transition-all duration-300 h-12 px-3 sm:px-6 text-sm flex-shrink-0",
-                isFormValid()
-                  ? "bg-gradient-primary hover:shadow-elegant text-white"
-                  : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                isFormValid() ? "bg-gradient-primary hover:shadow-elegant text-white" : "bg-gray-300 text-gray-500 cursor-not-allowed"
               )}
             >
               <Search className="h-4 w-4 sm:mr-2" />
               <span className="hidden sm:inline">{t("search")}</span>
             </Button>
 
-            {/* Filters Button - Sticky with search bar */}
             {onFilterClick && (
               <Button
                 type="button"
@@ -260,9 +243,7 @@ const ShortStayHeroSearch: React.FC<ShortStayHeroSearchProps> = ({ onSearch, onF
                     >
                       <Calendar className="mr-3 h-5 w-5" />
                       <span>
-                        {formData.dateRange?.from
-                          ? format(formData.dateRange.from, "dd/MM/yyyy")
-                          : t("checkIn")}
+                        {formData.dateRange?.from ? format(formData.dateRange.from, "dd/MM/yyyy") : t("checkIn")}
                       </span>
                     </Button>
                   </PopoverTrigger>
@@ -291,9 +272,7 @@ const ShortStayHeroSearch: React.FC<ShortStayHeroSearchProps> = ({ onSearch, onF
                     >
                       <Calendar className="mr-3 h-5 w-5" />
                       <span>
-                        {formData.dateRange?.to
-                          ? format(formData.dateRange.to, "dd/MM/yyyy")
-                          : t("checkOut")}
+                        {formData.dateRange?.to ? format(formData.dateRange.to, "dd/MM/yyyy") : t("checkOut")}
                       </span>
                     </Button>
                   </PopoverTrigger>
@@ -311,16 +290,13 @@ const ShortStayHeroSearch: React.FC<ShortStayHeroSearchProps> = ({ onSearch, onF
           </>
         )}
 
-        {/* Non-compact: Full search button */}
         {!compact && (
           <Button
             type="submit"
             disabled={!isFormValid()}
             className={cn(
               "font-inter font-semibold transition-all duration-300 h-14 px-8 text-base min-w-[140px]",
-              isFormValid()
-                ? "bg-gradient-primary hover:shadow-elegant text-white"
-                : "bg-gray-300 text-gray-500 cursor-not-allowed"
+              isFormValid() ? "bg-gradient-primary hover:shadow-elegant text-white" : "bg-gray-300 text-gray-500 cursor-not-allowed"
             )}
           >
             <Search className="mr-2 h-5 w-5" />
@@ -333,11 +309,12 @@ const ShortStayHeroSearch: React.FC<ShortStayHeroSearchProps> = ({ onSearch, onF
 
   return (
     <>
-      {/* Sticky Search Bar - works on all screens now */}
+      {/* Sticky Search Bar */}
       <div
         className={cn(
-          "fixed top-16 left-0 right-0 z-50 transition-all duration-300 bg-white/95 backdrop-blur-md shadow-lg border-b border-border/50",
-          isScrolled ? "translate-y-0 opacity-100" : "-translate-y-full opacity-0"
+          "fixed top-16 left-0 right-0 z-40 transition-all duration-300 bg-white/95 backdrop-blur-md shadow-lg border-b border-border/50",
+          isScrolled ? "translate-y-0 opacity-100 pointer-events-auto"
+                     : "-translate-y-full opacity-0 pointer-events-none"
         )}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
