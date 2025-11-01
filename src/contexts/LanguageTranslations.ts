@@ -75,7 +75,7 @@ export const buyRentTranslations = {
     testimonialAuthor: "— Sarah M., Locataire de France",
     
     // Authentication Modal Translations
-    loginOrSignup: "Connexion ou inscription",
+    loginOrSignup: "Log in or sign up",
     country: "Pays/région",
     algeria: "Algérie",
     france: "France",
@@ -639,6 +639,20 @@ export const buyRentTranslations = {
     verifiedDocuments: "Verified Documents",
     meetYourHostDescription: "Experienced and verified host, dedicated to providing exceptional service and ensuring your comfortable stay.",
     allVerifiedSellersDisclaimer: "All Holibayt Verified Sellers undergo identity and document checks before listing.",
+    
+    // Authentication Modal Translations
+    loginOrSignup: "Log in or sign up",
+    country: "Country/region",
+    algeria: "Algeria",
+    france: "France",
+    usa: "United States",
+    uk: "United Kingdom",
+    phoneNumber: "Phone number",
+    phoneVerificationNotice: "We'll call or text you to confirm your number. Standard message and data rates apply.",
+    continue: "Continue",
+    or: "or",
+    continueWithGoogle: "Continue with Google",
+    continueWithFacebook: "Continue with Facebook",
     
     // Holibayt Pay Page Translations - POLISHED ENGLISH COPY
     holibaytPayHero: "Secure Real Estate Payments",
@@ -1230,6 +1244,20 @@ export const buyRentTranslations = {
     verifiedDocuments: "وثائق موثقة",
     meetYourHostDescription: "مضيف ذو خبرة وموثق، ملتزم بتقديم خدمة استثنائية وضمان إقامة مريحة لك.",
     allVerifiedSellersDisclaimer: "جميع البائعين الموثقين في Holibayt يخضعون لفحوصات الهوية والوثائق قبل الإدراج.",
+    
+    // Authentication Modal Translations
+    loginOrSignup: "تسجيل الدخول أو الاشتراك",
+    country: "الدولة/المنطقة",
+    algeria: "الجزائر",
+    france: "فرنسا",
+    usa: "الولايات المتحدة",
+    uk: "المملكة المتحدة",
+    phoneNumber: "رقم الهاتف",
+    phoneVerificationNotice: "سنتصل بك أو نرسل لك رسالة نصية لتأكيد رقمك. تطبق أسعار الرسائل والبيانات القياسية.",
+    continue: "متابعة",
+    or: "أو",
+    continueWithGoogle: "المتابعة مع Google",
+    continueWithFacebook: "المتابعة مع Facebook",
     
     // Holibayt Pay Page Translations - النسخة العربية المحسنة
     holibaytPayHero: "مدفوعات عقارية آمنة",

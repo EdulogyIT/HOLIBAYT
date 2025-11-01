@@ -300,11 +300,12 @@ export const MapboxPropertyMap = ({ properties }: MapboxPropertyMapProps) => {
         el.style.cssText = `
           background:#FF385C;color:#fff;padding:6px 10px;border-radius:999px;
           font-weight:700;font-size:12px;white-space:nowrap;box-shadow:0 2px 10px rgba(0,0,0,.25);
-          border:2px solid #fff;cursor:pointer;transform:translateY(-4px);transition:transform .15s ease;
+          border:2px solid #fff;cursor:pointer;transition:box-shadow .15s ease;
+          pointer-events:auto;
         `;
         el.textContent = label;
-        el.onmouseenter = () => (el.style.transform = 'translateY(-4px) scale(1.06)');
-        el.onmouseleave  = () => (el.style.transform = 'translateY(-4px)');
+        el.onmouseenter = () => (el.style.boxShadow = '0 4px 16px rgba(255,56,92,.4)');
+        el.onmouseleave  = () => (el.style.boxShadow = '0 2px 10px rgba(0,0,0,.25)');
         el.addEventListener('click', () => navigate(`/property/${p.id}`));
 
         const popup = new mapboxgl.Popup({ offset: 12 }).setHTML(`

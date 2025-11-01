@@ -380,7 +380,7 @@ const Buy = () => {
             </div>
 
             {/* Map column - RIGHT */}
-            <div className="order-2 h-screen">
+            <div className="order-2 lg:min-h-[200vh]">
               <LocalErrorBoundary
                 fallback={
                   <div className="sticky top-24 rounded-2xl ring-1 ring-border bg-background p-8 h-[calc(100vh-7rem)]">
