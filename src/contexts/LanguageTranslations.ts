@@ -73,6 +73,21 @@ export const buyRentTranslations = {
     pciCompliant: "Conforme PCI-DSS et Sécurisé par Stripe",
     testimonialText: "Grâce à Holibayt Pay, j'ai pu louer en toute sécurité depuis l'étranger. Le système de séquestre m'a donné une tranquillité d'esprit totale sachant que mon argent était protégé jusqu'à mon emménagement.",
     testimonialAuthor: "— Sarah M., Locataire de France",
+    
+    // Authentication Modal Translations
+    loginOrSignup: "Connexion ou inscription",
+    country: "Pays/région",
+    algeria: "Algérie",
+    france: "France",
+    usa: "États-Unis",
+    uk: "Royaume-Uni",
+    phoneNumber: "Numéro de téléphone",
+    phoneVerificationNotice: "Nous vous appellerons ou vous enverrons un SMS pour confirmer votre numéro. Les frais standards de message et de transfert de données s'appliquent.",
+    continue: "Continuer",
+    or: "ou",
+    continueWithGoogle: "Continuer avec Google",
+    continueWithFacebook: "Continuer avec Facebook",
+    
     frequentlyAskedQuestions: "Questions Fréquemment Posées",
     faqSafetyQuestion: "Comment Holibayt Pay™ garde-t-il mon argent en sécurité ?",
     faqSafetyAnswer: "Nous utilisons Stripe, l'un des processeurs de paiement les plus fiables au monde, combiné à une protection de séquestre. Votre paiement est crypté, conservé en sécurité et libéré uniquement après confirmation de la remise de la propriété. Nous ne stockons jamais vos détails de carte.",

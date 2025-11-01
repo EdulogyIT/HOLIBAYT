@@ -336,10 +336,10 @@ const Buy = () => {
                       filtered = filtered.filter((p) => num(p.bathrooms) >= filters.bathrooms);
                     }
 
-                    if (filters.minPrice[0] > 0 || filters.maxPrice[0] < 5_000_000_000) {
+                    if (filters.minPrice > 0 || filters.maxPrice < 5_000_000_000) {
                       filtered = filtered.filter((p) => {
                         const price = num(p.price);
-                        return price >= filters.minPrice[0] && price <= filters.maxPrice[0];
+                        return price >= filters.minPrice && price <= filters.maxPrice;
                       });
                     }
 
@@ -383,8 +383,15 @@ const Buy = () => {
             <div className="order-2 h-screen">
               <LocalErrorBoundary
                 fallback={
-                  <div className="sticky top-24 rounded-2xl ring-1 ring-border bg-background grid place-items-center h-[calc(100vh-7rem)]">
-                    Map unavailable
+                  <div className="sticky top-24 rounded-2xl ring-1 ring-border bg-background p-8 h-[calc(100vh-7rem)]">
+                    <div className="flex flex-col items-center justify-center h-full text-center">
+                      <MapPin className="h-12 w-12 text-muted-foreground mb-4" />
+                      <h3 className="text-lg font-semibold mb-2">Map Unavailable</h3>
+                      <p className="text-sm text-muted-foreground max-w-xs">
+                        The interactive map cannot be displayed on this device. 
+                        Please use the list view to browse properties.
+                      </p>
+                    </div>
                   </div>
                 }
               >
@@ -403,6 +410,7 @@ const Buy = () => {
         <AIChatBox />
       </main>
       <Footer />
+      <AuthenticationModal isOpen={authModalOpen} onClose={() => setAuthModalOpen(false)} />
     </div>
   );
 };
