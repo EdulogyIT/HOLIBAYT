@@ -143,6 +143,26 @@ const PublishProperty = () => {
         return;
       }
 
+      // Update host profile if they opted to create a host ad
+      if (formData.createHostAd) {
+        const { error: profileError } = await supabase
+          .from('profiles')
+          .update({
+            has_host_ad: true,
+            profession: formData.hostProfession || null,
+            host_message: formData.hostMessage || null,
+            pets_info: formData.hostPetsInfo || null,
+            passions: formData.hostPassions || null,
+            hosting_since: new Date().toISOString().split('T')[0], // Set today as hosting start date if not already set
+          })
+          .eq('id', user.id);
+
+        if (profileError) {
+          console.error('Profile update error:', profileError);
+          // Don't fail the whole submission if profile update fails
+        }
+      }
+
       toast({
         title: t('propertyPublished'),
         description: t('propertySubmittedSuccess'),

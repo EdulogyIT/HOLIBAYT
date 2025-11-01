@@ -122,6 +122,13 @@ interface FormData {
     fireExtinguisher: boolean;
     securityCameras: boolean;
   };
+  
+  // Host Ad (Step 5)
+  createHostAd: boolean;
+  hostProfession: string;
+  hostMessage: string;
+  hostPetsInfo: string;
+  hostPassions: string;
 }
 
 interface PublishPropertyStepsProps {
@@ -219,6 +226,11 @@ const PublishPropertySteps = ({ onSubmit, isSubmitting = false }: PublishPropert
       fireExtinguisher: false,
       securityCameras: false,
     },
+    createHostAd: false,
+    hostProfession: "",
+    hostMessage: "",
+    hostPetsInfo: "",
+    hostPassions: "",
   });
 
   // Auto-save to localStorage every 30 seconds
@@ -1315,6 +1327,89 @@ const PublishPropertySteps = ({ onSubmit, isSubmitting = false }: PublishPropert
                   </div>
                 </div>
               </div>
+
+              {/* Host Ad Section */}
+              <Card className="border-primary/20 bg-gradient-to-br from-background to-primary/5">
+                <CardHeader>
+                  <div className="flex items-center justify-between">
+                    <div className="space-y-1">
+                      <CardTitle className="text-xl font-playfair">Create Your Host Profile</CardTitle>
+                      <p className="text-sm text-muted-foreground">
+                        Stand out by creating a host ad that showcases your personality and helps guests get to know you better
+                      </p>
+                    </div>
+                    <Award className="w-8 h-8 text-primary" />
+                  </div>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="flex items-center space-x-2">
+                    <Checkbox
+                      id="createHostAd"
+                      checked={formData.createHostAd}
+                      onCheckedChange={(checked) => handleInputChange("createHostAd", checked as boolean)}
+                    />
+                    <Label htmlFor="createHostAd" className="font-semibold cursor-pointer">
+                      Yes, I want to create a host ad (Recommended)
+                    </Label>
+                  </div>
+
+                  {formData.createHostAd && (
+                    <div className="space-y-4 pt-4 border-t">
+                      <div className="space-y-2">
+                        <Label htmlFor="hostProfession">My Profession</Label>
+                        <Input
+                          id="hostProfession"
+                          placeholder="e.g., Real Estate Agent, Architect, Teacher"
+                          value={formData.hostProfession}
+                          onChange={(e) => handleInputChange("hostProfession", e.target.value)}
+                        />
+                      </div>
+                      
+                      <div className="space-y-2">
+                        <Label htmlFor="hostMessage">Message for Travelers</Label>
+                        <Textarea
+                          id="hostMessage"
+                          placeholder="Share what makes you a great host and what guests can expect from their stay..."
+                          value={formData.hostMessage}
+                          onChange={(e) => handleInputChange("hostMessage", e.target.value)}
+                          rows={3}
+                        />
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label htmlFor="hostPetsInfo">About My Pets (Optional)</Label>
+                        <Input
+                          id="hostPetsInfo"
+                          placeholder="e.g., I have a friendly dog named Max"
+                          value={formData.hostPetsInfo}
+                          onChange={(e) => handleInputChange("hostPetsInfo", e.target.value)}
+                        />
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label htmlFor="hostPassions">My Passions & Interests</Label>
+                        <Textarea
+                          id="hostPassions"
+                          placeholder="Share your hobbies, interests, and what you love about your city..."
+                          value={formData.hostPassions}
+                          onChange={(e) => handleInputChange("hostPassions", e.target.value)}
+                          rows={3}
+                        />
+                      </div>
+
+                      <div className="p-4 bg-primary/5 rounded-lg border border-primary/10">
+                        <p className="text-sm text-muted-foreground">
+                          <strong className="text-foreground">Why create a host ad?</strong><br />
+                          • Build trust with potential guests<br />
+                          • Stand out from other listings<br />
+                          • Increase your booking rate by up to 40%<br />
+                          • Showcase your properties in a featured carousel
+                        </p>
+                      </div>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
             </div>
           )}
         </CardContent>

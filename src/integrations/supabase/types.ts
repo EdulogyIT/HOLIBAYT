@@ -1078,6 +1078,10 @@ export type Database = {
           average_rating: number | null
           created_at: string
           email: string
+          has_host_ad: boolean | null
+          hobbies: string | null
+          host_message: string | null
+          hosting_since: string | null
           id: string
           id_verified: boolean | null
           is_superhost: boolean | null
@@ -1087,6 +1091,9 @@ export type Database = {
           last_login_at: string | null
           name: string | null
           ownership_verified: boolean | null
+          passions: string | null
+          pets_info: string | null
+          profession: string | null
           response_rate: number | null
           role: Database["public"]["Enums"]["app_role"]
           spoken_languages: Json | null
@@ -1102,6 +1109,10 @@ export type Database = {
           average_rating?: number | null
           created_at?: string
           email: string
+          has_host_ad?: boolean | null
+          hobbies?: string | null
+          host_message?: string | null
+          hosting_since?: string | null
           id: string
           id_verified?: boolean | null
           is_superhost?: boolean | null
@@ -1111,6 +1122,9 @@ export type Database = {
           last_login_at?: string | null
           name?: string | null
           ownership_verified?: boolean | null
+          passions?: string | null
+          pets_info?: string | null
+          profession?: string | null
           response_rate?: number | null
           role?: Database["public"]["Enums"]["app_role"]
           spoken_languages?: Json | null
@@ -1126,6 +1140,10 @@ export type Database = {
           average_rating?: number | null
           created_at?: string
           email?: string
+          has_host_ad?: boolean | null
+          hobbies?: string | null
+          host_message?: string | null
+          hosting_since?: string | null
           id?: string
           id_verified?: boolean | null
           is_superhost?: boolean | null
@@ -1135,6 +1153,9 @@ export type Database = {
           last_login_at?: string | null
           name?: string | null
           ownership_verified?: boolean | null
+          passions?: string | null
+          pets_info?: string | null
+          profession?: string | null
           response_rate?: number | null
           role?: Database["public"]["Enums"]["app_role"]
           spoken_languages?: Json | null
@@ -1715,18 +1736,12 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      auto_complete_bookings: {
-        Args: Record<PropertyKey, never>
-        Returns: number
-      }
+      auto_complete_bookings: { Args: never; Returns: number }
       calculate_avg_booking_value: {
         Args: { days_back?: number }
         Returns: number
       }
-      calculate_avg_response_time: {
-        Args: Record<PropertyKey, never>
-        Returns: unknown
-      }
+      calculate_avg_response_time: { Args: never; Returns: unknown }
       calculate_conversion_rate: {
         Args: { days_back?: number }
         Returns: number
@@ -1735,10 +1750,7 @@ export type Database = {
         Args: { duration: number; start_d: string }
         Returns: string
       }
-      calculate_platform_gmv: {
-        Args: { days_back?: number }
-        Returns: number
-      }
+      calculate_platform_gmv: { Args: { days_back?: number }; Returns: number }
       get_booking_property_category: {
         Args: { booking_id_param: string }
         Returns: string
@@ -1750,14 +1762,8 @@ export type Database = {
         }
         Returns: boolean
       }
-      is_host: {
-        Args: { user_uuid: string }
-        Returns: boolean
-      }
-      is_platform_in_maintenance: {
-        Args: Record<PropertyKey, never>
-        Returns: boolean
-      }
+      is_host: { Args: { user_uuid: string }; Returns: boolean }
+      is_platform_in_maintenance: { Args: never; Returns: boolean }
     }
     Enums: {
       app_role: "user" | "host" | "admin"

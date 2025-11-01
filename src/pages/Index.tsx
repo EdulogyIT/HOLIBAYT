@@ -10,6 +10,7 @@ import TestimonialsCarousel from "@/components/TestimonialsCarousel";
 import AIChatBox from "@/components/AIChatBox";
 import SEOHead from "@/components/SEOHead";
 import { AuthenticationModal } from "@/components/AuthenticationModal";
+import { HostAdsCarousel } from "@/components/HostAdsCarousel";
 
 const Index = () => {
   const [authModalOpen, setAuthModalOpen] = useState(false);
@@ -56,6 +57,9 @@ const Index = () => {
         </div>
         <div className="py-1">
           <TestimonialsCarousel />
+        </div>
+        <div className="py-1">
+          <HostAdsCarousel />
         </div>
         <div className="py-1">
           <ServicesSection />
