@@ -48,6 +48,7 @@ export const AdminLayout = ({ children }: AdminLayoutProps) => {
   const adminMenuItems = [
     { title: t('admin.dashboard'), url: '/admin', icon: LayoutDashboard },
     { title: t('admin.properties'), url: '/admin/properties', icon: Building2 },
+    { title: 'Pricing', url: '/admin/pricing', icon: Calendar },
     { title: t('admin.hostsGuests'), url: '/admin/users', icon: Users },
     { title: t('admin.kycVerification'), url: '/admin/kyc', icon: ShieldCheck },
     { title: t('admin.superhosts'), url: '/admin/superhosts', icon: Users },

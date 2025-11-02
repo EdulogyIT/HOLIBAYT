@@ -58,6 +58,8 @@ interface Property {
   commission_rate?: number;
   check_in_time?: string;
   check_out_time?: string;
+  min_nights?: number;
+  max_nights?: number;
   fees?: any;
   verified?: boolean;
   financing_available?: boolean;
@@ -498,6 +500,20 @@ const Property = () => {
                       </span>
                     )}
                   </div>
+                  
+                  {/* Check-in/Check-out Times */}
+                  {property.category === 'short-stay' && (
+                    <div className="grid grid-cols-2 gap-4 pt-4 border-t">
+                      <div className="text-sm">
+                        <p className="text-muted-foreground">Check-in</p>
+                        <p className="font-semibold">After {property.check_in_time || '3:00 PM'}</p>
+                      </div>
+                      <div className="text-sm">
+                        <p className="text-muted-foreground">Check-out</p>
+                        <p className="font-semibold">Before {property.check_out_time || '11:00 AM'}</p>
+                      </div>
+                    </div>
+                  )}
                 </CardHeader>
                 <CardContent className="space-y-4">
                   {property.category === 'short-stay' && (
@@ -507,8 +523,30 @@ const Property = () => {
                         basePrice={property.price}
                         priceType={property.price_type}
                         currency={property.price_currency}
+                        minNights={property.min_nights || 1}
+                        maxNights={property.max_nights || 365}
                         onDateSelect={(dates) => setSelectedDates(dates)}
                       />
+                      
+                      {/* Nights & Price Calculation */}
+                      {selectedDates.checkIn && selectedDates.checkOut && (
+                        <div className="bg-primary/5 p-4 rounded-lg space-y-2">
+                          <div className="flex justify-between text-sm">
+                            <span className="text-muted-foreground">
+                              {Math.ceil((selectedDates.checkOut.getTime() - selectedDates.checkIn.getTime()) / (1000 * 60 * 60 * 24))} nights
+                            </span>
+                            <span className="font-semibold">
+                              {formatPrice(
+                                Number(property.price) * Math.ceil((selectedDates.checkOut.getTime() - selectedDates.checkIn.getTime()) / (1000 * 60 * 60 * 24)),
+                                'total',
+                                property.price_currency
+                              )}
+                            </span>
+                          </div>
+                          <p className="text-xs text-muted-foreground">Total before fees and taxes</p>
+                        </div>
+                      )}
+                      
                       <GuestsSelector
                         value={guestCounts}
                         onChange={setGuestCounts}

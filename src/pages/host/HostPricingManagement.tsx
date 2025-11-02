@@ -16,6 +16,7 @@ import { format } from 'date-fns';
 import { useParams } from 'react-router-dom';
 import { PricingRulesSection } from '@/components/host/PricingRulesSection';
 import { PricingFeesSection } from '@/components/host/PricingFeesSection';
+import { SmartPricingSection } from '@/components/host/SmartPricingSection';
 
 interface SeasonalPrice {
   id?: string;
@@ -35,6 +36,7 @@ export const HostPricingManagement = () => {
   const [seasonalPrices, setSeasonalPrices] = useState<SeasonalPrice[]>([]);
   const [pricingRules, setPricingRules] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [property, setProperty] = useState<any>(null);
   const [weekendMultiplier, setWeekendMultiplier] = useState(1.0);
   
   // New seasonal price form
@@ -233,6 +235,13 @@ export const HostPricingManagement = () => {
           </div>
         </CardContent>
       </Card>
+
+      {/* Smart Pricing Section */}
+      <SmartPricingSection
+        propertyId={propertyId}
+        basePrice={parseFloat(basePrice)}
+        currency={property?.price_currency || 'DZD'}
+      />
 
       <Card>
         <CardHeader>

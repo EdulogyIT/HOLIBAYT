@@ -2,16 +2,22 @@ import { useState, useEffect } from 'react';
 import { Calendar } from '@/components/ui/calendar';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { supabase } from '@/integrations/supabase/client';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useCurrency } from '@/contexts/CurrencyContext';
-import { format, eachDayOfInterval, parseISO, isSameDay } from 'date-fns';
+import { format, eachDayOfInterval, parseISO, isSameDay, differenceInDays } from 'date-fns';
+import { X, TrendingDown, TrendingUp } from 'lucide-react';
+import { calculateSmartPrice } from '@/utils/smartPricingCalculator';
+import { toast } from 'sonner';
 
 interface PropertyAvailabilityCalendarProps {
   propertyId: string;
   basePrice: string;
   priceType: string;
   currency?: string;
+  minNights?: number;
+  maxNights?: number;
   onDateSelect?: (dates: { checkIn: Date | undefined; checkOut: Date | undefined }) => void;
 }
 
@@ -20,6 +26,14 @@ interface SeasonalPrice {
   end_date: string;
   price_per_night: number;
   season_name?: string;
+  weekend_multiplier?: number;
+}
+
+interface DayPricing {
+  date: Date;
+  price: number;
+  isSmartPrice: boolean;
+  smartPriceReason?: string;
 }
 
 export const PropertyAvailabilityCalendar = ({
@@ -27,6 +41,8 @@ export const PropertyAvailabilityCalendar = ({
   basePrice,
   priceType,
   currency = 'DZD',
+  minNights = 1,
+  maxNights = 365,
   onDateSelect
 }: PropertyAvailabilityCalendarProps) => {
   const { t } = useLanguage();
@@ -35,6 +51,7 @@ export const PropertyAvailabilityCalendar = ({
   const [seasonalPrices, setSeasonalPrices] = useState<SeasonalPrice[]>([]);
   const [dateRange, setDateRange] = useState<{ from: Date | undefined; to: Date | undefined }>({ from: undefined, to: undefined });
   const [loading, setLoading] = useState(true);
+  const [dayPricing, setDayPricing] = useState<Map<string, DayPricing>>(new Map());
 
   useEffect(() => {
     fetchBookedDates();
@@ -103,10 +120,30 @@ export const PropertyAvailabilityCalendar = ({
 
   const handleDateSelect = (range: { from: Date | undefined; to: Date | undefined } | undefined) => {
     if (range) {
+      // Validate min/max nights
+      if (range.from && range.to) {
+        const nights = differenceInDays(range.to, range.from);
+        if (nights < minNights) {
+          toast.error(`Minimum stay is ${minNights} night${minNights > 1 ? 's' : ''}`);
+          return;
+        }
+        if (nights > maxNights) {
+          toast.error(`Maximum stay is ${maxNights} nights`);
+          return;
+        }
+      }
+      
       setDateRange(range);
       if (onDateSelect) {
         onDateSelect({ checkIn: range.from, checkOut: range.to });
       }
+    }
+  };
+
+  const clearDates = () => {
+    setDateRange({ from: undefined, to: undefined });
+    if (onDateSelect) {
+      onDateSelect({ checkIn: undefined, checkOut: undefined });
     }
   };
 
@@ -123,64 +160,95 @@ export const PropertyAvailabilityCalendar = ({
   }
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center justify-between">
-          <span>{t('selectDates') || 'Select Dates'}</span>
+    <div className="space-y-4">
+      <Card className="overflow-hidden">
+        <CardHeader className="bg-gradient-to-r from-primary/10 to-primary/5">
+          <div className="flex items-center justify-between">
+            <CardTitle className="text-lg">{t('selectDates') || 'Select Dates'}</CardTitle>
+            {(dateRange.from || dateRange.to) && (
+              <Button variant="ghost" size="sm" onClick={clearDates} className="h-8">
+                <X className="w-4 h-4 mr-1" />
+                Clear
+              </Button>
+            )}
+          </div>
           {priceType === 'night' && (
-            <Badge variant="secondary">
-              {formatPrice(basePrice, priceType, currency)}/night
-            </Badge>
+            <div className="flex items-center gap-2 mt-2">
+              <Badge variant="secondary" className="text-base">
+                {formatPrice(basePrice, priceType, currency)}/night
+              </Badge>
+              <span className="text-xs text-muted-foreground">
+                • {minNights} night min • {maxNights} night max
+              </span>
+            </div>
           )}
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
-        <Calendar
-          mode="range"
-          selected={dateRange}
-          onSelect={handleDateSelect}
-          numberOfMonths={2}
-          disabled={(date) => {
-            // Disable past dates
-            if (date < new Date()) return true;
-            // Disable booked dates
-            if (isDateBooked(date)) return true;
-            return false;
-          }}
-          modifiers={{
-            booked: bookedDates,
-          }}
-          modifiersClassNames={{
-            booked: 'line-through opacity-50 bg-destructive/10',
-          }}
-          className="rounded-md border"
-        />
-        <div className="mt-4 space-y-2">
-          <div className="flex items-center justify-between text-sm">
+        </CardHeader>
+        <CardContent className="p-4">
+          <Calendar
+            mode="range"
+            selected={dateRange}
+            onSelect={handleDateSelect}
+            numberOfMonths={2}
+            disabled={(date) => {
+              if (date < new Date()) return true;
+              if (isDateBooked(date)) return true;
+              return false;
+            }}
+            modifiers={{
+              booked: bookedDates,
+            }}
+            modifiersClassNames={{
+              booked: 'line-through opacity-50 bg-destructive/10 cursor-not-allowed',
+            }}
+            className="rounded-md border-0"
+          />
+        </CardContent>
+      </Card>
+
+      {/* Pricing Legend */}
+      <Card>
+        <CardContent className="pt-4 space-y-3">
+          <div className="grid grid-cols-2 gap-2 text-sm">
             <div className="flex items-center gap-2">
-              <div className="w-4 h-4 rounded bg-primary"></div>
-              <span>{t('available') || 'Available'}</span>
+              <div className="w-3 h-3 rounded-full bg-primary"></div>
+              <span className="text-muted-foreground">{t('available') || 'Available'}</span>
             </div>
             <div className="flex items-center gap-2">
-              <div className="w-4 h-4 rounded bg-destructive/10 line-through"></div>
-              <span>{t('booked') || 'Booked'}</span>
+              <div className="w-3 h-3 rounded-full bg-destructive/20 line-through"></div>
+              <span className="text-muted-foreground">{t('booked') || 'Booked'}</span>
             </div>
           </div>
+
           {seasonalPrices.length > 0 && (
-            <div className="pt-2 border-t">
-              <p className="text-sm font-medium mb-2">{t('seasonalPricing') || 'Seasonal Pricing'}:</p>
-              <div className="space-y-1">
+            <div className="pt-3 border-t">
+              <p className="text-sm font-semibold mb-2 flex items-center gap-2">
+                <TrendingUp className="w-4 h-4 text-primary" />
+                {t('seasonalPricing') || 'Seasonal Pricing'}
+              </p>
+              <div className="space-y-2">
                 {seasonalPrices.map((sp, idx) => (
-                  <div key={idx} className="text-xs text-muted-foreground flex justify-between">
-                    <span>{sp.season_name || `${format(parseISO(sp.start_date), 'MMM dd')} - ${format(parseISO(sp.end_date), 'MMM dd')}`}</span>
-                    <span className="font-medium">{formatPrice(sp.price_per_night.toString(), 'night', currency)}</span>
+                  <div key={idx} className="flex justify-between items-center p-2 rounded-lg bg-muted/50 hover:bg-muted transition-colors">
+                    <div className="flex flex-col">
+                      <span className="text-xs font-medium">{sp.season_name || 'Season'}</span>
+                      <span className="text-xs text-muted-foreground">
+                        {format(parseISO(sp.start_date), 'MMM dd')} - {format(parseISO(sp.end_date), 'MMM dd')}
+                      </span>
+                    </div>
+                    <div className="text-right">
+                      <span className="font-semibold text-primary">{formatPrice(sp.price_per_night.toString(), 'night', currency)}</span>
+                      {sp.weekend_multiplier && sp.weekend_multiplier !== 1 && (
+                        <span className="text-xs text-muted-foreground block">
+                          +{Math.round((sp.weekend_multiplier - 1) * 100)}% weekends
+                        </span>
+                      )}
+                    </div>
                   </div>
                 ))}
               </div>
             </div>
           )}
-        </div>
-      </CardContent>
-    </Card>
+        </CardContent>
+      </Card>
+    </div>
   );
 };

@@ -45,6 +45,7 @@ import AdminSuperhost from "./pages/admin/AdminSuperhost";
 import AdminCommissions from "./pages/admin/AdminCommissions";
 import AdminKYC from "./pages/admin/AdminKYC";
 import AdminTestimonials from "./pages/admin/AdminTestimonials";
+import AdminPricing from "./pages/admin/AdminPricing";
 import CreateBlog from "./pages/host/CreateBlog";
 import HostDashboard from "./pages/host/HostDashboard";
 import HostOnboarding from "./pages/host/HostOnboarding";
@@ -210,6 +211,7 @@ const App = () => (
                     <Route path="testimonials" element={<MaintenanceMode><AdminTestimonials /></MaintenanceMode>} />
                     <Route path="settings" element={<MaintenanceMode><AdminSettings /></MaintenanceMode>} />
                     <Route path="kyc" element={<MaintenanceMode><AdminKYC /></MaintenanceMode>} />
+                    <Route path="pricing" element={<MaintenanceMode><AdminPricing /></MaintenanceMode>} />
                     <Route path="lawyers" element={<MaintenanceMode><AdminLawyers /></MaintenanceMode>} />
                     <Route path="lawyer-requests" element={<MaintenanceMode><AdminLawyerRequests /></MaintenanceMode>} />
                     <Route path="document-templates" element={<MaintenanceMode><AdminDocumentTemplates /></MaintenanceMode>} />

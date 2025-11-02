@@ -1300,6 +1300,8 @@ export type Database = {
           latitude: number | null
           location: string
           longitude: number | null
+          max_nights: number | null
+          min_nights: number | null
           minimum_rental_term: string | null
           new_build: boolean | null
           occupancy_available_from: string | null
@@ -1355,6 +1357,8 @@ export type Database = {
           latitude?: number | null
           location: string
           longitude?: number | null
+          max_nights?: number | null
+          min_nights?: number | null
           minimum_rental_term?: string | null
           new_build?: boolean | null
           occupancy_available_from?: string | null
@@ -1410,6 +1414,8 @@ export type Database = {
           latitude?: number | null
           location?: string
           longitude?: number | null
+          max_nights?: number | null
+          min_nights?: number | null
           minimum_rental_term?: string | null
           new_build?: boolean | null
           occupancy_available_from?: string | null
@@ -1778,6 +1784,56 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      smart_pricing_settings: {
+        Row: {
+          aggressiveness_level: string | null
+          consider_events: boolean | null
+          consider_occupancy: boolean | null
+          consider_seasonality: boolean | null
+          created_at: string | null
+          id: string
+          is_enabled: boolean | null
+          max_price: number
+          min_price: number
+          property_id: string
+          updated_at: string | null
+        }
+        Insert: {
+          aggressiveness_level?: string | null
+          consider_events?: boolean | null
+          consider_occupancy?: boolean | null
+          consider_seasonality?: boolean | null
+          created_at?: string | null
+          id?: string
+          is_enabled?: boolean | null
+          max_price: number
+          min_price: number
+          property_id: string
+          updated_at?: string | null
+        }
+        Update: {
+          aggressiveness_level?: string | null
+          consider_events?: boolean | null
+          consider_occupancy?: boolean | null
+          consider_seasonality?: boolean | null
+          created_at?: string | null
+          id?: string
+          is_enabled?: boolean | null
+          max_price?: number
+          min_price?: number
+          property_id?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "smart_pricing_settings_property_id_fkey"
+            columns: ["property_id"]
+            isOneToOne: true
+            referencedRelation: "properties"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_roles: {
         Row: {
