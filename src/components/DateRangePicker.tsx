@@ -13,8 +13,8 @@ interface DateRangePickerProps {
   onChange: (range?: { from?: Date; to?: Date }) => void;
   allowPast?: boolean;
   className?: string;
-  disabledDates?: Date[]; // fully blocked individual dates
-  onClose?: () => void;   // when provided, shows an Apply/Done button
+  disabledDates?: Date[];
+  onApply?: () => void;   // use this to close popover from parent
 }
 
 const localeMap = {
@@ -29,19 +29,19 @@ export function DateRangePicker({
   allowPast = true,
   className,
   disabledDates = [],
-  onClose,
+  onApply,
 }: DateRangePickerProps) {
   const { currentLang, t } = useLanguage();
   const locale = localeMap[currentLang];
 
-  // Normalize "today" to midnight to avoid time-of-day edge cases.
+  // normalize today to midnight
   const today = React.useMemo(() => {
     const d = new Date();
     d.setHours(0, 0, 0, 0);
     return d;
   }, []);
 
-  // SSR-safe responsive month count: start with 2, update after mount.
+  // SSR-safe months: start with 2, adjust after mount
   const [months, setMonths] = React.useState<number>(2);
   React.useEffect(() => {
     const mq = window.matchMedia("(max-width: 640px)");
@@ -57,7 +57,6 @@ export function DateRangePicker({
 
   const disabledMatcher: Matcher[] = [
     ...(allowPast ? [] : [{ before: today }]),
-    // block each provided date
     ...disabledDates.map((d) => ({ from: d, to: d } as Matcher)),
   ];
 
@@ -69,14 +68,21 @@ export function DateRangePicker({
   const hasCompleteRange = Boolean(value?.from && value?.to);
 
   return (
-    <div className={cn("rounded-xl shadow-sm p-3 sm:p-4 bg-background border", className)}>
+    <div
+      className={cn(
+        "rounded-xl shadow-sm bg-background border",
+        // ensure footer never clips
+        "p-3 sm:p-4 max-w-[min(92vw,720px)]",
+        className
+      )}
+      data-testid="date-range-picker"
+    >
       <DayPicker
         mode="range"
         selected={selectedRange}
         onSelect={handleSelect}
         locale={locale}
         showOutsideDays
-        // Use arrow buttons on mobile (1 month), month/year dropdowns on >= sm
         captionLayout={months === 1 ? "buttons" : "dropdown"}
         fromYear={1900}
         toYear={2100}
@@ -86,6 +92,7 @@ export function DateRangePicker({
         components={{
           IconLeft: () => <ChevronLeft className="h-4 w-4" />,
           IconRight: () => <ChevronRight className="h-4 w-4" />,
+          // If you want to guarantee mobile arrow buttons even on desktop, force captionLayout="buttons"
         }}
         classNames={{
           months: "flex flex-col sm:flex-row gap-3 sm:gap-4 sm:space-y-0",
@@ -111,10 +118,11 @@ export function DateRangePicker({
           row: "flex justify-around w-full mt-1",
           cell:
             "relative p-0 text-center text-sm focus-within:relative focus-within:z-20 [&:has([aria-selected])]:bg-accent [&:has([aria-selected].day-outside)]:bg-accent/50 [&:has([aria-selected].day-range-middle)]:rounded-none first:[&:has([aria-selected])]:rounded-l-md last:[&:has([aria-selected])]:rounded-r-md",
-          day: cn(
-            "h-10 w-10 p-0 font-normal aria-selected:opacity-100 rounded-md",
-            "hover:bg-accent hover:text-accent-foreground focus:outline-none focus:ring-2 focus:ring-ring transition-colors"
-          ),
+          day:
+            cn(
+              "h-10 w-10 p-0 font-normal aria-selected:opacity-100 rounded-md",
+              "hover:bg-accent hover:text-accent-foreground focus:outline-none focus:ring-2 focus:ring-ring transition-colors"
+            ),
           day_range_start: "day-range-start rounded-l-md",
           day_range_end: "day-range-end rounded-r-md",
           day_selected:
@@ -124,10 +132,8 @@ export function DateRangePicker({
           day_outside:
             "day-outside text-muted-foreground opacity-50 aria-selected:bg-accent/50 aria-selected:text-muted-foreground aria-selected:opacity-30",
           day_disabled: "text-muted-foreground opacity-50",
-          day_range_middle:
-            "aria-selected:bg-accent aria-selected:text-accent-foreground rounded-none",
+          day_range_middle: "aria-selected:bg-accent aria-selected:text-accent-foreground rounded-none",
           day_hidden: "invisible",
-          // dropdowns
           dropdown:
             "h-9 sm:h-10 px-2 sm:px-4 text-sm sm:text-base bg-white dark:bg-gray-800 border-2 border-input rounded-lg sm:rounded-xl focus:outline-none focus:ring-2 focus:ring-ring min-w-0",
           dropdown_month: "flex-1 min-w-0",
@@ -135,35 +141,33 @@ export function DateRangePicker({
         }}
       />
 
-      {/* Clear + Apply + range preview */}
-      <div className="mt-3 sm:mt-4 flex justify-between items-center">
+      {/* Footer: Clear + Apply + range preview */}
+      <div className="mt-3 sm:mt-4 flex flex-col sm:flex-row gap-2 sm:gap-0 sm:items-center sm:justify-between">
         <Button
           variant="ghost"
           size="sm"
           onClick={handleClear}
-          className="text-sm text-muted-foreground hover:text-foreground"
+          className="text-sm text-muted-foreground hover:text-foreground self-start"
         >
           {t("clear")}
         </Button>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 self-end">
           {value?.from && (
             <div className="text-xs text-muted-foreground">
               {value.from.toLocaleDateString()}{" "}
               {value.to && `- ${value.to.toLocaleDateString()}`}
             </div>
           )}
-          {onClose && (
-            <Button
-              variant="default"
-              size="sm"
-              onClick={onClose}
-              disabled={!hasCompleteRange}
-              className="text-sm"
-            >
-              {t("done") /* or change to t("apply") if you have it */}
-            </Button>
-          )}
+          <Button
+            variant="default"
+            size="sm"
+            onClick={onApply}
+            disabled={!hasCompleteRange}
+            className="text-sm"
+          >
+            {t("apply") || t("done") || "Apply"}
+          </Button>
         </div>
       </div>
     </div>
