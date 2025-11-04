@@ -504,6 +504,27 @@ const Property = () => {
               {/* Reviews */}
               <PropertyReviews propertyId={property.id} hostUserId={property.user_id || ''} />
 
+              {/* Availability (shown above the map, synced with sidebar) */}
+{property.category === "short-stay" && (
+  <Card className="shadow-lg">
+    <CardHeader>
+      <CardTitle className="text-2xl">{t("availability") || "Availability"}</CardTitle>
+    </CardHeader>
+    <CardContent>
+      <PropertyAvailabilityCalendar
+        propertyId={property.id}
+        basePrice={property.price}
+        priceType={property.price_type}
+        currency={property.price_currency}
+        minNights={property.min_nights || 1}
+        maxNights={property.max_nights || 365}
+        onDateSelect={(dates) => setSelectedDates(dates)}  // ← keeps it in sync
+      />
+    </CardContent>
+  </Card>
+)}
+
+
               {/* Location Map - Enhanced "Where you'll be" section */}
               <GooglePropertyMap 
                 location={`${property.location}, ${property.city}, Algeria`}
