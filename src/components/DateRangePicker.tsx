@@ -1,5 +1,6 @@
+// src/components/short-stay/DateRangePicker.tsx
 import * as React from "react";
-import { DayPicker, DateRange } from "react-day-picker";
+import { DayPicker, DateRange, Matcher } from "react-day-picker";
 import { enUS, fr } from "date-fns/locale";
 import "react-day-picker/dist/style.css";
 import { Button } from "@/components/ui/button";
@@ -12,8 +13,8 @@ interface DateRangePickerProps {
   onChange: (range?: { from?: Date; to?: Date }) => void;
   allowPast?: boolean;
   className?: string;
-  disabledDates?: Date[];
-  onClose?: () => void;
+  disabledDates?: Date[]; // fully blocked individual dates
+  onClose?: () => void;   // when provided, shows an Apply/Done button
 }
 
 const localeMap = {
@@ -31,13 +32,17 @@ export function DateRangePicker({
   onClose,
 }: DateRangePickerProps) {
   const { currentLang, t } = useLanguage();
-  const today = new Date();
   const locale = localeMap[currentLang];
 
-  // responsive: 1 month on mobile, 2 on >= sm
-  const [months, setMonths] = React.useState<number>(
-    typeof window !== "undefined" && window.matchMedia("(max-width: 640px)").matches ? 1 : 2
-  );
+  // Normalize "today" to midnight to avoid time-of-day edge cases.
+  const today = React.useMemo(() => {
+    const d = new Date();
+    d.setHours(0, 0, 0, 0);
+    return d;
+  }, []);
+
+  // SSR-safe responsive month count: start with 2, update after mount.
+  const [months, setMonths] = React.useState<number>(2);
   React.useEffect(() => {
     const mq = window.matchMedia("(max-width: 640px)");
     const apply = () => setMonths(mq.matches ? 1 : 2);
@@ -50,15 +55,18 @@ export function DateRangePicker({
     ? { from: value.from, to: value.to }
     : undefined;
 
-  const disabledMatcher = [
+  const disabledMatcher: Matcher[] = [
     ...(allowPast ? [] : [{ before: today }]),
-    ...disabledDates.map((date) => ({ from: date, to: date })),
+    // block each provided date
+    ...disabledDates.map((d) => ({ from: d, to: d } as Matcher)),
   ];
 
   const handleSelect = (range: DateRange | undefined) =>
     onChange(range ? { from: range.from, to: range.to } : undefined);
 
   const handleClear = () => onChange(undefined);
+
+  const hasCompleteRange = Boolean(value?.from && value?.to);
 
   return (
     <div className={cn("rounded-xl shadow-sm p-3 sm:p-4 bg-background border", className)}>
@@ -67,23 +75,20 @@ export function DateRangePicker({
         selected={selectedRange}
         onSelect={handleSelect}
         locale={locale}
-        weekStartsOn={0}
         showOutsideDays
-        /** Use buttons on mobile (1 month) for arrow navigation, dropdown on desktop (2 months) */
+        // Use arrow buttons on mobile (1 month), month/year dropdowns on >= sm
         captionLayout={months === 1 ? "buttons" : "dropdown"}
         fromYear={1900}
         toYear={2100}
         disabled={disabledMatcher}
-        /** responsive months */
         numberOfMonths={months}
         className="pointer-events-auto"
         components={{
-          IconLeft: ({ ...props }) => <ChevronLeft className="h-4 w-4" />,
-          IconRight: ({ ...props }) => <ChevronRight className="h-4 w-4" />,
+          IconLeft: () => <ChevronLeft className="h-4 w-4" />,
+          IconRight: () => <ChevronRight className="h-4 w-4" />,
         }}
         classNames={{
-          months:
-            "flex flex-col sm:flex-row gap-3 sm:gap-4 sm:space-y-0",
+          months: "flex flex-col sm:flex-row gap-3 sm:gap-4 sm:space-y-0",
           month: "space-y-3 w-full",
           caption: "flex justify-center pt-1 pb-3 relative items-center",
           caption_label: months === 1 ? "text-sm font-medium" : "sr-only",
@@ -92,11 +97,11 @@ export function DateRangePicker({
           nav: "flex items-center gap-1",
           nav_button: cn(
             "inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors",
-            "h-10 w-10 sm:h-8 sm:w-8", // Larger touch targets on mobile
-            "bg-background/80 backdrop-blur border border-input", // Better visibility
-            "opacity-100 hover:bg-accent hover:border-accent", // Always visible with hover state
+            "h-10 w-10 sm:h-8 sm:w-8",
+            "bg-background/80 backdrop-blur border border-input",
+            "opacity-100 hover:bg-accent hover:border-accent",
             "disabled:pointer-events-none disabled:opacity-50",
-            "shadow-sm" // Add depth
+            "shadow-sm"
           ),
           nav_button_previous: "absolute left-1",
           nav_button_next: "absolute right-1",
@@ -106,11 +111,10 @@ export function DateRangePicker({
           row: "flex justify-around w-full mt-1",
           cell:
             "relative p-0 text-center text-sm focus-within:relative focus-within:z-20 [&:has([aria-selected])]:bg-accent [&:has([aria-selected].day-outside)]:bg-accent/50 [&:has([aria-selected].day-range-middle)]:rounded-none first:[&:has([aria-selected])]:rounded-l-md last:[&:has([aria-selected])]:rounded-r-md",
-          day:
-            cn(
-              "h-10 w-10 p-0 font-normal aria-selected:opacity-100 rounded-md",
-              "hover:bg-accent hover:text-accent-foreground focus:outline-none focus:ring-2 focus:ring-ring transition-colors"
-            ),
+          day: cn(
+            "h-10 w-10 p-0 font-normal aria-selected:opacity-100 rounded-md",
+            "hover:bg-accent hover:text-accent-foreground focus:outline-none focus:ring-2 focus:ring-ring transition-colors"
+          ),
           day_range_start: "day-range-start rounded-l-md",
           day_range_end: "day-range-end rounded-r-md",
           day_selected:
@@ -120,9 +124,10 @@ export function DateRangePicker({
           day_outside:
             "day-outside text-muted-foreground opacity-50 aria-selected:bg-accent/50 aria-selected:text-muted-foreground aria-selected:opacity-30",
           day_disabled: "text-muted-foreground opacity-50",
-          day_range_middle: "aria-selected:bg-accent aria-selected:text-accent-foreground rounded-none",
+          day_range_middle:
+            "aria-selected:bg-accent aria-selected:text-accent-foreground rounded-none",
           day_hidden: "invisible",
-          /** compact dropdowns on mobile, larger on sm+ */
+          // dropdowns
           dropdown:
             "h-9 sm:h-10 px-2 sm:px-4 text-sm sm:text-base bg-white dark:bg-gray-800 border-2 border-input rounded-lg sm:rounded-xl focus:outline-none focus:ring-2 focus:ring-ring min-w-0",
           dropdown_month: "flex-1 min-w-0",
@@ -130,7 +135,7 @@ export function DateRangePicker({
         }}
       />
 
-      {/* Clear + Done buttons + range preview */}
+      {/* Clear + Apply + range preview */}
       <div className="mt-3 sm:mt-4 flex justify-between items-center">
         <Button
           variant="ghost"
@@ -153,9 +158,10 @@ export function DateRangePicker({
               variant="default"
               size="sm"
               onClick={onClose}
+              disabled={!hasCompleteRange}
               className="text-sm"
             >
-              {t("done")}
+              {t("done") /* or change to t("apply") if you have it */}
             </Button>
           )}
         </div>
