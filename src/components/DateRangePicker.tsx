@@ -9,7 +9,7 @@ import { cn } from "@/lib/utils";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 // ✅ Import PopoverClose so the Apply button can close the popover itself
-import { PopoverClose } from "@radix-ui/react-popover";
+import { PopoverClose } from "@/components/ui/popover";
 
 interface DateRangePickerProps {
   value?: { from?: Date; to?: Date };
