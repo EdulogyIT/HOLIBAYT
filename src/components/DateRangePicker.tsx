@@ -8,13 +8,16 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { cn } from "@/lib/utils";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
+// ✅ Import PopoverClose so the Apply button can close the popover itself
+import { PopoverClose } from "@radix-ui/react-popover";
+
 interface DateRangePickerProps {
   value?: { from?: Date; to?: Date };
   onChange: (range?: { from?: Date; to?: Date }) => void;
   allowPast?: boolean;
   className?: string;
   disabledDates?: Date[]; // blocked dates
-  onApply?: () => void;   // called when user clicks Apply
+  onApply?: () => void;   // optional: parent can still react to Apply
 }
 
 const localeMap = {
@@ -75,6 +78,7 @@ export function DateRangePicker({
     e.preventDefault();
     e.stopPropagation();
     if (!hasCompleteRange) return;
+    // Let parent do extra work (like pricing fetch), but closing is guaranteed by PopoverClose
     onApply?.();
   };
 
@@ -169,16 +173,19 @@ export function DateRangePicker({
               {value.to && `- ${value.to.toLocaleDateString()}`}
             </div>
           )}
-          <Button
-            variant="default"
-            size="sm"
-            type="button"
-            onClick={handleApply}
-            disabled={!hasCompleteRange}
-            className="text-sm"
-          >
-            {applyLabel}
-          </Button>
+          {/* ✅ This will ALWAYS close the popover (even if parent forgot onOpenChange) */}
+          <PopoverClose asChild>
+            <Button
+              variant="default"
+              size="sm"
+              type="button"
+              onClick={handleApply}
+              disabled={!hasCompleteRange}
+              className="text-sm"
+            >
+              {applyLabel}
+            </Button>
+          </PopoverClose>
         </div>
       </div>
     </div>
