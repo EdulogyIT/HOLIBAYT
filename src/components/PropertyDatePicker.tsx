@@ -18,47 +18,46 @@ interface PropertyDatePickerProps {
 const PropertyDatePicker = ({ propertyId, onDateChange }: PropertyDatePickerProps) => {
   const { t } = useLanguage();
   const { toast } = useToast();
+
   const [dateRange, setDateRange] = useState<{ from?: Date; to?: Date }>();
   const [bookedDates, setBookedDates] = useState<Date[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
+  // ✅ control the popover so Apply can close it
+  const [open, setOpen] = useState(false);
+
   useEffect(() => {
     fetchBookedDates();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [propertyId]);
 
   const fetchBookedDates = async () => {
     try {
       setIsLoading(true);
       const { data: bookings, error } = await supabase
-        .from('bookings')
-        .select('check_in_date, check_out_date')
-        .eq('property_id', propertyId)
-        .in('status', ['confirmed', 'pending']);
+        .from("bookings")
+        .select("check_in_date, check_out_date")
+        .eq("property_id", propertyId)
+        .in("status", ["confirmed", "pending"]);
 
       if (error) throw error;
 
-      console.log('Fetched bookings for property:', propertyId, bookings);
-
-      // Generate all dates between check-in and check-out for each booking
       const allBookedDates: Date[] = [];
       bookings?.forEach((booking) => {
         const checkIn = new Date(booking.check_in_date);
         const checkOut = new Date(booking.check_out_date);
-        
-        // Include all dates from check-in to check-out (inclusive)
         for (let d = new Date(checkIn); d <= checkOut; d.setDate(d.getDate() + 1)) {
           allBookedDates.push(new Date(d));
         }
       });
 
-      console.log('Booked dates:', allBookedDates);
       setBookedDates(allBookedDates);
     } catch (error) {
-      console.error('Error fetching booked dates:', error);
+      console.error("Error fetching booked dates:", error);
       toast({
         title: "Error",
         description: "Failed to fetch booking availability",
-        variant: "destructive"
+        variant: "destructive",
       });
     } finally {
       setIsLoading(false);
@@ -66,33 +65,31 @@ const PropertyDatePicker = ({ propertyId, onDateChange }: PropertyDatePickerProp
   };
 
   const handleDateRangeChange = (range?: { from?: Date; to?: Date }) => {
-    // Check if any selected dates are booked
+    // block selection that overlaps booked dates
     if (range?.from && range?.to) {
       const selectedDates: Date[] = [];
       for (let d = new Date(range.from); d <= range.to; d.setDate(d.getDate() + 1)) {
         selectedDates.push(new Date(d));
       }
 
-      const hasBookedDate = selectedDates.some(selectedDate => 
-        bookedDates.some(bookedDate => 
-          selectedDate.toDateString() === bookedDate.toDateString()
-        )
+      const hasBookedDate = selectedDates.some((selectedDate) =>
+        bookedDates.some((bookedDate) => selectedDate.toDateString() === bookedDate.toDateString())
       );
 
       if (hasBookedDate) {
         toast({
           title: "Dates Unavailable",
           description: "Some of the selected dates are already booked. Please choose different dates.",
-          variant: "destructive"
+          variant: "destructive",
         });
         return;
       }
     }
 
     setDateRange(range);
-    onDateChange({ 
-      checkIn: range?.from, 
-      checkOut: range?.to 
+    onDateChange({
+      checkIn: range?.from,
+      checkOut: range?.to,
     });
   };
 
@@ -108,11 +105,12 @@ const PropertyDatePicker = ({ propertyId, onDateChange }: PropertyDatePickerProp
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="font-playfair">{t('stayDates')}</CardTitle>
+        <CardTitle className="font-playfair">{t("stayDates")}</CardTitle>
       </CardHeader>
+
       <CardContent className="space-y-4">
         {/* Date Range Picker */}
-        <Popover>
+        <Popover open={open} onOpenChange={setOpen} modal={false}>
           <PopoverTrigger asChild>
             <Button
               variant="outline"
@@ -129,16 +127,19 @@ const PropertyDatePicker = ({ propertyId, onDateChange }: PropertyDatePickerProp
                   format(dateRange.from, "dd/MM/yyyy")
                 )
               ) : (
-                t('selectDates')
+                t("selectDates")
               )}
             </Button>
           </PopoverTrigger>
-          <PopoverContent className="w-auto p-0" align="start">
+
+          <PopoverContent className="w-auto p-0 z-[1000]" align="start">
             <DateRangePicker
               value={dateRange}
               onChange={handleDateRangeChange}
               allowPast={false}
               disabledDates={bookedDates}
+              // ✅ this makes the Apply button close the popover
+              onApply={() => setOpen(false)}
             />
           </PopoverContent>
         </Popover>
@@ -147,12 +148,12 @@ const PropertyDatePicker = ({ propertyId, onDateChange }: PropertyDatePickerProp
         {dateRange?.from && dateRange?.to && (
           <div className="p-4 bg-muted/50 rounded-lg">
             <div className="text-center space-y-2">
-              <div className="text-sm font-inter text-muted-foreground">{t('stayDuration')}</div>
+              <div className="text-sm font-inter text-muted-foreground">{t("stayDuration")}</div>
               <div className="text-2xl font-playfair font-bold text-primary">
-                {calculateNights()} {calculateNights() === 1 ? t('night') : t('nights')}
+                {calculateNights()} {calculateNights() === 1 ? t("night") : t("nights")}
               </div>
               <div className="text-xs font-inter text-muted-foreground">
-                {t('from')} {format(dateRange.from, "dd MMM")} {t('to')} {format(dateRange.to, "dd MMM yyyy")}
+                {t("from")} {format(dateRange.from, "dd MMM")} {t("to")} {format(dateRange.to, "dd MMM yyyy")}
               </div>
             </div>
           </div>
@@ -160,7 +161,7 @@ const PropertyDatePicker = ({ propertyId, onDateChange }: PropertyDatePickerProp
 
         {/* Quick Selection */}
         <div className="space-y-2">
-          <label className="text-sm font-inter font-medium text-foreground">{t('quickSelection')}</label>
+          <label className="text-sm font-inter font-medium text-foreground">{t("quickSelection")}</label>
           <div className="grid grid-cols-2 gap-2">
             <Button
               variant="outline"
@@ -173,7 +174,7 @@ const PropertyDatePicker = ({ propertyId, onDateChange }: PropertyDatePickerProp
                 handleDateRangeChange({ from: today, to: tomorrow });
               }}
             >
-              {t('oneNight')}
+              {t("oneNight")}
             </Button>
             <Button
               variant="outline"
@@ -186,7 +187,7 @@ const PropertyDatePicker = ({ propertyId, onDateChange }: PropertyDatePickerProp
                 handleDateRangeChange({ from: today, to: weekLater });
               }}
             >
-              {t('oneWeek')}
+              {t("oneWeek")}
             </Button>
             <Button
               variant="outline"
@@ -196,9 +197,7 @@ const PropertyDatePicker = ({ propertyId, onDateChange }: PropertyDatePickerProp
                 const friday = new Date();
                 const dayOfWeek = friday.getDay();
                 const daysUntilFriday = (5 - dayOfWeek + 7) % 7;
-                if (daysUntilFriday === 0 && friday.getDay() === 5) {
-                  // It's already Friday
-                } else {
+                if (!(daysUntilFriday === 0 && friday.getDay() === 5)) {
                   friday.setDate(friday.getDate() + daysUntilFriday);
                 }
                 const sunday = new Date(friday);
@@ -206,7 +205,7 @@ const PropertyDatePicker = ({ propertyId, onDateChange }: PropertyDatePickerProp
                 handleDateRangeChange({ from: friday, to: sunday });
               }}
             >
-              {t('weekend')}
+              {t("weekend")}
             </Button>
             <Button
               variant="outline"
@@ -219,7 +218,7 @@ const PropertyDatePicker = ({ propertyId, onDateChange }: PropertyDatePickerProp
                 handleDateRangeChange({ from: today, to: monthLater });
               }}
             >
-              {t('oneMonth')}
+              {t("oneMonth")}
             </Button>
           </div>
         </div>
