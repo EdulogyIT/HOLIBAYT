@@ -70,7 +70,7 @@ export default function BookingConfirm() {
         .from('properties')
         .select('*')
         .eq('id', propertyId)
-        .single();
+        .maybeSingle();
 
       if (error) throw error;
       setProperty(data);

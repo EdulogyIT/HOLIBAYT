@@ -85,6 +85,8 @@ const Property = () => {
     checkOut: undefined
   });
   const [guestCounts, setGuestCounts] = useState({ adults: 1, children: 0, infants: 0, pets: 0 });
+  const [pricingBreakdown, setPricingBreakdown] = useState<any>(null);
+  const [pricingLoading, setPricingLoading] = useState(false);
   
   useScrollToTop();
 
@@ -94,6 +96,13 @@ const Property = () => {
       fetchReviews();
     }
   }, [id]);
+
+  // Calculate pricing when dates or guests change
+  useEffect(() => {
+    if (property && selectedDates.checkIn && selectedDates.checkOut && property.category === 'short-stay') {
+      calculatePricing();
+    }
+  }, [property, selectedDates, guestCounts]);
 
   const fetchReviews = async () => {
     try {
@@ -106,6 +115,35 @@ const Property = () => {
       setReviews(data || []);
     } catch (error) {
       console.error('Error fetching reviews:', error);
+    }
+  };
+
+  const calculatePricing = async () => {
+    if (!property || !selectedDates.checkIn || !selectedDates.checkOut) return;
+
+    setPricingLoading(true);
+    try {
+      const { calculateBookingPrice } = await import('@/utils/pricingCalculator');
+      const breakdown = await calculateBookingPrice(
+        property.id,
+        selectedDates.checkIn,
+        selectedDates.checkOut,
+        guestCounts.adults + guestCounts.children + guestCounts.infants,
+        guestCounts.pets
+      );
+      setPricingBreakdown(breakdown);
+    } catch (error) {
+      console.error('Error calculating pricing:', error);
+      // Fallback to simple calculation
+      const nights = Math.ceil((selectedDates.checkOut.getTime() - selectedDates.checkIn.getTime()) / (1000 * 60 * 60 * 24));
+      setPricingBreakdown({
+        nights,
+        total: Number(property.price) * nights,
+        subtotal: Number(property.price) * nights,
+        basePrice: Number(property.price)
+      });
+    } finally {
+      setPricingLoading(false);
     }
   };
 
@@ -528,29 +566,72 @@ const Property = () => {
                         onDateSelect={(dates) => setSelectedDates(dates)}
                       />
                       
-                      {/* Nights & Price Calculation */}
+                      {/* Detailed Pricing Breakdown - Airbnb Style */}
                       {selectedDates.checkIn && selectedDates.checkOut && (
-                        <div className="bg-primary/5 p-4 rounded-lg space-y-2">
-                          <div className="flex justify-between text-sm">
-                            <span className="text-muted-foreground">
-                              {Math.ceil((selectedDates.checkOut.getTime() - selectedDates.checkIn.getTime()) / (1000 * 60 * 60 * 24))} nights
-                            </span>
-                            <span className="font-semibold">
-                              {formatPrice(
-                                Number(property.price) * Math.ceil((selectedDates.checkOut.getTime() - selectedDates.checkIn.getTime()) / (1000 * 60 * 60 * 24)),
-                                'total',
-                                property.price_currency
-                              )}
-                            </span>
-                          </div>
-                          <p className="text-xs text-muted-foreground">Total before fees and taxes</p>
+                        <div className="space-y-4">
+                          {pricingLoading ? (
+                            <div className="flex items-center justify-center py-4">
+                              <Loader2 className="h-5 w-5 animate-spin" />
+                              <span className="ml-2 text-sm">Calculating...</span>
+                            </div>
+                          ) : pricingBreakdown ? (
+                            <>
+                              <div className="space-y-3">
+                                <div className="flex justify-between text-sm">
+                                  <span className="underline">
+                                    {formatPrice(pricingBreakdown.basePrice, 'daily', property.price_currency)} × {pricingBreakdown.nights} nights
+                                  </span>
+                                  <span>{formatPrice(pricingBreakdown.subtotal + (pricingBreakdown.savings || 0), 'total', property.price_currency)}</span>
+                                </div>
+                                
+                                {/* Show discounts if any */}
+                                {pricingBreakdown.lengthOfStayDiscount && (
+                                  <div className="flex justify-between text-sm text-green-600">
+                                    <span>Length of stay discount</span>
+                                    <span>-{formatPrice(pricingBreakdown.lengthOfStayDiscount.amount, 'total', property.price_currency)}</span>
+                                  </div>
+                                )}
+                                {pricingBreakdown.earlyBirdDiscount && (
+                                  <div className="flex justify-between text-sm text-green-600">
+                                    <span>Early bird discount</span>
+                                    <span>-{formatPrice(pricingBreakdown.earlyBirdDiscount.amount, 'total', property.price_currency)}</span>
+                                  </div>
+                                )}
+                                
+                                {/* Show fees */}
+                                {pricingBreakdown.cleaningFee > 0 && (
+                                  <div className="flex justify-between text-sm">
+                                    <span className="underline">Cleaning fee</span>
+                                    <span>{formatPrice(pricingBreakdown.cleaningFee, 'total', property.price_currency)}</span>
+                                  </div>
+                                )}
+                                {pricingBreakdown.serviceFee > 0 && (
+                                  <div className="flex justify-between text-sm">
+                                    <span className="underline">Service fee</span>
+                                    <span>{formatPrice(pricingBreakdown.serviceFee, 'total', property.price_currency)}</span>
+                                  </div>
+                                )}
+                              </div>
+                              
+                              <Separator />
+                              
+                              <div className="flex justify-between font-bold text-base">
+                                <span>Total</span>
+                                <span>{formatPrice(pricingBreakdown.total, 'total', property.price_currency)}</span>
+                              </div>
+                              
+                              <p className="text-xs text-center text-muted-foreground">
+                                {formatPrice(pricingBreakdown.total, 'total', property.price_currency)} for {pricingBreakdown.nights} nights
+                              </p>
+                            </>
+                          ) : null}
                         </div>
                       )}
                       
                       <GuestsSelector
                         value={guestCounts}
                         onChange={setGuestCounts}
-                        keepOpen={false}
+                        keepOpen={true}
                       />
                       <Button 
                         size="lg" 

@@ -32,13 +32,16 @@ export const calculateBookingPrice = async (
 ): Promise<PricingBreakdown> => {
   try {
     // 1. Fetch property details
-    const { data: property } = await supabase
+    const { data: property, error: propertyError } = await supabase
       .from('properties')
       .select('price, commission_rate')
       .eq('id', propertyId)
-      .single();
+      .maybeSingle();
 
-    if (!property) throw new Error('Property not found');
+    if (propertyError || !property) {
+      console.error('Property fetch error:', propertyError);
+      throw new Error('Property not found');
+    }
 
     const basePrice = parseFloat(property.price);
     const commissionRate = property.commission_rate || 0.15;

@@ -7,7 +7,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useCurrency } from '@/contexts/CurrencyContext';
 import { format, eachDayOfInterval, parseISO, isSameDay, differenceInDays } from 'date-fns';
-import { X, TrendingDown, TrendingUp } from 'lucide-react';
+import { TrendingDown, TrendingUp } from 'lucide-react';
 import { calculateSmartPrice } from '@/utils/smartPricingCalculator';
 import { toast } from 'sonner';
 
@@ -163,15 +163,11 @@ export const PropertyAvailabilityCalendar = ({
     <div className="space-y-4">
       <Card className="overflow-hidden">
         <CardHeader className="bg-gradient-to-r from-primary/10 to-primary/5">
-          <div className="flex items-center justify-between">
-            <CardTitle className="text-lg">{t('selectDates') || 'Select Dates'}</CardTitle>
-            {(dateRange.from || dateRange.to) && (
-              <Button variant="ghost" size="sm" onClick={clearDates} className="h-8">
-                <X className="w-4 h-4 mr-1" />
-                Clear
-              </Button>
-            )}
-          </div>
+          <CardTitle className="text-lg">
+            {dateRange.from && dateRange.to
+              ? `${format(dateRange.from, 'MMM d')} - ${format(dateRange.to, 'MMM d')}`
+              : t('selectDates') || 'Select Dates'}
+          </CardTitle>
           {priceType === 'night' && (
             <div className="flex items-center gap-2 mt-2">
               <Badge variant="secondary" className="text-base">
@@ -202,6 +198,15 @@ export const PropertyAvailabilityCalendar = ({
             }}
             className="rounded-md border-0"
           />
+          
+          {/* Clear dates button at bottom-right like Airbnb */}
+          {(dateRange.from || dateRange.to) && (
+            <div className="flex justify-end mt-4 pt-4 border-t">
+              <Button variant="ghost" size="sm" onClick={clearDates} className="underline font-semibold">
+                Clear dates
+              </Button>
+            </div>
+          )}
         </CardContent>
       </Card>
 
