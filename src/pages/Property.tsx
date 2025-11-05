@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { MapPin, Bed, Bath, Square, Calendar, ChevronLeft, ChevronRight } from "lucide-react";
 import { useParams } from "react-router-dom";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -581,18 +582,53 @@ const Property = () => {
                       <div className="border border-input rounded-lg overflow-hidden">
                         {/* Check-in and Check-out side by side */}
                         <div className="grid grid-cols-2">
-                          <div className="p-3 border-r">
-                            <div className="text-xs font-semibold uppercase mb-1">Check-in</div>
-                            <div className="text-sm">
-                              {selectedDates.checkIn ? format(selectedDates.checkIn, 'MM/dd/yyyy') : 'Add date'}
-                            </div>
-                          </div>
-                          <div className="p-3">
-                            <div className="text-xs font-semibold uppercase mb-1">Checkout</div>
-                            <div className="text-sm">
-                              {selectedDates.checkOut ? format(selectedDates.checkOut, 'MM/dd/yyyy') : 'Add date'}
-                            </div>
-                          </div>
+                          <Popover>
+                            <PopoverTrigger asChild>
+                              <button className="p-3 text-left hover:bg-muted/50 transition-colors border-r w-full">
+                                <div className="text-xs font-semibold uppercase mb-1">Check-in</div>
+                                <div className="text-sm">
+                                  {selectedDates.checkIn ? format(selectedDates.checkIn, 'MM/dd/yyyy') : 'Add date'}
+                                </div>
+                              </button>
+                            </PopoverTrigger>
+                            <PopoverContent className="w-auto p-0" align="start">
+                              <PropertyAvailabilityCalendar
+                                propertyId={property.id}
+                                basePrice={property.price}
+                                priceType={property.price_type}
+                                currency={property.price_currency}
+                                minNights={property.min_nights || 1}
+                                maxNights={property.max_nights || 365}
+                                onDateSelect={(dates) => {
+                                  setSelectedDates(dates);
+                                }}
+                              />
+                            </PopoverContent>
+                          </Popover>
+                          
+                          <Popover>
+                            <PopoverTrigger asChild>
+                              <button className="p-3 text-left hover:bg-muted/50 transition-colors w-full">
+                                <div className="text-xs font-semibold uppercase mb-1">Checkout</div>
+                                <div className="text-sm">
+                                  {selectedDates.checkOut ? format(selectedDates.checkOut, 'MM/dd/yyyy') : 'Add date'}
+                                </div>
+                              </button>
+                            </PopoverTrigger>
+                            <PopoverContent className="w-auto p-0" align="start">
+                              <PropertyAvailabilityCalendar
+                                propertyId={property.id}
+                                basePrice={property.price}
+                                priceType={property.price_type}
+                                currency={property.price_currency}
+                                minNights={property.min_nights || 1}
+                                maxNights={property.max_nights || 365}
+                                onDateSelect={(dates) => {
+                                  setSelectedDates(dates);
+                                }}
+                              />
+                            </PopoverContent>
+                          </Popover>
                         </div>
                         
                         {/* Guests section with detailed selector */}

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Calendar } from '@/components/ui/calendar';
+import { PopoverClose } from '@/components/ui/popover';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -214,17 +215,15 @@ export const PropertyAvailabilityCalendar = ({
                 <span className="text-sm text-muted-foreground">
                   {format(dateRange.from, 'MMM dd')} - {format(dateRange.to, 'MMM dd')}
                 </span>
-                <Button 
-                  variant="default" 
-                  size="sm"
-                  onClick={() => {
-                    // Apply dates is already handled by handleDateSelect
-                    // This button just provides visual confirmation
-                  }}
-                  className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold"
-                >
-                  Apply
-                </Button>
+                <PopoverClose asChild>
+                  <Button 
+                    variant="default" 
+                    size="sm"
+                    className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold"
+                  >
+                    Apply
+                  </Button>
+                </PopoverClose>
               </>
             )}
           </div>
