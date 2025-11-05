@@ -50,26 +50,40 @@ export const calculateBookingPrice = async (
     const nights = differenceInDays(checkOutDate, checkInDate);
     if (nights < 1) throw new Error('Invalid date range');
 
-    // 3. Fetch seasonal pricing
-    const { data: seasonalPrices } = await supabase
+    // 3. Fetch seasonal pricing (with timeout protection)
+    const seasonalPromise = supabase
       .from('property_seasonal_pricing')
       .select('*')
       .eq('property_id', propertyId)
       .order('start_date');
 
-    // 4. Fetch pricing fees
-    const { data: fees } = await supabase
+    // 4. Fetch pricing fees (with timeout protection)
+    const feesPromise = supabase
       .from('pricing_fees')
       .select('*')
       .eq('property_id', propertyId)
       .maybeSingle();
 
-    // 5. Fetch active pricing rules
-    const { data: rules } = await supabase
+    // 5. Fetch active pricing rules (with timeout protection)
+    const rulesPromise = supabase
       .from('pricing_rules')
       .select('*')
       .eq('property_id', propertyId)
       .eq('is_active', true);
+
+    // Fetch all in parallel with 10 second timeout
+    const timeout = new Promise((_, reject) => 
+      setTimeout(() => reject(new Error('Pricing fetch timeout')), 10000)
+    );
+
+    const [seasonalResult, feesResult, rulesResult] = await Promise.race([
+      Promise.all([seasonalPromise, feesPromise, rulesPromise]),
+      timeout
+    ]) as any;
+
+    const { data: seasonalPrices } = seasonalResult || {};
+    const { data: fees } = feesResult || {};
+    const { data: rules } = rulesResult || {};
 
     // 6. Calculate nightly rates with seasonal and weekend adjustments
     const nightlyRates: { date: string; rate: number; isWeekend: boolean }[] = [];

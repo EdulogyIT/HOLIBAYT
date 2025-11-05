@@ -600,9 +600,9 @@ const Property = () => {
                               <div className="space-y-3">
                                 <div className="flex justify-between text-sm">
                                   <span className="underline">
-                                    {formatPrice(pricingBreakdown.basePrice, 'daily', property.price_currency)} × {pricingBreakdown.nights} nights
+                                    {formatPrice(pricingBreakdown.basePrice.toString(), 'night', property.price_currency)} × {pricingBreakdown.nights} {pricingBreakdown.nights === 1 ? 'night' : 'nights'}
                                   </span>
-                                  <span>{formatPrice(pricingBreakdown.subtotal + (pricingBreakdown.savings || 0), 'total', property.price_currency)}</span>
+                                  <span>{formatPrice((pricingBreakdown.subtotal + (pricingBreakdown.savings || 0)).toString(), 'total', property.price_currency)}</span>
                                 </div>
                                 
                                 {/* Show discounts if any */}
@@ -638,11 +638,11 @@ const Property = () => {
                               
                               <div className="flex justify-between font-bold text-base">
                                 <span>Total</span>
-                                <span>{formatPrice(pricingBreakdown.total, 'total', property.price_currency)}</span>
+                                <span>{formatPrice(pricingBreakdown.total.toString(), 'total', property.price_currency)}</span>
                               </div>
                               
-                              <p className="text-xs text-center text-muted-foreground">
-                                {formatPrice(pricingBreakdown.total, 'total', property.price_currency)} for {pricingBreakdown.nights} nights
+                              <p className="text-xs text-center text-muted-foreground pt-2">
+                                Total price for {pricingBreakdown.nights} {pricingBreakdown.nights === 1 ? 'night' : 'nights'}
                               </p>
                             </>
                           ) : null}

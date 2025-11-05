@@ -196,17 +196,27 @@ export const PropertyAvailabilityCalendar = ({
             modifiersClassNames={{
               booked: 'line-through opacity-50 bg-destructive/10 cursor-not-allowed',
             }}
-            className="rounded-md border-0"
+            className="rounded-md border-0 pointer-events-auto"
           />
           
-          {/* Clear dates button at bottom-right like Airbnb */}
-          {(dateRange.from || dateRange.to) && (
-            <div className="flex justify-end mt-4 pt-4 border-t">
-              <Button variant="ghost" size="sm" onClick={clearDates} className="underline font-semibold">
-                Clear dates
-              </Button>
-            </div>
-          )}
+          {/* Apply button footer - Airbnb style */}
+          <div className="mt-4 pt-4 border-t flex items-center justify-between">
+            <Button 
+              variant="ghost" 
+              size="sm"
+              onClick={clearDates}
+              className="text-sm underline font-semibold"
+            >
+              Clear
+            </Button>
+            {(dateRange.from && dateRange.to) && (
+              <div className="flex items-center gap-3">
+                <span className="text-sm text-muted-foreground">
+                  {format(dateRange.from, 'MMM dd')} - {format(dateRange.to, 'MMM dd')}
+                </span>
+              </div>
+            )}
+          </div>
         </CardContent>
       </Card>
 
