@@ -207,14 +207,25 @@ export const PropertyAvailabilityCalendar = ({
               onClick={clearDates}
               className="text-sm underline font-semibold"
             >
-              Clear
+              Clear dates
             </Button>
             {(dateRange.from && dateRange.to) && (
-              <div className="flex items-center gap-3">
+              <>
                 <span className="text-sm text-muted-foreground">
                   {format(dateRange.from, 'MMM dd')} - {format(dateRange.to, 'MMM dd')}
                 </span>
-              </div>
+                <Button 
+                  variant="default" 
+                  size="sm"
+                  onClick={() => {
+                    // Apply dates is already handled by handleDateSelect
+                    // This button just provides visual confirmation
+                  }}
+                  className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold"
+                >
+                  Apply
+                </Button>
+              </>
             )}
           </div>
         </CardContent>

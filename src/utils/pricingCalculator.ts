@@ -71,9 +71,9 @@ export const calculateBookingPrice = async (
       .eq('property_id', propertyId)
       .eq('is_active', true);
 
-    // Fetch all in parallel with 10 second timeout
+    // Fetch all in parallel with 5 second timeout (reduced from 10s)
     const timeout = new Promise((_, reject) => 
-      setTimeout(() => reject(new Error('Pricing fetch timeout')), 10000)
+      setTimeout(() => reject(new Error('Pricing fetch timeout (5s)')), 5000)
     );
 
     const [seasonalResult, feesResult, rulesResult] = await Promise.race([

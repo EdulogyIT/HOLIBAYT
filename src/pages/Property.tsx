@@ -29,6 +29,7 @@ import { NeighborhoodInsights } from "@/components/NeighborhoodInsights";
 import GooglePropertyMap from "@/components/GooglePropertyMap";
 import { PropertyAvailabilityCalendar } from "@/components/PropertyAvailabilityCalendar";
 import { GuestsSelector } from "@/components/GuestsSelector";
+import { format } from "date-fns";
 
 interface Property {
   id: string;
@@ -504,25 +505,40 @@ const Property = () => {
               {/* Reviews */}
               <PropertyReviews propertyId={property.id} hostUserId={property.user_id || ''} />
 
-              {/* Availability (shown above the map, synced with sidebar) */}
-{property.category === "short-stay" && (
-  <Card className="shadow-lg">
-    <CardHeader>
-      <CardTitle className="text-2xl">{t("availability") || "Availability"}</CardTitle>
-    </CardHeader>
-    <CardContent>
-      <PropertyAvailabilityCalendar
-        propertyId={property.id}
-        basePrice={property.price}
-        priceType={property.price_type}
-        currency={property.price_currency}
-        minNights={property.min_nights || 1}
-        maxNights={property.max_nights || 365}
-        onDateSelect={(dates) => setSelectedDates(dates)}  // ← keeps it in sync
-      />
-    </CardContent>
-  </Card>
-)}
+              {/* Availability Calendar - Enhanced visibility for short-stay properties */}
+              {property.category === "short-stay" && (
+                <div className="my-8">
+                  <Separator className="mb-8" />
+                  <Card className="shadow-2xl border-2 border-primary/20">
+                    <CardHeader className="bg-gradient-to-r from-primary/5 to-primary/10">
+                      <CardTitle className="text-3xl font-bold flex items-center gap-3">
+                        <Calendar className="w-8 h-8 text-primary" />
+                        {t("selectDates") || "Select your dates"}
+                      </CardTitle>
+                      <p className="text-muted-foreground mt-2 text-base">
+                        {property.min_nights && `Minimum stay: ${property.min_nights} night${property.min_nights > 1 ? 's' : ''}`}
+                        {property.max_nights && ` • Maximum stay: ${property.max_nights} nights`}
+                      </p>
+                    </CardHeader>
+                    <CardContent className="pt-6">
+                      <PropertyAvailabilityCalendar
+                        propertyId={property.id}
+                        basePrice={property.price}
+                        priceType={property.price_type}
+                        currency={property.price_currency}
+                        minNights={property.min_nights || 1}
+                        maxNights={property.max_nights || 365}
+                        onDateSelect={(dates) => {
+                          setSelectedDates(dates);
+                          // Scroll to sidebar booking card when dates are selected
+                          window.scrollTo({ top: 0, behavior: 'smooth' });
+                        }}
+                      />
+                    </CardContent>
+                  </Card>
+                  <Separator className="mt-8" />
+                </div>
+              )}
 
 
               {/* Location Map - Enhanced "Where you'll be" section */}
@@ -545,118 +561,54 @@ const Property = () => {
               </Card>
             </div>
 
-            {/* Sticky Sidebar - Booking Card */}
+            {/* Sticky Sidebar - Booking Card - Airbnb Style */}
             <div className="lg:col-span-1">
               <Card className="shadow-xl sticky top-24">
-                <CardHeader>
-                  <div className="flex items-baseline gap-2 mb-4">
-                    <span className="text-4xl font-bold text-primary">
+                <CardHeader className="pb-4">
+                  {/* Price at top - Airbnb style */}
+                  <div className="flex items-baseline gap-2">
+                    <span className="text-3xl font-semibold">
                       {formatPrice(Number(property.price), property.price_type, property.price_currency)}
                     </span>
-                    {property.price_type !== 'total' && (
-                      <span className="text-muted-foreground">
-                        / {property.price_type === 'daily' ? t('night') : property.price_type === 'weekly' ? t('week') : t('month')}
-                      </span>
-                    )}
+                    <span className="text-base text-muted-foreground">night</span>
                   </div>
-                  
-                  {/* Check-in/Check-out Times */}
-                  {property.category === 'short-stay' && (
-                    <div className="grid grid-cols-2 gap-4 pt-4 border-t">
-                      <div className="text-sm">
-                        <p className="text-muted-foreground">Check-in</p>
-                        <p className="font-semibold">After {property.check_in_time || '3:00 PM'}</p>
-                      </div>
-                      <div className="text-sm">
-                        <p className="text-muted-foreground">Check-out</p>
-                        <p className="font-semibold">Before {property.check_out_time || '11:00 AM'}</p>
-                      </div>
-                    </div>
-                  )}
                 </CardHeader>
+                
                 <CardContent className="space-y-4">
                   {property.category === 'short-stay' && (
                     <>
-                      <PropertyAvailabilityCalendar
-                        propertyId={property.id}
-                        basePrice={property.price}
-                        priceType={property.price_type}
-                        currency={property.price_currency}
-                        minNights={property.min_nights || 1}
-                        maxNights={property.max_nights || 365}
-                        onDateSelect={(dates) => setSelectedDates(dates)}
-                      />
-                      
-                      {/* Detailed Pricing Breakdown - Airbnb Style */}
-                      {selectedDates.checkIn && selectedDates.checkOut && (
-                        <div className="space-y-4">
-                          {pricingLoading ? (
-                            <div className="flex items-center justify-center py-4">
-                              <Loader2 className="h-5 w-5 animate-spin" />
-                              <span className="ml-2 text-sm">Calculating...</span>
+                      {/* Dates and Guests in bordered boxes - Airbnb style */}
+                      <div className="border border-input rounded-lg overflow-hidden">
+                        {/* Check-in and Check-out side by side */}
+                        <div className="grid grid-cols-2">
+                          <div className="p-3 border-r">
+                            <div className="text-xs font-semibold uppercase mb-1">Check-in</div>
+                            <div className="text-sm">
+                              {selectedDates.checkIn ? format(selectedDates.checkIn, 'MM/dd/yyyy') : 'Add date'}
                             </div>
-                          ) : pricingBreakdown ? (
-                            <>
-                              <div className="space-y-3">
-                                <div className="flex justify-between text-sm">
-                                  <span className="underline">
-                                    {formatPrice(pricingBreakdown.basePrice.toString(), 'night', property.price_currency)} × {pricingBreakdown.nights} {pricingBreakdown.nights === 1 ? 'night' : 'nights'}
-                                  </span>
-                                  <span>{formatPrice((pricingBreakdown.subtotal + (pricingBreakdown.savings || 0)).toString(), 'total', property.price_currency)}</span>
-                                </div>
-                                
-                                {/* Show discounts if any */}
-                                {pricingBreakdown.lengthOfStayDiscount && (
-                                  <div className="flex justify-between text-sm text-green-600">
-                                    <span>Length of stay discount</span>
-                                    <span>-{formatPrice(pricingBreakdown.lengthOfStayDiscount.amount, 'total', property.price_currency)}</span>
-                                  </div>
-                                )}
-                                {pricingBreakdown.earlyBirdDiscount && (
-                                  <div className="flex justify-between text-sm text-green-600">
-                                    <span>Early bird discount</span>
-                                    <span>-{formatPrice(pricingBreakdown.earlyBirdDiscount.amount, 'total', property.price_currency)}</span>
-                                  </div>
-                                )}
-                                
-                                {/* Show fees */}
-                                {pricingBreakdown.cleaningFee > 0 && (
-                                  <div className="flex justify-between text-sm">
-                                    <span className="underline">Cleaning fee</span>
-                                    <span>{formatPrice(pricingBreakdown.cleaningFee, 'total', property.price_currency)}</span>
-                                  </div>
-                                )}
-                                {pricingBreakdown.serviceFee > 0 && (
-                                  <div className="flex justify-between text-sm">
-                                    <span className="underline">Service fee</span>
-                                    <span>{formatPrice(pricingBreakdown.serviceFee, 'total', property.price_currency)}</span>
-                                  </div>
-                                )}
-                              </div>
-                              
-                              <Separator />
-                              
-                              <div className="flex justify-between font-bold text-base">
-                                <span>Total</span>
-                                <span>{formatPrice(pricingBreakdown.total.toString(), 'total', property.price_currency)}</span>
-                              </div>
-                              
-                              <p className="text-xs text-center text-muted-foreground pt-2">
-                                Total price for {pricingBreakdown.nights} {pricingBreakdown.nights === 1 ? 'night' : 'nights'}
-                              </p>
-                            </>
-                          ) : null}
+                          </div>
+                          <div className="p-3">
+                            <div className="text-xs font-semibold uppercase mb-1">Checkout</div>
+                            <div className="text-sm">
+                              {selectedDates.checkOut ? format(selectedDates.checkOut, 'MM/dd/yyyy') : 'Add date'}
+                            </div>
+                          </div>
                         </div>
-                      )}
+                        
+                        {/* Guests section with detailed selector */}
+                        <div className="border-t">
+                          <GuestsSelector
+                            value={guestCounts}
+                            onChange={setGuestCounts}
+                            keepOpen={true}
+                          />
+                        </div>
+                      </div>
                       
-                      <GuestsSelector
-                        value={guestCounts}
-                        onChange={setGuestCounts}
-                        keepOpen={true}
-                      />
+                      {/* Reserve button - Airbnb magenta */}
                       <Button 
                         size="lg" 
-                        className="w-full"
+                        className="w-full bg-gradient-to-r from-[#E61E4D] to-[#D70466] hover:from-[#D70466] hover:to-[#BD1E59] text-white font-semibold text-base h-12"
                         onClick={() => {
                           const params = new URLSearchParams();
                           if (selectedDates.checkIn) params.set('checkIn', selectedDates.checkIn.toISOString());
@@ -667,9 +619,61 @@ const Property = () => {
                         }}
                         disabled={!selectedDates.checkIn || !selectedDates.checkOut}
                       >
-                        <Calendar className="w-4 h-4 mr-2" />
-                        {t('bookNow')}
+                        Reserve
                       </Button>
+                      
+                      <p className="text-center text-sm text-muted-foreground">
+                        You won't be charged yet
+                      </p>
+                      
+                      {/* Pricing breakdown - Airbnb style */}
+                      {selectedDates.checkIn && selectedDates.checkOut && (
+                        <div className="space-y-3 pt-4">
+                          {pricingLoading ? (
+                            <div className="flex items-center justify-center py-4">
+                              <Loader2 className="h-5 w-5 animate-spin" />
+                              <span className="ml-2 text-sm">Calculating...</span>
+                            </div>
+                          ) : pricingBreakdown ? (
+                            <>
+                              <div className="flex justify-between text-base">
+                                <span className="underline">
+                                  {formatPrice(pricingBreakdown.basePrice, 'night', property.price_currency)} × {pricingBreakdown.nights} nights
+                                </span>
+                                <span>{formatPrice(pricingBreakdown.subtotal + (pricingBreakdown.savings || 0), 'total', property.price_currency)}</span>
+                              </div>
+                              
+                              {pricingBreakdown.lengthOfStayDiscount && (
+                                <div className="flex justify-between text-base text-green-600">
+                                  <span className="underline">Length of stay discount</span>
+                                  <span>-{formatPrice(pricingBreakdown.lengthOfStayDiscount.amount, 'total', property.price_currency)}</span>
+                                </div>
+                              )}
+                              
+                              {pricingBreakdown.cleaningFee > 0 && (
+                                <div className="flex justify-between text-base">
+                                  <span className="underline">Cleaning fee</span>
+                                  <span>{formatPrice(pricingBreakdown.cleaningFee, 'total', property.price_currency)}</span>
+                                </div>
+                              )}
+                              
+                              {pricingBreakdown.serviceFee > 0 && (
+                                <div className="flex justify-between text-base">
+                                  <span className="underline">Service fee</span>
+                                  <span>{formatPrice(pricingBreakdown.serviceFee, 'total', property.price_currency)}</span>
+                                </div>
+                              )}
+                              
+                              <Separator />
+                              
+                              <div className="flex justify-between text-base font-semibold">
+                                <span>Total</span>
+                                <span>{formatPrice(pricingBreakdown.total, 'total', property.price_currency)}</span>
+                              </div>
+                            </>
+                          ) : null}
+                        </div>
+                      )}
                     </>
                   )}
 
