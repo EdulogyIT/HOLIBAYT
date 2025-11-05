@@ -89,6 +89,8 @@ const Property = () => {
   const [guestCounts, setGuestCounts] = useState({ adults: 1, children: 0, infants: 0, pets: 0 });
   const [pricingBreakdown, setPricingBreakdown] = useState<any>(null);
   const [pricingLoading, setPricingLoading] = useState(false);
+  const [checkInPopoverOpen, setCheckInPopoverOpen] = useState(false);
+  const [checkOutPopoverOpen, setCheckOutPopoverOpen] = useState(false);
   
   useScrollToTop();
 
@@ -582,7 +584,7 @@ const Property = () => {
                       <div className="border border-input rounded-lg overflow-hidden">
                         {/* Check-in and Check-out side by side */}
                         <div className="grid grid-cols-2">
-                          <Popover>
+                          <Popover open={checkInPopoverOpen} onOpenChange={setCheckInPopoverOpen}>
                             <PopoverTrigger asChild>
                               <button className="p-3 text-left hover:bg-muted/50 transition-colors border-r w-full">
                                 <div className="text-xs font-semibold uppercase mb-1">Check-in</div>
@@ -602,11 +604,12 @@ const Property = () => {
                                 onDateSelect={(dates) => {
                                   setSelectedDates(dates);
                                 }}
+                                onApply={() => setCheckInPopoverOpen(false)}
                               />
                             </PopoverContent>
                           </Popover>
                           
-                          <Popover>
+                          <Popover open={checkOutPopoverOpen} onOpenChange={setCheckOutPopoverOpen}>
                             <PopoverTrigger asChild>
                               <button className="p-3 text-left hover:bg-muted/50 transition-colors w-full">
                                 <div className="text-xs font-semibold uppercase mb-1">Checkout</div>
@@ -626,6 +629,7 @@ const Property = () => {
                                 onDateSelect={(dates) => {
                                   setSelectedDates(dates);
                                 }}
+                                onApply={() => setCheckOutPopoverOpen(false)}
                               />
                             </PopoverContent>
                           </Popover>

@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { Calendar } from '@/components/ui/calendar';
-import { PopoverClose } from '@/components/ui/popover';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -20,6 +19,7 @@ interface PropertyAvailabilityCalendarProps {
   minNights?: number;
   maxNights?: number;
   onDateSelect?: (dates: { checkIn: Date | undefined; checkOut: Date | undefined }) => void;
+  onApply?: () => void;
 }
 
 interface SeasonalPrice {
@@ -44,7 +44,8 @@ export const PropertyAvailabilityCalendar = ({
   currency = 'DZD',
   minNights = 1,
   maxNights = 365,
-  onDateSelect
+  onDateSelect,
+  onApply
 }: PropertyAvailabilityCalendarProps) => {
   const { t } = useLanguage();
   const { formatPrice } = useCurrency();
@@ -215,15 +216,21 @@ export const PropertyAvailabilityCalendar = ({
                 <span className="text-sm text-muted-foreground">
                   {format(dateRange.from, 'MMM dd')} - {format(dateRange.to, 'MMM dd')}
                 </span>
-                <PopoverClose asChild>
-                  <Button 
-                    variant="default" 
-                    size="sm"
-                    className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold"
-                  >
-                    Apply
-                  </Button>
-                </PopoverClose>
+                <Button 
+                  variant="default" 
+                  size="sm"
+                  onClick={() => {
+                    if (onDateSelect && dateRange.from && dateRange.to) {
+                      onDateSelect({ checkIn: dateRange.from, checkOut: dateRange.to });
+                    }
+                    if (onApply) {
+                      onApply();
+                    }
+                  }}
+                  className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold"
+                >
+                  Apply
+                </Button>
               </>
             )}
           </div>
