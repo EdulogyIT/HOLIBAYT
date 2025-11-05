@@ -48,7 +48,7 @@ export function DateRangeInputs({
               onChange(range);
             }}
             allowPast={allowPast}
-            onClose={() => setIsCheckInOpen(false)}
+            onApply={() => setIsCheckInOpen(false)}
           />
         </PopoverContent>
       </Popover>
@@ -75,7 +75,7 @@ export function DateRangeInputs({
               onChange(range);
             }}
             allowPast={allowPast}
-            onClose={() => setIsCheckOutOpen(false)}
+            onApply={() => setIsCheckOutOpen(false)}
           />
         </PopoverContent>
       </Popover>

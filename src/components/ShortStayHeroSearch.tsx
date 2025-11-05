@@ -166,7 +166,7 @@ const ShortStayHeroSearch: React.FC<ShortStayHeroSearchProps> = ({ onSearch, onF
                   value={formData.dateRange}
                   onChange={(range) => updateFormField("dateRange", range)}
                   allowPast={false}
-                  onClose={() => setIsCompactCheckInOpen(false)}
+                  onApply={() => setIsCompactCheckInOpen(false)}
                 />
               </PopoverContent>
             </Popover>
@@ -248,12 +248,12 @@ const ShortStayHeroSearch: React.FC<ShortStayHeroSearchProps> = ({ onSearch, onF
                     </Button>
                   </PopoverTrigger>
                   <PopoverContent className="w-auto p-0 z-[100]" align="center" collisionPadding={10}>
-                    <DateRangePicker
-                      value={formData.dateRange}
-                      onChange={(range) => updateFormField("dateRange", range)}
-                      allowPast={false}
-                      onClose={() => setIsCheckInOpen(false)}
-                    />
+                <DateRangePicker
+                  value={formData.dateRange}
+                  onChange={(range) => updateFormField("dateRange", range)}
+                  allowPast={false}
+                  onApply={() => setIsCheckInOpen(false)}
+                />
                   </PopoverContent>
                 </Popover>
               </div>
@@ -277,12 +277,12 @@ const ShortStayHeroSearch: React.FC<ShortStayHeroSearchProps> = ({ onSearch, onF
                     </Button>
                   </PopoverTrigger>
                   <PopoverContent className="w-auto p-0 z-[100]" align="center" collisionPadding={10}>
-                    <DateRangePicker
-                      value={formData.dateRange}
-                      onChange={(range) => updateFormField("dateRange", range)}
-                      allowPast={false}
-                      onClose={() => setIsCheckOutOpen(false)}
-                    />
+                <DateRangePicker
+                  value={formData.dateRange}
+                  onChange={(range) => updateFormField("dateRange", range)}
+                  allowPast={false}
+                  onApply={() => setIsCheckOutOpen(false)}
+                />
                   </PopoverContent>
                 </Popover>
               </div>

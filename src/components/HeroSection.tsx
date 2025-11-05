@@ -225,7 +225,7 @@ const HeroSection = () => {
       value={formData.dateRange}
       onChange={(range) => updateFormField('dateRange', range)}
       allowPast={false}
-      onClose={() => setIsCheckInOpen(false)}
+      onApply={() => setIsCheckInOpen(false)}
     />
   </div>
 </PopoverContent>
@@ -259,7 +259,7 @@ const HeroSection = () => {
       value={formData.dateRange}
       onChange={(range) => updateFormField('dateRange', range)}
       allowPast={false}
-      onClose={() => setIsCheckOutOpen(false)}
+      onApply={() => setIsCheckOutOpen(false)}
     />
   </div>
 </PopoverContent>
