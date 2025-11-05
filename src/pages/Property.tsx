@@ -101,6 +101,26 @@ const Property = () => {
     }
   }, [id]);
 
+  useEffect(() => {
+    console.log('🏠 Property component mounted/updated', {
+      propertyId: property?.id,
+      category: property?.category,
+      isShortStay: property?.category === 'short-stay'
+    });
+  }, [property]);
+
+  useEffect(() => {
+    console.log('📅 Selected dates changed:', selectedDates);
+  }, [selectedDates]);
+
+  useEffect(() => {
+    console.log('👥 Guest counts changed:', guestCounts);
+  }, [guestCounts]);
+
+  useEffect(() => {
+    console.log('🚪 Popover states:', { checkInPopoverOpen, checkOutPopoverOpen });
+  }, [checkInPopoverOpen, checkOutPopoverOpen]);
+
   // Calculate pricing when dates or guests change
   useEffect(() => {
     if (property && selectedDates.checkIn && selectedDates.checkOut && property.category === 'short-stay') {
@@ -602,9 +622,13 @@ const Property = () => {
                                 minNights={property.min_nights || 1}
                                 maxNights={property.max_nights || 365}
                                 onDateSelect={(dates) => {
+                                  console.log('📅 Check-in onDateSelect called', dates);
                                   setSelectedDates(dates);
                                 }}
-                                onApply={() => setCheckInPopoverOpen(false)}
+                                onApply={() => {
+                                  console.log('📅 Check-in onApply called - closing popover');
+                                  setCheckInPopoverOpen(false);
+                                }}
                               />
                             </PopoverContent>
                           </Popover>
@@ -627,9 +651,13 @@ const Property = () => {
                                 minNights={property.min_nights || 1}
                                 maxNights={property.max_nights || 365}
                                 onDateSelect={(dates) => {
+                                  console.log('📅 Checkout onDateSelect called', dates);
                                   setSelectedDates(dates);
                                 }}
-                                onApply={() => setCheckOutPopoverOpen(false)}
+                                onApply={() => {
+                                  console.log('📅 Checkout onApply called - closing popover');
+                                  setCheckOutPopoverOpen(false);
+                                }}
                               />
                             </PopoverContent>
                           </Popover>

@@ -220,11 +220,16 @@ export const PropertyAvailabilityCalendar = ({
                   variant="default" 
                   size="sm"
                   onClick={() => {
+                    console.log('📅 Apply button clicked', { from: dateRange.from, to: dateRange.to });
                     if (onDateSelect && dateRange.from && dateRange.to) {
+                      console.log('📅 Calling onDateSelect with dates');
                       onDateSelect({ checkIn: dateRange.from, checkOut: dateRange.to });
                     }
                     if (onApply) {
+                      console.log('📅 Calling onApply to close popover');
                       onApply();
+                    } else {
+                      console.error('❌ onApply callback is not defined!');
                     }
                   }}
                   className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold"
